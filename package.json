@@ -1,13 +1,14 @@
 {
   "name": "hume-evi-next-js-starter",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "homepage": "https://github.com/humeai/hume-evi-next-js-starter",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docs:structure": "tree -I 'node_modules|.git|.next|dist|build|.taskmaster' -a -L 4 > STRUCTURE.md"
   },
   "dependencies": {
     "@humeai/voice-react": "^0.1.15",

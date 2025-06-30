@@ -876,7 +876,66 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Inngest SDK",
+            "description": "Install the Inngest SDK and its required dependencies using the package manager.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Create Inngest API Endpoint",
+            "description": "Create the '/api/inngest' API route handler to serve as the endpoint for Inngest events.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Define Inngest Client",
+            "description": "Create an Inngest client instance in a dedicated file (e.g., 'inngest/client.ts').",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Test Function",
+            "description": "Create a simple 'hello.world' function in 'inngest/functions.ts' to test the setup.",
+            "dependencies": [
+              3
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Create Trigger API Route",
+            "description": "Create a separate API route that uses the Inngest client to send a test event.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Verify in Inngest Dashboard",
+            "description": "Trigger the test event and verify it was received and processed successfully in the Inngest dashboard.",
+            "dependencies": [
+              5
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 12,
@@ -889,7 +948,78 @@
           5
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define 'interviews' Table Schema",
+            "description": "Define the Drizzle schema for the 'interviews' table, including columns for user_id, agent_config_id, status, and timestamps.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Define 'interview_feedback' Table Schema",
+            "description": "Define the schema for the 'interview_feedback' table, including interview_id, content, and sentiment_score.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Define 'recording_url' Table Schema",
+            "description": "Define the schema for the 'recording_url' table, linking an interview_id to a storage URL.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Define 'transcript_url' Table Schema",
+            "description": "Define the schema for the 'transcript_url' table, linking an interview_id to a transcript URL.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Establish Foreign Key Relationships",
+            "description": "Add foreign key constraints from the feedback, recording, and transcript tables to the 'interviews' table.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Add Database Indexes",
+            "description": "Add indexes to foreign keys and frequently queried columns like 'user_id' in the 'interviews' table.",
+            "dependencies": [
+              5
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Generate and Apply Migration",
+            "description": "Run 'drizzle-kit generate:pg' to create the migration file and apply it to the database.",
+            "dependencies": [
+              6
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 13,
@@ -902,7 +1032,64 @@
           5
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define 'archetypes' Table Schema",
+            "description": "Define the schema for the 'archetypes' table with id, name, and description fields.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Define 'career_plans' Table Schema",
+            "description": "Define the schema for 'career_plans' table, linking to a user_id and having a title.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Define 'goals' Table Schema",
+            "description": "Define the schema for 'goals' table, with foreign key to career_plans, description, due_date, and status enum.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Define 'emotional_analysis' Table Schema",
+            "description": "Define the schema for 'emotional_analysis' table, linking to an interview_id and storing JSON data.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Link User Profiles to Archetypes",
+            "description": "Add a foreign key from the 'user_profiles' table to the 'archetypes' table.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Generate and Apply Migration",
+            "description": "Run drizzle-kit to generate and apply a migration for the new schemas and relationships.",
+            "dependencies": [
+              3,
+              4,
+              5
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 14,
@@ -915,7 +1102,55 @@
           5
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define 'subscriptions' Table Schema",
+            "description": "Define the schema for the 'subscriptions' table, including user_id, plan details, status enum, and billing cycle timestamps.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Define 'agent_config' Table Schema",
+            "description": "Define the schema for 'agent_config' with name, system_prompt, and voice_id.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Add Foreign Key for Subscriptions",
+            "description": "Add a foreign key constraint from 'subscriptions.user_id' to 'users.id'.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Generate and Apply Migration",
+            "description": "Run drizzle-kit to generate a migration for the new tables and apply it to the database.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Seed Default Agent Configurations",
+            "description": "Create a seed script to populate the 'agent_config' table with a few default interview agents.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 15,
@@ -928,7 +1163,67 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Vercel Project",
+            "description": "Create a new project on Vercel and connect it to the GitHub repository.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Configure Build Settings",
+            "description": "Ensure the Vercel project is configured with the Next.js framework preset and correct root directory.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Add Production Environment Variables",
+            "description": "Add all necessary environment variables (database, auth, API keys) to the Vercel project settings for the production environment.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Add Preview Environment Variables",
+            "description": "Add environment variables for preview deployments (pull requests).",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Trigger Initial Deployment",
+            "description": "Push a commit to the main branch to trigger the first production deployment and verify it succeeds.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Test Production URL",
+            "description": "Access the deployed Vercel URL to ensure the application is live and functioning correctly.",
+            "dependencies": [
+              5
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 16,
@@ -941,7 +1236,68 @@
           15
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Workflow File",
+            "description": "Create a 'ci.yml' file inside the '.github/workflows' directory.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Define Workflow Trigger",
+            "description": "Configure the workflow to trigger on pull requests targeting the 'main' branch.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Add Linting Job",
+            "description": "Create a job that installs dependencies and runs the linting command.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Add Testing Job",
+            "description": "Create a job that installs dependencies and runs the unit/integration test suite.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Add Build Job",
+            "description": "Create a job that installs dependencies and runs the production build command to check for build errors.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Test the CI Pipeline",
+            "description": "Open a test pull request (e.g., with a deliberate lint error) to verify that the CI pipeline runs and reports status correctly.",
+            "dependencies": [
+              3,
+              4,
+              5
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 17,
@@ -954,7 +1310,66 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Dependencies",
+            "description": "Install 'zustand' and '@tanstack/react-query' packages.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Set up QueryClientProvider",
+            "description": "Create a React Query client and wrap the root application layout with QueryClientProvider.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Create Zustand Store",
+            "description": "Create a simple Zustand store for a piece of global UI state (e.g., managing a modal's open/closed state).",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement `useQuery` Hook",
+            "description": "Create a sample component that uses the `useQuery` hook to fetch data from an API endpoint.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate Zustand Store",
+            "description": "Create a component that uses the Zustand store to manage its state or trigger actions.",
+            "dependencies": [
+              3
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Add React Query Devtools",
+            "description": "Integrate the React Query Devtools to facilitate debugging of server state.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 18,
@@ -967,7 +1382,65 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Add Vapi API Key",
+            "description": "Store the Vapi API key securely in environment variables.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Create Vapi Service File",
+            "description": "Create a dedicated service file at 'lib/services/vapi.ts' or similar.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Initialize Vapi Client",
+            "description": "Install the Vapi SDK (if available) and initialize a client instance in the service file.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Call Creation Function",
+            "description": "Create a function to initiate a new Vapi call, passing necessary parameters like agent configuration.",
+            "dependencies": [
+              3
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement Call Management Functions",
+            "description": "Create functions to handle other call-related actions, such as ending a call.",
+            "dependencies": [
+              3
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Create Test API Route",
+            "description": "Build a test Next.js API route to trigger the call creation function and verify the integration.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 19,
@@ -980,7 +1453,74 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Add Deepgram API Key",
+            "description": "Store the Deepgram API key securely in environment variables.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Install Deepgram SDK",
+            "description": "Install the official Deepgram Node.js SDK.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Create Deepgram Service File",
+            "description": "Create a dedicated service file at 'lib/services/deepgram.ts'.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Initialize Deepgram Client",
+            "description": "Initialize the Deepgram client in the service file using the API key.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement Streaming Transcription",
+            "description": "Create a function to handle real-time audio stream transcription, configuring options like endpointing.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Implement Batch Transcription",
+            "description": "Create a function to transcribe a pre-recorded audio file from a URL or buffer.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Create Test API Route",
+            "description": "Build a test API route that uses the service to transcribe a sample audio file and returns the text.",
+            "dependencies": [
+              6
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 20,
@@ -993,7 +1533,75 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Add Hume.ai API Key",
+            "description": "Store the Hume.ai API key and any necessary configuration IDs in environment variables.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Install Hume AI SDK",
+            "description": "Install the official Hume AI TypeScript SDK.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Create Hume Service File",
+            "description": "Create a dedicated service file at 'lib/services/hume.ts'.",
+            "dependencies": [],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Initialize Hume Client",
+            "description": "Initialize the Hume client for the streaming API in the service file.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement Streaming Inference",
+            "description": "Create a function to connect to Hume's WebSocket, send audio chunks, and process incoming emotion events.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Implement Batch Inference",
+            "description": "Create a function to get emotion analysis for a pre-recorded audio file.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Create Test API Route",
+            "description": "Build a test API route to verify both streaming and batch inference.",
+            "dependencies": [
+              5,
+              6
+            ],
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 21,
@@ -1006,7 +1614,95 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Add TTS Provider API Keys",
+            "description": "Add API keys for ElevenLabs and PlayHT to environment variables.",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify keys are loaded correctly in the application."
+          },
+          {
+            "id": 2,
+            "title": "Create TTS Service File and Interface",
+            "description": "Create 'lib/tts.ts' and define a common interface for TTS providers.",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Review file structure and interface definition for correctness."
+          },
+          {
+            "id": 3,
+            "title": "Implement ElevenLabs Provider",
+            "description": "Implement a class or object for the ElevenLabs provider that conforms to the common TTS interface.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Unit test the ElevenLabs provider with mock API calls."
+          },
+          {
+            "id": 4,
+            "title": "Implement PlayHT Provider",
+            "description": "Implement a class or object for the PlayHT provider that conforms to the common TTS interface.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "status": "pending",
+            "priority": "medium",
+            "testStrategy": "Unit test the PlayHT provider with mock API calls."
+          },
+          {
+            "id": 5,
+            "title": "Implement TTS Orchestrator",
+            "description": "Create a function that selects and uses a TTS provider based on input parameters (e.g., voice_id from agent_config).",
+            "dependencies": [
+              3,
+              4
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Unit test the orchestrator to ensure it selects the correct provider."
+          },
+          {
+            "id": 6,
+            "title": "Implement Audio Streaming",
+            "description": "Ensure the TTS service can return an audio stream for real-time playback.",
+            "dependencies": [
+              5
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Test streaming output with a client that can play audio streams."
+          },
+          {
+            "id": 7,
+            "title": "Create Test API Route for TTS",
+            "description": "Build an API route that takes text and returns a streamed audio response from the TTS service.",
+            "dependencies": [
+              6
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Call the API endpoint and play the resulting audio stream in a browser."
+          },
+          {
+            "id": 8,
+            "title": "Implement Caching for TTS",
+            "description": "Implement a caching mechanism to store and retrieve previously generated audio to reduce latency and cost.",
+            "dependencies": [
+              5
+            ],
+            "status": "pending",
+            "priority": "medium",
+            "testStrategy": "Request the same text twice and verify the second request is served from cache."
+          }
+        ]
       },
       {
         "id": 22,
@@ -1019,7 +1715,106 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Add LLM Provider API Keys",
+            "description": "Add API keys for OpenAI (GPT-4) and Anthropic (Claude-3) to environment variables.",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify keys are loaded correctly in the application."
+          },
+          {
+            "id": 2,
+            "title": "Install OpenAI and Anthropic SDKs",
+            "description": "Install the official Node.js/TypeScript SDKs for OpenAI and Anthropic.",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Check package.json for dependencies."
+          },
+          {
+            "id": 3,
+            "title": "Create LLM Service File and Interface",
+            "description": "Create 'lib/llm.ts' and define a common interface for LLM providers (e.g., for chat completion).",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Review file and interface definition."
+          },
+          {
+            "id": 4,
+            "title": "Implement OpenAI Provider",
+            "description": "Implement a provider for OpenAI's GPT-4 Turbo that conforms to the common LLM interface.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Unit test the provider with mock API calls."
+          },
+          {
+            "id": 5,
+            "title": "Implement Anthropic Provider",
+            "description": "Implement a provider for Anthropic's Claude-3 Opus that conforms to the common LLM interface.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Unit test the provider with mock API calls."
+          },
+          {
+            "id": 6,
+            "title": "Implement LLM Orchestrator",
+            "description": "Create a function that selects the appropriate LLM provider based on parameters (e.g., from agent_config).",
+            "dependencies": [
+              4,
+              5
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Unit test that the orchestrator calls the correct provider."
+          },
+          {
+            "id": 7,
+            "title": "Implement Streaming Support",
+            "description": "Ensure the orchestration service supports streaming responses from the LLMs.",
+            "dependencies": [
+              6
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Test streaming with a client that can handle chunked responses."
+          },
+          {
+            "id": 8,
+            "title": "Create Test API Route for LLM",
+            "description": "Build an API route to test the LLM orchestration service with a sample prompt.",
+            "dependencies": [
+              7
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Call the API and verify a valid response is received from the selected LLM."
+          },
+          {
+            "id": 9,
+            "title": "Add PII Stripping Pre-hook",
+            "description": "Integrate the PII anonymization service (Task 50) to sanitize prompts before sending to any LLM.",
+            "dependencies": [
+              6
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Unit test with a prompt containing PII and verify it is stripped."
+          }
+        ]
       },
       {
         "id": 23,
@@ -1035,7 +1830,110 @@
           21
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Session State Machine",
+            "description": "Define the states of an interview session (e.g., 'initializing', 'in_progress', 'ended', 'error').",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Review state diagram for completeness and correctness."
+          },
+          {
+            "id": 2,
+            "title": "Create Interview API Endpoint",
+            "description": "Create a Next.js API route (e.g., '/api/interview/start') to handle the initiation of an interview session.",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Test the endpoint can be called and returns a session ID."
+          },
+          {
+            "id": 3,
+            "title": "Integrate Vapi Call Management",
+            "description": "Use the Vapi service to create and manage the voice call session.",
+            "dependencies": [
+              2,
+              18
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Trigger the endpoint and verify a call is created in the Vapi dashboard."
+          },
+          {
+            "id": 4,
+            "title": "Set up Real-time Audio Pipeline",
+            "description": "Configure the audio stream from Vapi to be forwarded to Deepgram and Hume.ai services.",
+            "dependencies": [
+              3,
+              19,
+              20
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "During a test call, verify that both Deepgram and Hume are receiving audio data."
+          },
+          {
+            "id": 5,
+            "title": "Implement Transcript Handling",
+            "description": "Receive real-time transcripts from Deepgram and process them.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Check logs for incoming transcript messages during a call."
+          },
+          {
+            "id": 6,
+            "title": "Implement Emotion Data Handling",
+            "description": "Receive real-time emotion inference data from Hume.ai.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Check logs for incoming emotion data messages during a call."
+          },
+          {
+            "id": 7,
+            "title": "Orchestrate LLM Responses",
+            "description": "Use the LLM orchestration service to generate agent responses based on user transcript and agent config.",
+            "dependencies": [
+              5,
+              22,
+              26
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify that user speech during a call triggers an LLM completion request."
+          },
+          {
+            "id": 8,
+            "title": "Integrate TTS for Agent Speech",
+            "description": "Take the text response from the LLM and convert it to speech using the TTS service, then send it to Vapi.",
+            "dependencies": [
+              7,
+              21
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify that the agent speaks the LLM-generated response during a call."
+          },
+          {
+            "id": 9,
+            "title": "Handle Session Termination",
+            "description": "Implement logic to gracefully end the session, terminate the Vapi call, and trigger post-processing jobs.",
+            "dependencies": [
+              3,
+              27
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "End a call and verify the Vapi call is terminated and the 'interview.completed' event is fired."
+          }
+        ]
       },
       {
         "id": 24,
@@ -1050,7 +1948,106 @@
           23
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Interview Page Route",
+            "description": "Create the dynamic route '/interview/[id]' in the Next.js app router.",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Navigate to '/interview/test-id' and verify the page component renders."
+          },
+          {
+            "id": 2,
+            "title": "Design Session UI Layout",
+            "description": "Design the main layout for the interview screen, including placeholders for video, controls, and status indicators.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Review the UI design in Figma or a similar tool."
+          },
+          {
+            "id": 3,
+            "title": "Implement Call Control Buttons",
+            "description": "Build the UI buttons for 'Mute/Unmute', 'Camera On/Off', and 'End Call' using Shadcn components.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify buttons are rendered and have onClick handlers."
+          },
+          {
+            "id": 4,
+            "title": "Implement Status Indicators",
+            "description": "Create UI elements to show the real-time status of the call (e.g., 'Connecting', 'Listening', 'Speaking', 'Error').",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Create a storybook to view all possible states of the indicator."
+          },
+          {
+            "id": 5,
+            "title": "Integrate Zustand for Session State",
+            "description": "Use a Zustand store to manage the client-side state of the interview session (status, errors, etc.).",
+            "dependencies": [
+              17
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify state changes in the store update the UI components."
+          },
+          {
+            "id": 6,
+            "title": "Connect UI to Session Handler",
+            "description": "Implement the client-side logic to communicate with the backend interview session handler API.",
+            "dependencies": [
+              5,
+              23
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Clicking 'Start' should trigger an API call to the backend."
+          },
+          {
+            "id": 7,
+            "title": "Implement Real-time Transcript Display",
+            "description": "Display the real-time transcript received from the server during the call.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "priority": "medium",
+            "testStrategy": "During a test call, verify the user's speech appears as text on the screen."
+          },
+          {
+            "id": 8,
+            "title": "Implement Emotion Visualization",
+            "description": "Display a simple, real-time visualization of the primary emotion detected by Hume.ai.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "priority": "medium",
+            "testStrategy": "During a test call, verify the emotion display changes based on tone of voice."
+          },
+          {
+            "id": 9,
+            "title": "Handle Graceful Exit and Errors",
+            "description": "Implement the UI flow for when a call ends, is disconnected, or an error occurs, guiding the user to the next step (e.g., feedback page or error message).",
+            "dependencies": [
+              3
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Manually disconnect or end a call and verify the user is redirected correctly."
+          }
+        ]
       },
       {
         "id": 25,
@@ -1063,7 +2060,95 @@
           24
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Stream SDK",
+            "description": "Install the Stream Video React SDK package.",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Check package.json for the dependency."
+          },
+          {
+            "id": 2,
+            "title": "Add Stream API Key",
+            "description": "Add the Stream API key to environment variables.",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the key is loaded correctly in the application."
+          },
+          {
+            "id": 3,
+            "title": "Create API to Generate User Token",
+            "description": "Create a backend API endpoint that generates a Stream user token for an authenticated user.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Call the endpoint and verify it returns a valid JWT."
+          },
+          {
+            "id": 4,
+            "title": "Set up Stream Client Provider",
+            "description": "Wrap the interview component with the Stream Video client provider, initialized with the user token.",
+            "dependencies": [
+              1,
+              3,
+              24
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the component tree renders without errors."
+          },
+          {
+            "id": 5,
+            "title": "Implement 'Join Call' Logic",
+            "description": "Implement the logic to create or join a call object using the interview ID.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify that joining a call connects the user to the Stream backend."
+          },
+          {
+            "id": 6,
+            "title": "Implement Video Player UI",
+            "description": "Use Stream's React components to render the local participant's video feed.",
+            "dependencies": [
+              5
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the user's camera feed is displayed on the screen."
+          },
+          {
+            "id": 7,
+            "title": "Connect UI Controls to SDK",
+            "description": "Wire the mute/unmute and camera on/off buttons to the corresponding functions in the Stream SDK.",
+            "dependencies": [
+              5,
+              24
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Clicking the mute button should stop audio transmission."
+          },
+          {
+            "id": 8,
+            "title": "Handle Remote Participants",
+            "description": "Implement logic to automatically render the video feed of any remote participant (e.g., the agent) who joins the call.",
+            "dependencies": [
+              5
+            ],
+            "status": "pending",
+            "priority": "medium",
+            "testStrategy": "Have a second participant join the call and verify their video appears."
+          }
+        ]
       },
       {
         "id": 26,
@@ -1076,7 +2161,76 @@
           14
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Refine 'agent_config' Schema",
+            "description": "Ensure the 'agent_config' table in Drizzle schema can store structured conversational flows (e.g., using a JSONB column).",
+            "dependencies": [
+              14
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Review the schema definition and run a migration."
+          },
+          {
+            "id": 2,
+            "title": "Create Agent Config CRUD APIs",
+            "description": "Build admin-only API endpoints to Create, Read, Update, and Delete agent configurations.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "priority": "medium",
+            "testStrategy": "Test the CRUD operations using an API client like Postman."
+          },
+          {
+            "id": 3,
+            "title": "Seed Default Agent Configurations",
+            "description": "Create a seed script to populate the database with a few default agent configs for different interview types.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Run the seed script and verify the data in the database."
+          },
+          {
+            "id": 4,
+            "title": "Integrate Agent Config into Session Handler",
+            "description": "Modify the core interview session handler to fetch the selected agent_config at the start of an interview.",
+            "dependencies": [
+              1,
+              23
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Check logs to verify the correct config is loaded for a new session."
+          },
+          {
+            "id": 5,
+            "title": "Use System Prompt in LLM Calls",
+            "description": "Pass the 'system_prompt' from the agent configuration to the LLM orchestration service for every request.",
+            "dependencies": [
+              4,
+              22
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the system prompt is included in the payload sent to the LLM API."
+          },
+          {
+            "id": 6,
+            "title": "Implement Conversational Flow Logic",
+            "description": "Implement logic that uses the agent configuration to guide the conversation, e.g., asking a list of predefined questions in order.",
+            "dependencies": [
+              4
+            ],
+            "status": "pending",
+            "priority": "medium",
+            "testStrategy": "In a test interview, verify the agent asks the questions from the config."
+          }
+        ]
       },
       {
         "id": 27,
@@ -1091,7 +2245,76 @@
           23
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define 'interview.completed' Event",
+            "description": "Define the schema for the 'interview.completed' event payload in the Inngest client.",
+            "dependencies": [
+              11
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Review the event schema definition."
+          },
+          {
+            "id": 2,
+            "title": "Create Inngest Recording Function",
+            "description": "Create an Inngest function that is triggered by the 'interview.completed' event.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Trigger the event and verify the function starts in the Inngest dashboard."
+          },
+          {
+            "id": 3,
+            "title": "Fetch Raw Recording",
+            "description": "Implement logic to get the recording URL from the event payload (from Vapi or Stream).",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Unit test this logic with a mock event payload."
+          },
+          {
+            "id": 4,
+            "title": "Implement Supabase Upload",
+            "description": "Implement logic to download the recording from the source URL and upload it to the 'interview-recordings' bucket in Supabase.",
+            "dependencies": [
+              3,
+              7
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Test with a sample file and verify it appears in the Supabase bucket."
+          },
+          {
+            "id": 5,
+            "title": "Update 'recording_url' Table",
+            "description": "After successful upload, save the public or signed URL of the recording from Supabase into the 'recording_url' table against the interview ID.",
+            "dependencies": [
+              4,
+              12
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the database record is created with the correct URL."
+          },
+          {
+            "id": 6,
+            "title": "Add Error Handling and Retries",
+            "description": "Implement robust error handling and configure Inngest retries for transient failures during download or upload.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "priority": "medium",
+            "testStrategy": "Simulate a network failure and verify the job retries automatically."
+          }
+        ]
       },
       {
         "id": 28,
@@ -1105,7 +2328,78 @@
           27
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define 'recording.processed' Event",
+            "description": "Define a new event schema ('recording.processed') to be sent by the recording job on success, containing the Supabase URL.",
+            "dependencies": [
+              27
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Review the event schema definition."
+          },
+          {
+            "id": 2,
+            "title": "Create Inngest Transcription Function",
+            "description": "Create an Inngest function triggered by the 'recording.processed' event.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Trigger the event and verify the function starts in the Inngest dashboard."
+          },
+          {
+            "id": 3,
+            "title": "Fetch Recording from Supabase",
+            "description": "Implement logic to get the recording audio file from the Supabase URL provided in the event.",
+            "dependencies": [
+              2,
+              7
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Test with a valid Supabase URL."
+          },
+          {
+            "id": 4,
+            "title": "Transcribe with Deepgram",
+            "description": "Send the audio file to the Deepgram batch transcription service.",
+            "dependencies": [
+              3,
+              19
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify a successful transcription job is created in Deepgram."
+          },
+          {
+            "id": 5,
+            "title": "Save Transcript to Supabase",
+            "description": "Save the resulting transcript text as a .txt or .json file to a 'transcripts' bucket in Supabase Storage.",
+            "dependencies": [
+              4,
+              7
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the transcript file is created in the Supabase bucket."
+          },
+          {
+            "id": 6,
+            "title": "Update 'transcript_url' Table",
+            "description": "Save the URL of the new transcript file into the 'transcript_url' table against the interview ID.",
+            "dependencies": [
+              5,
+              12
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the database record is created with the correct URL."
+          }
+        ]
       },
       {
         "id": 29,
@@ -1119,7 +2413,65 @@
           27
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Inngest Emotion Analysis Function",
+            "description": "Create an Inngest function also triggered by the 'recording.processed' event.",
+            "dependencies": [
+              27
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Trigger the event and verify this function runs in parallel with transcription."
+          },
+          {
+            "id": 2,
+            "title": "Get Recording URL",
+            "description": "Get the recording's Supabase URL from the event payload.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Unit test with a mock event payload."
+          },
+          {
+            "id": 3,
+            "title": "Call Hume.ai Batch API",
+            "description": "Send the recording URL to the Hume.ai batch inference API to start an analysis job.",
+            "dependencies": [
+              2,
+              20
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify a job is created in the Hume.ai dashboard."
+          },
+          {
+            "id": 4,
+            "title": "Handle Hume.ai Callback or Poll for Results",
+            "description": "Implement logic to wait for the Hume.ai job to complete and retrieve the results. This might involve setting up a webhook or polling.",
+            "dependencies": [
+              3
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the full JSON analysis is retrieved."
+          },
+          {
+            "id": 5,
+            "title": "Save Analysis to 'emotional_analysis' Table",
+            "description": "Store the complete JSON response from Hume.ai into the 'emotional_analysis' table, linked to the interview ID.",
+            "dependencies": [
+              4,
+              13
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the database record is created with the correct JSON data."
+          }
+        ]
       },
       {
         "id": 30,
@@ -1135,7 +2487,87 @@
           29
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define 'analysis.completed' Event",
+            "description": "Define a new event to be triggered when both transcription and emotion analysis are complete.",
+            "dependencies": [
+              28,
+              29
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "This could be a fan-in event in Inngest."
+          },
+          {
+            "id": 2,
+            "title": "Create Inngest Feedback Generation Function",
+            "description": "Create an Inngest function triggered by the 'analysis.completed' event.",
+            "dependencies": [
+              1
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Trigger the event and verify the function starts."
+          },
+          {
+            "id": 3,
+            "title": "Fetch Transcript and Emotion Data",
+            "description": "From the event payload, get the locations of the transcript and emotion analysis data and fetch them.",
+            "dependencies": [
+              2
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Unit test with mock data locations."
+          },
+          {
+            "id": 4,
+            "title": "Develop Feedback Generation Prompt",
+            "description": "Create a detailed prompt template that instructs the LLM how to analyze the transcript and emotion data to generate structured feedback.",
+            "dependencies": [],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Review the prompt for clarity, structure, and inclusion of all necessary data."
+          },
+          {
+            "id": 5,
+            "title": "Call LLM Orchestration Service",
+            "description": "Combine the prompt template with the user's data and call the LLM orchestration service to generate the feedback.",
+            "dependencies": [
+              3,
+              4,
+              22
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the LLM returns structured feedback in the expected format (e.g., JSON)."
+          },
+          {
+            "id": 6,
+            "title": "Parse and Validate LLM Output",
+            "description": "Parse the response from the LLM and validate its structure before saving.",
+            "dependencies": [
+              5
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Test with valid and malformed LLM responses to ensure robustness."
+          },
+          {
+            "id": 7,
+            "title": "Save Feedback to 'interview_feedback' Table",
+            "description": "Save the generated, structured feedback into the 'interview_feedback' table, linked to the interview ID.",
+            "dependencies": [
+              6,
+              12
+            ],
+            "status": "pending",
+            "priority": "high",
+            "testStrategy": "Verify the data is correctly saved in the database."
+          }
+        ]
       },
       {
         "id": 31,

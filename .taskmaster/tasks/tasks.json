@@ -1,0 +1,2403 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Project: Initialize GitHub Repository",
+        "description": "Initialize the project repository on GitHub. Set up main and develop branches with appropriate protection rules.",
+        "details": "Create a new private repository on GitHub. Initialize it with a README, .gitignore (for Node.js), and a license file. Configure branch protection rules for 'main' to require pull request reviews before merging.",
+        "testStrategy": "Verify that the repository is created on GitHub and that branch protection rules are active by attempting a direct push to 'main', which should fail.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create GitHub Repository",
+            "description": "Initialize a new GitHub repository with appropriate settings and configurations",
+            "dependencies": [],
+            "details": "Create a new repository on GitHub with the project name, set visibility (public/private), add a brief description, choose license type (e.g., MIT, Apache 2.0), and configure basic repository settings including issues, wiki, and project boards enablement",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Setup Branch Structure",
+            "description": "Establish the branching strategy and create necessary branches",
+            "dependencies": [
+              1
+            ],
+            "details": "Create main/master branch as the default, create develop branch for ongoing development, establish naming conventions for feature branches (e.g., feature/*, bugfix/*, hotfix/*), and document the git flow or branching strategy to be followed",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Configure Branch Protection Rules",
+            "description": "Implement security and quality gates for protected branches",
+            "dependencies": [
+              2
+            ],
+            "details": "Enable branch protection for main/master and develop branches, require pull request reviews before merging (minimum 1-2 reviewers), enable status checks (CI/CD pipelines must pass), enforce linear history if needed, restrict who can push to protected branches, and enable automatic deletion of head branches after merge",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Setup Initial Documentation",
+            "description": "Create essential documentation files for the repository",
+            "dependencies": [
+              1
+            ],
+            "details": "Create README.md with project overview, installation instructions, and usage guidelines, add CONTRIBUTING.md with contribution guidelines and code standards, create .gitignore file appropriate for the project technology stack, add CODE_OF_CONDUCT.md if applicable, create docs folder structure for additional documentation, and add CHANGELOG.md for version tracking",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Frontend: Initialize Next.js 15 Project",
+        "description": "Set up the Next.js 15 project with React 19 and Tailwind CSS 4.1 using the App Router.",
+        "details": "Use `create-next-app` with experimental flags for React 19 and Tailwind 4.1 if necessary. Configure the project structure with `app`, `components`, `lib`, `styles` directories. Ensure TypeScript is enabled.",
+        "testStrategy": "Run `npm run dev` and verify that the default Next.js page loads correctly in the browser. Check that Tailwind CSS utility classes are correctly applied to a sample component.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Execute create-next-app with Next.js 15",
+            "description": "Initialize a new Next.js 15 project using create-next-app with the latest experimental features and App Router",
+            "dependencies": [],
+            "details": "Run 'npx create-next-app@latest' with flags for TypeScript, ESLint, Tailwind CSS, and App Router. Ensure Next.js 15 and React 19 RC versions are specified in package.json",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Configure TypeScript for Next.js 15",
+            "description": "Set up TypeScript configuration with strict mode and Next.js 15 specific settings",
+            "dependencies": [
+              1
+            ],
+            "details": "Update tsconfig.json with strict type checking, module resolution for App Router, and path aliases. Configure types for React 19 features and Next.js 15 server components",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Set up project directory structure",
+            "description": "Organize the application with a scalable folder structure following Next.js 15 App Router conventions",
+            "dependencies": [
+              1
+            ],
+            "details": "Create directories for app routes, components, lib, hooks, types, and utils. Set up the app directory with layout.tsx, page.tsx, and proper route groups",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Integrate and configure Tailwind CSS",
+            "description": "Set up Tailwind CSS with Next.js 15 optimizations and custom configuration",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Configure tailwind.config.js with content paths for App Router, add custom theme extensions, set up CSS variables, and create base styles in globals.css",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Configure environment variables",
+            "description": "Set up environment variable handling for different deployment environments",
+            "dependencies": [
+              3
+            ],
+            "details": "Create .env.local, .env.development, and .env.production files. Set up type-safe environment variable validation using zod or t3-env. Configure NEXT_PUBLIC_ variables",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Set up initial testing framework",
+            "description": "Configure Jest and React Testing Library for Next.js 15 with App Router support",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Install and configure Jest with next/jest preset, set up React Testing Library, create jest.config.js with module aliases, and write initial smoke tests for app routes",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Frontend: Integrate Shadcn UI",
+        "description": "Integrate Shadcn UI component library into the Next.js project for a consistent and accessible UI foundation.",
+        "details": "Use the Shadcn UI CLI to initialize the library. Configure `tailwind.config.js` and `globals.css` as per the Shadcn documentation. Install a few basic components like Button, Card, and Input to verify the setup.",
+        "testStrategy": "Import and render a Shadcn Button component on a page. Verify it displays with the correct default styling and that its variants work as expected.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Shadcn UI with CLI",
+            "description": "Set up Shadcn UI in the project using the official CLI tool and configure base settings",
+            "dependencies": [],
+            "details": "Run 'npx shadcn-ui@latest init' to initialize Shadcn UI. Configure the components.json file with appropriate settings for TypeScript, Tailwind CSS config path, and component directory structure. Ensure the CLI recognizes the existing project structure.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Update Tailwind Configuration",
+            "description": "Merge Shadcn UI's Tailwind requirements with existing configuration",
+            "dependencies": [
+              1
+            ],
+            "details": "Update tailwind.config.js to include Shadcn UI's required content paths, theme extensions, and plugins. Add CSS variables for colors and radius to the global CSS file. Ensure compatibility with existing Tailwind classes and custom configurations.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Install Core Components",
+            "description": "Install essential Shadcn UI components needed for the application",
+            "dependencies": [
+              2
+            ],
+            "details": "Use the CLI to install core components like Button, Card, Input, Label, Select, Dialog, and Toast. Run 'npx shadcn-ui@latest add [component-name]' for each component. Verify that components are properly installed in the designated directory.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Configure Theme Customization",
+            "description": "Set up theme customization system for Shadcn UI components",
+            "dependencies": [
+              3
+            ],
+            "details": "Create a theme configuration file to define custom color schemes, typography, and spacing. Implement CSS variables for dynamic theming. Set up dark mode support if required. Ensure theme changes propagate correctly to all Shadcn UI components.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Test and Verify Components",
+            "description": "Create test pages and verify all installed components work correctly",
+            "dependencies": [
+              4
+            ],
+            "details": "Build a component showcase page displaying all installed Shadcn UI components. Test each component's functionality, responsiveness, and theme compatibility. Verify TypeScript types are working correctly. Check for any console errors or styling conflicts with existing components.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Backend: Provision Neon Postgres Database",
+        "description": "Set up a Neon serverless Postgres database instance for the application.",
+        "details": "Create a new project in the Neon console. Obtain the connection string (specifically the connection URI for Drizzle). Configure IP allow lists if necessary for security.",
+        "testStrategy": "Attempt to connect to the database using a local `psql` client or a database GUI with the provided connection string. A successful connection confirms the setup.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Neon Account Setup",
+            "description": "Create and configure a Neon account for the project",
+            "dependencies": [],
+            "details": "Register for a Neon account, verify email, set up billing if needed, configure account security settings including 2FA, and establish project organization structure",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Database Instance Creation",
+            "description": "Create and configure a PostgreSQL database instance in Neon",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a new project in Neon, select appropriate region and compute size, configure database name and initial schema, set up automatic backups and scaling policies, and define database roles and permissions",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Connection String Configuration with Security Settings",
+            "description": "Configure secure connection strings and implement security best practices",
+            "dependencies": [
+              2
+            ],
+            "details": "Generate connection strings for different environments, implement SSL/TLS encryption requirements, configure IP allowlisting if needed, set up environment variables for connection string storage, implement connection pooling settings, and document security configurations",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Backend: Configure Drizzle ORM",
+        "description": "Integrate Drizzle ORM into the Next.js project to interact with the Neon Postgres database.",
+        "details": "Install `drizzle-orm`, `drizzle-kit`, and the `pg` driver. Create a `drizzle.config.ts` file. Set up a database connection client in `lib/db.ts` using the Neon connection string from environment variables.",
+        "testStrategy": "Create a simple test schema and run `drizzle-kit push:pg` to sync it with the Neon database. Verify the table is created in the Neon SQL editor.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Drizzle ORM packages",
+            "description": "Install necessary Drizzle ORM packages and database driver dependencies",
+            "dependencies": [],
+            "details": "Install drizzle-orm, drizzle-kit, and the appropriate database driver (e.g., @vercel/postgres, postgres, mysql2, or better-sqlite3) using npm or yarn",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Set up Drizzle configuration file",
+            "description": "Create and configure drizzle.config.ts file for database schema and migration settings",
+            "dependencies": [
+              1
+            ],
+            "details": "Create drizzle.config.ts in the project root with database connection URL, schema path, output directory for migrations, and driver configuration",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Create database connection client",
+            "description": "Set up the database connection client and export it for use throughout the application",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a db.ts file that initializes the Drizzle client with the appropriate database driver and connection configuration",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Configure migration setup",
+            "description": "Set up database migration scripts and folder structure for schema changes",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Configure package.json scripts for generating and running migrations, create migrations folder, and set up initial schema files",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Configure type generation",
+            "description": "Set up automatic TypeScript type generation from database schema",
+            "dependencies": [
+              2,
+              4
+            ],
+            "details": "Configure drizzle-kit to generate TypeScript types from schema definitions and ensure proper type inference in the application",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Manage environment variables",
+            "description": "Set up environment variables for database connection and configuration",
+            "dependencies": [],
+            "details": "Create .env file with DATABASE_URL and other necessary variables, update .gitignore, and configure environment variable loading",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Test database connection",
+            "description": "Verify the database connection and basic CRUD operations are working correctly",
+            "dependencies": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "details": "Create a test script to verify database connectivity, run a sample query, and ensure migrations are applied successfully",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "DB Schema: Users and Profiles",
+        "description": "Define and create the Drizzle schema for users and user profiles.",
+        "details": "In a `db/schema.ts` file, define the `users` table (id, email, password_hash, role, created_at) and `user_profiles` table (user_id, first_name, last_name, avatar_url, archetype_id). The `role` should be an enum ('learner', 'mentor', 'wdb_partner', 'enterprise_manager', 'admin').",
+        "testStrategy": "Run `drizzle-kit push:pg` to migrate the schema to the Neon database. Inspect the database to ensure tables and columns are created correctly with foreign key constraints.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Enum Type Definitions",
+            "description": "Create and document all enum types needed for the database schema including user roles, status types, and any other categorical data",
+            "dependencies": [],
+            "details": "Define enums for user_role (admin, user, moderator), account_status (active, inactive, suspended), and any other domain-specific enumerations. Consider PostgreSQL enum types or check constraints based on database choice.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Design Users Table Schema",
+            "description": "Create the core users table with essential fields like id, email, username, password_hash, created_at, updated_at, and status",
+            "dependencies": [
+              1
+            ],
+            "details": "Define primary key strategy (UUID vs auto-increment), add unique constraints on email/username, include timestamp fields with defaults, and reference enum types defined in subtask 1.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Design User Profiles Table Schema",
+            "description": "Create the user_profiles table with extended user information like full_name, bio, avatar_url, date_of_birth, and preferences",
+            "dependencies": [
+              1
+            ],
+            "details": "Include user_id as foreign key, consider JSON/JSONB fields for flexible preferences storage, add appropriate nullable constraints, and ensure one-to-one relationship with users table.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Establish Foreign Key Relationships",
+            "description": "Define and implement all foreign key constraints between users and user_profiles tables with appropriate cascade rules",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Create FK from user_profiles.user_id to users.id, set ON DELETE CASCADE for profile deletion when user is removed, consider ON UPDATE actions, and document referential integrity rules.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Create Database Indexes",
+            "description": "Design and implement indexes for optimal query performance on frequently accessed columns",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Add indexes on users.email, users.username, users.created_at, user_profiles.user_id, and any columns used in WHERE, JOIN, or ORDER BY clauses. Consider composite indexes for common query patterns.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Generate Migration Files",
+            "description": "Create versioned migration files for all schema changes using the project's migration tool",
+            "dependencies": [
+              5
+            ],
+            "details": "Generate up and down migrations for creating tables, adding constraints, and indexes. Include rollback procedures, use timestamp-based naming convention, and ensure migrations are idempotent.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Implement Schema Validation",
+            "description": "Create validation rules and constraints to ensure data integrity at the database level",
+            "dependencies": [
+              6
+            ],
+            "details": "Add CHECK constraints for email format, password complexity requirements, age restrictions, and field length limits. Implement triggers for complex validations if needed.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "Seed Test Data",
+            "description": "Create seed scripts to populate the database with realistic test data for development and testing",
+            "dependencies": [
+              7
+            ],
+            "details": "Generate diverse user records with various roles and statuses, create corresponding profile data, ensure data covers edge cases, and make seeds repeatable/idempotent for consistent testing environments.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Backend: Set up Supabase for Storage & Real-time",
+        "description": "Set up a Supabase project for real-time data features and file storage.",
+        "details": "Create a new project in Supabase. Note the project URL and anon/service keys. Create a storage bucket named 'interview-recordings' with appropriate access policies (e.g., private with signed URLs for access).",
+        "testStrategy": "Use the Supabase client library in a test script to upload a dummy file to the 'interview-recordings' bucket and then delete it. A successful round trip confirms setup.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Supabase Project",
+            "description": "Set up a new Supabase project instance with proper naming and region selection",
+            "dependencies": [],
+            "details": "Navigate to Supabase dashboard, create new project with appropriate name, select optimal region for performance, configure initial database settings, and wait for project provisioning to complete",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Configure API Keys",
+            "description": "Set up and secure API keys for both client-side and server-side access",
+            "dependencies": [
+              1
+            ],
+            "details": "Locate project API keys in Supabase dashboard, identify anon/public key for client-side usage, secure service role key for server-side operations, configure environment variables for both development and production environments",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Set Up Storage Bucket",
+            "description": "Create and configure storage bucket for file uploads with appropriate settings",
+            "dependencies": [
+              1
+            ],
+            "details": "Access Supabase Storage section, create new bucket with meaningful name, configure file size limits, set allowed MIME types for security, enable/disable public access based on requirements",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Configure Access Policies",
+            "description": "Implement Row Level Security (RLS) policies for storage bucket access control",
+            "dependencies": [
+              3
+            ],
+            "details": "Define RLS policies for upload permissions, configure read access rules based on authentication status, set up policies for file deletion and updates, test policies with different user roles to ensure proper security",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate Client Library",
+            "description": "Install and configure Supabase client library in the application",
+            "dependencies": [
+              2,
+              4
+            ],
+            "details": "Install @supabase/supabase-js package, initialize Supabase client with project URL and anon key, implement authentication methods if needed, create utility functions for storage operations, test connection and basic operations",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Auth: Implement User Authentication with Better Auth",
+        "description": "Integrate Better Auth for user authentication, including email/password and social logins.",
+        "details": "Install the Better Auth package. Configure the auth provider in a Next.js API route handler (`/api/auth/[...betterauth]`). Set up environment variables for JWT secrets and social provider credentials (e.g., Google, GitHub).",
+        "testStrategy": "Create a login page and attempt to register a new user. Verify the user is created in the `users` table. Test the login flow and session management.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Better Auth installation",
+            "description": "Install and configure Better Auth package in the Next.js project with required dependencies",
+            "dependencies": [],
+            "details": "Install @better-auth/core and any additional packages needed for authentication. Set up initial configuration file and environment variables for auth secrets",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "API route handler setup",
+            "description": "Create API routes for authentication endpoints including login, logout, register, and auth status",
+            "dependencies": [
+              1
+            ],
+            "details": "Set up Next.js API routes in app/api/auth/[...auth]/route.ts to handle all authentication requests. Configure proper HTTP methods and response handling",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "JWT configuration",
+            "description": "Configure JWT token generation, validation, and security settings",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Set up JWT secret keys, token expiration times, signing algorithms, and payload structure. Configure secure token storage and transmission methods",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Session management",
+            "description": "Implement session creation, validation, and destruction logic with proper security measures",
+            "dependencies": [
+              3
+            ],
+            "details": "Create session management system including session storage, cookie configuration, session timeout handling, and concurrent session limits",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Social provider integration",
+            "description": "Configure OAuth integration for social login providers like Google, GitHub, or Facebook",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Set up OAuth credentials, callback URLs, and provider-specific configurations. Implement user profile mapping and account linking logic",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Database adapter configuration",
+            "description": "Configure Better Auth database adapter to work with the existing database schema",
+            "dependencies": [
+              1
+            ],
+            "details": "Set up database adapter for user storage, session persistence, and auth-related tables. Configure migrations for auth schema if needed",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Middleware setup",
+            "description": "Create authentication middleware for protecting routes and API endpoints",
+            "dependencies": [
+              4,
+              6
+            ],
+            "details": "Implement Next.js middleware to check authentication status, validate tokens, and redirect unauthorized users. Set up role-based access control",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "Error handling",
+            "description": "Implement comprehensive error handling for authentication failures and edge cases",
+            "dependencies": [
+              2,
+              7
+            ],
+            "details": "Create error handlers for invalid credentials, expired tokens, network failures, and rate limiting. Implement proper error messages and logging",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 9,
+            "title": "Token refresh logic",
+            "description": "Implement automatic token refresh mechanism to maintain user sessions",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Create refresh token system with secure storage, automatic renewal before expiration, and proper invalidation on logout",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 10,
+            "title": "Authentication testing",
+            "description": "Write comprehensive tests for all authentication flows and security scenarios",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "details": "Create unit tests for auth functions, integration tests for API routes, and end-to-end tests for complete auth flows including edge cases and security vulnerabilities",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Frontend: Build Auth Forms (Login/Register)",
+        "description": "Create the user registration and login UI forms using Shadcn components.",
+        "details": "Build a registration page (`/signup`) and a login page (`/login`) using Shadcn's `Card`, `Input`, `Label`, and `Button` components. Implement form state management and validation using `react-hook-form` and `zod`.",
+        "testStrategy": "Unit test form validation logic. Manually test the UI flows: enter valid/invalid data, submit the form, and verify API calls are made and responses (success/error) are handled correctly.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          8
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Form Component Structure",
+            "description": "Build the base form component with input fields for authentication (email, password, etc.) including proper HTML structure and accessibility attributes",
+            "dependencies": [],
+            "details": "Create reusable form components with proper semantic HTML, ARIA labels, and component composition. Include login and registration form variants with appropriate input fields.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Setup Validation Schema",
+            "description": "Define validation rules using a schema validation library (e.g., Zod, Yup) for form fields including email format, password strength, and required field checks",
+            "dependencies": [],
+            "details": "Create comprehensive validation schemas with custom error messages, regex patterns for email/password validation, and conditional validation rules for different form types.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Integrate React Hook Form",
+            "description": "Implement react-hook-form for form state management, connecting validation schema and handling form submission logic",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Setup useForm hook with resolver for validation schema, configure form modes, default values, and implement handleSubmit with proper type safety.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Build Error Handling UI",
+            "description": "Create error display components for field-level and form-level errors with proper styling and accessibility announcements",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Design error message components with consistent styling, implement error boundaries, show inline field errors, and create toast/alert components for API errors.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement Loading States",
+            "description": "Add loading indicators, disabled states during submission, and skeleton screens for async operations",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Create loading spinners, implement button disabled states during submission, add form field disabled states, and design smooth transitions between states.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Setup API Integration",
+            "description": "Connect form submission to authentication API endpoints with proper error handling and response processing",
+            "dependencies": [
+              3,
+              4,
+              5
+            ],
+            "details": "Implement API client functions for login/register, handle various HTTP response codes, implement retry logic, and process authentication tokens/cookies.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Configure Success Redirects",
+            "description": "Implement post-authentication navigation logic, protected route handling, and success feedback to users",
+            "dependencies": [
+              6
+            ],
+            "details": "Setup router navigation after successful auth, implement redirect to intended pages, store authentication state, and show success messages.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "Write Form Tests",
+            "description": "Create comprehensive test suite covering form validation, submission flows, error scenarios, and accessibility requirements",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "details": "Write unit tests for validation logic, integration tests for form submission, test error handling scenarios, verify accessibility with testing tools, and create E2E tests for complete auth flows.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Auth: Implement Role-Based Access Control (RBAC)",
+        "description": "Implement Role-Based Access Control (RBAC) middleware for API routes and frontend pages.",
+        "details": "Create a middleware function in `middleware.ts` that checks the user's session and role from the JWT. Protect routes based on user role (e.g., `/dashboard/mentor` is only accessible to 'mentor' roles). Redirect unauthorized users to a login or an 'unauthorized' page.",
+        "testStrategy": "Write tests to verify that users with incorrect roles are redirected. For example, a 'learner' user attempting to access a '/mentor' route should be denied access.",
+        "priority": "high",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create middleware function for authentication",
+            "description": "Develop a reusable middleware function that verifies user authentication status and extracts user information from JWT tokens or session data",
+            "dependencies": [],
+            "details": "Create middleware that checks for valid authentication tokens, validates them, and attaches user information to the request object. Handle token expiration and invalid token scenarios gracefully.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement role checking logic",
+            "description": "Build core logic to verify user roles and permissions against required access levels for different resources",
+            "dependencies": [
+              1
+            ],
+            "details": "Create functions to check if a user has specific roles, handle role hierarchies, and manage permission inheritance. Include support for multiple roles per user and role-based feature flags.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Configure route protection",
+            "description": "Set up route-level protection by applying middleware to specific routes and route groups based on required roles",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Apply authentication and role-checking middleware to protected routes. Configure which routes require authentication and which specific roles are needed for each route or route group.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Create unauthorized access page",
+            "description": "Design and implement a user-friendly unauthorized access page that displays when users lack required permissions",
+            "dependencies": [],
+            "details": "Build a 403 Forbidden page with clear messaging about why access was denied, options to request access, and navigation back to authorized areas. Include proper styling and responsive design.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement role-based redirects",
+            "description": "Create logic to redirect users to appropriate pages based on their roles after login or when accessing restricted areas",
+            "dependencies": [
+              2,
+              4
+            ],
+            "details": "Implement redirect logic that sends users to role-specific dashboards after login, handles unauthorized access attempts with appropriate redirects, and maintains intended destination URLs for post-login redirects.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Protect API routes",
+            "description": "Apply RBAC middleware to API endpoints to ensure proper authorization for data access and modifications",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Secure all API endpoints with appropriate role checks, implement proper HTTP status codes for unauthorized requests (401/403), and ensure consistent error response formats across all protected endpoints.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "Implement frontend route guards",
+            "description": "Create client-side route protection to prevent unauthorized navigation and improve user experience",
+            "dependencies": [
+              2,
+              5
+            ],
+            "details": "Build route guards that check user permissions before rendering protected components, handle loading states during permission checks, and synchronize frontend guards with backend authorization.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 8,
+            "title": "Conduct comprehensive testing",
+            "description": "Create and execute thorough test suites covering all RBAC functionality, edge cases, and security scenarios",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "details": "Write unit tests for middleware functions and role checking logic, integration tests for protected routes, end-to-end tests for user flows with different roles, and security tests for authorization bypass attempts.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Backend: Set up Inngest for Background Jobs",
+        "description": "Set up Inngest for running reliable background jobs and event-driven workflows.",
+        "details": "Install the Inngest SDK. Create an API endpoint (`/api/inngest`) to serve as the event handler. Define a simple test function in `inngest/functions.ts` and trigger it from an API route to verify the setup.",
+        "testStrategy": "Trigger a test event from a button click in the UI. Check the Inngest dashboard to confirm the event was received and the corresponding function was executed successfully.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "DB Schema: Interviews and Feedback",
+        "description": "Define Drizzle schemas for interviews, feedback, recordings, and transcripts.",
+        "details": "In `db/schema.ts`, add tables: `interviews` (user_id, agent_config_id, status), `interview_feedback` (interview_id, content, sentiment_score), `recording_url` (interview_id, url), and `transcript_url` (interview_id, url). Establish foreign key relationships.",
+        "testStrategy": "Run `drizzle-kit push:pg` and verify the new tables are created in the Neon database. Check that foreign key constraints are correctly applied between the tables.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "DB Schema: Career Plans, Goals, Archetypes",
+        "description": "Define Drizzle schemas for career plans, goals, and archetypes.",
+        "details": "In `db/schema.ts`, add tables: `career_plans` (user_id, title), `goals` (plan_id, description, due_date, status), `archetypes` (id, name, description), and `emotional_analysis` (interview_id, data). Link `user_profiles` to `archetypes`.",
+        "testStrategy": "Run `drizzle-kit push:pg`. Verify the tables and their relationships in the database. Ensure enums for status fields are correctly defined.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "DB Schema: Subscriptions and Agent Config",
+        "description": "Define Drizzle schemas for subscriptions, agent configurations, and billing.",
+        "details": "In `db/schema.ts`, add tables: `subscriptions` (user_id, plan_id, status, current_period_end) and `agent_config` (id, name, system_prompt, voice_id). These will support billing and custom interview agents.",
+        "testStrategy": "Run `drizzle-kit push:pg` and inspect the database to confirm the `subscriptions` and `agent_config` tables are created with the correct columns and types.",
+        "priority": "high",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "DevOps: Configure Vercel Deployment",
+        "description": "Set up Vercel for continuous deployment and hosting.",
+        "details": "Connect the GitHub repository to a new Vercel project. Configure the build settings (Next.js framework preset). Add all necessary environment variables (database, auth, AI services) to the Vercel project settings.",
+        "testStrategy": "Push a small change to the `main` branch. Verify that Vercel automatically triggers a build and deploys the update. Check the deployed URL to ensure the site is live.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "DevOps: Set up GitHub Actions CI/CD",
+        "description": "Set up GitHub Actions for CI/CD pipeline (linting, testing, building).",
+        "details": "Create a `.github/workflows/ci.yml` file. Define jobs that trigger on pull requests to `main`. Include steps for `npm install`, `npm run lint`, `npm run test`, and `npm run build`. This ensures code quality before merging.",
+        "testStrategy": "Create a new pull request with a linting error. Verify that the GitHub Action fails at the linting step, blocking the merge.",
+        "priority": "high",
+        "dependencies": [
+          15
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Frontend: Set up Zustand and React Query",
+        "description": "Integrate Zustand for client-side state management and React Query for server-state management.",
+        "details": "Install `@tanstack/react-query` and `zustand`. Wrap the root layout in `_app.tsx` or `layout.tsx` with `QueryClientProvider`. Create a simple Zustand store for managing global UI state, like a modal's visibility.",
+        "testStrategy": "Create a component that fetches data using `useQuery` and another that uses a Zustand store. Verify that data is fetched and cached correctly, and that state changes in the Zustand store are reflected across components.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Backend: Vapi Integration Service",
+        "description": "Set up API service layer for Vapi integration.",
+        "details": "Create a dedicated service file (`lib/vapi.ts`) to encapsulate Vapi API calls. Implement a function to create and manage Vapi phone calls/sessions. Store the Vapi API key in environment variables.",
+        "testStrategy": "Write a unit test for the Vapi service that mocks the API call and verifies that the correct parameters are sent. Create a test API route to trigger a real Vapi call and check for a successful response.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Backend: Deepgram Integration Service",
+        "description": "Set up API service layer for Deepgram STT integration.",
+        "details": "Create a service file (`lib/deepgram.ts`). Implement a function to handle audio stream transcription using the Deepgram Node.js SDK. Configure API keys and options like language, model, and endpointing.",
+        "testStrategy": "Create a test API route that accepts an audio file, sends it to Deepgram, and returns the transcript. Verify the accuracy of the transcription with a sample audio file.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Backend: Hume.ai Integration Service",
+        "description": "Set up API service layer for Hume.ai emotion inference.",
+        "details": "Create a service file (`lib/hume.ts`). Implement a function to connect to Hume.ai's streaming API using the provided config ID and API key. This function will process audio chunks and receive emotion analysis data.",
+        "testStrategy": "Write a test that sends a sample audio stream to the Hume.ai API and logs the received emotion data. Verify that the data format matches Hume's documentation.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "Backend: TTS Integration Service (ElevenLabs/PlayHT)",
+        "description": "Set up API service layer for ElevenLabs/PlayHT TTS.",
+        "details": "Create a service file (`lib/tts.ts`). Implement functions to generate speech from text using either the ElevenLabs or PlayHT API. Abstract the choice of provider behind a common interface. Store API keys in environment variables.",
+        "testStrategy": "Create a test API route that takes text input, calls the TTS service, and returns an audio stream. Play the audio in the browser to verify its quality.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Backend: LLM Orchestration Service (GPT-4/Claude-3)",
+        "description": "Set up LLM orchestration service for GPT-4 and Claude-3.",
+        "details": "Create a service file (`lib/llm.ts`). Implement a function that can route requests to either GPT-4 Turbo or Claude-3 Opus based on input parameters. Use the official OpenAI and Anthropic SDKs. Manage API keys via environment variables.",
+        "testStrategy": "Write a unit test for the orchestrator that verifies it calls the correct underlying LLM based on a 'provider' flag. Test with a simple prompt to both models and check for valid responses.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 23,
+        "title": "Backend: Core Interview Session Handler",
+        "description": "Develop the core real-time interview session handler.",
+        "details": "Create a Next.js API route that initiates an interview. This route will use Vapi to manage the call, pipe audio to Deepgram for STT and Hume.ai for emotion, and use the TTS service to speak the agent's lines.",
+        "testStrategy": "Initiate an interview session via an API call. Use mock services to verify that the audio pipeline is correctly established. Check logs for confirmation of data flow between services.",
+        "priority": "high",
+        "dependencies": [
+          18,
+          19,
+          20,
+          21
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Frontend: Interview Session UI",
+        "description": "Build the frontend UI for the voice/video interview session.",
+        "details": "Create a React component for the interview page (`/interview/[id]`). It should display the video feed (using Stream SDK), provide controls (mute, end call), and show real-time status indicators (e.g., 'Connecting...', 'Listening...', 'Speaking...').",
+        "testStrategy": "Manually test the UI by starting a mock interview. Verify that all UI elements are responsive and functional. Check that status indicators update correctly based on the session state.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          17,
+          23
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "Frontend: Integrate Stream SDK for Video",
+        "description": "Integrate Stream SDK for low-latency video streaming.",
+        "details": "Integrate the Stream React SDK into the interview UI component. Implement logic to join a video call, publish the user's camera/microphone, and subscribe to the agent's stream (if applicable). Ensure latency is minimized by connecting to the nearest edge server.",
+        "testStrategy": "Start a two-participant test call using the Stream SDK. Measure the glass-to-glass latency and verify it is under the 800ms target. Test video and audio quality.",
+        "priority": "high",
+        "dependencies": [
+          24
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 26,
+        "title": "Backend: Custom Voice-Agent Scripting",
+        "description": "Implement custom voice-agent scripting logic.",
+        "details": "Create a system where interview questions and conversational flows can be defined and stored in the `agent_config` table. The backend session handler will fetch this configuration to guide the interview, including system prompts for the LLM.",
+        "testStrategy": "Create a sample agent configuration in the database. Start an interview using this agent. Verify that the agent follows the scripted questions and conversational path.",
+        "priority": "medium",
+        "dependencies": [
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 27,
+        "title": "Backend: Inngest Job for Recording Processing",
+        "description": "Create an Inngest job to process interview recordings post-session.",
+        "details": "Define an Inngest function triggered by an 'interview.completed' event. This job will: 1. Fetch the raw recording URL from Vapi/Stream. 2. Upload the recording to the Supabase Storage bucket. 3. Save the final Supabase URL to the `recording_url` table.",
+        "testStrategy": "Manually trigger an 'interview.completed' event with mock data. Verify that the Inngest job runs and a file is successfully uploaded to Supabase Storage. Check the database for the new URL entry.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          11,
+          23
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 28,
+        "title": "Backend: Inngest Job for Transcription",
+        "description": "Create an Inngest job for audio transcription.",
+        "details": "Chain another Inngest function to run after the recording is saved. This job will: 1. Get the recording from Supabase. 2. Send it to Deepgram for transcription. 3. Save the resulting transcript to a file in Supabase Storage and link it in the `transcript_url` table.",
+        "testStrategy": "Trigger the job with a sample recording. Verify that a transcript file is created in Supabase and that the `transcript_url` table is updated with the correct URL.",
+        "priority": "high",
+        "dependencies": [
+          19,
+          27
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 29,
+        "title": "Backend: Inngest Job for Emotional Analysis",
+        "description": "Create an Inngest job for detailed emotional analysis.",
+        "details": "Chain an Inngest function to run after the recording is saved. This job will send the audio to Hume.ai's batch processing API to get a full emotional analysis report. The resulting JSON data will be stored in the `emotional_analysis` table.",
+        "testStrategy": "Trigger the job with a sample recording. Verify that the `emotional_analysis` table is populated with valid JSON data from Hume.ai.",
+        "priority": "high",
+        "dependencies": [
+          20,
+          27
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 30,
+        "title": "Backend: Feedback Generation Engine (LLM)",
+        "description": "Implement the post-interview feedback generation engine.",
+        "details": "Create an Inngest function that triggers after transcription and emotion analysis are complete. It will feed the transcript and emotion data into a prompt for GPT-4/Claude-3 to generate structured feedback. The feedback is then saved to the `interview_feedback` table.",
+        "testStrategy": "Provide a sample transcript and emotion data to the function. Verify that the generated feedback is coherent, relevant, and correctly structured before being saved to the database.",
+        "priority": "high",
+        "dependencies": [
+          12,
+          22,
+          28,
+          29
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 31,
+        "title": "Frontend: Display Interview Feedback UI",
+        "description": "Build the UI to display post-interview feedback.",
+        "details": "Create a page (`/interview/[id]/feedback`) that fetches and displays feedback from the `interview_feedback` table using React Query. The UI should be clear, sectioned (e.g., Strengths, Areas for Improvement), and easy to read.",
+        "testStrategy": "Populate the database with sample feedback data. Navigate to the feedback page and verify that the data is displayed correctly and matches the database content.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          17,
+          30
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 32,
+        "title": "Frontend: Emotion-Aware Feedback Animations",
+        "description": "Implement emotion-aware feedback animations.",
+        "details": "Using the data from the `emotional_analysis` table, enhance the feedback UI. For example, display a timeline of emotional tone during the interview, or use subtle animations and color cues next to specific transcript parts to reflect the detected emotion.",
+        "testStrategy": "With sample emotion data, verify that the UI dynamically renders the correct animations or visual cues. For instance, a section with a high 'joy' score might have a subtle yellow glow.",
+        "priority": "medium",
+        "dependencies": [
+          31
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 33,
+        "title": "Frontend: Ensure WCAG-AA Color Contrast",
+        "description": "Implement WCAG-AA accessibility standards for color contrast and text.",
+        "details": "Audit all UI components and pages. Adjust Tailwind CSS color palettes in `tailwind.config.js` to ensure all text has a contrast ratio of at least 4.5:1 against its background. Use semantic HTML and ARIA attributes where necessary.",
+        "testStrategy": "Use browser accessibility tools (like Lighthouse or Axe) to scan all pages. Fix any reported issues related to color contrast, font sizes, and ARIA roles.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 34,
+        "title": "Frontend: Implement Keyboard Navigation",
+        "description": "Implement full keyboard navigation for all interactive elements.",
+        "details": "Ensure all buttons, links, inputs, and custom components are focusable and operable using the keyboard. Implement logical focus order. Use `:focus-visible` styles in Tailwind to provide clear focus indicators.",
+        "testStrategy": "Navigate the entire application using only the Tab, Shift+Tab, Enter, and Space keys. Verify that every interactive element can be reached and activated. Check for focus traps.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 35,
+        "title": "Backend: Integrate Polar for Billing",
+        "description": "Set up Polar for subscription billing.",
+        "details": "Integrate the Polar SDK. Create subscription tiers in the Polar dashboard. Set up API endpoints to create checkout sessions and a webhook handler (`/api/webhooks/polar`) to listen for subscription events (e.g., `subscription.created`, `subscription.updated`).",
+        "testStrategy": "Use Polar's test mode to simulate a user purchasing a subscription. Verify that the webhook is called and the user's status is correctly updated in the `subscriptions` table.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 36,
+        "title": "Frontend: Build Pricing and Billing UI",
+        "description": "Create the pricing and subscription management page.",
+        "details": "Build a UI page (`/pricing`) that displays the available subscription plans. For authenticated users, create a settings page (`/settings/billing`) where they can view their current plan, and manage or cancel their subscription via a Polar-hosted portal link.",
+        "testStrategy": "Verify that the pricing page correctly displays plans. For a test user with an active subscription, confirm that the billing page shows the correct plan and the link to the management portal works.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          35
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 37,
+        "title": "Backend: Implement Polar Webhook Handler",
+        "description": "Implement webhook handler to sync subscription status.",
+        "details": "In the `/api/webhooks/polar` route, write logic to handle events from Polar. Secure the webhook with a signing secret. On successful payment or cancellation, update the corresponding record in the `subscriptions` table in the database.",
+        "testStrategy": "Use Polar's CLI or dashboard to send test webhook events. Check the server logs to ensure the events are received and processed. Verify that the `subscriptions` table reflects the changes.",
+        "priority": "high",
+        "dependencies": [
+          35
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 38,
+        "title": "Backend: Set up OpenAI Embeddings Service",
+        "description": "Set up OpenAI Embeddings for search functionality.",
+        "details": "Create a service (`lib/embeddings.ts`) to interact with the OpenAI Embeddings API (e.g., `text-embedding-3-small`). This will be used for semantic search across resources and career data.",
+        "testStrategy": "Write a test that sends a piece of text to the embeddings service and verifies that it receives a vector of the expected dimension.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 39,
+        "title": "AI/ML: Deploy and Integrate Custom BERT Model",
+        "description": "Set up the custom BERT model for career archetyping.",
+        "details": "Deploy the custom BERT model as a serverless function on Vercel or a dedicated service like Hugging Face Inference Endpoints. Create an API route in the Next.js app to act as a proxy, forwarding archetyping requests to this model.",
+        "testStrategy": "Send sample user data (e.g., skills, interview summary) to the API endpoint. Verify that the endpoint returns a valid archetype classification in the expected format.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 40,
+        "title": "Backend: Career Archetyping Engine",
+        "description": "Develop the Career Archetyping Engine logic.",
+        "details": "Create a service that orchestrates the archetyping process. It will take interview feedback, use the BERT model for initial classification, and then use a fine-tuned GPT model to generate a rich, descriptive career persona. The result is saved to the user's profile.",
+        "testStrategy": "Run a full pipeline test: input interview data, and verify that a coherent and detailed archetype is generated and correctly associated with the user in the `user_profiles` and `archetypes` tables.",
+        "priority": "high",
+        "dependencies": [
+          13,
+          22,
+          30,
+          39
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 41,
+        "title": "Frontend: Display Career Archetype",
+        "description": "Build the UI to display the user's generated Career Archetype.",
+        "details": "Create a component on the user's dashboard that displays their career archetype. This should include the archetype name (e.g., 'The Innovator'), a detailed description, and key behavioral traits identified.",
+        "testStrategy": "For a user with a generated archetype, navigate to their dashboard and verify that the archetype information is displayed correctly and attractively.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          40
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 42,
+        "title": "Backend: Map Interview to Career Skills",
+        "description": "Map interview performance to career skills.",
+        "details": "Enhance the feedback generation service (task 30) to include a mapping of interview answers and performance to a predefined list of career skills (e.g., 'Problem Solving', 'Communication'). This mapping will be used by the career plan builder.",
+        "testStrategy": "Analyze the generated feedback for a sample interview. Verify that it includes a 'Skills Demonstrated' section and that the skills listed are relevant to the interview content.",
+        "priority": "medium",
+        "dependencies": [
+          30,
+          40
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 43,
+        "title": "Frontend: Career Plan Draggable Timeline UI",
+        "description": "Build the draggable timeline UI for the Career Plan Builder.",
+        "details": "Using a library like `@dnd-kit/core`, create a timeline component where users can add, reorder, and edit milestones and goals. The UI should be intuitive, with clear visual cues for dragging and dropping.",
+        "testStrategy": "Manually test the UI: drag and drop milestones, add new goals, edit existing ones. Verify that the UI state updates correctly and smoothly. Test on different screen sizes.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          13
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 44,
+        "title": "Backend: Career Plan CRUD APIs",
+        "description": "Implement API endpoints for Career Plan CRUD operations.",
+        "details": "Create API routes (`/api/plans`) to handle Create, Read, Update, and Delete operations for career plans and their associated goals. Use Drizzle ORM to interact with the `career_plans` and `goals` tables. Ensure all operations are authenticated and authorized.",
+        "testStrategy": "Use an API client like Postman to test each CRUD endpoint. Verify that data is correctly created, retrieved, updated, and deleted in the database. Test authorization by trying to modify another user's plan.",
+        "priority": "high",
+        "dependencies": [
+          13,
+          17,
+          43
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 45,
+        "title": "Frontend: Connect Career Plan UI to Backend",
+        "description": "Connect the Career Plan UI to the backend APIs.",
+        "details": "Use React Query's `useQuery` to fetch the user's career plan and `useMutation` to handle create, update, and delete actions. Implement optimistic updates for a smooth user experience when reordering or editing items.",
+        "testStrategy": "Perform actions in the UI (add, edit, delete a goal) and verify that the changes are persisted by reloading the page. Check the browser's network tab to confirm API calls are being made correctly.",
+        "priority": "high",
+        "dependencies": [
+          43,
+          44
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 46,
+        "title": "Feature: Printable/Shareable Career Plans",
+        "description": "Implement printable/shareable format generation for career plans.",
+        "details": "Create an API route that generates a public, read-only version of a career plan. For printing, create a print-specific CSS stylesheet to format the plan page cleanly. A library like `react-to-print` could be used for the frontend.",
+        "testStrategy": "Click the 'Share' button and verify a unique, shareable link is generated. Open the link in an incognito window to ensure it's publicly accessible. Click the 'Print' button and check the browser's print preview for correct formatting.",
+        "priority": "medium",
+        "dependencies": [
+          44
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 47,
+        "title": "DevOps: Configure Monitoring and Logging",
+        "description": "Set up monitoring and logging with Axiom, PostHog, and Sentry.",
+        "details": "Integrate the Axiom and Sentry SDKs into the Next.js app for logging and error tracking. Add the PostHog script for product analytics. Configure environment variables for all three services.",
+        "testStrategy": "Trigger a test log, a deliberate error, and a tracked event from the application. Verify that the data appears in the Axiom, Sentry, and PostHog dashboards respectively.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          15
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 48,
+        "title": "DevOps: Configure Global Replicas",
+        "description": "Configure global replicas for Salesforce and Supabase.",
+        "details": "For Supabase, enable read replicas in different geographical regions via the Supabase dashboard. For Salesforce, configure the integration to connect to the appropriate regional endpoint. This is crucial for global scalability and low latency.",
+        "testStrategy": "Run performance tests from different geographic locations (using a VPN or cloud VMs) to measure read latency from the replicas. Verify that the latency is lower when accessing a nearby replica.",
+        "priority": "low",
+        "dependencies": [
+          4,
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 49,
+        "title": "DevOps: Configure Cloudflare CDN",
+        "description": "Configure Cloudflare CDN for Vercel deployments.",
+        "details": "In the Vercel project settings, enable the Cloudflare CDN integration. Configure caching rules for static assets to ensure optimal performance and offload traffic from the origin servers.",
+        "testStrategy": "Use a tool like `curl` or a website speed test to check the response headers of static assets (JS, CSS, images). Verify that they are being served from the Cloudflare cache (e.g., `cf-cache-status: HIT`).",
+        "priority": "medium",
+        "dependencies": [
+          15
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 50,
+        "title": "Security: PII Anonymization Pipeline",
+        "description": "Implement strict PII leakage prevention pipeline.",
+        "details": "Create a utility service that uses a library like `pii-filter` or a custom regex-based approach to scan all user-generated text (transcripts, goals) before it's sent to third-party AI models. This should strip names, emails, phone numbers, etc.",
+        "testStrategy": "Write unit tests for the PII stripping service with various sample texts containing different types of PII. Verify that all PII is correctly identified and replaced with placeholders.",
+        "priority": "high",
+        "dependencies": [
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 51,
+        "title": "Frontend: Learner Dashboard UI",
+        "description": "Create the Learner/Job Seeker dashboard.",
+        "details": "Build the main dashboard page (`/dashboard`) for the 'learner' role. It should provide an overview of their progress, links to retake interviews, a summary of their career plan, and their current archetype.",
+        "testStrategy": "Log in as a 'learner' user. Verify that the dashboard displays the correct summary information and that all links navigate to the appropriate pages.",
+        "priority": "high",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 52,
+        "title": "Frontend: Mentor Dashboard UI (Initial)",
+        "description": "Create the initial Mentor/Coach dashboard structure.",
+        "details": "Build the main dashboard page (`/dashboard/mentor`) for the 'mentor' role. Initially, this will be a placeholder, but it should be protected by RBAC. It will later contain lists of assigned learners and review tools.",
+        "testStrategy": "Log in as a 'mentor' user and verify access to the mentor dashboard. Log in as a 'learner' and verify access is denied.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 53,
+        "title": "Frontend: WDB Partner Dashboard UI (Initial)",
+        "description": "Create the initial WDB Partner dashboard structure.",
+        "details": "Build the main dashboard page (`/dashboard/wdb`) for the 'wdb_partner' role. This will be a placeholder for future data visualizations and referral management tools. Protect it with RBAC.",
+        "testStrategy": "Log in as a 'wdb_partner' user and verify access to the WDB dashboard. Log in as a 'learner' and verify access is denied.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 54,
+        "title": "Feature: First-Time User Onboarding Flow",
+        "description": "Implement the 'First-Time User' onboarding flow.",
+        "details": "Guide new users through a sequence of steps after their first login: 1. A prompt to take their first interview. 2. Display their archetype after the interview. 3. Guide them to the career plan builder. 4. Show links to WDB/mentor resources.",
+        "testStrategy": "Register a new user and log in for the first time. Verify that the onboarding sequence is triggered and guides the user through each key feature as described.",
+        "priority": "medium",
+        "dependencies": [
+          51
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 55,
+        "title": "Feature: Returning User Dashboard Flow",
+        "description": "Implement the 'Returning User' dashboard flow.",
+        "details": "For users who have completed the onboarding, the dashboard should present their existing data. This includes a list of past interviews, their current career plan progress, and options to share/export their plan.",
+        "testStrategy": "Log in as a user who has already completed at least one interview and created a plan. Verify that the dashboard displays their historical data correctly.",
+        "priority": "medium",
+        "dependencies": [
+          51
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 56,
+        "title": "Frontend: Landing Page and CTA",
+        "description": "Create a generic landing page with a clear Call-to-Action (CTA).",
+        "details": "Design and build a public-facing landing page (`/`) that explains the platform's value proposition. It should feature a prominent CTA button that directs users to the registration page (`/signup`).",
+        "testStrategy": "Visit the root URL of the site as an unauthenticated user. Verify the landing page loads and the CTA button correctly links to the signup page.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 57,
+        "title": "Backend: Emotion Inference Fallback Logic",
+        "description": "Implement fallback for emotion inference failure.",
+        "details": "In the interview processing logic, add error handling for the Hume.ai integration. If the API call fails or returns an error, the system should gracefully degrade and proceed with feedback generation using only the transcript text. The feedback UI should indicate that emotion analysis is unavailable.",
+        "testStrategy": "Mock a failure response from the Hume.ai service. Run the interview processing pipeline and verify that it completes successfully without emotion data. Check that the final feedback UI displays a 'text-only' version of the feedback.",
+        "priority": "medium",
+        "dependencies": [
+          20
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 58,
+        "title": "Backend: Database Connection Pooling",
+        "description": "Set up database connection pooling.",
+        "details": "Configure the Drizzle/node-postgres client to use connection pooling to handle concurrent database requests efficiently. Set appropriate pool size limits based on the Neon database plan.",
+        "testStrategy": "Run a load test with a tool like `k6` that makes multiple concurrent API requests requiring database access. Monitor the database connections in the Neon dashboard to ensure they do not exceed the configured pool size.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 59,
+        "title": "DB: Seed Archetypes Table",
+        "description": "Seed the database with initial archetypes.",
+        "details": "Create a seed script that populates the `archetypes` table with a predefined set of career archetypes (e.g., 'The Analyst', 'The Creator', 'The Leader'), each with a name and a base description.",
+        "testStrategy": "Run the seed script. Query the `archetypes` table to verify that the initial data has been populated correctly.",
+        "priority": "medium",
+        "dependencies": [
+          13
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 60,
+        "title": "DB: Seed Agent Configurations",
+        "description": "Seed the database with initial agent configurations.",
+        "details": "Create a seed script to populate the `agent_config` table with a few default interview types (e.g., 'Behavioral Interview', 'Technical Screening'). Each config should have a name, a system prompt for the LLM, and a default voice ID from ElevenLabs/PlayHT.",
+        "testStrategy": "Run the seed script. Query the `agent_config` table to verify that the default interview agents have been created.",
+        "priority": "medium",
+        "dependencies": [
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 61,
+        "title": "DB: Create and Populate Alt-Ed Programs Table",
+        "description": "Create a database of Alt-Ed bootcamps and certifications.",
+        "details": "Create a new table `alt_ed_programs` (id, name, provider, cost, duration, description). Write a script to scrape or manually populate this table with data for at least 500 programs.",
+        "testStrategy": "After running the population script, query the `alt_ed_programs` table to verify it contains at least 500 records with complete data.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 62,
+        "title": "Frontend: Alt-Ed Explorer UI",
+        "description": "Build the UI for the Alt-Ed Explorer.",
+        "details": "Create a page (`/explorer/alt-ed`) with a searchable and filterable list of the programs from the `alt_ed_programs` table. Use Shadcn components for filters (checkboxes, sliders for cost/duration) and a card layout to display the programs.",
+        "testStrategy": "Navigate to the Alt-Ed Explorer page. Test the search and filter functionality to ensure the list of programs updates correctly and efficiently.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          61
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 63,
+        "title": "Backend: API for Alt-Ed Explorer",
+        "description": "Implement API and data fetching for Alt-Ed Explorer.",
+        "details": "Create an API route that accepts filter and search parameters, queries the `alt_ed_programs` table, and returns a paginated list of results. Use React Query on the frontend to fetch and cache this data.",
+        "testStrategy": "Use the UI to apply filters and check the network tab to verify that the correct API request is made. Confirm the API response matches the filter criteria.",
+        "priority": "medium",
+        "dependencies": [
+          17,
+          62
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 64,
+        "title": "Feature: Alt-Ed ROI Analysis",
+        "description": "Implement ROI analysis for Alt-Ed programs.",
+        "details": "For each program in the Alt-Ed Explorer, add a feature to calculate a simple ROI. This could be based on user-provided current salary vs. post-program expected salary (from industry data) against the program's cost and duration.",
+        "testStrategy": "Select a program and input a sample current salary. Verify that the UI displays a calculated ROI figure and a simple breakdown of the calculation.",
+        "priority": "low",
+        "dependencies": [
+          62
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 65,
+        "title": "Feature: Grant/Funding Eligibility Sync",
+        "description": "Implement grant/funding eligibility logic.",
+        "details": "Add logic to the Alt-Ed Explorer that cross-references programs with known grant or funding sources (e.g., WIOA-approved programs). This could be a simple tag or a more complex check against user profile data.",
+        "testStrategy": "Find a program that should be eligible for a known grant. Verify that the UI displays an indicator or tag signifying this eligibility.",
+        "priority": "low",
+        "dependencies": [
+          62
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 66,
+        "title": "Backend: Salesforce Integration Setup",
+        "description": "Set up Salesforce integration credentials and API client.",
+        "details": "Obtain Salesforce API credentials for the WDB partner instance. Set up an API client using a library like `jsforce`. Store credentials securely in environment variables. Create a service file (`lib/salesforce.ts`) to encapsulate API calls.",
+        "testStrategy": "Write a test function that uses the client to connect to the Salesforce API and perform a simple query (e.g., fetch a single contact). A successful response confirms the connection.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 67,
+        "title": "Backend: Salesforce Data Sync Job",
+        "description": "Develop Inngest job for syncing WDB data from Salesforce.",
+        "details": "Create a scheduled Inngest job that runs periodically (e.g., daily). This job will connect to Salesforce, fetch relevant data (e.g., WDB client information), and sync it with the application's database, potentially updating `user_profiles` or a dedicated WDB table.",
+        "testStrategy": "Manually trigger the sync job. Verify that data from Salesforce is correctly pulled and inserted/updated in the Postgres database. Check for error handling in case of API failures.",
+        "priority": "medium",
+        "dependencies": [
+          11,
+          66
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 68,
+        "title": "Feature: Sync Career Plan with WDB Data",
+        "description": "Integrate WDB data into the Career Plan Builder.",
+        "details": "Allow career plans to be linked to a user's WDB record. When a user is identified as a WDB client (via Salesforce sync), provide options in the career plan builder to align goals with their official WDB plan.",
+        "testStrategy": "Log in as a user synced from Salesforce. Open the career plan builder and verify that WDB-specific options or fields are visible and functional.",
+        "priority": "medium",
+        "dependencies": [
+          45,
+          67
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 69,
+        "title": "Feature: Mentor Video Review Tool",
+        "description": "Implement mentor tool to review learner's video sessions.",
+        "details": "On the mentor dashboard, create a UI for mentors to view a list of their assigned learners. Allow them to click on a learner to see their past interview recordings, transcripts, and the AI-generated feedback.",
+        "testStrategy": "Log in as a mentor. Assign a learner with a completed interview to this mentor. Verify that the mentor can access and view the learner's interview assets.",
+        "priority": "medium",
+        "dependencies": [
+          52
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 70,
+        "title": "Feature: Mentor Feedback/Commenting",
+        "description": "Implement mentor tool to add feedback to sessions.",
+        "details": "Add a feature allowing mentors to add their own comments or feedback on top of the AI-generated feedback for a learner's interview. This feedback should be stored in a new table, e.g., `mentor_feedback`.",
+        "testStrategy": "As a mentor, add a comment to a learner's interview feedback. Log in as the learner and verify that they can see the mentor's comment.",
+        "priority": "medium",
+        "dependencies": [
+          69
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 71,
+        "title": "Feature: Mentor Referral Pathways",
+        "description": "Implement referral pathways for mentors.",
+        "details": "Create a feature on the mentor dashboard that allows a mentor to generate a referral for a learner. This could be a referral to a WDB partner, a specific job opening, or another resource. The referral action should be logged.",
+        "testStrategy": "As a mentor, create a referral for a learner. Check the database to ensure a `referrals` record is created with the correct details.",
+        "priority": "low",
+        "dependencies": [
+          52
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 72,
+        "title": "Feature: Mentor Resource Sharing",
+        "description": "Implement resource sharing for mentors.",
+        "details": "Allow mentors to curate a list of resources (links, documents) and share them with their learners. This could be a simple text field on the mentor dashboard or a more structured resource management system.",
+        "testStrategy": "As a mentor, add a resource link for a learner. Log in as the learner and verify that the shared resource is visible on their dashboard.",
+        "priority": "low",
+        "dependencies": [
+          52
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 73,
+        "title": "Feature: WDB Partner Dashboard Visualizations",
+        "description": "Build out the WDB Partner dashboard with data visualizations.",
+        "details": "Enhance the WDB Partner dashboard to show key metrics and visualizations about their client cohort. This could include charts showing interview completion rates, common archetypes, and progress on career plans.",
+        "testStrategy": "Log in as a WDB partner. Verify that the dashboard displays charts and data that accurately reflect the underlying data for their assigned clients.",
+        "priority": "medium",
+        "dependencies": [
+          53,
+          67
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 74,
+        "title": "AI/ML: Archetype Model Bias Detection",
+        "description": "Implement model bias detection checks for archetyping.",
+        "details": "Develop a post-processing step for the archetyping engine. This step will analyze the distribution of archetypes across demographic segments (if available and ethically permissible) to check for statistical bias. Flag significant imbalances for human review.",
+        "testStrategy": "Run a batch of diverse, synthetic user profiles through the archetyping engine. Analyze the output distribution with the bias detection script. Verify that the script correctly identifies any artificial biases introduced in the test data.",
+        "priority": "medium",
+        "dependencies": [
+          40
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 75,
+        "title": "Admin: Human Review Queue for Archetypes",
+        "description": "Create a human review queue for flagged archetypes.",
+        "details": "Build a simple admin interface where flagged archetyping results can be reviewed by a human. The reviewer should be able to see the input data, the AI's output, and either approve or override the generated archetype.",
+        "testStrategy": "Manually flag an archetype result in the database. Log in to the admin review interface and verify that the flagged item appears in the queue and can be actioned.",
+        "priority": "medium",
+        "dependencies": [
+          74
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 76,
+        "title": "Performance: WebRTC Latency Tuning",
+        "description": "Optimize WebRTC settings for latency.",
+        "details": "Fine-tune the WebRTC configuration used by the Stream SDK. This includes experimenting with different STUN/TURN server configurations, adjusting codec preferences, and potentially implementing dynamic bitrate adjustments to maintain low latency even on weaker networks.",
+        "testStrategy": "Conduct a series of tests under various simulated network conditions (e.g., high packet loss, low bandwidth) using browser developer tools. Measure latency and quality to find the optimal configuration.",
+        "priority": "medium",
+        "dependencies": [
+          25
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 77,
+        "title": "Auth: RBAC for Enterprise Role",
+        "description": "Refine RBAC for Enterprise Talent Manager role.",
+        "details": "Define and implement the specific permissions for the 'enterprise_manager' role. This role should have read-only access to a cohort of users within their organization but no access to other users' data.",
+        "testStrategy": "Create two users in different 'enterprises'. Log in as an enterprise manager for the first enterprise. Verify they can see their user's data but receive an authorization error when trying to access the second user's data.",
+        "priority": "low",
+        "dependencies": [
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 78,
+        "title": "AI/ML: Adaptive Feedback Engine",
+        "description": "Implement adaptive feedback based on user history.",
+        "details": "Enhance the feedback generation prompt. Before calling the LLM, fetch the user's past interview feedback. Instruct the LLM to consider previous feedback and tailor the new feedback to highlight improvement or recurring issues.",
+        "testStrategy": "Give a user two consecutive mock interviews. In the second interview, verify that the generated feedback references their performance or the feedback from the first interview.",
+        "priority": "low",
+        "dependencies": [
+          30
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 79,
+        "title": "AI/ML: Predictive Career Analytics",
+        "description": "Develop predictive career analytics.",
+        "details": "Create a service that analyzes a user's combined data (archetype, skills, plan goals, interview performance). Use an LLM to generate predictive insights, such as 'Recommended next skill to learn' or 'Potential career paths to explore'.",
+        "testStrategy": "For a user with a rich data profile, trigger the analytics service. Review the generated insights for relevance, coherence, and actionability.",
+        "priority": "low",
+        "dependencies": [
+          45,
+          55
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 80,
+        "title": "DevEx: Component Storybook",
+        "description": "Create a style guide and component storybook.",
+        "details": "Use a tool like Storybook to document all Shadcn and custom components. For each component, document its props, variants, and usage examples. This ensures consistency as the team grows.",
+        "testStrategy": "Set up Storybook and create stories for the Button and Card components. Run the Storybook server and verify that the components are rendered and documented correctly.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 81,
+        "title": "Frontend: Responsive App Layout",
+        "description": "Create a responsive layout shell.",
+        "details": "Implement the main application layout component, including a responsive sidebar/navigation and a main content area. Ensure the layout adapts gracefully to mobile, tablet, and desktop screen sizes using Tailwind's responsive breakpoints.",
+        "testStrategy": "View the main layout on different device sizes using browser developer tools. Verify that the navigation collapses into a hamburger menu on mobile and that content reflows without horizontal scrolling.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 82,
+        "title": "Auth: Forgot Password Flow",
+        "description": "Implement 'Forgot Password' functionality.",
+        "details": "Create a flow for password recovery. A user enters their email, the system generates a secure, time-limited token, and sends a password reset link via email. The user clicks the link to set a new password.",
+        "testStrategy": "Go through the entire flow: request a password reset, check for the email, click the link, and set a new password. Verify that the new password works for login and the old one does not.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 83,
+        "title": "Auth: Google Social Login",
+        "description": "Implement social authentication with Google.",
+        "details": "Configure Google as a social login provider in Better Auth. Add a 'Sign in with Google' button to the login and registration pages. Handle the OAuth callback to create or log in the user.",
+        "testStrategy": "Click the 'Sign in with Google' button. Complete the Google authentication flow. Verify that a new user is created in the database with their Google account information and that they are logged in.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 84,
+        "title": "Frontend: User Profile Settings Page",
+        "description": "Create user profile settings page.",
+        "details": "Build a page (`/settings/profile`) where users can update their personal information, such as first name, last name, and avatar image. The avatar image should be uploaded to Supabase Storage.",
+        "testStrategy": "Update a user's name and upload a new avatar. Save the changes. Reload the page and verify that the new information is persisted and the new avatar is displayed.",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 85,
+        "title": "Backend: Avatar Upload to Supabase",
+        "description": "Implement avatar upload to Supabase Storage.",
+        "details": "In the profile settings page, handle the file upload logic. When a user selects an image, upload it directly from the client to the Supabase Storage bucket using a signed upload URL. Update the `avatar_url` in the `user_profiles` table.",
+        "testStrategy": "Upload an image file. Check the Supabase Storage dashboard to confirm the file was uploaded. Check the `user_profiles` table to verify the `avatar_url` was updated.",
+        "priority": "medium",
+        "dependencies": [
+          84
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 86,
+        "title": "Frontend: Interview History Page",
+        "description": "Create a user's interview history page.",
+        "details": "Build a page (`/interviews`) that lists all of a user's past interviews. Each item in the list should show the date, interview type, and a link to the feedback page.",
+        "testStrategy": "For a user with multiple completed interviews, navigate to the history page. Verify that all interviews are listed correctly and the links to feedback work.",
+        "priority": "medium",
+        "dependencies": [
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 87,
+        "title": "Frontend: Global Notification Toasts",
+        "description": "Implement a global notification system.",
+        "details": "Use a library like `react-hot-toast` to display global notifications (toasts) for actions like 'Profile saved successfully' or 'Error connecting to interview'. Create a centralized function to trigger these notifications.",
+        "testStrategy": "Trigger a success and an error notification from different parts of the app. Verify that the toasts appear with the correct message, style, and icon.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 88,
+        "title": "DB: Implement Soft Deletes",
+        "description": "Implement soft deletes for key database tables.",
+        "details": "Instead of permanently deleting records from tables like `users`, `interviews`, and `career_plans`, add a `deleted_at` timestamp column. Update repository functions to filter out records where `deleted_at` is not null. This preserves data for analytics.",
+        "testStrategy": "Delete a user via an API call. Verify that the user can no longer log in, but their record in the `users` table has a `deleted_at` timestamp instead of being removed.",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 89,
+        "title": "Frontend: Custom 404 Page",
+        "description": "Create a custom 404 Not Found page.",
+        "details": "Design and implement a custom `not-found.tsx` page in the Next.js app directory. The page should be user-friendly, match the site's branding, and provide a link back to the homepage.",
+        "testStrategy": "Navigate to a URL that does not exist. Verify that the custom 404 page is displayed instead of the default Next.js error page.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 90,
+        "title": "Frontend: Custom 500 Error Page",
+        "description": "Create a custom 500 Server Error page.",
+        "details": "Design and implement a custom `error.tsx` file in the Next.js app directory to handle unexpected server errors gracefully. This page should inform the user of the issue without exposing technical details.",
+        "testStrategy": "Create a test page that deliberately throws an error during server-side rendering. Verify that the custom 500 error page is displayed.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 91,
+        "title": "DevOps: E2E Testing with Playwright",
+        "description": "Add automated browser testing with Playwright to CI/CD.",
+        "details": "Set up Playwright for end-to-end testing. Write a few basic tests for key user flows, such as logging in, and navigating to the dashboard. Configure the GitHub Actions workflow to run these tests on every pull request.",
+        "testStrategy": "Create a pull request. Verify that the Playwright tests are executed as part of the CI pipeline and that their results are reported in the PR checks.",
+        "priority": "low",
+        "dependencies": [
+          16
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 92,
+        "title": "Security: API Rate Limiting",
+        "description": "Set up API rate limiting.",
+        "details": "Implement rate limiting on critical API endpoints to prevent abuse. Use a library like `upstash/ratelimit` with Redis (or a similar Vercel KV store) to track requests per IP or user ID.",
+        "testStrategy": "Write a script to call a rate-limited endpoint repeatedly in a short period. Verify that after a certain number of requests, the API returns a 429 'Too Many Requests' error.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 93,
+        "title": "Security: Configure HTTP Security Headers",
+        "description": "Configure security headers.",
+        "details": "In `next.config.js`, configure custom headers to enhance security. This includes Content-Security-Policy (CSP), X-Content-Type-Options, X-Frame-Options, and Strict-Transport-Security.",
+        "testStrategy": "Use a security header scanning tool (like securityheaders.com) on the deployed site. Verify that the site receives a high score and that the configured headers are present in the response.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 94,
+        "title": "Content: Legal Pages (ToS, Privacy)",
+        "description": "Create a terms of service and privacy policy page.",
+        "details": "Create static pages at `/terms` and `/privacy`. Populate them with placeholder or initial legal text. Link to these pages from the website footer and the user registration form.",
+        "testStrategy": "Verify that the `/terms` and `/privacy` pages are accessible. Check that links in the footer and on the signup page point to the correct pages.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 95,
+        "title": "Frontend: Global Footer Component",
+        "description": "Implement a website footer.",
+        "details": "Create a global footer component that appears on all pages. It should contain links to legal pages, contact information, and social media profiles.",
+        "testStrategy": "Navigate through different pages of the application and verify that the footer is consistently present and all links are functional.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 96,
+        "title": "Backend: Transactional Email Service Setup",
+        "description": "Set up email sending service (e.g., Resend).",
+        "details": "Integrate an email service like Resend to send transactional emails (e.g., welcome email, password reset). Create reusable React Email templates for a consistent look and feel.",
+        "testStrategy": "Create an API endpoint that sends a test email. Call the endpoint and verify that the email is delivered to the recipient's inbox and renders correctly.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 97,
+        "title": "Feature: Welcome Email on Signup",
+        "description": "Send a welcome email upon user registration.",
+        "details": "After a user successfully signs up, trigger an event to send them a welcome email. The email should confirm their registration and provide a link to log in.",
+        "testStrategy": "Register a new user account. Check the user's email inbox to confirm that a welcome email was received shortly after.",
+        "priority": "medium",
+        "dependencies": [
+          8,
+          96
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 98,
+        "title": "Feature: Career Plan Goal Completion",
+        "description": "Add goal completion tracking to career plan.",
+        "details": "In the career plan UI, add a checkbox or button for each goal to mark it as complete. This action should update the goal's status in the database and be visually reflected in the UI (e.g., strikethrough text).",
+        "testStrategy": "Mark a goal as complete in the UI. Reload the page and verify that the goal remains marked as complete, confirming the state was persisted.",
+        "priority": "medium",
+        "dependencies": [
+          45
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 99,
+        "title": "Frontend: Career Plan Progress Widget",
+        "description": "Add a progress summary widget to the learner dashboard.",
+        "details": "Create a component for the learner dashboard that shows a summary of their career plan progress, such as '3 out of 10 goals completed (30%)'.",
+        "testStrategy": "Complete a few goals in the career plan. Navigate to the dashboard and verify that the progress summary widget updates to reflect the correct completion percentage.",
+        "priority": "medium",
+        "dependencies": [
+          51
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 100,
+        "title": "Feature: Curated Resource Recommendations",
+        "description": "Curate resource recommendations for career plan goals.",
+        "details": "Develop a system that suggests relevant resources for specific goals in a user's career plan. This could involve a simple keyword match against a resource database or a more advanced LLM-based recommendation.",
+        "testStrategy": "Create a goal like 'Learn Python for data analysis'. Verify that the system suggests relevant resources, such as links to Python tutorials or data analysis bootcamps from the Alt-Ed explorer.",
+        "priority": "low",
+        "dependencies": [
+          45
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 101,
+        "title": "Admin: Basic Dashboard UI",
+        "description": "Implement a basic admin dashboard.",
+        "details": "Create a new section of the site (`/admin`) accessible only to users with the 'admin' role. The initial dashboard should show high-level stats like total users, active subscriptions, and interviews conducted.",
+        "testStrategy": "Log in as an admin and verify access to the `/admin` route. Check that the displayed stats are accurate. Log in as a non-admin and verify access is denied.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 102,
+        "title": "Admin: User Management Feature",
+        "description": "Implement user management in the admin dashboard.",
+        "details": "Add a feature to the admin dashboard to search for, view, and edit user profiles. Admins should be able to perform actions like changing a user's role or resetting their password.",
+        "testStrategy": "As an admin, search for a user, change their role from 'learner' to 'mentor'. Log in as that user and verify their permissions have been updated.",
+        "priority": "low",
+        "dependencies": [
+          101
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 103,
+        "title": "Admin: Agent Configuration Management",
+        "description": "Implement agent configuration management in the admin dashboard.",
+        "details": "Add a CRUD interface in the admin dashboard for managing `agent_config` records. Admins should be able to create new interview agent types, edit their system prompts, and change their voice.",
+        "testStrategy": "As an admin, create a new interview agent. Start a new interview and verify that the new agent type is available for selection.",
+        "priority": "low",
+        "dependencies": [
+          101
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 104,
+        "title": "Performance: Bundle Size Optimization",
+        "description": "Optimize Next.js bundle size.",
+        "details": "Use the `@next/bundle-analyzer` to inspect the application's bundle size. Identify large dependencies and replace them with smaller alternatives if possible. Use dynamic imports (`next/dynamic`) for components that are not needed on the initial page load.",
+        "testStrategy": "Generate a bundle analysis report before and after optimizations. Verify that the total bundle size and the initial JS load size have been reduced.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 105,
+        "title": "Performance: Database Query Optimization",
+        "description": "Optimize critical database queries.",
+        "details": "Identify slow-running database queries, particularly those used in high-traffic API routes. Use `EXPLAIN ANALYZE` to inspect their execution plans. Add database indexes to frequently queried columns (e.g., `user_id` on the `interviews` table).",
+        "testStrategy": "Measure the p95 response time of a query-intensive API endpoint before and after adding an index. Verify that the response time has significantly improved.",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 106,
+        "title": "Performance: Image Optimization",
+        "description": "Optimize image loading with `next/image`.",
+        "details": "Ensure all images in the application are rendered using the `next/image` component. This provides automatic optimization, resizing, and serving in modern formats like WebP.",
+        "testStrategy": "Inspect the network tab in the browser. Verify that images are being served in `.webp` format and that they are appropriately sized for their container.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 107,
+        "title": "Scaling: API Prep for Mobile App",
+        "description": "Prepare for mobile app development (API structure).",
+        "details": "Review the existing API structure to ensure it is suitable for consumption by a future mobile app. Ensure authentication is token-based (as with Better Auth) and that responses are clean, well-structured JSON.",
+        "testStrategy": "Document the key API endpoints using a tool like Swagger or OpenAPI. Review the documentation from the perspective of a mobile developer to ensure clarity and completeness.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 108,
+        "title": "Scaling: Theming for White-Labeling",
+        "description": "Prepare for white-label employer version (theming).",
+        "details": "Refactor the Tailwind CSS configuration to use CSS variables for colors, fonts, and spacing. This will make it easier to create different themes for white-label customers by simply providing a different set of CSS variables.",
+        "testStrategy": "Create a second, alternative theme file with different color values. Load this theme and verify that the entire application's color scheme changes accordingly without any code changes.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 109,
+        "title": "Scaling: Data Scoping for Multi-Tenancy",
+        "description": "Prepare for white-label employer version (multi-tenancy).",
+        "details": "Review the database schema and add an `organization_id` column to key tables like `users`, `interviews`, and `career_plans`. Update all database queries to be scoped by the current user's `organization_id` to ensure data isolation.",
+        "testStrategy": "Write a test that creates two users in two different organizations. Verify that API calls made by one user can never access data belonging to the other organization.",
+        "priority": "low",
+        "dependencies": [
+          108
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 110,
+        "title": "SEO: Generate sitemap.xml",
+        "description": "Create a sitemap.xml for SEO.",
+        "details": "Generate a `sitemap.xml` file that lists all public pages of the site (e.g., landing page, pricing, blog posts). This can be done dynamically in Next.js by creating a `sitemap.ts` file in the `app` directory.",
+        "testStrategy": "Navigate to `/sitemap.xml` on the deployed site. Verify that it returns a valid XML file containing the correct URLs.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 111,
+        "title": "SEO: Create robots.txt",
+        "description": "Create a robots.txt file.",
+        "details": "Create a `robots.txt` file in the `public` directory to instruct web crawlers on which pages to index. Disallow crawling of private routes like `/dashboard` and `/settings`. Point to the sitemap.",
+        "testStrategy": "Navigate to `/robots.txt` on the deployed site. Verify its contents are correct and disallow the appropriate paths.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 112,
+        "title": "SEO: Add Structured Data (JSON-LD)",
+        "description": "Add structured data (JSON-LD) for SEO.",
+        "details": "Add structured data snippets (using JSON-LD format in a `<script>` tag) to key pages like the landing page. Use schemas from schema.org, such as `Organization` or `SoftwareApplication`.",
+        "testStrategy": "Use Google's Rich Results Test tool to validate the structured data on the landing page. Verify that there are no errors and the data is parsed correctly.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 113,
+        "title": "Feature: Contact Us Form",
+        "description": "Implement a 'Contact Us' form.",
+        "details": "Create a `/contact` page with a form for users to send inquiries. The form submission should trigger an email to a support address or create a ticket in a helpdesk system.",
+        "testStrategy": "Submit the contact form. Verify that an email or support ticket is created with the correct information from the form.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 114,
+        "title": "Content: FAQ Page",
+        "description": "Create a simple FAQ page.",
+        "details": "Build a static page at `/faq` that answers common questions about the platform. Use an accordion component (from Shadcn) to display the questions and answers.",
+        "testStrategy": "Navigate to the FAQ page. Verify that the content is displayed correctly and the accordions expand and collapse on click.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 115,
+        "title": "Content: Blog Setup (MDX)",
+        "description": "Set up a simple blog structure.",
+        "details": "Create a structure for a blog using MDX files for posts. Set up a listing page (`/blog`) and individual post pages (`/blog/[slug]`). This will be used for content marketing.",
+        "testStrategy": "Create a sample MDX blog post. Verify that it appears on the blog listing page and that navigating to its slug renders the post content correctly.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 116,
+        "title": "Feature: Cookie Consent Banner",
+        "description": "Implement a cookie consent banner.",
+        "details": "Add a cookie consent banner that appears for new visitors. This is necessary for compliance with GDPR and other privacy regulations. Store the user's consent choice in local storage.",
+        "testStrategy": "Visit the site in an incognito window. Verify the cookie banner appears. Accept the cookies and reload the page. Verify the banner does not appear again.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 117,
+        "title": "Scaling: Internationalization (i18n) Setup",
+        "description": "Implement internationalization (i18n) foundation.",
+        "details": "Set up a library like `next-intl` to handle translations. Extract all hardcoded strings from the UI into JSON translation files. Implement a language switcher.",
+        "testStrategy": "Create a translation file for a second language (e.g., Spanish) with a few translated strings. Use the language switcher to change the language and verify that the UI updates with the translated text.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 118,
+        "title": "Frontend: Loading Skeleton UI",
+        "description": "Create a loading skeleton UI for data-heavy pages.",
+        "details": "For pages that fetch data (like the dashboard or career plan), implement loading skeleton components using Shadcn's `Skeleton` component. This improves the perceived performance and user experience while data is loading.",
+        "testStrategy": "Throttle the network speed in browser developer tools. Navigate to a data-heavy page and verify that the skeleton UI is displayed first, before being replaced by the actual content.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 119,
+        "title": "Security: Session Timeout",
+        "description": "Implement a session timeout warning.",
+        "details": "For security, automatically log out users after a period of inactivity. A few minutes before the session expires, display a modal warning the user and giving them an option to extend their session.",
+        "testStrategy": "Set a short session timeout for testing purposes. Wait for the timeout period and verify that the warning modal appears. After another minute, verify the user is automatically logged out.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 120,
+        "title": "DevEx: Feature Flag System",
+        "description": "Create a feature flag system.",
+        "details": "Implement a simple feature flag system (e.g., using a configuration file or a service like LaunchDarkly) to enable or disable new features in production. This allows for safer rollouts and A/B testing.",
+        "testStrategy": "Create a feature flag for a new button. Verify that the button is hidden when the flag is off and visible when the flag is on, without requiring a new deployment.",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 121,
+        "title": "Feature: User Feedback Widget",
+        "description": "Implement a user feedback widget.",
+        "details": "Add a small, non-intrusive widget (e.g., a 'Feedback' button on the side of the screen) that allows users to submit quick feedback or bug reports. This can be integrated with a service like Canny or a simple email/webhook.",
+        "testStrategy": "Submit feedback through the widget. Verify that the feedback is received in the designated system (e.g., email inbox, Canny board).",
+        "priority": "low",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 122,
+        "title": "Analytics: Track Key User Actions",
+        "description": "Add analytics events for key user actions.",
+        "details": "Using PostHog, add event tracking for key user actions, such as 'Interview Started', 'Interview Completed', 'Career Plan Created', 'Goal Completed', 'Subscription Started'. This is crucial for measuring KPIs.",
+        "testStrategy": "Perform each of the key actions in the application. Go to the PostHog dashboard and verify that an event for each action was logged with the correct properties.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 123,
+        "title": "Analytics: KPI Dashboard Setup",
+        "description": "Create a KPI dashboard in PostHog.",
+        "details": "Using the events from the previous task, create a dashboard in PostHog to visualize the key KPIs: 75% interview completion rate, 60% plan activation, 30% WDB connection rate.",
+        "testStrategy": "Review the PostHog dashboard. Verify that the funnels and charts are set up correctly to measure the defined KPIs. Check with sample data to ensure calculations are correct.",
+        "priority": "high",
+        "dependencies": [
+          122
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 124,
+        "title": "Frontend: Final Responsive Polish",
+        "description": "Final responsive design polish.",
+        "details": "Conduct a full audit of the application on a wide range of devices (from small mobile phones to large desktops). Fix any remaining responsive design issues, such as text overflow, awkward wrapping, or elements that are too small to tap on mobile.",
+        "testStrategy": "Test the application on real mobile and tablet devices, in addition to browser-based simulators. Confirm a smooth and polished experience across all tested screen sizes.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 125,
+        "title": "Performance: Pre-launch Load Test",
+        "description": "Conduct pre-launch load testing.",
+        "details": "Use a load testing tool (e.g., k6, Artillery) to simulate high traffic against the production environment. Target at least 10K concurrent users and measure API response times to ensure they stay below the 200ms p95 target. Identify and fix any bottlenecks.",
+        "testStrategy": "Run the load test script. Monitor Vercel, Neon, and Axiom dashboards during the test. Analyze the test report to confirm that the system meets the concurrency and latency KPIs under load.",
+        "priority": "high",
+        "dependencies": [
+          105
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-06-30T06:19:00.464Z",
+      "updated": "2025-06-30T06:19:00.464Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

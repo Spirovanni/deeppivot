@@ -1,0 +1,93 @@
+{
+	"meta": {
+		"generatedAt": "2025-06-30T18:16:05.613Z",
+		"tasksAnalyzed": 10,
+		"totalTasks": 125,
+		"analysisCount": 10,
+		"thresholdScore": 5,
+		"projectName": "Taskmaster",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Project: Initialize GitHub Repository",
+			"complexityScore": 3,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the GitHub repository initialization into subtasks covering repository creation, branch setup, protection rules configuration, and initial documentation setup.",
+			"reasoning": "This is a straightforward DevOps task with clear steps. While not technically complex, it requires attention to detail for proper branch protection and repository configuration."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Frontend: Initialize Next.js 15 Project",
+			"complexityScore": 5,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Divide the Next.js 15 setup into subtasks including create-next-app execution, TypeScript configuration, directory structure setup, Tailwind CSS integration, environment variable configuration, and initial testing setup.",
+			"reasoning": "Setting up Next.js 15 with React 19 involves experimental features and requires careful configuration of multiple technologies. The App Router paradigm adds complexity."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Frontend: Integrate Shadcn UI",
+			"complexityScore": 4,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Split Shadcn UI integration into CLI initialization, Tailwind configuration updates, component installation, theme customization setup, and component testing/verification.",
+			"reasoning": "Shadcn UI integration is well-documented but requires careful configuration with existing Tailwind setup and testing of multiple components to ensure proper functionality."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Backend: Provision Neon Postgres Database",
+			"complexityScore": 2,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down into Neon account setup, database instance creation, and connection string configuration with security settings.",
+			"reasoning": "This is a simple cloud service provisioning task with minimal technical complexity. The main considerations are security configuration and connection string management."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Backend: Configure Drizzle ORM",
+			"complexityScore": 6,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Divide into package installation, Drizzle configuration file setup, database connection client creation, migration setup, type generation configuration, environment variable management, and connection testing.",
+			"reasoning": "Drizzle ORM setup requires understanding of TypeScript, database connections, and ORM patterns. Configuration involves multiple files and proper type safety setup."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "DB Schema: Users and Profiles",
+			"complexityScore": 7,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Break down into enum type definitions, users table schema, user_profiles table schema, foreign key relationships, indexes creation, migration file generation, schema validation, and test data seeding.",
+			"reasoning": "Database schema design is critical for the application foundation. It requires careful consideration of data types, relationships, constraints, and future scalability needs."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Backend: Set up Supabase for Storage & Real-time",
+			"complexityScore": 4,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Split into Supabase project creation, API key configuration, storage bucket setup, access policy configuration, and client library integration.",
+			"reasoning": "Supabase setup is straightforward but requires understanding of storage policies and real-time configuration. Security considerations for file access add some complexity."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Auth: Implement User Authentication with Better Auth",
+			"complexityScore": 8,
+			"recommendedSubtasks": 10,
+			"expansionPrompt": "Divide into Better Auth installation, API route handler setup, JWT configuration, session management, social provider integration, database adapter configuration, middleware setup, error handling, token refresh logic, and authentication testing.",
+			"reasoning": "Authentication is a critical security feature requiring careful implementation of multiple auth flows, session management, and integration with the database and frontend."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "Frontend: Build Auth Forms (Login/Register)",
+			"complexityScore": 6,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Break down into form component creation, validation schema setup, react-hook-form integration, error handling UI, loading states, API integration, success redirects, and form testing.",
+			"reasoning": "Building production-ready auth forms requires proper validation, error handling, accessibility, and user experience considerations beyond basic form creation."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Auth: Implement Role-Based Access Control (RBAC)",
+			"complexityScore": 7,
+			"recommendedSubtasks": 8,
+			"expansionPrompt": "Split into middleware function creation, role checking logic, route protection configuration, unauthorized page creation, role-based redirects, API route protection, frontend route guards, and comprehensive testing.",
+			"reasoning": "RBAC implementation touches multiple layers of the application and requires careful consideration of security implications, edge cases, and user experience for different role scenarios."
+		}
+	]
+}

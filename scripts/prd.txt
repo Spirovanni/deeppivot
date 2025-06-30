@@ -1,0 +1,160 @@
+<context>
+# Overview  
+Deep Pivots + EchoPrep is a comprehensive AI-powered career development platform that merges real-time voice and video interview simulations with intelligent career archetyping and planning tools.
+
+**Mission**  
+To democratize career development through scalable, emotionally-intelligent AI coaching accessible 24/7.
+
+**Key Objectives**  
+- Accessibility: 24/7 guided career support  
+- Personalization: Archetypes and planning by skills, emotions, and goals  
+- Scalability: Serverless and real-time infrastructure for global reach  
+- Integration: Built-in support for WDBs, education, and funding pipelines  
+- Intelligence: AI that evaluates emotion, response quality, and aptitude
+
+# Core Features  
+## 1. Voice/Video Interview System  
+- <800 ms latency mock interviews via Stream SDK + Vapi  
+- TTS/STT with Deepgram; emotion inference via Hume.ai  
+- Custom voice-agent scripting  
+- Post-interview feedback engine through GPT-4 + Claude  
+- Interview archetype & career skill mapping
+
+## 2. Career Archetyping Engine  
+- NLP + behavioral trait modeling  
+- Real-time updates to user profile  
+- Career persona alignment with fine-tuned GPT models
+
+## 3. Personalized Career Plan Builder  
+- Draggable timeline UI with gaps & milestones  
+- Curated resource recommendations  
+- Syncs with WDB Salesforce data  
+- Generates printable/shareable formats
+
+## 4. Mentor & Workforce Partner Tools  
+- Feedback & review video sessions  
+- Referral pathways  
+- Mentor dashboards & resource sharing
+
+## 5. Alt-Ed Explorer  
+- 500+ bootcamp & cert filters  
+- ROI analysis  
+- Syncs with grant/funding eligibility logic
+
+# User Experience  
+### Personas  
+- Learner / Job Seeker  
+- Mentor / Coach  
+- Workforce Development Board (WDB) Partner  
+- Enterprise Talent Manager
+
+### Key Flows  
+1. **First-Time User**  
+   - Start from CTA  
+   - Take interview  
+   - Receive archetype  
+   - Build career plan  
+   - Explore WDB/mentor links
+2. **Returning User**  
+   - Login  
+   - Review progress  
+   - Retake or book interviews  
+   - Export or share career plans
+
+### UI/UX Considerations  
+- Next.js App Router with responsive Tailwind UI  
+- Emotion-aware feedback animations  
+- Accessibility: WCAG-AA color contrast & keyboard nav  
+- Real-time status indicators for interview sessions
+</context>
+<PRD>
+# Technical Architecture  
+## Frontend  
+- Next.js 15 (App Router)  
+- React 19 + Tailwind 4.1  
+- Zustand + React Query state/data  
+- Shadcn UI component library with animation presets
+
+## Backend  
+- API Routes + Neon Postgres via DrizzleORM  
+- Supabase for real-time data + file storage  
+- Inngest for background processing  
+- Better Auth for login / social auth  
+- Polar for billing
+
+## AI/ML  
+- GPT-4 Turbo + Claude-3 Opus (LLM orchestration)  
+- Deepgram for transcription  
+- ElevenLabs / PlayHT for TTS  
+- Hume AI for voice tone & emotion inference  
+- OpenAI Embeddings for search  
+- Custom BERT model for archetyping
+
+## Data Models (DrizzleORM – TypeScript)  
+```
+users, user_profiles, interviews, interview_feedback,
+career_plans, subscriptions, agent_config,
+recording_url, transcript_url, archetypes, goals,
+emotional_analysis
+```
+
+## Infrastructure / DevOps  
+- Vercel + Cloudflare CDN deployments  
+- GitHub Actions CI/CD with Node.js 20 runtime  
+- Axiom, PostHog, Sentry for logs & monitoring  
+- Global replicas: Salesforce + Supabase
+
+# Development Roadmap  
+1. **Phase 1 – MVP**  
+   - Voice interviews  
+   - Auth, billing, base career plan builder
+2. **Phase 2 – Ecosystem Connect**  
+   - WDB & Alt-Ed API integrations  
+   - Mentor / coach marketplace
+3. **Phase 3 – Intelligence Layer**  
+   - Adaptive feedback  
+   - Predictive career analytics
+4. **Phase 4 – Scale**  
+   - Mobile app  
+   - White-label employer version
+
+# Logical Dependency Chain  
+1. Foundation: Auth → Database schemas → Voice interview core  
+2. Visible MVP: Frontend interview UI + feedback loop  
+3. Career plan builder tying interview results → plans  
+4. Ecosystem APIs (WDB, Alt-Ed)  
+5. Mentor marketplace  
+6. Intelligence layer enhancements  
+7. Mobile/White-label scaling
+
+# Risks and Mitigations  
+| Risk | Mitigation |
+|------|------------|
+| PII leakage in training data | Strip PII, use anonymization pipeline |
+| Model bias in archetyping | Bias detection checks + human review |
+| Latency >800 ms in interviews | Edge deployments, WebRTC tuning |
+| Emotion inference fallback | Provide text-only feedback when Hume fails |
+| Concurrency (>10 K users) | Horizontal scaling with serverless & CDN |
+| RBAC violations | Strict role-based permissions (user, mentor, admin, WDB, enterprise) |
+
+# Appendix  
+## KPIs  
+- 75 % interview completion rate  
+- 60 % plan activation after 7 days  
+- 30 % WDB connection rate  
+- 10 K concurrent users supported  
+- <200 ms API p95 response time
+
+## Environment Variables  
+```env
+NEXT_PUBLIC_HUME_CONFIG_ID=your-config-id
+HUME_API_KEY=your-secret
+```
+
+## Integration Notes  
+Built for:
+- Cursor AI TaskMaster
+- Claude Code project automation
+- Reusable DrizzleORM schemas
+- Serverless Vercel deployment
+</PRD> 

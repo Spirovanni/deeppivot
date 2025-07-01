@@ -11,6 +11,7 @@
     "docs:structure": "tree -I 'node_modules|.git|.next|dist|build|.taskmaster' -a -L 4 > STRUCTURE.md"
   },
   "dependencies": {
+    "@anthropic-ai/claude-code": "^1.0.38",
     "@humeai/voice-react": "^0.1.15",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toggle": "^1.1.9",

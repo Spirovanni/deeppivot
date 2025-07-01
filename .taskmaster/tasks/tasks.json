@@ -5326,7 +5326,35 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design Layout Component Architecture",
+          "description": "Create the architectural design for the responsive layout system including component hierarchy, state management, and prop interfaces",
+          "details": "Design the structure for AppLayout component that includes: Header component with user info and actions, Sidebar component with navigation items and collapsible state, MainContent wrapper with proper spacing and max-width constraints, MobileNav component for hamburger menu. Define TypeScript interfaces for layout props and state. Priority: HIGH - foundational architecture needed.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 81
+        },
+        {
+          "id": 2,
+          "title": "Implement Responsive Sidebar Navigation",
+          "description": "Build the sidebar component with collapsible functionality and responsive behavior for different screen sizes",
+          "details": "Create Sidebar component with: navigation menu items with icons and labels, active route highlighting, collapse/expand toggle button, smooth transition animations, responsive breakpoints (hidden on mobile, mini on tablet, full on desktop). Use Tailwind's responsive utilities and CSS transitions. Priority: HIGH - core navigation functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 81
+        },
+        {
+          "id": 3,
+          "title": "Create Mobile Navigation Drawer",
+          "description": "Implement a mobile-specific navigation drawer with hamburger menu toggle and overlay",
+          "details": "Build MobileNav component using Shadcn Sheet/Drawer: hamburger menu button in header, slide-out drawer from left, backdrop overlay with click-to-close, same navigation items as desktop sidebar, close button inside drawer, swipe gestures support if possible. Ensure smooth animations and proper z-index layering. Priority: HIGH - essential for mobile UX.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 81
+        }
+      ]
     },
     {
       "id": 82,
@@ -5339,7 +5367,35 @@
         8
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Password Reset Token Generation",
+          "description": "Implement secure token generation and storage for password reset requests",
+          "details": "Build token generation service that: creates cryptographically secure random tokens, stores tokens in database with expiration (1 hour), associates token with user email, prevents multiple active tokens per user, includes rate limiting to prevent abuse. Use crypto.randomBytes for token generation. Priority: HIGH - security critical component.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 82
+        },
+        {
+          "id": 2,
+          "title": "Build Password Reset Request Form",
+          "description": "Create the forgot password form UI with email input and validation",
+          "details": "Implement forgot password page at /auth/forgot-password with: email input field with validation, loading state during submission, success message after email sent, error handling for invalid emails, link back to login page. Use react-hook-form and zod for validation. Priority: HIGH - user-facing feature.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 82
+        },
+        {
+          "id": 3,
+          "title": "Implement Password Reset Email Template",
+          "description": "Create email template for password reset with secure link and clear instructions",
+          "details": "Design React Email template with: professional branding, clear reset instructions, secure reset link with token, expiration time notice (1 hour), warning about unsolicited requests, support contact information. Include both HTML and plain text versions. Priority: HIGH - critical for user experience.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 82
+        }
+      ]
     },
     {
       "id": 83,
@@ -5352,7 +5408,26 @@
         8
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Configure Google OAuth Application",
+          "description": "Set up Google Cloud Console OAuth 2.0 credentials and configure authorized domains",
+          "details": "In Google Cloud Console: create new OAuth 2.0 client ID, configure authorized JavaScript origins (localhost for dev, production domain), set authorized redirect URIs for Better Auth callback, obtain client ID and client secret, configure OAuth consent screen with app info. Store credentials in environment variables. Priority: HIGH - prerequisite for integration.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 83
+        },
+        {
+          "id": 2,
+          "title": "Implement Google Sign-In Button UI",
+          "description": "Add Google sign-in button to login and registration pages with proper styling and branding",
+          "details": "Create GoogleSignInButton component: use official Google branding guidelines, implement both light and dark mode variants, add loading state during authentication, position prominently on auth pages, include 'Continue with Google' text. Ensure button is accessible and follows Google's design requirements. Priority: HIGH - user-facing authentication option.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 83
+        }
+      ]
     },
     {
       "id": 84,
@@ -5365,7 +5440,17 @@
         6
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Profile Form with Validation",
+          "description": "Build the profile settings form with inputs for personal information and validation rules",
+          "details": "Implement profile form with: first name and last name inputs, email display (read-only), avatar upload preview, bio/description textarea, form validation with zod schema, dirty state tracking for unsaved changes warning. Use react-hook-form for form management. Priority: HIGH - core functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 84
+        }
+      ]
     },
     {
       "id": 85,
@@ -5378,7 +5463,17 @@
         84
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Client-Side Image Processing",
+          "description": "Add image validation, resizing, and compression before upload to optimize storage and performance",
+          "details": "Create image processing utilities: validate file type (jpg, png, webp only), check file size (max 5MB), resize image to max 500x500px maintaining aspect ratio, compress image to reduce file size, generate preview thumbnail. Use browser Canvas API or library like browser-image-compression. Priority: MEDIUM - improves performance and UX.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 85
+        }
+      ]
     },
     {
       "id": 86,
@@ -5391,7 +5486,17 @@
         12
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Interview List Component with Filtering",
+          "description": "Build a list component to display interview history with search and filter capabilities",
+          "details": "Implement InterviewList component with: card-based layout for each interview, display date, type, status, and score, search by company/position, filter by date range and status, sort by date/score, pagination or infinite scroll, empty state for no interviews. Priority: HIGH - main feature component.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 86
+        }
+      ]
     },
     {
       "id": 87,
@@ -5404,7 +5509,17 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Toast Notification Service",
+          "description": "Build a centralized service for triggering toast notifications from anywhere in the app",
+          "details": "Implement toast service with: showSuccess(), showError(), showWarning(), showInfo() methods, customizable duration and position, queue management for multiple toasts, dismissible toasts with close button, auto-dismiss after timeout, persist important notifications. Export as singleton for global access. Priority: HIGH - used throughout application.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 87
+        }
+      ]
     },
     {
       "id": 88,
@@ -5417,7 +5532,17 @@
         5
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Database Migration for Soft Delete Columns",
+          "description": "Add deleted_at timestamp columns to key tables requiring soft delete functionality",
+          "details": "Create migration to add deleted_at columns to: users, interviews, career_plans, goals tables. Set columns as nullable timestamps with timezone. Add indexes on deleted_at for query performance. Update Drizzle schema definitions to include new columns. Priority: HIGH - database structure change required first.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 88
+        }
+      ]
     },
     {
       "id": 89,
@@ -5430,7 +5555,17 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design and Implement 404 Page Content",
+          "description": "Create engaging 404 page design with helpful navigation options and brand consistency",
+          "details": "Design 404 page with: friendly error message, creative illustration or animation, search bar to find content, links to popular pages (home, dashboard, help), recently viewed pages if available, contact support option. Maintain brand colors and tone. Include humor if appropriate for brand voice. Priority: MEDIUM - improves user experience.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 89
+        }
+      ]
     },
     {
       "id": 90,
@@ -5443,7 +5578,17 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Error Boundary with Logging",
+          "description": "Create error boundary component that catches errors and logs them while displaying the 500 page",
+          "details": "Build ErrorBoundary component that: catches JavaScript errors in component tree, logs error details to monitoring service (Sentry), displays user-friendly error message, provides 'Try Again' button to reset state, includes 'Report Issue' link, shows error ID for support reference. Avoid exposing technical details to users. Priority: HIGH - critical for production stability.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 90
+        }
+      ]
     },
     {
       "id": 91,

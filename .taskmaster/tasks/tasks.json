@@ -6558,7 +6558,39 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Feedback Widget UI Component",
+          "description": "Build a floating feedback button and modal/drawer component that's non-intrusive but easily accessible",
+          "details": "Create FeedbackWidget component with: floating action button positioned on screen edge, slide-out drawer or modal for feedback form, fields for feedback type (bug/feature/general), message textarea with character limit (500 chars), optional screenshot attachment, user email (pre-filled if authenticated). Use Shadcn Sheet or Dialog components. Include minimize/expand functionality. Priority: HIGH - core UI component needed.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 121
+        },
+        {
+          "id": 2,
+          "title": "Implement Feedback Submission API",
+          "description": "Create API endpoint to handle feedback submissions and route them to appropriate destination",
+          "details": "Build POST /api/feedback endpoint that: validates feedback data, implements rate limiting (5 submissions per hour per user), attaches user context (browser, OS, current page URL), sends to configured destination (email, webhook, or Canny API), stores copy in database for backup. Include spam detection. Priority: HIGH - backend functionality required.",
+          "status": "pending",
+          "dependencies": [
+            "121.1"
+          ],
+          "parentTaskId": 121
+        },
+        {
+          "id": 3,
+          "title": "Integrate with Feedback Management Service",
+          "description": "Set up integration with Canny or alternative feedback management platform",
+          "details": "Configure Canny API integration or email service fallback: set up Canny board and API credentials, implement webhook for two-way sync, map feedback categories to Canny tags, include user identification for tracking, fallback to email if Canny unavailable. Store credentials in environment variables. Priority: MEDIUM - enhances feedback management.",
+          "status": "pending",
+          "dependencies": [
+            "121.2"
+          ],
+          "parentTaskId": 121
+        }
+      ]
     },
     {
       "id": 122,
@@ -6571,7 +6603,39 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Analytics Service Wrapper",
+          "description": "Build a centralized analytics service to manage all PostHog event tracking",
+          "details": "Create analytics.ts service that wraps PostHog client with: typed event definitions for all tracked actions, consistent event naming conventions, automatic user property enrichment, error handling for failed tracking, development mode logging for debugging. Export tracking methods for each key action. Priority: HIGH - foundation for all analytics.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 122
+        },
+        {
+          "id": 2,
+          "title": "Implement Interview Tracking Events",
+          "description": "Add comprehensive analytics tracking for all interview-related actions",
+          "details": "Track events: Interview Started (with interview type, agent used), Interview Completed (duration, completion status), Interview Abandoned (time spent, abandon reason), Interview Feedback Viewed, Recording Played. Include properties like interview_id, duration, completion_percentage. Priority: HIGH - critical KPI tracking.",
+          "status": "pending",
+          "dependencies": [
+            "122.1"
+          ],
+          "parentTaskId": 122
+        },
+        {
+          "id": 3,
+          "title": "Track Career Plan and Goal Events",
+          "description": "Implement analytics for career plan creation and goal management actions",
+          "details": "Track events: Career Plan Created (archetype, initial goals count), Goal Added/Completed/Deleted, Plan Progress Updated, Milestone Reached, Resource Clicked. Include properties: plan_id, goal_count, completion_rate, time_to_complete. Priority: HIGH - measures plan activation KPI.",
+          "status": "pending",
+          "dependencies": [
+            "122.1"
+          ],
+          "parentTaskId": 122
+        }
+      ]
     },
     {
       "id": 123,
@@ -6584,7 +6648,28 @@
         122
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Interview Completion Funnel",
+          "description": "Build a funnel in PostHog to track the 75% interview completion rate KPI",
+          "details": "Set up funnel visualization: Interview Started → Interview Completed. Configure breakdown by interview type, user cohort, time period. Add conversion rate calculation and trend analysis. Set up alerts if completion rate drops below 70%. Include abandonment analysis to identify drop-off points. Priority: HIGH - primary KPI measurement.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 123
+        },
+        {
+          "id": 2,
+          "title": "Configure Plan Activation Tracking",
+          "description": "Set up metrics to measure the 60% career plan activation KPI",
+          "details": "Create activation metric: Users who complete interview → Users who create career plan within 7 days. Track activation funnel steps, time to activation, and user segments. Configure cohort retention analysis for activated users. Set up weekly reports and alerts for activation rate changes. Priority: HIGH - critical business metric.",
+          "status": "pending",
+          "dependencies": [
+            "123.1"
+          ],
+          "parentTaskId": 123
+        }
+      ]
     },
     {
       "id": 124,
@@ -6597,7 +6682,28 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Audit Mobile Touch Targets",
+          "description": "Ensure all interactive elements meet minimum touch target size requirements for mobile devices",
+          "details": "Review all buttons, links, and interactive elements for 44x44px minimum touch target size (WCAG guideline). Fix elements that are too small by increasing padding or using larger hit areas. Pay special attention to close buttons, navigation items, and form controls. Test with real touch devices. Priority: HIGH - critical for mobile usability.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 124
+        },
+        {
+          "id": 2,
+          "title": "Fix Form Input Experience on Mobile",
+          "description": "Optimize all form inputs for mobile keyboards and ensure proper zoom behavior",
+          "details": "Set appropriate input types (email, tel, number) for correct mobile keyboards. Ensure font-size is at least 16px to prevent iOS zoom. Add proper autocomplete attributes. Test virtual keyboard behavior doesn't cover inputs. Fix any layout shifts when keyboard appears. Priority: HIGH - impacts user experience significantly.",
+          "status": "pending",
+          "dependencies": [
+            "124.1"
+          ],
+          "parentTaskId": 124
+        }
+      ]
     },
     {
       "id": 125,
@@ -6610,7 +6716,28 @@
         105
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set Up Load Testing Infrastructure",
+          "description": "Configure k6 or Artillery for comprehensive load testing with realistic scenarios",
+          "details": "Install and configure k6 Cloud or Artillery Pro for distributed load testing. Set up test environment pointing to production-like infrastructure. Configure test data generation for realistic user profiles. Set up monitoring integration with Axiom and Vercel Analytics. Create reusable test configurations. Priority: HIGH - required for load testing.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 125
+        },
+        {
+          "id": 2,
+          "title": "Create Load Test Scenarios for Critical User Flows",
+          "description": "Design and implement realistic load test scenarios covering key application paths",
+          "details": "Build test scenarios: User registration and login flow (20% of traffic), Interview session creation and completion (40%), Career plan creation and updates (25%), Dashboard and analytics viewing (15%). Simulate realistic think times and user behavior patterns. Include both burst traffic and sustained load patterns. Priority: HIGH - ensures comprehensive testing.",
+          "status": "pending",
+          "dependencies": [
+            "125.1"
+          ],
+          "parentTaskId": 125
+        }
+      ]
     }
   ],
   "metadata": {

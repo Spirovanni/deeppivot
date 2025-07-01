@@ -47,7 +47,7 @@ export const Nav = () => {
           <span>
             <Github className={"size-4"} />
           </span>
-          <span>Active Version</span>
+          <span>Active Version 2</span>
         </Button>
         <Button
           onClick={toggleDark}

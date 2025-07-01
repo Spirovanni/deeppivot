@@ -4972,7 +4972,40 @@
         52
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Referral Database Schema",
+          "description": "Design and implement database tables for storing mentor referrals including referral_type, target_resource, status, and tracking",
+          "details": "Create referrals table with fields: id, mentor_id, learner_id, referral_type (enum: wdb_partner, job_opening, resource, program), target_id, target_name, referral_reason, status (pending, accepted, declined), created_at, followed_up_at. Add indexes for efficient querying. Priority: HIGH - foundational for feature.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 71
+        },
+        {
+          "id": 2,
+          "title": "Build Referral Creation UI",
+          "description": "Create mentor interface for generating referrals with forms for different referral types",
+          "details": "Implement referral creation modal with: referral type selector, dynamic form fields based on type, learner selection dropdown, reason/notes textarea, WDB partner search for partner referrals, job posting link input for job referrals. Use Shadcn form components. Priority: HIGH - core user interface.",
+          "status": "pending",
+          "dependencies": [
+            "71.1"
+          ],
+          "parentTaskId": 71
+        },
+        {
+          "id": 3,
+          "title": "Implement Referral Tracking System",
+          "description": "Build tracking functionality to monitor referral status and outcomes",
+          "details": "Create tracking features: automated status updates via webhooks/API, follow-up reminders for mentors, outcome recording (hired, enrolled, etc.), success rate analytics, referral history view. Include notification system for status changes. Priority: MEDIUM - enhances feature value.",
+          "status": "pending",
+          "dependencies": [
+            "71.1",
+            "71.2"
+          ],
+          "parentTaskId": 71
+        }
+      ]
     },
     {
       "id": 72,
@@ -4985,7 +5018,28 @@
         52
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design Resource Sharing Data Model",
+          "description": "Create database schema for mentor-curated resources and sharing relationships",
+          "details": "Design tables: mentor_resources (id, mentor_id, title, url, description, resource_type, tags), resource_shares (resource_id, learner_id, shared_at, viewed_at). Support multiple resource types: links, documents, videos, courses. Add categorization and search capabilities. Priority: HIGH - foundation for feature.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 72
+        },
+        {
+          "id": 2,
+          "title": "Build Resource Management UI for Mentors",
+          "description": "Create interface for mentors to add, organize, and manage their resource library",
+          "details": "Implement resource management dashboard with: add resource form (URL, title, description, tags), resource library with grid/list views, bulk actions (delete, categorize), import from bookmarks feature, preview capability for links. Include drag-and-drop for organization. Priority: HIGH - essential UI component.",
+          "status": "pending",
+          "dependencies": [
+            "72.1"
+          ],
+          "parentTaskId": 72
+        }
+      ]
     },
     {
       "id": 73,
@@ -4999,7 +5053,28 @@
         67
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Data Aggregation APIs",
+          "description": "Build backend APIs to aggregate WDB client data for visualization",
+          "details": "Implement API endpoints that aggregate: interview completion rates by time period, archetype distribution across cohort, career plan progress metrics, skill development trends, placement success rates. Use efficient database queries with caching. Priority: HIGH - required for visualizations.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 73
+        },
+        {
+          "id": 2,
+          "title": "Implement Interactive Chart Components",
+          "description": "Build reusable chart components for displaying WDB metrics",
+          "details": "Create visualization components using Chart.js or Recharts: completion rate line chart, archetype distribution pie chart, progress funnel chart, cohort comparison bar charts, skill radar charts. Include interactivity, tooltips, and export functionality. Priority: HIGH - core UI components.",
+          "status": "pending",
+          "dependencies": [
+            "73.1"
+          ],
+          "parentTaskId": 73
+        }
+      ]
     },
     {
       "id": 74,
@@ -5012,7 +5087,28 @@
         40
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Statistical Bias Analysis Service",
+          "description": "Create service to analyze archetype distribution patterns across demographic segments",
+          "details": "Build bias detection service that: calculates archetype distribution by demographics (when ethically collected), performs chi-square tests for independence, detects significant deviations from expected distributions, generates bias reports with confidence intervals. Include configurable thresholds. Priority: HIGH - core detection logic.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 74
+        },
+        {
+          "id": 2,
+          "title": "Create Automated Flagging System",
+          "description": "Build system to automatically flag potential bias issues for review",
+          "details": "Implement flagging logic that: triggers on statistical anomalies (p-value < 0.05), flags underrepresented archetype assignments, detects pattern changes over time, creates audit trail of flagged cases. Include batch processing for periodic reviews. Priority: HIGH - enables human review workflow.",
+          "status": "pending",
+          "dependencies": [
+            "74.1"
+          ],
+          "parentTaskId": 74
+        }
+      ]
     },
     {
       "id": 75,
@@ -5025,7 +5121,28 @@
         74
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design Review Queue Database Schema",
+          "description": "Create database structure for managing archetype review queue",
+          "details": "Create tables: review_queue (id, archetype_assignment_id, flag_reason, priority, status, reviewer_id, review_notes, original_archetype, override_archetype, created_at, reviewed_at). Include audit trail for compliance. Priority: HIGH - foundational for feature.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 75
+        },
+        {
+          "id": 2,
+          "title": "Build Admin Review Interface",
+          "description": "Create admin UI for reviewing and actioning flagged archetypes",
+          "details": "Implement review interface with: queue list with filters (priority, age, reason), detailed view showing input data and AI reasoning, side-by-side comparison of suggested vs potential alternatives, approve/override actions with required justification, bulk review capabilities. Priority: HIGH - core functionality.",
+          "status": "pending",
+          "dependencies": [
+            "75.1"
+          ],
+          "parentTaskId": 75
+        }
+      ]
     },
     {
       "id": 76,
@@ -5038,7 +5155,28 @@
         25
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Dynamic Codec Selection",
+          "description": "Build logic to dynamically select optimal audio/video codecs based on network conditions",
+          "details": "Create codec selection service that: detects network bandwidth and latency, prioritizes low-latency codecs (Opus for audio, H.264/VP8 for video), implements fallback hierarchy, adjusts parameters like bitrate and frame rate dynamically. Test with various network conditions. Priority: HIGH - directly impacts latency.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 76
+        },
+        {
+          "id": 2,
+          "title": "Configure TURN Server Optimization",
+          "description": "Optimize TURN server configuration for minimal relay latency",
+          "details": "Implement TURN optimization: deploy geographically distributed TURN servers, configure optimal relay protocols (prefer UDP over TCP), implement intelligent server selection based on user location, monitor relay usage and performance metrics. Priority: MEDIUM - improves connectivity in restricted networks.",
+          "status": "pending",
+          "dependencies": [
+            "76.1"
+          ],
+          "parentTaskId": 76
+        }
+      ]
     },
     {
       "id": 77,
@@ -5051,7 +5189,28 @@
         10
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define Enterprise Permission Matrix",
+          "description": "Create detailed permission matrix for enterprise_manager role",
+          "details": "Define permissions: read-only access to own organization's users, view aggregate analytics for organization, cannot access individual interview recordings, can export cohort reports, no access to other organizations' data. Document in permission configuration file. Priority: HIGH - security critical.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 77
+        },
+        {
+          "id": 2,
+          "title": "Implement Organization-Scoped Data Access",
+          "description": "Build data access layer that enforces organization boundaries",
+          "details": "Create middleware that: automatically filters queries by organization_id, prevents cross-organization data access, implements row-level security policies, adds organization context to all API calls. Include comprehensive testing for access violations. Priority: HIGH - critical for multi-tenancy.",
+          "status": "pending",
+          "dependencies": [
+            "77.1"
+          ],
+          "parentTaskId": 77
+        }
+      ]
     },
     {
       "id": 78,
@@ -5064,7 +5223,28 @@
         30
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Build Historical Feedback Retrieval Service",
+          "description": "Create service to fetch and analyze user's past interview feedback",
+          "details": "Implement service that: retrieves last 3-5 interview feedbacks for user, extracts key themes and recurring issues, identifies improvement areas and progress made, formats historical context for LLM consumption. Include caching for performance. Priority: HIGH - core functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 78
+        },
+        {
+          "id": 2,
+          "title": "Create Adaptive Feedback Prompt Template",
+          "description": "Design LLM prompt that incorporates historical context for personalized feedback",
+          "details": "Develop prompt template that: includes user's improvement trajectory, references specific past feedback points, highlights progress on previous weak areas, suggests next-level challenges based on mastery. Test with various user profiles for effectiveness. Priority: HIGH - determines feedback quality.",
+          "status": "pending",
+          "dependencies": [
+            "78.1"
+          ],
+          "parentTaskId": 78
+        }
+      ]
     },
     {
       "id": 79,
@@ -5078,7 +5258,28 @@
         55
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design Comprehensive User Data Aggregation",
+          "description": "Create service to aggregate all relevant user data for predictive analytics",
+          "details": "Build aggregation service that combines: archetype classification, demonstrated skills from interviews, career plan goals and progress, interview performance trends, learning velocity metrics. Structure data for optimal LLM analysis. Priority: HIGH - foundation for predictions.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 79
+        },
+        {
+          "id": 2,
+          "title": "Implement Predictive Insights Generation",
+          "description": "Build LLM-powered service to generate actionable career predictions",
+          "details": "Create prediction engine that generates: recommended next skills based on market trends, potential career path trajectories, timing estimates for goal achievement, personalized learning resource suggestions, job market readiness indicators. Format as structured JSON for UI consumption. Priority: HIGH - core feature value.",
+          "status": "pending",
+          "dependencies": [
+            "79.1"
+          ],
+          "parentTaskId": 79
+        }
+      ]
     },
     {
       "id": 80,
@@ -5091,7 +5292,28 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Install and Configure Storybook",
+          "description": "Set up Storybook with Next.js and TypeScript configuration",
+          "details": "Install Storybook packages, configure for Next.js 15 and React 19, set up TypeScript support, configure Tailwind CSS integration, add necessary addons (controls, actions, docs). Create initial folder structure for stories. Priority: HIGH - foundation for component documentation.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 80
+        },
+        {
+          "id": 2,
+          "title": "Create Stories for Core Shadcn Components",
+          "description": "Document all Shadcn UI components with comprehensive stories",
+          "details": "Write stories for: Button (all variants and states), Card (with different content types), Input/Form components, Modal/Dialog variations, Toast notifications. Include props documentation, usage examples, and accessibility notes. Priority: HIGH - ensures consistent component usage.",
+          "status": "pending",
+          "dependencies": [
+            "80.1"
+          ],
+          "parentTaskId": 80
+        }
+      ]
     },
     {
       "id": 81,

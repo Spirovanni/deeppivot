@@ -2934,7 +2934,37 @@
         40
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Archetype Display Component",
+          "description": "Build a React component to display archetype information with proper structure and styling",
+          "details": "Create a reusable component that displays archetype name, description, icon/badge, and key behavioral traits using Shadcn Card components. Include proper TypeScript interfaces. Priority: high - core UI component needed.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 41
+        },
+        {
+          "id": 2,
+          "title": "Create API Route for Archetype Data",
+          "description": "Build API endpoint to fetch user archetype information from the database",
+          "details": "Implement /api/users/[id]/archetype endpoint that joins user_profiles with archetypes table and returns formatted data. Include authentication checks. Priority: high - required for frontend data fetching.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 41
+        },
+        {
+          "id": 3,
+          "title": "Implement React Query Hook for Archetype",
+          "description": "Create a custom useArchetype hook using React Query for data fetching",
+          "details": "Build useArchetype hook that fetches archetype data with proper caching, error handling, and loading states. Include TypeScript types for response data. Priority: high - essential for data management.",
+          "status": "pending",
+          "dependencies": [
+            "41.2"
+          ],
+          "parentTaskId": 41
+        }
+      ]
     },
     {
       "id": 42,
@@ -2948,7 +2978,17 @@
         40
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Define Career Skills Schema",
+          "description": "Create database table and schema for storing career skills mappings",
+          "details": "Design and implement a career_skills table with skill categories, proficiency levels, and relationships to interviews. Include predefined skill taxonomy. Priority: high - foundational for skill mapping.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 42
+        }
+      ]
     },
     {
       "id": 43,
@@ -2962,7 +3002,97 @@
         13
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set up @dnd-kit/core library and dependencies",
+          "description": "Install and configure @dnd-kit/core along with required dependencies for drag-and-drop functionality",
+          "dependencies": [],
+          "details": "Install @dnd-kit/core, @dnd-kit/sortable, and @dnd-kit/utilities. Create a basic DndContext provider wrapper component. Set up initial configuration for drag sensors and collision detection. Priority: High",
+          "status": "pending",
+          "testStrategy": "Verify library imports work correctly and DndContext renders without errors"
+        },
+        {
+          "id": 2,
+          "title": "Create timeline component structure and layout",
+          "description": "Build the base timeline component with proper structure for displaying career milestones chronologically",
+          "dependencies": [
+            1
+          ],
+          "details": "Create Timeline.tsx component with horizontal or vertical layout options. Implement timeline track, time markers, and container for milestone items. Use CSS Grid or Flexbox for responsive layout. Include props for timeline duration and scale. Priority: High",
+          "status": "pending",
+          "testStrategy": "Test timeline renders correctly with mock data and responds to different viewport sizes"
+        },
+        {
+          "id": 3,
+          "title": "Implement draggable milestone and goal components",
+          "description": "Create individual milestone/goal components that can be dragged and positioned on the timeline",
+          "dependencies": [
+            2
+          ],
+          "details": "Build Milestone.tsx and Goal.tsx components using useSortable hook from @dnd-kit. Include visual representations (cards/badges), title, date, and description fields. Implement drag handles and make components focusable. Priority: High",
+          "status": "pending",
+          "testStrategy": "Verify components can be picked up, dragged, and maintain their data during drag operations"
+        },
+        {
+          "id": 4,
+          "title": "Add CRUD functionality for milestones and goals",
+          "description": "Implement features to add new items, edit existing ones, and delete items from the timeline",
+          "dependencies": [
+            3
+          ],
+          "details": "Create AddItemButton component with modal/inline form for new items. Implement edit mode with inline editing or modal. Add delete confirmation dialog. Include form validation for required fields. Priority: High",
+          "status": "pending",
+          "testStrategy": "Test all CRUD operations work correctly and data persists after operations"
+        },
+        {
+          "id": 5,
+          "title": "Implement responsive design for mobile and desktop",
+          "description": "Ensure the timeline UI works seamlessly across different screen sizes and devices",
+          "dependencies": [
+            3,
+            4
+          ],
+          "details": "Create responsive breakpoints for mobile, tablet, and desktop views. Implement horizontal scrolling for mobile timeline. Adjust milestone card sizes and spacing. Consider vertical timeline layout for mobile. Priority: Medium",
+          "status": "pending",
+          "testStrategy": "Test on various device sizes and orientations, verify touch interactions work on mobile"
+        },
+        {
+          "id": 6,
+          "title": "Add accessibility features and keyboard navigation",
+          "description": "Implement comprehensive accessibility support for screen readers and keyboard-only users",
+          "dependencies": [
+            3,
+            4
+          ],
+          "details": "Add ARIA labels and roles for timeline elements. Implement keyboard navigation (arrow keys, tab, enter, escape). Include focus indicators and announcements for drag operations. Ensure proper contrast ratios. Priority: High",
+          "status": "pending",
+          "testStrategy": "Test with screen readers, verify all functionality is accessible via keyboard only"
+        },
+        {
+          "id": 7,
+          "title": "Create visual feedback system for drag operations",
+          "description": "Implement visual cues and animations to enhance the drag-and-drop user experience",
+          "dependencies": [
+            3
+          ],
+          "details": "Add drag preview/ghost element during dragging. Implement drop zone indicators and hover states. Create smooth animations for reordering. Add visual feedback for valid/invalid drop targets. Include haptic feedback for mobile. Priority: Medium",
+          "status": "pending",
+          "testStrategy": "Verify all visual feedback appears correctly during drag operations and animations are smooth"
+        },
+        {
+          "id": 8,
+          "title": "Implement state management for timeline data",
+          "description": "Set up robust state management to handle timeline data, changes, and synchronization",
+          "dependencies": [
+            4,
+            7
+          ],
+          "details": "Create Redux slices or Context API for timeline state. Implement actions for reordering, adding, updating, and deleting items. Add optimistic updates and error handling. Include undo/redo functionality. Set up data persistence with backend API. Priority: High",
+          "status": "pending",
+          "testStrategy": "Test state updates correctly for all operations, verify data syncs with backend, test undo/redo functionality"
+        }
+      ]
     },
     {
       "id": 44,
@@ -2977,7 +3107,90 @@
         43
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set up Career Plan API route structure",
+          "description": "Create the base API route structure for career plans at /api/plans with proper file organization and routing setup",
+          "dependencies": [],
+          "details": "Create route handlers in the app/api/plans directory following Next.js App Router conventions. Set up route.ts files for handling HTTP methods. Configure base response formats and status codes. Priority: High",
+          "status": "pending",
+          "testStrategy": "Verify route accessibility with basic GET requests and ensure proper 404 handling for undefined routes"
+        },
+        {
+          "id": 2,
+          "title": "Implement authentication and authorization middleware",
+          "description": "Create middleware to verify user authentication and ensure users can only access their own career plans",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement session validation using NextAuth or similar. Create helper functions to extract user ID from session. Add authorization checks to verify plan ownership. Return 401 for unauthenticated requests and 403 for unauthorized access. Priority: High",
+          "status": "pending",
+          "testStrategy": "Test with valid/invalid tokens, verify access control by attempting to access other users' plans"
+        },
+        {
+          "id": 3,
+          "title": "Implement Create Career Plan endpoint",
+          "description": "Build POST /api/plans endpoint to create new career plans with associated goals",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Handle POST requests to create career plans. Use Drizzle ORM to insert into career_plans table. Support creating initial goals in the same transaction. Return created plan with ID and timestamps. Handle database constraints and unique violations. Priority: High",
+          "status": "pending",
+          "testStrategy": "Test plan creation with valid/invalid data, verify goal associations, check transaction rollback on errors"
+        },
+        {
+          "id": 4,
+          "title": "Implement Read endpoints for career plans",
+          "description": "Build GET endpoints for fetching single plan by ID and listing all user's plans",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Create GET /api/plans for listing user's plans with pagination support. Implement GET /api/plans/[id] for fetching single plan with associated goals. Use Drizzle ORM joins to include related data. Add query parameters for filtering and sorting. Priority: High",
+          "status": "pending",
+          "testStrategy": "Test pagination, filtering, and sorting. Verify proper data inclusion and access control"
+        },
+        {
+          "id": 5,
+          "title": "Implement Update Career Plan endpoint",
+          "description": "Build PUT/PATCH /api/plans/[id] endpoint to update existing career plans",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Handle PUT/PATCH requests for partial or full plan updates. Update career_plans table using Drizzle ORM. Support updating associated goals. Maintain data integrity and handle concurrent updates. Return updated plan data. Priority: Medium",
+          "status": "pending",
+          "testStrategy": "Test partial and full updates, verify goal updates, check optimistic locking if implemented"
+        },
+        {
+          "id": 6,
+          "title": "Implement Delete Career Plan endpoint",
+          "description": "Build DELETE /api/plans/[id] endpoint to remove career plans and handle cascading deletes",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Handle DELETE requests to remove career plans. Implement soft delete or hard delete based on requirements. Handle cascading deletion of associated goals. Return appropriate success response. Consider archiving instead of deletion. Priority: Medium",
+          "status": "pending",
+          "testStrategy": "Test deletion with and without associated goals, verify cascade behavior, check soft delete functionality if implemented"
+        },
+        {
+          "id": 7,
+          "title": "Add input validation and comprehensive error handling",
+          "description": "Implement request validation schemas and standardized error responses across all endpoints",
+          "dependencies": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "details": "Use Zod or similar for request body validation. Create consistent error response format with appropriate HTTP status codes. Handle database errors, validation errors, and edge cases. Add request logging and monitoring hooks. Priority: High",
+          "status": "pending",
+          "testStrategy": "Test with malformed requests, boundary values, SQL injection attempts, and verify consistent error formats"
+        }
+      ]
     },
     {
       "id": 45,
@@ -2991,7 +3204,74 @@
         44
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set up React Query hooks for Career Plan API integration",
+          "description": "Create custom React Query hooks to handle all Career Plan CRUD operations including fetching, creating, updating, and deleting career plan items",
+          "dependencies": [],
+          "details": "Create a dedicated hooks file (useCareerPlan.ts) with: useGetCareerPlan() for fetching user's career plan, useCreateCareerPlanItem(), useUpdateCareerPlanItem(), useDeleteCareerPlanItem(), and useReorderCareerPlanItems(). Configure query keys following a consistent pattern like ['careerPlan', userId]. Set staleTime to 5 minutes and cacheTime to 10 minutes. Priority: HIGH",
+          "status": "pending",
+          "testStrategy": "Write unit tests using React Testing Library and MSW to mock API responses. Test hook behavior for success, error, and loading states. Verify proper query key invalidation after mutations"
+        },
+        {
+          "id": 2,
+          "title": "Implement optimistic updates for Career Plan mutations",
+          "description": "Configure React Query mutations to immediately update the UI before server confirmation, providing instant feedback for create, update, delete, and reorder operations",
+          "dependencies": [
+            1
+          ],
+          "details": "In each mutation hook, implement onMutate callbacks to: 1) Cancel outgoing queries, 2) Snapshot previous data, 3) Optimistically update cache. Use onError to rollback on failure and onSettled to invalidate/refetch. For reordering, update item positions locally before API call. Store rollback data in mutation context. Priority: HIGH",
+          "status": "pending",
+          "testStrategy": "Test optimistic update flow by simulating user actions and verifying immediate UI updates. Test rollback behavior when API calls fail. Verify cache consistency after successful mutations"
+        },
+        {
+          "id": 3,
+          "title": "Add comprehensive error handling and retry logic",
+          "description": "Implement robust error handling for all API operations with user-friendly error messages and configurable retry strategies",
+          "dependencies": [
+            1
+          ],
+          "details": "Configure React Query's retry logic: 3 retries with exponential backoff for GET requests, 1 retry for mutations. Create error boundary component for Career Plan section. Implement toast notifications for mutation errors. Handle specific error codes (401, 403, 404, 500) with appropriate messages. Add network error detection and offline handling. Priority: HIGH",
+          "status": "pending",
+          "testStrategy": "Test retry behavior by simulating intermittent network failures. Verify error messages display correctly for different error scenarios. Test offline behavior and recovery when connection restored"
+        },
+        {
+          "id": 4,
+          "title": "Implement real-time synchronization for Career Plan updates",
+          "description": "Set up WebSocket connection or polling mechanism to sync Career Plan changes across multiple sessions and handle concurrent updates",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Implement WebSocket listener for career plan updates using Socket.io or similar. On receiving updates, invalidate relevant queries. Handle conflict resolution for concurrent edits using timestamps or version numbers. Add visual indicators when remote changes occur. Implement connection status indicator. Fall back to polling every 30 seconds if WebSocket fails. Priority: MEDIUM",
+          "status": "pending",
+          "testStrategy": "Test multi-tab synchronization by making changes in one tab and verifying updates in another. Test conflict resolution with simultaneous edits. Verify graceful degradation when WebSocket unavailable"
+        },
+        {
+          "id": 5,
+          "title": "Design and implement intelligent caching strategy",
+          "description": "Create a sophisticated caching strategy that balances performance with data freshness, including prefetching and cache warming",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement cache warming on app initialization for active user's career plan. Use React Query's prefetchQuery for related data (skills, goals). Configure selective cache invalidation - only invalidate affected items rather than entire plan. Implement cache persistence using localStorage for offline support. Add cache versioning to handle schema changes. Set up background refetching for stale data. Priority: MEDIUM",
+          "status": "pending",
+          "testStrategy": "Measure cache hit rates and loading times. Test cache persistence across sessions. Verify selective invalidation doesn't cause data inconsistencies. Test migration when cache schema changes"
+        },
+        {
+          "id": 6,
+          "title": "Create polished loading and error state components",
+          "description": "Design and implement reusable loading skeletons and error state components specifically for the Career Plan UI that provide excellent user experience",
+          "dependencies": [
+            1,
+            3
+          ],
+          "details": "Create CareerPlanSkeleton component matching exact layout of career plan items. Implement progressive loading - show cached data immediately while refetching. Design empty state component for new users. Create inline loading states for individual item operations. Add loading progress indicators for bulk operations. Implement graceful degradation for partial data loading. Priority: LOW",
+          "status": "pending",
+          "testStrategy": "Visual regression testing for all loading states. Test perceived performance with throttled network. Verify accessibility of loading and error states. Test transition animations between states"
+        }
+      ]
     },
     {
       "id": 46,
@@ -3004,7 +3284,60 @@
         44
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Public Share Link Generation API",
+          "description": "Create an API endpoint that generates unique, shareable public links for career plans with configurable expiration and access settings",
+          "dependencies": [],
+          "details": "Priority: HIGH. Create POST /api/career-plans/:id/share endpoint that generates a unique share token (UUID), stores it in database with expiration timestamp and access permissions. Return shareable URL format: /shared/career-plan/:shareToken. Include fields for expiration date, view count limit, and password protection options.",
+          "status": "pending",
+          "testStrategy": "Test token generation uniqueness, URL format validation, expiration logic, and database storage. Verify that multiple share links can be created for the same plan."
+        },
+        {
+          "id": 2,
+          "title": "Build Access Control System for Shared Plans",
+          "description": "Implement authentication and authorization logic to control access to shared career plans based on share tokens and permissions",
+          "dependencies": [
+            1
+          ],
+          "details": "Priority: HIGH. Create middleware to validate share tokens, check expiration dates, increment view counts, and handle password verification if enabled. Implement GET /api/shared/career-plan/:shareToken endpoint that returns read-only plan data. Include rate limiting to prevent abuse.",
+          "status": "pending",
+          "testStrategy": "Test expired token rejection, view count limits, password protection, rate limiting, and ensure original plan data remains unmodifiable through shared links."
+        },
+        {
+          "id": 3,
+          "title": "Create Print-Specific CSS Stylesheet",
+          "description": "Design and implement a print-optimized CSS stylesheet that formats career plans for clean, professional printing",
+          "dependencies": [],
+          "details": "Priority: MEDIUM. Create print.css with @media print rules to hide navigation, buttons, and interactive elements. Format content for A4/Letter paper with proper margins, page breaks between sections, and optimized font sizes. Include header/footer with plan title and generation date. Ensure charts and progress indicators are print-friendly.",
+          "status": "pending",
+          "testStrategy": "Test print preview in multiple browsers, verify page breaks work correctly, ensure all content is visible and properly formatted on standard paper sizes."
+        },
+        {
+          "id": 4,
+          "title": "Implement PDF Generation Service",
+          "description": "Create a service that converts career plans into downloadable PDF documents with professional formatting",
+          "dependencies": [
+            3
+          ],
+          "details": "Priority: MEDIUM. Implement POST /api/career-plans/:id/export/pdf endpoint using a library like Puppeteer or jsPDF. Reuse print CSS for consistent formatting. Include metadata (title, creation date, owner name), table of contents for multi-page plans, and embedded fonts for consistent rendering.",
+          "status": "pending",
+          "testStrategy": "Verify PDF generation across different plan sizes, test file download functionality, validate PDF metadata, and ensure consistent rendering across PDF viewers."
+        },
+        {
+          "id": 5,
+          "title": "Add Social Media Sharing Integration",
+          "description": "Implement social media sharing functionality with Open Graph meta tags and platform-specific share buttons",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Priority: LOW. Create dynamic Open Graph meta tags for shared plan pages including title, description, and preview image. Add share buttons for LinkedIn, Twitter/X, and Facebook using their respective sharing APIs. Generate a summary card image showing key plan highlights. Include UTM parameters for tracking share sources.",
+          "status": "pending",
+          "testStrategy": "Test meta tag generation for different plans, verify share preview appearance on each platform using debugging tools, validate UTM parameter tracking, and ensure shared links maintain proper access control."
+        }
+      ]
     },
     {
       "id": 47,
@@ -3018,7 +3351,96 @@
         15
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Install and Configure Axiom SDK for Logging",
+          "description": "Set up Axiom for centralized logging in the Next.js application with proper environment configuration",
+          "dependencies": [],
+          "details": "Install @axiomhq/axiom-node and @axiomhq/winston packages. Create axiom client configuration in lib/axiom.ts. Set up AXIOM_TOKEN and AXIOM_DATASET environment variables. Configure Winston transport for structured logging. Priority: High",
+          "status": "pending",
+          "testStrategy": "Create test logs at different levels (info, warn, error) and verify they appear in Axiom dashboard with correct metadata"
+        },
+        {
+          "id": 2,
+          "title": "Integrate Sentry for Error Tracking",
+          "description": "Configure Sentry SDK for automatic error capture and performance monitoring in both client and server environments",
+          "dependencies": [],
+          "details": "Install @sentry/nextjs package. Create sentry.client.config.ts and sentry.server.config.ts files. Configure SENTRY_DSN, SENTRY_ORG, and SENTRY_PROJECT environment variables. Set up source maps upload in next.config.js. Configure error sampling rates. Priority: High",
+          "status": "pending",
+          "testStrategy": "Trigger intentional errors in both API routes and React components, verify they appear in Sentry dashboard with proper stack traces"
+        },
+        {
+          "id": 3,
+          "title": "Set Up PostHog Analytics Integration",
+          "description": "Implement PostHog for product analytics and user behavior tracking across the application",
+          "dependencies": [],
+          "details": "Install posthog-js package. Create PostHog provider component in components/providers/PostHogProvider.tsx. Add NEXT_PUBLIC_POSTHOG_KEY and NEXT_PUBLIC_POSTHOG_HOST environment variables. Wrap app with provider in _app.tsx. Configure feature flags and session recording settings. Priority: Medium",
+          "status": "pending",
+          "testStrategy": "Track custom events and page views, verify they appear in PostHog dashboard with correct user identification"
+        },
+        {
+          "id": 4,
+          "title": "Create Custom Logging Middleware",
+          "description": "Develop middleware for consistent request/response logging and correlation IDs across all API routes",
+          "dependencies": [
+            1
+          ],
+          "details": "Create middleware.ts in root directory. Implement request ID generation using uuid. Log request method, path, headers, response time, and status codes. Integrate with Axiom client for structured logging. Add correlation ID to response headers. Priority: High",
+          "status": "pending",
+          "testStrategy": "Make various API requests and verify complete request lifecycle is logged with correlation IDs in Axiom"
+        },
+        {
+          "id": 5,
+          "title": "Implement Error Boundaries for React Components",
+          "description": "Create error boundary components to gracefully handle React errors and report them to monitoring services",
+          "dependencies": [
+            2
+          ],
+          "details": "Create ErrorBoundary component in components/ErrorBoundary.tsx. Implement componentDidCatch lifecycle method. Send errors to Sentry with component stack. Create fallback UI for error states. Wrap critical app sections with error boundaries. Priority: High",
+          "status": "pending",
+          "testStrategy": "Throw errors in child components and verify error boundary catches them, displays fallback UI, and reports to Sentry"
+        },
+        {
+          "id": 6,
+          "title": "Configure Performance Monitoring",
+          "description": "Set up performance tracking for Core Web Vitals, API response times, and database query performance",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Enable Sentry performance monitoring with tracing. Configure web-vitals reporting to both Axiom and Sentry. Add custom performance marks for critical user journeys. Set up database query timing logs. Configure sampling rates for performance data. Priority: Medium",
+          "status": "pending",
+          "testStrategy": "Load pages and trigger API calls while monitoring performance metrics in both Sentry and Axiom dashboards"
+        },
+        {
+          "id": 7,
+          "title": "Set Up Alert Rules and Notifications",
+          "description": "Configure alerting rules across all monitoring services for critical errors and performance degradation",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Create Sentry alert rules for error rate spikes and new issues. Configure Axiom alerts for high error log volumes and slow API responses. Set up PostHog alerts for feature adoption drops. Configure notification channels (email, Slack). Define escalation policies. Priority: Medium",
+          "status": "pending",
+          "testStrategy": "Trigger conditions that should fire alerts and verify notifications are received through configured channels"
+        },
+        {
+          "id": 8,
+          "title": "Create Monitoring Dashboards",
+          "description": "Build comprehensive dashboards in each service to visualize system health, user behavior, and error trends",
+          "dependencies": [
+            1,
+            2,
+            3,
+            6
+          ],
+          "details": "Create Axiom dashboard with log volume charts, error rate graphs, and API performance metrics. Build Sentry dashboard for error trends and release health. Design PostHog dashboard for user funnels, feature usage, and retention metrics. Document dashboard URLs and key metrics to monitor. Priority: Low",
+          "status": "pending",
+          "testStrategy": "Generate various types of data and verify all dashboard widgets update correctly with real-time information"
+        }
+      ]
     },
     {
       "id": 48,
@@ -3032,7 +3454,60 @@
         7
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Assess Current Database Usage Patterns",
+          "description": "Analyze current database read/write patterns to identify regions with high read traffic for optimal replica placement",
+          "details": "Use Neon dashboard analytics to identify geographic distribution of database queries. Analyze peak usage times across different regions. Document read vs write query ratios to justify read replica implementation. Priority: HIGH - critical for informed replica placement decisions.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 48
+        },
+        {
+          "id": 2,
+          "title": "Enable Supabase Read Replicas",
+          "description": "Configure read replicas in strategic geographic regions through Supabase dashboard",
+          "details": "Access Supabase project settings and enable read replicas in regions identified from usage analysis (e.g., US-East, EU-West, Asia-Pacific). Configure replication lag monitoring and alerting. Set up proper connection strings for each region. Priority: HIGH - core implementation task.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 48
+        },
+        {
+          "id": 3,
+          "title": "Implement Geo-Aware Database Routing",
+          "description": "Create a service to automatically route database read queries to the nearest replica based on user location",
+          "details": "Develop a database connection manager that detects user region (via Edge functions or IP geolocation) and routes read queries to the closest replica. Implement fallback logic to primary database if replica is unavailable. Add connection pooling per region. Priority: HIGH - essential for utilizing replicas effectively.",
+          "status": "pending",
+          "dependencies": [
+            2
+          ],
+          "parentTaskId": 48
+        },
+        {
+          "id": 4,
+          "title": "Configure Salesforce Regional Endpoints",
+          "description": "Set up connections to Salesforce regional instances for optimal API performance",
+          "details": "Identify Salesforce instance locations (NA, EU, APAC) and configure API clients to use region-specific endpoints. Update environment variables to support multiple Salesforce URLs. Implement logic to select appropriate endpoint based on WDB partner location. Priority: MEDIUM - important for WDB partner experience.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 48
+        },
+        {
+          "id": 5,
+          "title": "Implement Global Performance Monitoring",
+          "description": "Set up monitoring to track replica performance and replication lag across all regions",
+          "details": "Configure Axiom dashboards to monitor replica latency, replication lag, and query distribution across regions. Set up alerts for high replication lag (>5 seconds) or replica failures. Create performance benchmarks for each region. Priority: MEDIUM - critical for maintaining service quality.",
+          "status": "pending",
+          "dependencies": [
+            2,
+            3
+          ],
+          "parentTaskId": 48
+        }
+      ]
     },
     {
       "id": 49,
@@ -3045,7 +3520,50 @@
         15
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set Up Cloudflare Account and Domain",
+          "description": "Create Cloudflare account and configure domain DNS settings for the application",
+          "details": "Create or access Cloudflare account, add the application domain, update DNS nameservers to point to Cloudflare. Configure DNS records including A, AAAA, and CNAME records for proper routing. Enable Universal SSL certificate. Priority: HIGH - foundational setup required.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 49
+        },
+        {
+          "id": 2,
+          "title": "Configure Cloudflare Page Rules",
+          "description": "Set up page rules to optimize caching for different content types and routes",
+          "details": "Create page rules for static assets (JS, CSS, images) with long cache TTL (1 month). Configure shorter TTL for HTML pages (1 hour). Set up cache bypass rules for API routes and authenticated pages. Enable Always Online feature for static content. Priority: HIGH - essential for CDN performance.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 49
+        },
+        {
+          "id": 3,
+          "title": "Enable Cloudflare Performance Features",
+          "description": "Activate Cloudflare optimization features for improved site performance",
+          "details": "Enable Auto Minify for HTML, CSS, and JavaScript. Activate Brotli compression. Enable HTTP/3 with QUIC. Configure Argo Smart Routing for optimal network paths. Enable Cloudflare Images for automatic image optimization. Set up Early Hints for faster page loads. Priority: MEDIUM - significant performance improvements.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 49
+        },
+        {
+          "id": 4,
+          "title": "Set Up Cloudflare Workers for Edge Computing",
+          "description": "Deploy edge functions to handle geo-routing and performance optimizations at the CDN edge",
+          "details": "Create Cloudflare Workers to implement edge-side logic for geographic routing, A/B testing, and request modifications. Deploy workers for handling region-specific redirects and custom cache headers. Configure Workers KV for edge-side data storage. Priority: MEDIUM - enhances global performance and flexibility.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 49
+        }
+      ]
     },
     {
       "id": 50,
@@ -3058,7 +3576,63 @@
         10
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Research and Select PII Detection Library",
+          "description": "Evaluate and choose the most suitable PII detection library or approach for the application's needs",
+          "details": "Research libraries like pii-filter, presidio, or custom regex solutions. Compare accuracy, performance, language support, and PII types covered (names, emails, SSN, phone numbers, addresses). Create proof-of-concept tests with sample data. Document pros/cons of each option. Priority: HIGH - foundational decision for implementation.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 50
+        },
+        {
+          "id": 2,
+          "title": "Create PII Detection Service",
+          "description": "Implement a centralized service for scanning and anonymizing PII in text content",
+          "details": "Create lib/services/pii-anonymizer.ts with methods to detect and replace PII. Implement configurable anonymization strategies (redaction, hashing, tokenization). Support batch processing for performance. Include whitelist functionality for approved terms. Add TypeScript interfaces for PII detection results. Priority: HIGH - core service implementation.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 50
+        },
+        {
+          "id": 3,
+          "title": "Integrate PII Filtering into LLM Service",
+          "description": "Add PII detection and removal as a preprocessing step before sending data to external LLM APIs",
+          "details": "Modify lib/llm.ts to automatically scan and anonymize prompts before API calls. Create reversible tokenization for maintaining context while protecting PII. Implement logging of anonymized content for audit trails. Add configuration to bypass filtering for specific use cases if needed. Priority: HIGH - critical integration point.",
+          "status": "pending",
+          "dependencies": [
+            2
+          ],
+          "parentTaskId": 50
+        },
+        {
+          "id": 4,
+          "title": "Implement PII Detection for Interview Transcripts",
+          "description": "Apply PII filtering to real-time and batch interview transcripts before processing",
+          "details": "Integrate PII service into Deepgram transcription pipeline. Scan transcripts in real-time during interviews and batch processing. Store both original (for user access) and anonymized versions (for AI processing). Implement streaming PII detection for live transcripts. Priority: HIGH - protects sensitive interview data.",
+          "status": "pending",
+          "dependencies": [
+            2
+          ],
+          "parentTaskId": 50
+        },
+        {
+          "id": 5,
+          "title": "Create Comprehensive PII Detection Test Suite",
+          "description": "Develop extensive tests to ensure PII detection accuracy and prevent data leakage",
+          "details": "Create unit tests with diverse PII patterns including edge cases (international formats, contextual names, partial information). Test false positive/negative rates. Implement integration tests for all AI service integrations. Add performance benchmarks for large text processing. Create compliance validation tests. Priority: HIGH - ensures security compliance.",
+          "status": "pending",
+          "dependencies": [
+            2,
+            3,
+            4
+          ],
+          "parentTaskId": 50
+        }
+      ]
     },
     {
       "id": 51,

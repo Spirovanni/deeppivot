@@ -5601,7 +5601,44 @@
         16
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Install and Configure Playwright",
+          "description": "Set up Playwright with Next.js-specific configuration and install necessary dependencies",
+          "details": "Install @playwright/test and configure playwright.config.ts with Next.js settings. Set up base URL for local and CI environments. Configure test directories and timeout settings. Install browser dependencies for Chrome, Firefox, and Safari. Priority: HIGH - foundational setup required.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 91
+        },
+        {
+          "id": 2,
+          "title": "Create Page Object Models",
+          "description": "Build page object models for key application pages to enable maintainable test code",
+          "details": "Create page objects for: LoginPage, DashboardPage, InterviewPage, CareerPlanPage, ProfilePage. Implement reusable methods for common actions and element locators. Use TypeScript for type safety. Priority: HIGH - essential for maintainable tests.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 91
+        },
+        {
+          "id": 3,
+          "title": "Write Authentication Flow Tests",
+          "description": "Create comprehensive E2E tests for login, logout, and registration flows",
+          "details": "Test scenarios: successful login with valid credentials, failed login with invalid credentials, user registration flow, password reset flow, session persistence, logout functionality. Include tests for social login if implemented. Priority: HIGH - critical user flow.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 91
+        },
+        {
+          "id": 4,
+          "title": "Integrate Tests into GitHub Actions",
+          "description": "Add Playwright test execution to the CI/CD pipeline with proper reporting",
+          "details": "Update GitHub Actions workflow to run Playwright tests on pull requests. Configure test artifact storage for failed test screenshots/videos. Set up test result reporting in PR comments. Configure matrix strategy for browser testing. Priority: HIGH - required for automated testing.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 91
+        }
+      ]
     },
     {
       "id": 92,
@@ -5614,7 +5651,35 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set Up Redis/Upstash KV Store",
+          "description": "Configure Redis or Upstash KV for storing rate limit counters",
+          "details": "Set up Upstash Redis instance or Vercel KV store. Configure connection credentials in environment variables. Test connection and basic operations. Create namespace strategy for different rate limit buckets. Priority: HIGH - required infrastructure.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 92
+        },
+        {
+          "id": 2,
+          "title": "Implement Rate Limiting Middleware",
+          "description": "Create reusable middleware for applying rate limits to API routes",
+          "details": "Build middleware using @upstash/ratelimit that supports multiple strategies: fixed window, sliding window, token bucket. Configure different limits for authenticated vs anonymous users. Support custom rate limit headers in responses. Priority: HIGH - core functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 92
+        },
+        {
+          "id": 3,
+          "title": "Apply Rate Limits to Critical Endpoints",
+          "description": "Identify and protect high-risk API endpoints with appropriate rate limits",
+          "details": "Apply rate limiting to: authentication endpoints (10 requests/minute), interview creation (5/hour), AI service calls (20/hour), file uploads (10/hour). Configure endpoint-specific limits based on cost and abuse potential. Priority: HIGH - security critical.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 92
+        }
+      ]
     },
     {
       "id": 93,
@@ -5627,7 +5692,26 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Configure Content Security Policy",
+          "description": "Implement comprehensive CSP headers to prevent XSS attacks",
+          "details": "Define CSP directives for: script-src, style-src, img-src, connect-src, font-src, frame-src. Whitelist necessary domains for external services (Supabase, AI APIs, analytics). Use nonce or hash for inline scripts. Test thoroughly to avoid breaking functionality. Priority: HIGH - critical security feature.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 93
+        },
+        {
+          "id": 2,
+          "title": "Add All Security Headers to next.config.js",
+          "description": "Configure all recommended security headers in Next.js configuration",
+          "details": "Add headers: X-Content-Type-Options: nosniff, X-Frame-Options: DENY, X-XSS-Protection: 1; mode=block, Referrer-Policy: strict-origin-when-cross-origin, Permissions-Policy for camera/microphone/geolocation. Set Strict-Transport-Security for HTTPS. Priority: HIGH - security best practice.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 93
+        }
+      ]
     },
     {
       "id": 94,
@@ -5640,7 +5724,26 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Legal Page Templates",
+          "description": "Build reusable page templates for terms of service and privacy policy",
+          "details": "Create LegalPage component with consistent styling, proper heading hierarchy, table of contents generation, last updated date display, print-friendly styles. Use markdown or MDX for easy content updates. Priority: MEDIUM - required for compliance.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 94
+        },
+        {
+          "id": 2,
+          "title": "Draft Initial Legal Content",
+          "description": "Create placeholder legal content covering essential points for the platform",
+          "details": "Draft basic terms covering: user accounts, acceptable use, intellectual property, limitation of liability, privacy practices, data collection and usage, third-party services, dispute resolution. Mark sections requiring legal review. Priority: HIGH - needed for launch.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 94
+        }
+      ]
     },
     {
       "id": 95,
@@ -5653,7 +5756,17 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design Footer Layout and Content Structure",
+          "description": "Create responsive footer design with organized sections for different link categories",
+          "details": "Design footer with sections: Company (About, Contact, Careers), Legal (Terms, Privacy, Cookie Policy), Resources (Blog, FAQ, Help), Social Media icons. Include copyright notice and company info. Make responsive with stacked layout on mobile. Priority: MEDIUM - improves site navigation.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 95
+        }
+      ]
     },
     {
       "id": 96,
@@ -5666,7 +5779,26 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set Up Resend Account and API Integration",
+          "description": "Create Resend account and configure API integration with proper authentication",
+          "details": "Sign up for Resend account, verify domain for sending emails, obtain API key and store in environment variables, install Resend SDK (@react-email/components), configure sender email address and reply-to settings. Priority: HIGH - required for email functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 96
+        },
+        {
+          "id": 2,
+          "title": "Create Email Template System with React Email",
+          "description": "Build reusable email templates using React Email for consistent branding",
+          "details": "Create base email template with header, footer, and branding. Build specific templates for: welcome email, password reset, interview completed, feedback ready notifications. Use React Email components for responsive design. Include unsubscribe links. Priority: HIGH - core email functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 96
+        }
+      ]
     },
     {
       "id": 97,
@@ -5680,7 +5812,17 @@
         96
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Post-Registration Email Trigger",
+          "description": "Add logic to send welcome email immediately after successful user registration",
+          "details": "Hook into the registration success event in Better Auth. Queue email send using Inngest for reliability. Include user's name and personalized getting started tips. Add error handling and retry logic. Track email send status. Priority: HIGH - improves user onboarding.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 97
+        }
+      ]
     },
     {
       "id": 98,
@@ -5693,7 +5835,26 @@
         45
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Add Goal Completion UI Controls",
+          "description": "Implement checkbox or button UI for marking goals as complete in the career plan",
+          "details": "Add checkbox component next to each goal with smooth animations. Implement strikethrough effect on completion. Add completion date display. Include undo capability within session. Show confetti or success animation on completion. Priority: HIGH - core feature functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 98
+        },
+        {
+          "id": 2,
+          "title": "Create Goal Completion API Endpoint",
+          "description": "Build API endpoint to update goal status and track completion metrics",
+          "details": "Create PATCH /api/goals/[id]/complete endpoint. Update goal status to 'completed' with completion timestamp. Calculate and update overall plan progress percentage. Trigger achievement notifications if milestones reached. Log completion for analytics. Priority: HIGH - backend support required.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 98
+        }
+      ]
     },
     {
       "id": 99,
@@ -5706,7 +5867,26 @@
         51
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Progress Calculation Service",
+          "description": "Build service to calculate career plan progress metrics from goal completion data",
+          "details": "Calculate: overall completion percentage, goals completed vs total, average time to complete goals, current streak, projected completion date. Support weighted goals if priority levels exist. Cache calculations for performance. Priority: HIGH - required for widget data.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 99
+        },
+        {
+          "id": 2,
+          "title": "Design Progress Widget UI Component",
+          "description": "Build visually appealing progress widget for the learner dashboard",
+          "details": "Create widget showing: circular or linear progress bar, completion fraction (e.g., 3/10 goals), percentage with animation, motivational message based on progress level, mini milestone indicators. Use Shadcn Card component with subtle gradient background. Priority: MEDIUM - enhances dashboard UX.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 99
+        }
+      ]
     },
     {
       "id": 100,
@@ -5719,7 +5899,26 @@
         45
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Build Resource Matching Algorithm",
+          "description": "Create algorithm to match career goals with relevant learning resources",
+          "details": "Implement matching based on: keyword extraction from goal description, skill requirements mapping, difficulty level alignment, resource type preferences. Use embeddings for semantic similarity. Score and rank resources by relevance. Priority: MEDIUM - enhances learning path.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 100
+        },
+        {
+          "id": 2,
+          "title": "Create Resource Recommendation UI",
+          "description": "Build UI component to display recommended resources for each career goal",
+          "details": "Design expandable section under each goal showing top 3-5 recommended resources. Display resource type icons (video, article, course), estimated time, cost indicator, and relevance score. Include 'View More' option and feedback buttons (helpful/not helpful). Priority: LOW - nice-to-have feature.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 100
+        }
+      ]
     },
     {
       "id": 101,

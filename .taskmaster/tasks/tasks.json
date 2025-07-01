@@ -6251,7 +6251,17 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Basic robots.txt File",
+          "description": "Create the initial robots.txt file with standard directives for web crawlers",
+          "details": "Create robots.txt in the public directory with: User-agent: * directive, Disallow rules for /api/, /dashboard/, /settings/, /admin/, /interview/ paths, Allow directive for public pages, Sitemap reference pointing to /sitemap.xml, Crawl-delay if needed for rate limiting. Priority: HIGH - essential for crawler control.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 111
+        }
+      ]
     },
     {
       "id": 112,
@@ -6264,7 +6274,28 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create JSON-LD Schema Generator Utility",
+          "description": "Build a utility function to generate structured data in JSON-LD format for different page types",
+          "details": "Create lib/seo/schemaGenerator.ts with functions to generate: Organization schema for company info, SoftwareApplication schema for the platform, WebPage schema for individual pages, Person schema for public profiles, FAQPage schema for FAQ content. Include TypeScript types for each schema. Priority: HIGH - foundation for structured data.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 112
+        },
+        {
+          "id": 2,
+          "title": "Implement Schema Injection in Page Components",
+          "description": "Add JSON-LD script tags to key pages using the schema generator utility",
+          "details": "Integrate structured data into: Landing page with Organization and SoftwareApplication schemas, FAQ page with FAQPage schema, Blog posts with Article schema, Profile pages with Person schema if public. Use next/head or metadata API to inject script tags. Test with Google's Rich Results tool. Priority: MEDIUM - improves SEO visibility.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 112
+        }
+      ]
     },
     {
       "id": 113,
@@ -6277,7 +6308,28 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Contact Form UI Component",
+          "description": "Build the contact form component with validation and proper UX",
+          "details": "Create ContactForm component with fields: name (required), email (required), subject (optional), message (required, textarea), optional phone number. Use react-hook-form with zod validation, implement character limit for message (1000 chars), add honeypot field for spam prevention. Use Shadcn form components. Priority: HIGH - core form functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 113
+        },
+        {
+          "id": 2,
+          "title": "Implement Contact Form API Endpoint",
+          "description": "Create API endpoint to handle contact form submissions and send emails",
+          "details": "Create POST /api/contact endpoint that: validates form data server-side, implements rate limiting (3 submissions per IP per hour), sends email via Resend to support address, includes user info in email body, returns success/error response. Add CAPTCHA verification if spam becomes an issue. Priority: HIGH - backend support required.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 113
+        }
+      ]
     },
     {
       "id": 114,
@@ -6290,7 +6342,28 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create FAQ Data Structure and Content",
+          "description": "Define the FAQ data structure and create initial FAQ content",
+          "details": "Create data/faq.ts with FAQ items structure: question, answer, category (general, billing, technical, etc), order/priority. Write initial FAQs covering: what the platform does, pricing, interview process, career plans, data privacy, technical requirements. Group by category for better organization. Priority: HIGH - content needed first.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 114
+        },
+        {
+          "id": 2,
+          "title": "Build FAQ Page with Accordion Component",
+          "description": "Create the FAQ page using Shadcn Accordion components for expandable Q&A sections",
+          "details": "Build /app/faq/page.tsx with: Shadcn Accordion for Q&A items, category filtering/tabs, search functionality to find questions, smooth expand/collapse animations, anchor links for direct question URLs, print-friendly styling. Include breadcrumb navigation and SEO metadata. Priority: MEDIUM - UI implementation.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 114
+        }
+      ]
     },
     {
       "id": 115,
@@ -6303,7 +6376,28 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set Up MDX Processing Pipeline",
+          "description": "Configure Next.js to process MDX files for blog posts with syntax highlighting and custom components",
+          "details": "Install and configure @next/mdx, next-mdx-remote, or contentlayer. Set up MDX processing with: syntax highlighting (shiki or prism), custom component mapping, frontmatter parsing for metadata, reading time calculation, table of contents generation. Configure for app directory. Priority: HIGH - foundational setup.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 115
+        },
+        {
+          "id": 2,
+          "title": "Create Blog Listing and Post Pages",
+          "description": "Build the blog listing page and individual post template with proper routing",
+          "details": "Create /app/blog/page.tsx for listing with: post cards showing title, excerpt, date, author, reading time, pagination or infinite scroll, category/tag filtering, search functionality. Build /app/blog/[slug]/page.tsx with: full post content rendering, author bio, related posts, social sharing buttons. Priority: HIGH - core blog functionality.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 115
+        }
+      ]
     },
     {
       "id": 116,
@@ -6316,7 +6410,28 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Cookie Consent Component",
+          "description": "Build a GDPR-compliant cookie consent banner component with customizable options",
+          "details": "Create CookieConsent component with: banner design that doesn't block content, accept all/reject all/customize buttons, cookie categories (necessary, analytics, marketing), sliding panel for detailed preferences, accessibility compliant (ARIA labels, keyboard nav). Store consent in localStorage with timestamp. Priority: HIGH - legal compliance requirement.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 116
+        },
+        {
+          "id": 2,
+          "title": "Implement Cookie Management Service",
+          "description": "Create service to manage cookie consent state and control third-party script loading",
+          "details": "Build cookieConsent.ts service that: checks and updates consent status, conditionally loads analytics scripts (PostHog, Google Analytics), respects user preferences before setting cookies, provides API for checking consent by category, handles consent revocation. Integrate with existing analytics setup. Priority: HIGH - controls data collection.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 116
+        }
+      ]
     },
     {
       "id": 117,
@@ -6329,7 +6444,28 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Configure next-intl with App Router",
+          "description": "Set up next-intl for internationalization with Next.js 13+ app router support",
+          "details": "Install and configure next-intl: set up middleware for locale detection, configure supported locales (en, es to start), implement locale routing strategy, set up translation file structure (messages/en.json, messages/es.json), configure default locale and fallbacks. Priority: HIGH - foundational i18n setup.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 117
+        },
+        {
+          "id": 2,
+          "title": "Extract Hardcoded Strings to Translation Files",
+          "description": "Identify and extract all hardcoded UI strings into translation JSON files",
+          "details": "Scan codebase for hardcoded strings and replace with translation keys. Organize translations by feature/page (common, auth, dashboard, interview). Use TypeScript for type-safe translations. Create translation helper hooks (useTranslations). Start with critical user-facing content. Priority: MEDIUM - enables multi-language support.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 117
+        }
+      ]
     },
     {
       "id": 118,
@@ -6342,7 +6478,28 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Reusable Skeleton Components",
+          "description": "Build a library of skeleton components matching common UI patterns",
+          "details": "Create skeleton components for: card skeletons (interview cards, program cards), table row skeletons, form field skeletons, dashboard widget skeletons, text line skeletons with varying widths. Use Shadcn Skeleton primitive with consistent animations. Export from components/ui/skeletons. Priority: HIGH - improves perceived performance.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 118
+        },
+        {
+          "id": 2,
+          "title": "Implement Skeletons in Data-Heavy Pages",
+          "description": "Replace loading states with skeleton UI on pages that fetch data",
+          "details": "Add skeleton loading states to: dashboard (show skeleton cards while fetching stats), career plan page (skeleton timeline during load), interview history (skeleton list items), Alt-Ed explorer (skeleton program cards). Use React Suspense where applicable. Ensure skeletons match actual content layout. Priority: MEDIUM - enhances UX.",
+          "status": "pending",
+          "dependencies": [
+            1
+          ],
+          "parentTaskId": 118
+        }
+      ]
     },
     {
       "id": 119,
@@ -6355,7 +6512,17 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Session Activity Tracker",
+          "description": "Build a service to track user activity and detect inactivity periods",
+          "details": "Create sessionTracker.ts that: monitors user interactions (mouse, keyboard, API calls), resets inactivity timer on activity, calculates time until session expiry, provides hooks for components to access session state. Use event listeners efficiently to avoid performance impact. Priority: HIGH - core session management.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 119
+        }
+      ]
     },
     {
       "id": 120,
@@ -6368,7 +6535,17 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Feature Flag Service and Provider",
+          "description": "Build a feature flag system with runtime configuration and React context",
+          "details": "Create featureFlags.ts service with: flag definitions with default values, environment-based overrides, user-specific flag overrides, React context provider for flag access, useFeatureFlag hook for components. Start with local config, prepare for LaunchDarkly integration. Priority: MEDIUM - enables safe feature rollouts.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 120
+        }
+      ]
     },
     {
       "id": 121,

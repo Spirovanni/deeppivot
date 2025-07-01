@@ -4711,7 +4711,28 @@
         62
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Grant/Funding Database Schema",
+          "description": "Design and implement database tables for storing grant and funding source information",
+          "details": "Create tables for: funding_sources (id, name, type, provider, max_amount, eligibility_criteria), program_funding_eligibility (program_id, funding_source_id, approval_status). Include fields for WIOA approval, Pell Grant eligibility, state-specific programs, veteran benefits, employer sponsorship options. Set up proper relationships and indexes. Priority: HIGH - foundational for feature.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 65
+        },
+        {
+          "id": 2,
+          "title": "Implement Funding Eligibility Checker Service",
+          "description": "Build service to match users and programs with available funding sources based on eligibility criteria",
+          "details": "Create eligibility checking logic that evaluates: user demographics (location, income, veteran status), program characteristics (WIOA approved, accredited, duration), specific grant requirements. Return list of potential funding sources with match confidence scores. Include explanations for eligibility or ineligibility reasons. Priority: HIGH - core business logic.",
+          "status": "pending",
+          "dependencies": [
+            "65.1"
+          ],
+          "parentTaskId": 65
+        }
+      ]
     },
     {
       "id": 66,
@@ -4724,7 +4745,39 @@
         4
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Configure Salesforce OAuth and Credentials",
+          "description": "Set up OAuth 2.0 authentication flow and securely store Salesforce credentials",
+          "details": "Configure Salesforce Connected App with OAuth 2.0 settings. Store in environment variables: CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, INSTANCE_URL. Implement token refresh logic for long-lived connections. Set up different credentials for development/staging/production. Document the authentication flow and credential management. Priority: HIGH - required for any Salesforce API access.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 66
+        },
+        {
+          "id": 2,
+          "title": "Create Salesforce Service Client Wrapper",
+          "description": "Build a service wrapper around jsforce library with error handling and retry logic",
+          "details": "Create SalesforceService class in lib/salesforce.ts that: initializes jsforce connection with credentials, implements automatic token refresh, adds retry logic for transient failures, provides typed methods for common operations (query, create, update), includes comprehensive error handling and logging. Add connection pooling if needed. Priority: HIGH - foundation for all Salesforce operations.",
+          "status": "pending",
+          "dependencies": [
+            "66.1"
+          ],
+          "parentTaskId": 66
+        },
+        {
+          "id": 3,
+          "title": "Define Salesforce to Application Data Mapping",
+          "description": "Create mapping configuration between Salesforce objects and application database schema",
+          "details": "Document and implement field mappings for: Contact -> user_profiles, WDB_Client__c -> wdb_client_data, Career_Plan__c -> career_plans. Handle data type conversions, custom field mappings, and picklist value translations. Create bidirectional mapping for sync operations. Include validation rules for data integrity. Priority: HIGH - critical for accurate data synchronization.",
+          "status": "pending",
+          "dependencies": [
+            "66.2"
+          ],
+          "parentTaskId": 66
+        }
+      ]
     },
     {
       "id": 67,
@@ -4738,7 +4791,39 @@
         66
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Incremental Sync Strategy",
+          "description": "Design and implement incremental sync logic to efficiently sync only changed records from Salesforce",
+          "details": "Implement sync strategy using: SystemModstamp for change detection, batch processing for large datasets (1000 records per batch), sync state tracking in database (last_sync_time, sync_status), conflict resolution rules (Salesforce wins vs local wins), deleted record handling. Create sync_log table for audit trail. Priority: HIGH - essential for scalable synchronization.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 67
+        },
+        {
+          "id": 2,
+          "title": "Build Inngest Sync Job Implementation",
+          "description": "Create the actual Inngest job that performs scheduled Salesforce data synchronization",
+          "details": "Implement Inngest function triggered on schedule (daily at 2 AM): connect to Salesforce using service wrapper, fetch records modified since last sync, transform data using field mappings, upsert into local database, handle errors with partial sync recovery, send sync summary notification. Include metrics for records synced, errors, duration. Priority: HIGH - core sync functionality.",
+          "status": "pending",
+          "dependencies": [
+            "67.1"
+          ],
+          "parentTaskId": 67
+        },
+        {
+          "id": 3,
+          "title": "Implement Sync Error Handling and Recovery",
+          "description": "Create comprehensive error handling and recovery mechanisms for sync failures",
+          "details": "Build error handling for: API rate limits (implement backoff), network failures (retry with exponential backoff), data validation errors (log and skip invalid records), partial sync failures (resume from last successful record). Create admin dashboard to view sync status, error logs, and manual retry options. Send alerts for critical sync failures. Priority: MEDIUM - ensures reliability.",
+          "status": "pending",
+          "dependencies": [
+            "67.2"
+          ],
+          "parentTaskId": 67
+        }
+      ]
     },
     {
       "id": 68,
@@ -4752,7 +4837,39 @@
         67
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create WDB Data Schema Extension",
+          "description": "Extend database schema to link career plans with WDB client data",
+          "details": "Add database tables/columns: wdb_career_plan_link (career_plan_id, wdb_client_id, salesforce_plan_id), add wdb_aligned flag to goals table, create wdb_milestones table for official WDB checkpoints. Update career_plans table with wdb_status field. Ensure proper foreign keys and indexes. Priority: HIGH - required for data integration.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 68
+        },
+        {
+          "id": 2,
+          "title": "Build WDB Plan Synchronization Service",
+          "description": "Create service to sync career plans with official WDB plans from Salesforce",
+          "details": "Implement bidirectional sync service that: imports WDB plan goals/milestones into user's career plan, marks which goals are WDB-mandated vs user-created, syncs progress updates back to Salesforce, handles conflicts between local and WDB goals, maintains audit trail of changes. Include permission checks to ensure only authorized updates. Priority: HIGH - core integration feature.",
+          "status": "pending",
+          "dependencies": [
+            "68.1"
+          ],
+          "parentTaskId": 68
+        },
+        {
+          "id": 3,
+          "title": "Update Career Plan UI for WDB Integration",
+          "description": "Modify career plan builder UI to display and manage WDB-aligned goals",
+          "details": "Enhance UI to: show WDB badge/indicator on aligned goals, display separate section for official WDB milestones, add toggle to show/hide WDB requirements, implement read-only mode for WDB-mandated items, show sync status and last update time, add 'Import from WDB' button. Use different styling for WDB vs personal goals. Priority: HIGH - essential for user experience.",
+          "status": "pending",
+          "dependencies": [
+            "68.2"
+          ],
+          "parentTaskId": 68
+        }
+      ]
     },
     {
       "id": 69,
@@ -4765,7 +4882,39 @@
         52
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Mentor-Learner Assignment System",
+          "description": "Build database schema and logic for assigning learners to mentors",
+          "details": "Create mentor_assignments table (mentor_id, learner_id, assigned_date, status). Implement assignment logic with: max learners per mentor limit, skill/industry matching algorithm, assignment request/approval workflow, automatic unassignment after inactivity. Add notifications for new assignments. Priority: HIGH - prerequisite for mentor features.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 69
+        },
+        {
+          "id": 2,
+          "title": "Build Mentor Dashboard Video Review UI",
+          "description": "Create the interface for mentors to view and review learner interview videos",
+          "details": "Implement review interface with: list of assigned learners with recent interviews, video player with playback controls and timestamps, side-by-side view of video and transcript, AI feedback display panel, note-taking area synced with video timestamp, progress tracking for reviewed/unreviewed videos. Include filtering and search capabilities. Priority: HIGH - core feature UI.",
+          "status": "pending",
+          "dependencies": [
+            "69.1"
+          ],
+          "parentTaskId": 69
+        },
+        {
+          "id": 3,
+          "title": "Implement Secure Access Control for Videos",
+          "description": "Create permission system to ensure mentors can only access their assigned learners' videos",
+          "details": "Build access control that: verifies mentor-learner relationship before allowing video access, generates time-limited signed URLs for video streaming, logs all access attempts for audit trail, prevents downloading/sharing of videos, implements view-only permissions for certain content. Include privacy consent checks. Priority: HIGH - critical for privacy and security.",
+          "status": "pending",
+          "dependencies": [
+            "69.2"
+          ],
+          "parentTaskId": 69
+        }
+      ]
     },
     {
       "id": 70,
@@ -4778,7 +4927,39 @@
         69
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design Mentor Feedback Database Schema",
+          "description": "Create database tables for storing mentor feedback and comments on interviews",
+          "details": "Create mentor_feedback table with: id, interview_id, mentor_id, feedback_type (general/timestamped), content, timestamp_seconds (for video-synced comments), sentiment (positive/constructive/critical), created_at. Add indexes for efficient querying by interview and mentor. Include soft delete support. Priority: HIGH - foundational for feature.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 70
+        },
+        {
+          "id": 2,
+          "title": "Build Feedback Creation UI Components",
+          "description": "Create UI components for mentors to add various types of feedback",
+          "details": "Implement feedback components: rich text editor for detailed feedback, quick feedback buttons (Great job!, Needs work, etc.), timestamp-based comment system linked to video playback, feedback templates for common scenarios, voice note recording option. Include auto-save functionality and character limits. Priority: HIGH - core user interface.",
+          "status": "pending",
+          "dependencies": [
+            "70.1"
+          ],
+          "parentTaskId": 70
+        },
+        {
+          "id": 3,
+          "title": "Implement Learner Notification System",
+          "description": "Create system to notify learners when mentors add feedback to their interviews",
+          "details": "Build notification system that: sends email/in-app notifications when mentor adds feedback, includes preview of feedback in notification, provides direct link to view full feedback, batches multiple feedback items to avoid spam, respects user notification preferences. Track read/unread status of feedback. Priority: MEDIUM - enhances user engagement.",
+          "status": "pending",
+          "dependencies": [
+            "70.2"
+          ],
+          "parentTaskId": 70
+        }
+      ]
     },
     {
       "id": 71,

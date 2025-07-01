@@ -5931,7 +5931,35 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Admin Route Structure with RBAC",
+          "description": "Set up the /admin route structure with proper authentication and role-based access control",
+          "details": "Create admin route layout at app/admin with middleware to check for 'admin' role. Implement redirect to unauthorized page for non-admin users. Set up admin-specific layout component with navigation. Configure proper error boundaries for admin section. Priority: HIGH - foundational requirement.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 101
+        },
+        {
+          "id": 2,
+          "title": "Build Statistics API Endpoints",
+          "description": "Create API endpoints to fetch aggregated statistics for the admin dashboard",
+          "details": "Implement GET /api/admin/stats endpoint that returns: total users count, active subscriptions count, interviews conducted (total and by status), user growth over time, revenue metrics. Use efficient database queries with proper indexing. Include caching for performance. Priority: HIGH - core dashboard data.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 101
+        },
+        {
+          "id": 3,
+          "title": "Create Admin Dashboard UI Components",
+          "description": "Build the main admin dashboard UI with stat cards and charts",
+          "details": "Create dashboard components: StatsCard for displaying metrics with icons and trends, UserGrowthChart using Chart.js or Recharts, RecentActivityFeed showing latest user actions, QuickActionButtons for common admin tasks. Use Shadcn Card components for consistent styling. Priority: MEDIUM - visual presentation layer.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 101
+        }
+      ]
     },
     {
       "id": 102,
@@ -5944,7 +5972,35 @@
         101
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create User Search and Filter API",
+          "description": "Build API endpoint for searching and filtering users with pagination",
+          "details": "Implement GET /api/admin/users with query parameters: search (name/email), role filter, status filter (active/inactive), date range, pagination (page, limit). Use full-text search for names/emails. Include user count for pagination. Return user profiles with relevant fields. Priority: HIGH - core functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 102
+        },
+        {
+          "id": 2,
+          "title": "Build User Management Table UI",
+          "description": "Create interactive data table for displaying and managing users",
+          "details": "Implement UserTable component with: sortable columns (name, email, role, created date), inline actions (edit, view details, reset password), bulk selection for batch operations, search bar and filter dropdowns, pagination controls. Use Tanstack Table or similar for advanced features. Priority: HIGH - main interface component.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 102
+        },
+        {
+          "id": 3,
+          "title": "Implement User Edit Modal and Actions",
+          "description": "Create modal interface for editing user details and performing admin actions",
+          "details": "Build UserEditModal with forms for: changing user role (with confirmation), editing profile information, resetting password (sends email), suspending/activating accounts, viewing user activity logs. Implement PATCH /api/admin/users/[id] endpoint. Add audit logging for all admin actions. Priority: HIGH - critical admin functionality.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 102
+        }
+      ]
     },
     {
       "id": 103,
@@ -5957,7 +6013,26 @@
         101
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Agent Config CRUD API",
+          "description": "Build complete CRUD API endpoints for managing agent configurations",
+          "details": "Implement endpoints: GET /api/admin/agents (list all), GET /api/admin/agents/[id], POST /api/admin/agents (create), PUT /api/admin/agents/[id] (update), DELETE /api/admin/agents/[id]. Validate system prompts and voice IDs. Include soft delete support. Priority: HIGH - backend foundation required.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 103
+        },
+        {
+          "id": 2,
+          "title": "Build Agent Configuration Editor UI",
+          "description": "Create form interface for creating and editing agent configurations",
+          "details": "Implement AgentConfigForm with: name input, system prompt textarea with syntax highlighting, voice provider selector (ElevenLabs/PlayHT), voice ID dropdown with preview capability, test interview button, prompt templates/examples. Include validation and auto-save. Priority: HIGH - main user interface.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 103
+        }
+      ]
     },
     {
       "id": 104,
@@ -5970,7 +6045,26 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Set Up Bundle Analysis Tools",
+          "description": "Configure @next/bundle-analyzer and create analysis scripts",
+          "details": "Install @next/bundle-analyzer, configure in next.config.js with ANALYZE environment variable, create npm scripts for generating bundle reports, set up baseline metrics for comparison. Document current bundle sizes for main chunks. Priority: HIGH - required for optimization work.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 104
+        },
+        {
+          "id": 2,
+          "title": "Implement Code Splitting and Dynamic Imports",
+          "description": "Convert heavy components to use dynamic imports for better code splitting",
+          "details": "Identify large components (charts, editors, modals) and convert to dynamic imports using next/dynamic. Implement loading states for dynamically imported components. Split route-specific code into separate bundles. Move heavy libraries to lazy-loaded modules. Priority: HIGH - major impact on initial load.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 104
+        }
+      ]
     },
     {
       "id": 105,
@@ -5983,7 +6077,26 @@
         5
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Query Performance Monitoring",
+          "description": "Set up monitoring to identify slow database queries",
+          "details": "Add query logging with execution time tracking, integrate with Axiom for query performance metrics, create alerts for queries exceeding 100ms, build dashboard showing slowest queries and most frequent operations. Use EXPLAIN ANALYZE in development. Priority: HIGH - needed to identify bottlenecks.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 105
+        },
+        {
+          "id": 2,
+          "title": "Add Strategic Database Indexes",
+          "description": "Create indexes on frequently queried columns based on usage patterns",
+          "details": "Add indexes on: foreign keys (user_id, interview_id, etc), timestamp columns used in ORDER BY, columns used in WHERE clauses (status, role), composite indexes for common query patterns. Test query performance before/after each index. Document index rationale. Priority: HIGH - direct performance impact.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 105
+        }
+      ]
     },
     {
       "id": 106,
@@ -5996,7 +6109,17 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Audit and Replace img Tags with next/image",
+          "description": "Find all img tags and convert them to use Next.js Image component",
+          "details": "Search codebase for <img> tags and replace with next/image, configure proper width/height or fill props, add blur placeholders for above-fold images, set appropriate loading priorities, configure image domains in next.config.js. Priority: MEDIUM - improves Core Web Vitals.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 106
+        }
+      ]
     },
     {
       "id": 107,
@@ -6009,7 +6132,26 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create API Documentation with OpenAPI/Swagger",
+          "description": "Generate comprehensive API documentation for mobile developers",
+          "details": "Set up swagger-jsdoc or similar to generate OpenAPI 3.0 specification, document all endpoints with request/response schemas, include authentication requirements and examples, host interactive documentation at /api-docs, export Postman collection for testing. Priority: HIGH - essential for mobile team.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 107
+        },
+        {
+          "id": 2,
+          "title": "Implement API Versioning Strategy",
+          "description": "Set up versioning system for API endpoints to support mobile app updates",
+          "details": "Implement URL-based versioning (/api/v1/), create versioning middleware to handle different API versions, document deprecation policy, set up version sunset headers, maintain backward compatibility for at least 2 versions. Priority: HIGH - critical for mobile app lifecycle.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 107
+        }
+      ]
     },
     {
       "id": 108,
@@ -6022,7 +6164,26 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Extract Theme Variables to CSS Custom Properties",
+          "description": "Convert all hardcoded colors and spacing to CSS variables",
+          "details": "Create :root CSS variables for all colors, fonts, spacing, border radius, shadows. Update Tailwind config to use CSS variables, create theme configuration file structure, ensure all components use theme variables instead of hardcoded values. Priority: HIGH - foundation for theming.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 108
+        },
+        {
+          "id": 2,
+          "title": "Build Dynamic Theme Loading System",
+          "description": "Create system to load and apply different themes at runtime",
+          "details": "Implement theme provider that loads theme based on organization/subdomain, create theme JSON schema for validation, build theme preview tool for testing, support logo/favicon replacement, enable runtime theme switching for development. Priority: MEDIUM - enables white-labeling.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 108
+        }
+      ]
     },
     {
       "id": 109,
@@ -6035,7 +6196,26 @@
         108
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Add organization_id to Database Schema",
+          "description": "Create migration to add organization_id column to all tenant-specific tables",
+          "details": "Add organization_id (UUID) to tables: users, interviews, career_plans, goals, user_profiles, agent_config. Create organizations table with name, settings, theme_id. Add foreign key constraints and indexes on organization_id. Priority: HIGH - database foundation for multi-tenancy.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 109
+        },
+        {
+          "id": 2,
+          "title": "Implement Automatic Query Scoping Middleware",
+          "description": "Create middleware to automatically filter queries by organization_id",
+          "details": "Build Drizzle middleware/wrapper that automatically adds organization_id filter to all queries based on authenticated user's org. Prevent cross-organization data access at query level. Add organization context to all API requests. Include bypass for super-admin queries. Priority: HIGH - critical security feature.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 109
+        }
+      ]
     },
     {
       "id": 110,
@@ -6048,7 +6228,17 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Create Dynamic Sitemap Generation",
+          "description": "Implement dynamic sitemap.xml generation in Next.js app directory",
+          "details": "Create app/sitemap.ts that dynamically generates sitemap including: static pages (landing, pricing, about), blog posts from MDX files, public user profiles if applicable, last modified dates from git or database. Set appropriate change frequencies and priorities. Priority: MEDIUM - improves SEO.",
+          "status": "pending",
+          "dependencies": [],
+          "parentTaskId": 110
+        }
+      ]
     },
     {
       "id": 111,

@@ -2,6 +2,7 @@
 ├── .claude
 │   └── commands
 │       └── structure.md
+├── .DS_Store
 ├── .env
 ├── .env.example
 ├── .gitignore
@@ -26,9 +27,16 @@
 │   ├── StartCall.tsx
 │   └── ui
 │       ├── button.tsx
+│       ├── card.tsx
+│       ├── input.tsx
+│       ├── label.tsx
 │       └── toggle.tsx
 ├── components.json
+├── lib
+│   └── utils.ts
 ├── next-env.d.ts
+├── next.config.js
+├── package-lock.json
 ├── package.json
 ├── pnpm-lock.yaml
 ├── postcss.config.mjs
@@ -40,6 +48,7 @@
 ├── scripts
 │   └── prd.txt
 ├── STRUCTURE.md
+├── tailwind.config.ts
 ├── tsconfig.json
 ├── utils
 │   ├── expressionColors.ts
@@ -48,4 +57,4 @@
 │   └── index.ts
 └── yarn.lock
 
-10 directories, 39 files
+11 directories, 47 files

@@ -2,21 +2,34 @@
 ├── .claude
 │   └── commands
 │       └── structure.md
+├── .DS_Store
 ├── .env
 ├── .env.example
+├── .env.local
 ├── .gitignore
 ├── .nvmrc
 ├── app
+│   ├── (landing)
+│   │   ├── _components
+│   │   │   ├── call-to-action
+│   │   │   └── hero-section
+│   │   ├── layout.tsx
+│   │   └── page.tsx
 │   ├── error.tsx
 │   ├── favicon.ico
 │   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
+│   └── layout.tsx
 ├── CLAUDE.md
 ├── components
 │   ├── Chat.tsx
 │   ├── Controls.tsx
 │   ├── Expressions.tsx
+│   ├── global
+│   │   ├── drop-down-1
+│   │   │   └── index.tsx
+│   │   └── landing-nav
+│   │       └── index.tsx
+│   ├── HeroSection.tsx
 │   ├── logos
 │   │   ├── GitHub.tsx
 │   │   └── Hume.tsx
@@ -29,17 +42,20 @@
 │       └── toggle.tsx
 ├── components.json
 ├── next-env.d.ts
+├── package-lock.json
 ├── package.json
 ├── pnpm-lock.yaml
 ├── postcss.config.mjs
 ├── preview.png
 ├── public
+│   ├── landing-mock.png
 │   ├── next.svg
 │   └── vercel.svg
 ├── README.md
 ├── scripts
 │   └── prd.txt
 ├── STRUCTURE.md
+├── tailwind.config.ts
 ├── tsconfig.json
 ├── utils
 │   ├── expressionColors.ts
@@ -48,4 +64,4 @@
 │   └── index.ts
 └── yarn.lock
 
-10 directories, 39 files
+17 directories, 48 files

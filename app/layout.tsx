@@ -31,7 +31,7 @@ export default function RootLayout({
           "flex flex-col min-h-screen"
         )}
       >
-        <Nav />
+        {/* <Nav /> */}
         {children}
       </body>
     </html>

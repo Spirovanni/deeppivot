@@ -1,6 +1,6 @@
 import { getHumeAccessToken } from "@/utils/getHumeAccessToken";
 import dynamic from "next/dynamic";
-import { HeroSectionOne } from "@/components/HeroSection";
+import { HeroSection } from "./_components/hero-section";
 
 const Chat = dynamic(() => import("@/components/Chat"), {
   ssr: false,
@@ -15,7 +15,7 @@ export default async function Page() {
 
   return (
     <div className={"min-h-screen flex flex-col"}>
-      <HeroSectionOne />
+      <HeroSection />
       
       {/* Chat Section */}
       <section 

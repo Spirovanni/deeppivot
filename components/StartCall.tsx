@@ -43,7 +43,7 @@ export default function StartCall() {
                     strokeWidth={0}
                   />
                 </span>
-                <span>Start Call</span>
+                <span>Let's Build!</span>
               </Button>
             </motion.div>
           </AnimatePresence>

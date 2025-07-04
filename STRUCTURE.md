@@ -12,7 +12,9 @@
 │   ├── (landing)
 │   │   ├── _components
 │   │   │   ├── call-to-action
-│   │   │   └── hero-section
+│   │   │   ├── feature-bento-grid
+│   │   │   ├── hero-section
+│   │   │   └── navbar
 │   │   ├── layout.tsx
 │   │   └── page.tsx
 │   ├── error.tsx
@@ -38,6 +40,7 @@
 │   ├── Nav.tsx
 │   ├── StartCall.tsx
 │   └── ui
+│       ├── bento-grid.tsx
 │       ├── button.tsx
 │       └── toggle.tsx
 ├── components.json
@@ -64,4 +67,4 @@
 │   └── index.ts
 └── yarn.lock
 
-17 directories, 48 files
+19 directories, 49 files

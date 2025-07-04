@@ -1,11 +1,11 @@
-import { Nav } from "@/components/Nav";
+import { Navbar } from "./_components/navbar";
 
 const LandingPageLayout = ({ children }: {children: React.ReactNode}) => {
     return (
         <div className="">
-            <Nav> 
+            <Navbar> 
 
-            </Nav>
+            </Navbar>
             {children}
         </div>
     )

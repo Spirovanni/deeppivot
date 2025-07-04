@@ -1,8 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export function HeroSectionOne() {
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
   const scrollToChat = () => {
     const chatSection = document.getElementById('chat-section');
     if (chatSection) {
@@ -13,9 +16,43 @@ export function HeroSectionOne() {
     }
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroImage = document.getElementById('hero-image');
+      if (heroImage) {
+        const imageRect = heroImage.getBoundingClientRect();
+        // Show button when the image is mostly scrolled past (80% of image height)
+        const imageBottom = imageRect.bottom;
+        const threshold = window.innerHeight * 0.2; // Show when 80% of image is scrolled past
+        
+        setShowScrollButton(imageBottom < threshold);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center">
       <Navbar />
+      
+      {/* Scroll-triggered "Let's Build" button */}
+      <motion.button
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ 
+          opacity: showScrollButton ? 1 : 0,
+          y: showScrollButton ? 0 : 20
+        }}
+        transition={{ duration: 0.3 }}
+        onClick={scrollToChat}
+        className={`fixed top-4 right-4 z-50 bg-black text-white px-4 py-2 rounded-full shadow-lg hover:bg-gray-800 transition-all duration-300 ${
+          showScrollButton ? 'pointer-events-auto' : 'pointer-events-none'
+        }`}
+      >
+        Let's Build!
+      </motion.button>
+
       <div className="absolute inset-y-0 left-0 h-full w-px bg-neutral-200/80 dark:bg-neutral-800/80">
         <div className="absolute top-0 h-40 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent" />
       </div>
@@ -98,7 +135,10 @@ export function HeroSectionOne() {
           }}
           className="relative z-10 mt-20 rounded-3xl border border-neutral-200 bg-neutral-100 p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
         >
-          <div className="w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
+          <div 
+            id="hero-image"
+            className="w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700"
+          >
             <img
               src="https://assets.aceternity.com/pro/aceternity-landing.webp"
               alt="Deep Pivot interview coaching preview"

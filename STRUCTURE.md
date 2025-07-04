@@ -14,9 +14,13 @@
 │   │   │   ├── call-to-action
 │   │   │   ├── feature-bento-grid
 │   │   │   ├── hero-section
+│   │   │   ├── hume-chat
 │   │   │   └── navbar
 │   │   ├── layout.tsx
 │   │   └── page.tsx
+│   ├── api
+│   │   └── hume-token
+│   │       └── route.ts
 │   ├── error.tsx
 │   ├── favicon.ico
 │   ├── globals.css
@@ -67,4 +71,4 @@
 │   └── index.ts
 └── yarn.lock
 
-19 directories, 49 files
+22 directories, 50 files

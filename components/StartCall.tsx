@@ -2,13 +2,32 @@ import { useVoice } from "@humeai/voice-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "./ui/button";
 import { Phone } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function StartCall() {
   const { status, connect } = useVoice();
+  const [showButton, setShowButton] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroImage = document.getElementById('hero-image');
+      if (heroImage) {
+        const imageRect = heroImage.getBoundingClientRect();
+        // Show button when the image is mostly scrolled past (80% of image height)
+        const imageBottom = imageRect.bottom;
+        const threshold = window.innerHeight * 0.2; // Show when 80% of image is scrolled past
+        
+        setShowButton(imageBottom < threshold);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <AnimatePresence>
-      {status.value !== "connected" ? (
+      {status.value !== "connected" && showButton ? (
         <motion.div
           className={"fixed inset-0 p-4 flex items-center justify-center bg-background"}
           initial="initial"

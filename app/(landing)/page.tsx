@@ -1,6 +1,7 @@
 import { getHumeAccessToken } from "@/utils/getHumeAccessToken";
 import dynamic from "next/dynamic";
 import { HeroSection } from "./_components/hero-section";
+import { FeatureBentoGrid } from "./_components/feature-bento-grid";
 
 const Chat = dynamic(() => import("@/components/Chat"), {
   ssr: false,
@@ -16,6 +17,7 @@ export default async function Page() {
   return (
     <div className={"min-h-screen flex flex-col"}>
       <HeroSection />
+      <FeatureBentoGrid />
       
       {/* Chat Section */}
       <section 

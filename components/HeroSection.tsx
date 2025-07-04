@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export function HeroSectionOne() {
   const scrollToChat = () => {
@@ -97,18 +98,21 @@ export function HeroSectionOne() {
             duration: 0.3,
             delay: 1.2,
           }}
-          className="relative z-10 mt-20 rounded-3xl border border-neutral-200 bg-neutral-100 p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+          className="relative z-10 mt-20 mx-auto max-w-2xl"
         >
           <div 
             id="hero-image"
-            className="w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700"
+            className="rounded-2xl border border-gray-300 bg-white p-2 shadow-xl dark:border-gray-600 dark:bg-gray-800"
           >
-            <img
-              src="https://assets.aceternity.com/pro/aceternity-landing.webp"
-              alt="Deep Pivot interview coaching preview"
-              className="aspect-[16/9] h-auto w-full object-cover"
-              height={1000}
-              width={1000}
+            <Image
+              src="/landing-mock.png"
+              alt="Deep Pivot interview coaching platform preview"
+              width={1024}
+              height={1536}
+              className="aspect-[2/3] w-full h-auto object-cover rounded-xl"
+              priority
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
             />
           </div>
         </motion.div>

@@ -9,6 +9,14 @@ export default function StartCall() {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
+    // Check if we're in the chat section (forced display)
+    const chatSection = document.getElementById('chat-section');
+    if (chatSection) {
+      // If chat section exists, show button immediately
+      setShowButton(true);
+      return;
+    }
+
     const handleScroll = () => {
       const heroImage = document.getElementById('hero-image');
       if (heroImage) {
@@ -21,8 +29,30 @@ export default function StartCall() {
       }
     };
 
+    // Initial check for scroll position
+    handleScroll();
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Also check when the component mounts or updates if chat section exists
+  useEffect(() => {
+    const checkChatSection = () => {
+      const chatSection = document.getElementById('chat-section');
+      if (chatSection) {
+        setShowButton(true);
+      }
+    };
+
+    // Check immediately
+    checkChatSection();
+    
+    // Use MutationObserver to detect when chat section is added to DOM
+    const observer = new MutationObserver(checkChatSection);
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    return () => observer.disconnect();
   }, []);
 
   return (

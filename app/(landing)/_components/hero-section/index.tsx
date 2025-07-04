@@ -3,14 +3,36 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onGetStarted?: () => void;
+}
+
+export function HeroSection({ onGetStarted }: HeroSectionProps) {
   const scrollToChat = () => {
-    const chatSection = document.getElementById('chat-section');
-    if (chatSection) {
-      chatSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
+    if (onGetStarted) {
+      onGetStarted();
+    } else {
+      // Fallback: Calculate the scroll position that will trigger the chat to show
+      // Based on the logic in page.tsx: rect.bottom < windowHeight * 0.3
+      // We need to scroll past the FeatureBentoGrid section
+      const windowHeight = window.innerHeight;
+      const targetScroll = windowHeight * 2; // Scroll past hero + feature bento grid
+      
+      window.scrollTo({ 
+        top: targetScroll,
+        behavior: 'smooth'
       });
+      
+      // Alternative approach: try to find and scroll to chat-section after a delay
+      setTimeout(() => {
+        const chatSection = document.getElementById('chat-section');
+        if (chatSection) {
+          chatSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 1000); // Give time for the chat to appear
     }
   };
 

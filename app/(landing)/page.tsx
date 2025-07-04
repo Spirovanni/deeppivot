@@ -14,6 +14,11 @@ export default function Page({}: PageProps) {
   const [error, setError] = useState<string | null>(null);
   const featureBentoRef = useRef<HTMLDivElement>(null);
 
+  // Function to force show chat (called from Get Started button)
+  const forceShowChat = () => {
+    setShowHumeChat(true);
+  };
+
   // Get access token on mount
   useEffect(() => {
     const fetchToken = async () => {
@@ -95,7 +100,7 @@ export default function Page({}: PageProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <HeroSection />
+      <HeroSection onGetStarted={forceShowChat} />
       
       {/* FeatureBentoGrid with proper spacing */}
       <section 
@@ -130,13 +135,9 @@ export default function Page({}: PageProps) {
           <HumeChat 
             accessToken={accessToken} 
             onClose={() => {
-              // Scroll back to the FeatureBentoGrid section
-              if (featureBentoRef.current) {
-                featureBentoRef.current.scrollIntoView({ 
-                  behavior: 'smooth',
-                  block: 'start'
-                });
-              }
+              setShowHumeChat(false);
+              // Scroll back to the top
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
         </div>

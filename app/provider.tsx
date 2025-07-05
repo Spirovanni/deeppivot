@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import { ClerkProvider } from "@clerk/nextjs";
 import UserSyncProvider from "./UserSyncProvider";
-import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 /**
  * CreateNewUser Function
@@ -42,22 +41,15 @@ const CreateNewUser = async (userData: {
  * This combines automatic user sync with manual user creation capabilities.
  */
 function Provider({ children }: { children: React.ReactNode }) {
-    return (
-        <ClerkProvider>
-            <UserSyncProvider>
-                {children}
-            </UserSyncProvider>
-        </ClerkProvider>
-    );
+  return (
+    <ClerkProvider>
+      <UserSyncProvider>
+        {children}
+      </UserSyncProvider>
+    </ClerkProvider>
+  );
 }
 
 // Export both the Provider and the CreateNewUser function
 export default Provider;
 export { CreateNewUser };
-
-function MyComponent() {
-  const { user, loading, error } = useCurrentUser();
-  
-  if (loading) return <div>Loading...</div>;
-  return <div>Hello {user?.firstName}!</div>;
-}

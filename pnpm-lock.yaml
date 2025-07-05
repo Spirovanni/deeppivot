@@ -65,9 +65,6 @@ importers:
       next:
         specifier: 14.2.3
         version: 14.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      postgres:
-        specifier: ^3.4.7
-        version: 3.4.7
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -5187,7 +5184,8 @@ snapshots:
     dependencies:
       xtend: 4.0.2
 
-  postgres@3.4.7: {}
+  postgres@3.4.7:
+    optional: true
 
   prelude-ls@1.2.1: {}
 

@@ -9,6 +9,7 @@ import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 export const Navbar = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   
   useLayoutEffect(() => {
     setIsClient(true);
@@ -21,14 +22,41 @@ export const Navbar = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const toggleDark = () => {
     const el = document.documentElement;
     el.classList.toggle("dark");
     setIsDarkMode((prev) => !prev);
   };
 
+  // Calculate opacity and shadow based on scroll position
+  const isScrolled = scrollY > 10;
+  const opacity = Math.max(0.85, 1 - (scrollY / 200)); // Gradually becomes more transparent, minimum 85%
+
   return (
-    <nav className="flex w-full items-center justify-between border-t border-b border-neutral-200 px-4 py-4 dark:border-neutral-800">
+    <motion.nav 
+      className={`fixed top-0 left-0 right-0 z-50 flex w-full items-center justify-between border-b px-4 py-4 backdrop-blur-sm transition-all duration-300 ${
+        isScrolled 
+          ? 'border-neutral-200/50 dark:border-neutral-800/50 shadow-lg' 
+          : 'border-neutral-200 dark:border-neutral-800 shadow-none'
+      }`}
+      style={{
+        backgroundColor: isDarkMode 
+          ? `rgba(0, 0, 0, ${opacity})` 
+          : `rgba(255, 255, 255, ${opacity})`
+      }}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="flex items-center gap-2">
         <div className="size-7 rounded-full bg-gradient-to-br from-violet-500 to-pink-500" />
         <h1 className="text-base font-bold md:text-2xl">Deep Pivots</h1>
@@ -52,7 +80,7 @@ export const Navbar = () => {
         
         {isClient && <AuthSection />}
       </div>
-    </nav>
+    </motion.nav>
   );
 };
 

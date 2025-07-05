@@ -1,12 +1,9 @@
 import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle } from 'drizzle-orm/neon-http';
 import { eq } from 'drizzle-orm';
-import postgres from 'postgres';
 import { usersTable } from './db/schema';
 
-// Disable prefetch as it is not supported for "Transaction" pool mode 
-const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-const db = drizzle({ client });
+const db = drizzle(process.env.DATABASE_URL!);
 
 async function main() {
   const user: typeof usersTable.$inferInsert = {

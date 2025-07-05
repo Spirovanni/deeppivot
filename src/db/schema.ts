@@ -1,8 +1,32 @@
-import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
   age: integer().notNull(),
   email: varchar({ length: 255 }).notNull().unique(),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+  role: varchar({ length: 255 }).notNull().default("user"),
+  status: varchar({ length: 255 }).notNull().default("active"),
+  isVerified: boolean().notNull().default(false),
+  isActive: boolean().notNull().default(true),
+  isDeleted: boolean().notNull().default(false),
+  isSuspended: boolean().notNull().default(false),
+  isLocked: boolean().notNull().default(false),
+  isEmailVerified: boolean().notNull().default(false),
+  isPhoneVerified: boolean().notNull().default(false),
+  isPremium: boolean().notNull().default(false),
+  isTrial: boolean().notNull().default(false),
+  isTrialExpired: boolean().notNull().default(false),
+  isTrialStarted: boolean().notNull().default(false),
+  isTrialEnded: boolean().notNull().default(false),
+  credits: integer().notNull().default(0),
+  creditsUsed: integer().notNull().default(0),
+  creditsRemaining: integer().notNull().default(0),
+  creditsExhausted: boolean().notNull().default(false),
+  creditsExhaustedAt: timestamp(),
+  creditsExhaustedReason: varchar({ length: 255 }).notNull().default(""),
+  creditsExhaustedReasonDescription: varchar({ length: 255 }).notNull().default(""),
+  
 }); 

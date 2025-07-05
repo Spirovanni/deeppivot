@@ -19,6 +19,7 @@
     "@anthropic-ai/claude-code": "^1.0.38",
     "@clerk/nextjs": "^5.7.5",
     "@humeai/voice-react": "^0.1.15",
+    "@neondatabase/serverless": "^1.0.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toggle": "^1.1.9",
     "@supabase/supabase-js": "^2.50.3",

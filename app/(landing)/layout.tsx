@@ -1,4 +1,5 @@
 import { Navbar } from "./_components/navbar";
+import { ScrollToTop } from "./_components/scroll-to-top";
 
 const LandingPageLayout = ({ children }: {children: React.ReactNode}) => {
     return (
@@ -7,6 +8,7 @@ const LandingPageLayout = ({ children }: {children: React.ReactNode}) => {
             <div className="pt-20">
                 {children}
             </div>
+            <ScrollToTop />
         </div>
     )
 }

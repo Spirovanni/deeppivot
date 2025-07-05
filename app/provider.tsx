@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 import axios from "axios";
 import { ClerkProvider, useUser } from "@clerk/nextjs";
@@ -12,7 +13,7 @@ import UserSyncProvider from "./UserSyncProvider";
  * 
  * This combines automatic user sync with manual user creation capabilities.
  */
-function Provider({ children }: { children: React.ReactNode }) {
+function InnerProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
 
   // Define CreateNewUser inside Provider
@@ -35,10 +36,18 @@ function Provider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   return (
+    <UserSyncProvider>
+      {children}
+    </UserSyncProvider>
+  );
+}
+
+function Provider({ children }: { children: React.ReactNode }) {
+  return (
     <ClerkProvider>
-      <UserSyncProvider>
+      <InnerProvider>
         {children}
-      </UserSyncProvider>
+      </InnerProvider>
     </ClerkProvider>
   );
 }

@@ -13,8 +13,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get all users from Clerk
-    const clerkUsers = await clerkClient.users.getUserList({
+    // Get all users from Clerk - clerkClient is a function that returns a promise
+    const client = await clerkClient();
+    const clerkUsers = await client.users.getUserList({
       limit: 100, // Adjust as needed
     });
 
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     for (const clerkUser of clerkUsers.data) {
       const primaryEmail = clerkUser.emailAddresses.find(
-        email => email.id === clerkUser.primaryEmailAddressId
+        (email: any) => email.id === clerkUser.primaryEmailAddressId
       );
 
       if (!primaryEmail) {

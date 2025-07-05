@@ -19,16 +19,17 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, age, email } = body;
+    const { name, age, email, clerkId } = body;
 
-    if (!name || !age || !email) {
+    if (!name || !age || !email || !clerkId) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, age, email' },
+        { error: 'Missing required fields: name, age, email, clerkId' },
         { status: 400 }
       );
     }
 
     const newUser = await db.insert(usersTable).values({
+      clerkId,
       name,
       age,
       email,
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, age, email } = body;
+    const { id, name, age, email, clerkId } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -58,7 +59,7 @@ export async function PUT(request: NextRequest) {
 
     const updatedUser = await db
       .update(usersTable)
-      .set({ name, age, email })
+      .set({ name, age, email, clerkId })
       .where(eq(usersTable.id, id))
       .returning();
 

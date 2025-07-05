@@ -7,6 +7,7 @@ const db = drizzle(process.env.DATABASE_URL!);
 
 async function main() {
   const user: typeof usersTable.$inferInsert = {
+    clerkId: 'user_test_123456789', // Test Clerk ID for seeding
     name: 'John',
     age: 30,
     email: 'john@example.com',

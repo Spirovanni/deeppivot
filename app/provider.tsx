@@ -1,9 +1,20 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ClerkProvider, useUser } from "@clerk/nextjs";
 import UserSyncProvider from "./UserSyncProvider";
+import { UserDetailContext } from "@/context/UserDetailContext";
 
+
+export type UsersDetail={
+    clerkId:string,
+    firstName:string,
+    lastName:string,
+    credits:number,
+    name:string,
+    age:number,
+    email:string
+}
 /**
  * Provider Component
  * 
@@ -15,6 +26,7 @@ import UserSyncProvider from "./UserSyncProvider";
  */
 function InnerProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
+  const [userDetail, setUserDetail] = useState<any>();
 
   // Define CreateNewUser inside Provider
   const CreateNewUser = async () => {
@@ -37,7 +49,9 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <UserSyncProvider>
-      {children}
+      <UserDetailContext.Provider value={{userDetail,setUserDetail}}>
+        {children}
+      </UserDetailContext.Provider>
     </UserSyncProvider>
   );
 }

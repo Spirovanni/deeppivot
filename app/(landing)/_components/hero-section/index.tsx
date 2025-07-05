@@ -153,7 +153,7 @@ const HeroButtons = ({ onGetStarted }: { onGetStarted: () => void }) => {
       <>
         <button 
           onClick={onGetStarted}
-          className="w-60 transform rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-600 hover:to-pink-600"
+          className="w-44 transform rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-600 hover:to-pink-600"
         >
           Start Coaching Session
         </button>
@@ -165,7 +165,7 @@ const HeroButtons = ({ onGetStarted }: { onGetStarted: () => void }) => {
               featuresSection.scrollIntoView({ behavior: 'smooth' });
             }
           }}
-          className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900"
+          className="w-44 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:from-gray-800 dark:hover:to-gray-900"
         >
           Learn More
         </button>
@@ -176,7 +176,7 @@ const HeroButtons = ({ onGetStarted }: { onGetStarted: () => void }) => {
   return (
     <>
       <SignUpButton mode="modal">
-        <button className="w-60 transform rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-600 hover:to-pink-600">
+        <button className="w-44 transform rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-600 hover:to-pink-600">
           Get Started Free
         </button>
       </SignUpButton>
@@ -188,7 +188,7 @@ const HeroButtons = ({ onGetStarted }: { onGetStarted: () => void }) => {
             featuresSection.scrollIntoView({ behavior: 'smooth' });
           }
         }}
-        className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900"
+        className="w-44 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:from-gray-800 dark:hover:to-gray-900"
       >
         Learn More
       </button>

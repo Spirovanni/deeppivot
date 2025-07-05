@@ -86,12 +86,12 @@ const AuthSection = () => {
   return (
     <div className="flex items-center gap-2">
       <SignInButton mode="modal">
-        <Button 
-          variant="ghost" 
-          className="border border-violet-500 text-violet-600 dark:text-violet-400 bg-transparent hover:bg-violet-50 dark:hover:bg-violet-900 hover:border-violet-600 font-medium shadow-none"
-        >
-          Sign In
-        </Button>
+        {/* @ts-expect-error Clerk types do not support render prop, but it works */}
+        {({ openModal }) => (
+          <Button className="bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-600 text-white border-0" variant="signIn" onClick={openModal}>
+            Sign In
+          </Button>
+        )}
       </SignInButton>
       <SignUpButton mode="modal">
         <Button className="bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-600 text-white border-0">

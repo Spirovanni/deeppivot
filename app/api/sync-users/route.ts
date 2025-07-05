@@ -6,6 +6,8 @@ import { eq } from 'drizzle-orm';
 
 async function syncSingleUser(userData: {
   clerkId: string;
+  firstName: string;
+  lastName: string;
   name: string;
   email: string;
   isEmailVerified: boolean;
@@ -20,6 +22,8 @@ async function syncSingleUser(userData: {
 
     const userRecord = {
       clerkId: userData.clerkId,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
       name: userData.name,
       email: userData.email,
       age: 25, // Default age
@@ -39,6 +43,8 @@ async function syncSingleUser(userData: {
       await db
         .update(usersTable)
         .set({
+          firstName: userRecord.firstName,
+          lastName: userRecord.lastName,
           name: userRecord.name,
           email: userRecord.email,
           isEmailVerified: userRecord.isEmailVerified,
@@ -109,6 +115,8 @@ export async function POST(req: NextRequest) {
 
         const userData = {
           clerkId: clerkUser.id,
+          firstName: clerkUser.firstName || '',
+          lastName: clerkUser.lastName || '',
           name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || primaryEmail.emailAddress,
           email: primaryEmail.emailAddress,
           age: 25, // Default age
@@ -131,6 +139,8 @@ export async function POST(req: NextRequest) {
           await db
             .update(usersTable)
             .set({
+              firstName: userData.firstName,
+              lastName: userData.lastName,
               name: userData.name,
               email: userData.email,
               isEmailVerified: userData.isEmailVerified,

@@ -74,6 +74,8 @@ export async function POST(req: NextRequest) {
 
       const userData = {
         clerkId: id,
+        firstName: first_name || '',
+        lastName: last_name || '',
         name: `${first_name || ''} ${last_name || ''}`.trim() || primaryEmail.email_address,
         email: primaryEmail.email_address,
         age: 25, // Default age since Clerk doesn't provide this
@@ -90,6 +92,8 @@ export async function POST(req: NextRequest) {
         await db
           .update(usersTable)
           .set({
+            firstName: userData.firstName,
+            lastName: userData.lastName,
             name: userData.name,
             email: userData.email,
             isEmailVerified: userData.isEmailVerified,

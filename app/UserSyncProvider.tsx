@@ -17,6 +17,7 @@
  * 
  * Data synced:
  * - Clerk ID (unique identifier)
+ * - First name and last name (separate fields)
  * - Full name (constructed from firstName/lastName or fallback to email)
  * - Email address
  * - Email verification status
@@ -35,6 +36,7 @@ import { useUser } from "@clerk/nextjs";
  * This function:
  * - Extracts relevant user data from Clerk user object
  * - Sends a POST request to /api/sync-users endpoint
+ * - Syncs firstName and lastName separately plus combined name
  * - Handles name construction with fallbacks (fullName -> firstName + lastName -> email)
  * - Includes email verification status from Clerk
  */
@@ -47,6 +49,8 @@ async function syncUserToDatabase(user: any) {
       },
       body: JSON.stringify({
         clerkId: user.id, // Unique Clerk identifier
+        firstName: user.firstName || '', // First name from Clerk
+        lastName: user.lastName || '', // Last name from Clerk
         name: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.primaryEmailAddress?.emailAddress, // Name with fallbacks
         email: user.primaryEmailAddress?.emailAddress, // Primary email
         isEmailVerified: user.primaryEmailAddress?.verification?.status === 'verified', // Email verification status

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from '@clerk/nextjs'
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { cn } from "@/utils";
+import Provider from "./provider";
 
 export const metadata: Metadata = {
   title: "Deep Pivot",
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <Provider>
       <html lang="en">
         <body
           className={cn(
@@ -35,6 +35,6 @@ export default function RootLayout({
           {children}
         </body>
       </html>
-    </ClerkProvider>
+    </Provider>
   ) as any;
 }

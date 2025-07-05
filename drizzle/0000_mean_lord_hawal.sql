@@ -1,5 +1,6 @@
 CREATE TABLE "users" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "users_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"clerkId" varchar(255) NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"age" integer NOT NULL,
 	"email" varchar(255) NOT NULL,
@@ -26,5 +27,6 @@ CREATE TABLE "users" (
 	"creditsExhaustedAt" timestamp,
 	"creditsExhaustedReason" varchar(255) DEFAULT '' NOT NULL,
 	"creditsExhaustedReasonDescription" varchar(255) DEFAULT '' NOT NULL,
+	CONSTRAINT "users_clerkId_unique" UNIQUE("clerkId"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );

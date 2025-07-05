@@ -4,13 +4,76 @@ import { db } from '@/src/db';
 import { usersTable } from '@/src/db/schema';
 import { eq } from 'drizzle-orm';
 
+async function syncSingleUser(userData: {
+  clerkId: string;
+  name: string;
+  email: string;
+  isEmailVerified: boolean;
+}) {
+  try {
+    // Check if user already exists by Clerk ID
+    const existingUser = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.clerkId, userData.clerkId))
+      .limit(1);
+
+    const userRecord = {
+      clerkId: userData.clerkId,
+      name: userData.name,
+      email: userData.email,
+      age: 25, // Default age
+      isEmailVerified: userData.isEmailVerified,
+    };
+
+    if (existingUser.length === 0) {
+      // Create new user
+      await db.insert(usersTable).values(userRecord);
+      return NextResponse.json({
+        message: 'User created successfully',
+        status: 'created',
+        user: userRecord
+      });
+    } else {
+      // Update existing user
+      await db
+        .update(usersTable)
+        .set({
+          name: userRecord.name,
+          email: userRecord.email,
+          isEmailVerified: userRecord.isEmailVerified,
+          updatedAt: new Date(),
+        })
+        .where(eq(usersTable.clerkId, userData.clerkId));
+      
+      return NextResponse.json({
+        message: 'User updated successfully',
+        status: 'updated',
+        user: userRecord
+      });
+    }
+  } catch (error) {
+    console.error('Error syncing single user:', error);
+    return NextResponse.json(
+      { error: 'Failed to sync user', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
-    // Check if user is authenticated and has admin privileges
+    // Check if user is authenticated
     const { userId } = await auth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if this is a single user sync request (from client)
+    const body = await req.json();
+    if (body.clerkId && body.email) {
+      return await syncSingleUser(body);
     }
 
     // Get all users from Clerk - clerkClient is a function that returns a promise
@@ -37,14 +100,15 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        // Check if user already exists in Supabase
+        // Check if user already exists by Clerk ID
         const existingUser = await db
           .select()
           .from(usersTable)
-          .where(eq(usersTable.email, primaryEmail.emailAddress))
+          .where(eq(usersTable.clerkId, clerkUser.id))
           .limit(1);
 
         const userData = {
+          clerkId: clerkUser.id,
           name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || primaryEmail.emailAddress,
           email: primaryEmail.emailAddress,
           age: 25, // Default age
@@ -68,10 +132,11 @@ export async function POST(req: NextRequest) {
             .update(usersTable)
             .set({
               name: userData.name,
+              email: userData.email,
               isEmailVerified: userData.isEmailVerified,
               updatedAt: new Date(),
             })
-            .where(eq(usersTable.email, primaryEmail.emailAddress));
+            .where(eq(usersTable.clerkId, clerkUser.id));
           
           syncResults.push({
             clerkId: clerkUser.id,

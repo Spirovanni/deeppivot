@@ -65,14 +65,15 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      // Check if user already exists
+      // Check if user already exists by Clerk ID
       const existingUser = await db
         .select()
         .from(usersTable)
-        .where(eq(usersTable.email, primaryEmail.email_address))
+        .where(eq(usersTable.clerkId, id))
         .limit(1);
 
       const userData = {
+        clerkId: id,
         name: `${first_name || ''} ${last_name || ''}`.trim() || primaryEmail.email_address,
         email: primaryEmail.email_address,
         age: 25, // Default age since Clerk doesn't provide this
@@ -90,10 +91,11 @@ export async function POST(req: NextRequest) {
           .update(usersTable)
           .set({
             name: userData.name,
+            email: userData.email,
             isEmailVerified: userData.isEmailVerified,
             updatedAt: new Date(),
           })
-          .where(eq(usersTable.email, primaryEmail.email_address));
+          .where(eq(usersTable.clerkId, id));
         console.log(`Updated user: ${primaryEmail.email_address}`);
       }
     } catch (error) {

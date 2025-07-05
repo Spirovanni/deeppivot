@@ -2,12 +2,21 @@
 
 import { motion } from "motion/react";
 import Image from "next/image";
+import { SignUpButton, useUser } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import { useState, useLayoutEffect } from "react";
 
 interface HeroSectionProps {
   onGetStarted?: () => void;
 }
 
 export function HeroSection({ onGetStarted }: HeroSectionProps) {
+  const [isClient, setIsClient] = useState(false);
+
+  useLayoutEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const scrollToChat = () => {
     if (onGetStarted) {
       onGetStarted();
@@ -97,15 +106,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
           }}
           className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-4"
         >
-          <button 
-            onClick={scrollToChat}
-            className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
-          >
-            Get Started
-          </button>
-          <button className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
-            Learn More
-          </button>
+          {isClient && <HeroButtons onGetStarted={scrollToChat} />}
         </motion.div>
         <motion.div
           initial={{
@@ -142,3 +143,55 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
     </div>
   );
 }
+
+// Separate component for hero buttons to handle Clerk hooks properly
+const HeroButtons = ({ onGetStarted }: { onGetStarted: () => void }) => {
+  const { isSignedIn } = useUser();
+
+  if (isSignedIn) {
+    return (
+      <>
+        <button 
+          onClick={onGetStarted}
+          className="w-60 transform rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-600 hover:to-pink-600"
+        >
+          Start Coaching Session
+        </button>
+        <button 
+          onClick={() => {
+            // Scroll to features section for logged in users
+            const featuresSection = document.querySelector('[data-features-section]');
+            if (featuresSection) {
+              featuresSection.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+          className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900"
+        >
+          Learn More
+        </button>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <SignUpButton mode="modal">
+        <button className="w-60 transform rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-600 hover:to-pink-600">
+          Get Started Free
+        </button>
+      </SignUpButton>
+      <button 
+        onClick={() => {
+          // Scroll to features section for non-logged in users
+          const featuresSection = document.querySelector('[data-features-section]');
+          if (featuresSection) {
+            featuresSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+        className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900"
+      >
+        Learn More
+      </button>
+    </>
+  );
+};

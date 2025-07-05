@@ -4,6 +4,7 @@ import { HeroSection } from "./_components/hero-section";
 import { FeatureBentoGrid } from "./_components/feature-bento-grid";
 import { HumeChat } from "./_components/hume-chat";
 import { useState, useEffect, useRef } from "react";
+import { useUser } from "@clerk/nextjs";
 
 interface PageProps {}
 
@@ -13,10 +14,22 @@ export default function Page({}: PageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<string>("");
+  const [isClient, setIsClient] = useState(false);
   const featureBentoRef = useRef<HTMLDivElement>(null);
+  const { isSignedIn } = useUser();
+
+  // Client-side hydration check
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Function to force show chat (called from Get Started button)
   const forceShowChat = () => {
+    // Only allow chat access if user is signed in
+    if (!isSignedIn) {
+      return;
+    }
+
     if (accessToken) {
       setShowHumeChat(true);
     } else {
@@ -57,8 +70,13 @@ export default function Page({}: PageProps) {
     }
   };
 
-  // Get access token on mount
+  // Get access token on mount only if user is signed in
   useEffect(() => {
+    if (!isClient || !isSignedIn) {
+      setIsLoading(false);
+      return;
+    }
+
     const initializeApp = async () => {
       try {
         setIsLoading(true);
@@ -72,10 +90,12 @@ export default function Page({}: PageProps) {
     };
 
     initializeApp();
-  }, []);
+  }, [isClient, isSignedIn]);
 
-  // Handle scroll detection
+  // Handle scroll detection - only if user is signed in
   useEffect(() => {
+    if (!isSignedIn) return;
+
     const handleScroll = () => {
       if (!featureBentoRef.current) return;
 
@@ -94,9 +114,9 @@ export default function Page({}: PageProps) {
     
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isSignedIn]);
 
-  if (isLoading) {
+  if (isLoading && isSignedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-4">
@@ -117,7 +137,7 @@ export default function Page({}: PageProps) {
     );
   }
 
-  if (error && !accessToken) {
+  if (error && !accessToken && isSignedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-4">
@@ -158,6 +178,7 @@ export default function Page({}: PageProps) {
       {/* FeatureBentoGrid with proper spacing */}
       <section 
         ref={featureBentoRef}
+        data-features-section
         className="py-20 px-4 min-h-screen flex items-center justify-center"
       >
         <div className="w-full">
@@ -173,11 +194,30 @@ export default function Page({}: PageProps) {
         </div>
       </section>
 
-      {/* Spacer to ensure smooth transition */}
-      <div className="h-screen"></div>
+      {/* Authentication Gate for Premium Features */}
+      {!isSignedIn && (
+        <section className="py-20 px-4 bg-gradient-to-r from-violet-50 to-pink-50 dark:from-violet-900/20 dark:to-pink-900/20">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-200 mb-6">
+              Ready to Start Your Journey?
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
+              Sign up now to access our AI-powered interview coaching, personalized feedback, and career development tools.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="text-sm text-slate-500 dark:text-slate-400">
+                🔒 Premium features require an account
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
-      {/* HumeChat - only show when scrolled past FeatureBentoGrid */}
-      {showHumeChat && (
+      {/* Spacer to ensure smooth transition - only for signed in users */}
+      {isSignedIn && <div className="h-screen"></div>}
+
+      {/* HumeChat - only show when signed in and scrolled past FeatureBentoGrid */}
+      {isSignedIn && showHumeChat && (
         <div 
           className="fixed inset-0 z-50 bg-white dark:bg-slate-900 transition-all duration-300 ease-in-out"
           style={{

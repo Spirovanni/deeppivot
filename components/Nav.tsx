@@ -6,12 +6,15 @@ import HumeLogo from "./logos/Hume";
 import { Button } from "./ui/button";
 import { Moon, Sun } from "lucide-react";
 import Github from "./logos/GitHub";
+import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import pkg from '@/package.json';
 
 export const Nav = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useLayoutEffect(() => {
+    setIsClient(true);
     const el = document.documentElement;
 
     if (el.classList.contains("dark")) {
@@ -36,11 +39,11 @@ export const Nav = () => {
         <h1 className="text-base font-bold md:text-2xl">Deep Pivots</h1>
       </div>
 
-
+      <div className="flex items-center gap-3">
         <Button
           onClick={toggleDark}
           variant={"ghost"}
-          className={"ml-auto flex items-center gap-1.5 rounded-full"}
+          className={"flex items-center gap-1.5 rounded-full"}
         >
           <span>
             {isDarkMode ? (
@@ -51,10 +54,50 @@ export const Nav = () => {
           </span>
           <span>{isDarkMode ? "Light" : "Dark"} Mode</span>
         </Button>
-        <button className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 md:w-32 dark:bg-white dark:text-black dark:hover:bg-gray-200">
-        Login
-      </button>
+        
+        {isClient && <AuthSection />}
+      </div>
       {/* </div> */}
     </nav>
+  );
+};
+
+// Separate component for auth section to handle Clerk hooks properly
+const AuthSection = () => {
+  const { isSignedIn, user } = useUser();
+  
+  if (isSignedIn) {
+    return (
+      <div className="flex items-center gap-3">
+        <span className="text-sm text-slate-600 dark:text-slate-400">
+          Welcome, {user?.firstName || user?.username}!
+        </span>
+        <UserButton 
+          appearance={{
+            elements: {
+              avatarBox: "w-8 h-8"
+            }
+          }}
+        />
+      </div>
+    );
+  }
+  
+  return (
+    <div className="flex items-center gap-2">
+      <SignInButton mode="modal">
+        <Button 
+          variant="ghost" 
+          className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+        >
+          Sign In
+        </Button>
+      </SignInButton>
+      <SignUpButton mode="modal">
+        <Button className="bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-600 text-white border-0">
+          Get Started
+        </Button>
+      </SignUpButton>
+    </div>
   );
 };

@@ -88,7 +88,7 @@ const AuthSection = () => {
       <SignInButton mode="modal">
         <Button 
           variant="ghost" 
-          className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+          className="border border-violet-500 text-violet-600 dark:text-violet-400 bg-transparent hover:bg-violet-50 dark:hover:bg-violet-900 hover:border-violet-600 font-medium shadow-none"
         >
           Sign In
         </Button>

@@ -25,11 +25,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { firstName, lastName, name, age, email, clerkId } = body;
 
+    console.log('Received user data:', { firstName, lastName, name, age, email, clerkId });
+
     if (!firstName || !lastName || !name || !age || !email || !clerkId) {
       return NextResponse.json(
         { error: 'Missing required fields: firstName, lastName, name, age, email, clerkId' },
         { status: 400 }
       );
+    }
+
+    // Check if user already exists
+    const existingUser = await db.select().from(usersTable).where(eq(usersTable.clerkId, clerkId));
+    
+    if (existingUser.length > 0) {
+      console.log('User already exists:', existingUser[0]);
+      return NextResponse.json(existingUser[0], { status: 200 });
     }
 
     const newUser = await db.insert(usersTable).values({
@@ -41,11 +51,34 @@ export async function POST(request: NextRequest) {
       email,
     }).returning();
 
+    console.log('User created successfully:', newUser[0]);
     return NextResponse.json(newUser[0], { status: 201 });
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error('Detailed error creating user:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      error
+    });
+    
+    // Check for specific database errors
+    if (error instanceof Error) {
+      if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
+        return NextResponse.json(
+          { error: 'User with this email or clerkId already exists' },
+          { status: 409 }
+        );
+      }
+      
+      if (error.message.includes('not null constraint') || error.message.includes('violates not-null')) {
+        return NextResponse.json(
+          { error: 'Missing required database fields', details: error.message },
+          { status: 400 }
+        );
+      }
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to create user' },
+      { error: 'Failed to create user', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

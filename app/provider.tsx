@@ -33,14 +33,28 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
   // Define CreateNewUser inside Provider
   const CreateNewUser = async () => {
     if (!user) return;
-    await axios.post('/api/users', {
-      clerkId: user.id,
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      name: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-      age: 25, // Default age since Clerk does not provide this
-      email: user.primaryEmailAddress?.emailAddress || '',
-    });
+    
+    try {
+      const response = await axios.post('/api/users', {
+        clerkId: user.id,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        name: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+        age: 25, // Default age since Clerk does not provide this
+        email: user.primaryEmailAddress?.emailAddress || '',
+      });
+      
+      console.log('User creation/sync successful:', response.data);
+    } catch (error) {
+      console.error('Failed to create/sync user:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        response: axios.isAxiosError(error) ? error.response?.data : undefined,
+        status: axios.isAxiosError(error) ? error.response?.status : undefined
+      });
+      
+      // Don't throw the error - just log it to avoid breaking the app
+      // The user can still use the app even if backend sync fails
+    }
   };
 
   useEffect(() => {

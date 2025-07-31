@@ -18,6 +18,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+
+  const user = await currentUser();
+
   try {
     const body = await request.json();
     const { firstName, lastName, name, age, email, clerkId } = body;

@@ -17,12 +17,14 @@ export type UsersDetail={
 }
 /**
  * Provider Component
- * 
+ *
  * Main application provider that wraps the app with:
- * - ClerkProvider for authentication
- * - UserSyncProvider for automatic user synchronization
- * 
- * This combines automatic user sync with manual user creation capabilities.
+ * - ClerkProvider: Provides authentication context for the entire app using Clerk.
+ * - UserSyncProvider: Handles automatic user synchronization logic.
+ * - UserDetailContext.Provider: Supplies user detail state and updater (userDetail, setUserDetail) to all children.
+ * - Automatic backend user creation: Ensures a user record is created in the backend database when a user logs in (if not already present).
+ *
+ * This component ensures that all children have access to authentication, user synchronization, user detail context, and backend user creation logic.
  */
 function InnerProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();

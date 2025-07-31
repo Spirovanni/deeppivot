@@ -107,12 +107,14 @@ const AuthSection = () => {
   
   return (
     <div className="flex items-center gap-2">
-      <Button
-        variant="ghost"
-        className="w-30 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:from-gray-800 dark:hover:to-gray-900"
-      >
-        Sign In
-      </Button>
+      <SignInButton mode="modal">
+        <Button
+          variant="ghost"
+          className="w-30 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:from-gray-800 dark:hover:to-gray-900"
+        >
+          Sign In
+        </Button>
+      </SignInButton>
       <SignUpButton mode="modal">
         <Button className="w-30 bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-600 text-white border-0">
           Get Started

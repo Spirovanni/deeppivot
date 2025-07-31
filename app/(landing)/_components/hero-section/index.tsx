@@ -155,7 +155,7 @@ const HeroButtons = ({ onGetStarted }: { onGetStarted: () => void }) => {
           onClick={onGetStarted}
           className="w-44 transform rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-600 hover:to-pink-600"
         >
-          Start Coaching Session
+          Start Session
         </button>
         <button 
           onClick={() => {

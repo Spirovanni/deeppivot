@@ -30,23 +30,28 @@ export function FeatureBentoGrid() {
   );
 }
 
-const VoiceWaveform = () => (
-  <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 to-blue-50 items-center justify-center p-4">
-    <div className="flex items-end space-x-1">
-      {[...Array(12)].map((_, i) => (
-        <div
-          key={i}
-          className="bg-blue-500 rounded-full animate-pulse"
-          style={{
-            width: '4px',
-            height: `${Math.random() * 30 + 10}px`,
-            animationDelay: `${i * 0.1}s`,
-          }}
-        />
-      ))}
+const VoiceWaveform = () => {
+  // Use fixed heights that are consistent between server and client
+  const heights = [15, 28, 22, 35, 18, 32, 25, 38, 20, 30, 16, 33];
+  
+  return (
+    <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 to-blue-50 items-center justify-center p-4">
+      <div className="flex items-end space-x-1">
+        {heights.map((height, i) => (
+          <div
+            key={i}
+            className="bg-blue-500 rounded-full animate-pulse"
+            style={{
+              width: '4px',
+              height: `${height}px`,
+              animationDelay: `${i * 0.1}s`,
+            }}
+          />
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const EmotionChart = () => (
   <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 to-purple-50 items-center justify-center p-4">

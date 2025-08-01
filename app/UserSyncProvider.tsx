@@ -58,10 +58,12 @@ async function syncUserToDatabase(user: any) {
     });
 
     if (!response.ok) {
-      console.error('Failed to sync user to database');
+      console.warn('Failed to sync user to database - continuing without sync');
+    } else {
+      console.log('User successfully synced to database');
     }
   } catch (error) {
-    console.error('Error syncing user to database:', error);
+    console.warn('Error syncing user to database - continuing without sync:', error);
   }
 }
 

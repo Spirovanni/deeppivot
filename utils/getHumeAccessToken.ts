@@ -7,8 +7,21 @@ export const getHumeAccessToken = async () => {
   const secretKey = process.env.HUME_SECRET_KEY;
   const configId = process.env.NEXT_PUBLIC_HUME_CONFIG_ID;
 
+  console.log('Environment check:', {
+    hasApiKey: !!apiKey,
+    hasSecretKey: !!secretKey,
+    hasConfigId: !!configId,
+    apiKeyLength: apiKey?.length,
+    secretKeyLength: secretKey?.length,
+    configId: configId
+  });
+
   if (!apiKey || !secretKey || !configId) {
-    throw new Error('Missing required environment variables (HUME_API_KEY or HUME_SECRET_KEY or NEXT_PUBLIC_HUME_CONFIG_ID)');
+    const missing = [];
+    if (!apiKey) missing.push('HUME_API_KEY');
+    if (!secretKey) missing.push('HUME_SECRET_KEY');
+    if (!configId) missing.push('NEXT_PUBLIC_HUME_CONFIG_ID');
+    throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
 
   const accessToken = await fetchAccessToken({

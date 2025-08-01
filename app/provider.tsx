@@ -46,7 +46,7 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
       
       console.log('User creation/sync successful:', response.data);
     } catch (error) {
-      console.error('Failed to create/sync user:', {
+      console.warn('Failed to create/sync user - continuing without database sync:', {
         message: error instanceof Error ? error.message : 'Unknown error',
         response: axios.isAxiosError(error) ? error.response?.data : undefined,
         status: axios.isAxiosError(error) ? error.response?.status : undefined

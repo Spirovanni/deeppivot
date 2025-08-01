@@ -18,10 +18,16 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-
+  // Add debug logging for authentication
   const user = await currentUser();
+  console.log('Current authenticated user:', user ? user.id : 'No user found');
 
   try {
+    // Test database connection first
+    console.log('Testing database connection...');
+    await db.select().from(usersTable).limit(1);
+    console.log('Database connection successful');
+
     const body = await request.json();
     const { firstName, lastName, name, age, email, clerkId } = body;
 

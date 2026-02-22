@@ -176,7 +176,8 @@ export default function Page({}: PageProps) {
       <HeroSection onGetStarted={forceShowChat} />
       
       {/* FeatureBentoGrid with proper spacing */}
-      <section 
+      <section
+        id="features"
         ref={featureBentoRef}
         data-features-section
         className="py-20 px-4 min-h-screen flex items-center justify-center"

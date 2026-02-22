@@ -1,19 +1,21 @@
 /**
  * Hume.ai Emotion Inference Service
  *
- * Wraps the Hume Node.js SDK (`hume` package, already installed) to provide:
- *   - Batch emotion analysis on audio/video recordings (post-interview processing)
+ * Compliant with current Hume AI protocol: https://dev.hume.ai/intro
+ *
+ * Wraps the Hume Node.js SDK (`hume` package) to provide:
+ *   - Batch emotion analysis on audio/video recordings (Expression Measurement API)
  *   - Real-time streaming emotion analysis WebSocket (during live sessions)
- *   - EVI access token generation (server-side, for browser SDK bootstrap)
+ *   - EVI access token generation (Token auth for client-side WebSocket)
  *   - EVI config management and chat history retrieval
- *   - Utility helpers for parsing emotion embedding arrays
  *
  * Env vars required:
- *   HUME_API_KEY               — Hume API key
+ *   HUME_API_KEY               — Hume API key (from https://app.hume.ai/keys)
  *   HUME_SECRET_KEY            — Hume secret key
  *   NEXT_PUBLIC_HUME_CONFIG_ID — Default EVI config ID
  *
- * Hume API reference: https://dev.hume.ai/reference
+ * Auth: Token auth (apiKey + secretKey) for EVI; API key for server-side REST.
+ * Reference: https://dev.hume.ai/docs/introduction/api-key
  */
 
 import "server-only";
@@ -24,13 +26,10 @@ import type { Hume } from "hume";
 
 function getClient(): HumeClient {
   const apiKey = process.env.HUME_API_KEY;
-  const secretKey = process.env.HUME_SECRET_KEY;
-  if (!apiKey || !secretKey) {
-    throw new Error(
-      "HUME_API_KEY and HUME_SECRET_KEY must be set in environment variables."
-    );
+  if (!apiKey) {
+    throw new Error("HUME_API_KEY must be set in environment variables.");
   }
-  return new HumeClient({ apiKey, secretKey });
+  return new HumeClient({ apiKey });
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────

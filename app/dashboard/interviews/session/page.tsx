@@ -1,6 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getHumeAccessToken } from "@/utils/getHumeAccessToken";
+import { getEviAccessToken } from "@/src/lib/hume";
 import { InterviewRoom } from "./_components/InterviewRoom";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -19,7 +19,7 @@ export default async function InterviewSessionPage({
 
   let accessToken: string | null = null;
   try {
-    accessToken = await getHumeAccessToken();
+    accessToken = await getEviAccessToken();
   } catch (error) {
     console.error("Failed to get Hume access token:", error);
   }

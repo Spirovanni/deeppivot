@@ -34,7 +34,6 @@ export default function ClientComponent({
       }
     >
       <VoiceProvider
-        auth={{ type: "accessToken", value: accessToken }}
         onMessage={() => {
           if (timeout.current) {
             window.clearTimeout(timeout.current);

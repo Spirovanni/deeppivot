@@ -1,10 +1,10 @@
-import { getHumeAccessToken } from "@/utils/getHumeAccessToken";
+import { getEviAccessToken } from "@/src/lib/hume";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     console.log('🔑 Fetching Hume access token...');
-    const accessToken = await getHumeAccessToken();
+    const accessToken = await getEviAccessToken();
     
     if (!accessToken) {
       console.error('❌ Failed to get access token - token is null/undefined');

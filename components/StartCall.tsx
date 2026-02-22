@@ -212,8 +212,13 @@ export default function StartCall({ accessToken, configId }: StartCallProps = {}
         hasConfigId: !!configId
       });
       
-      const result = await connect();
-      console.log('Connect result:', result);
+      if (!accessToken) {
+        throw new Error("Access token is required to connect");
+      }
+      await connect({
+        auth: { type: "accessToken", value: accessToken },
+        configId: configId ?? undefined,
+      });
       
       console.log(`🔄 Connection attempt completed [${currentConnectionId}]`);
       

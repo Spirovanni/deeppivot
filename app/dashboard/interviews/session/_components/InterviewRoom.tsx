@@ -99,9 +99,11 @@ function SessionLifecycle({
 
 function InterviewStartButton({
   sessionType,
+  accessToken,
   onSessionCreated,
 }: {
   sessionType: string;
+  accessToken: string;
   onSessionCreated: (id: number) => void;
 }) {
   const { status, connect } = useVoice();
@@ -116,7 +118,10 @@ function InterviewStartButton({
       await navigator.mediaDevices.getUserMedia({ audio: true });
       const sessionId = await startInterviewSession(sessionType);
       onSessionCreated(sessionId);
-      await connect();
+      await connect({
+        auth: { type: "accessToken", value: accessToken },
+        configId: process.env.NEXT_PUBLIC_HUME_CONFIG_ID,
+      });
     } catch (err) {
       console.error("Failed to start interview:", err);
       if (err instanceof Error) alert(err.message);
@@ -207,8 +212,6 @@ export function InterviewRoom({ accessToken, sessionType }: InterviewRoomProps) 
   return (
     <div className="relative flex h-full flex-col overflow-hidden">
       <VoiceProvider
-        auth={{ type: "accessToken", value: accessToken }}
-        configId={configId}
         onMessage={() => {
           setTimeout(() => {
             if (messagesRef.current) {
@@ -233,6 +236,7 @@ export function InterviewRoom({ accessToken, sessionType }: InterviewRoomProps) 
         <Controls />
         <InterviewStartButton
           sessionType={sessionType}
+          accessToken={accessToken}
           onSessionCreated={handleSessionCreated}
         />
       </VoiceProvider>

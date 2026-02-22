@@ -42,6 +42,11 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 - **interview_sessions** — Per-user interview sessions with type, status, score (LP2)
 - **interview_questions** — Ordered questions per session with response quality score (LP2)
 - **emotion_snapshots** — JSONB emotion maps captured during a session with dominant emotion & confidence (LP2)
+- **career_archetypes** — Per-user archetype result with name, JSONB trait scores, strengths, and growth areas (LP6)
+- **career_milestones** — Per-user draggable roadmap milestones with title, dates, status, and order (LP7)
+- **career_resources** — Resources linked to milestones (title, url, type: article/course/tool/video) (LP7)
+- **mentors** — Seeded mentor directory (12 profiles) with expertise array, industry, bio, links (LP8)
+- **mentor_connections** — User → mentor connection requests with status tracking (LP8)
 
 ### Existing Routes
 
@@ -81,10 +86,10 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-13** | LP5: Real-time Performance Analytics Dashboard |
+| **deeppivot-17** | LP9: Alternative Education Explorer |
 | **deeppivot-18** | Project: Initialize GitHub Repository |
 
-Run `bd ready` to see current ready work. Start with **deeppivot-13** — analytics dashboard now that session history and emotion data are fully captured.
+Run `bd ready` to see current ready work. Start with **deeppivot-17** — Education Explorer completes Phase 1.
 
 ---
 
@@ -96,9 +101,9 @@ Run `bd ready` to see current ready work. Start with **deeppivot-13** — analyt
 |-------|-------|-------|
 | 1 | ~~deeppivot-9~~ | ~~LP1: Dashboard Shell & Sidebar Navigation~~ ✓ |
 | 2 | ~~deeppivot-10~~ | ~~LP2: Interview Session Database Models & Migration~~ ✓ |
-| 3 | deeppivot-14 | LP6: Career Archetype Assessment |
-| 4 | deeppivot-15 | LP7: Personalized Career Planning & Roadmap |
-| 5 | deeppivot-16 | LP8: Mentor & Coach Network |
+| 3 | ~~deeppivot-14~~ | ~~LP6: Career Archetype Assessment~~ ✓ |
+| 4 | ~~deeppivot-15~~ | ~~LP7: Personalized Career Planning & Roadmap~~ ✓ |
+| 5 | ~~deeppivot-16~~ | ~~LP8: Mentor & Coach Network~~ ✓ |
 | 6 | deeppivot-17 | LP9: Alternative Education Explorer |
 
 **Unblocks**: LP3–LP5 (interview flow), plus all dashboard-dependent features.
@@ -114,7 +119,7 @@ Run `bd ready` to see current ready work. Start with **deeppivot-13** — analyt
 | 1 | ~~deeppivot-10~~ | ~~LP2: Interview Session DB (from Phase 1)~~ ✓ |
 | 2 | ~~deeppivot-11~~ | ~~LP3: AI Voice Interview Session Page~~ ✓ |
 | 3 | ~~deeppivot-12~~ | ~~LP4: Interview History & Emotion Feedback Reports~~ ✓ |
-| 4 | deeppivot-13 | LP5: Real-time Performance Analytics Dashboard |
+| 4 | ~~deeppivot-13~~ | ~~LP5: Real-time Performance Analytics Dashboard~~ ✓ |
 
 ---
 
@@ -207,4 +212,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-12 (LP4: Interview History & Emotion Feedback Reports) closed. New: `app/dashboard/interviews/[sessionId]/`, `components/interviews/EmotionTimeline.tsx`, `components/interviews/CommunicationSummary.tsx`.*
+*Last updated: 2026-02-22 — deeppivot-16 (LP8: Mentor & Coach Network) closed. New: `mentors` + `mentor_connections` tables (migration `0006_living_maximus.sql`), 12 seeded mentor profiles, `MentorCard` with connect dialog, `MentorGrid` with client-side search + industry/expertise filters.*

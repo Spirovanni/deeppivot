@@ -39,9 +39,12 @@ export const usersTable = pgTable("users", {
 // USER RELATIONS
 // ============================================
 
-export const usersRelations = relations(usersTable, ({ many }) => ({
+export const usersRelations = relations(usersTable, ({ many, one }) => ({
   jobBoards: many(jobBoardsTable),
   interviewSessions: many(interviewSessionsTable),
+  careerArchetype: one(careerArchetypesTable),
+  careerMilestones: many(careerMilestonesTable),
+  mentorConnections: many(mentorConnectionsTable),
 }));
 
 // ============================================
@@ -163,3 +166,143 @@ export const emotionSnapshotsRelations = relations(emotionSnapshotsTable, ({ one
     references: [interviewSessionsTable.id],
   }),
 }));
+
+// ============================================
+// CAREER ARCHETYPE MODEL (LP6)
+// ============================================
+
+export const careerArchetypesTable = pgTable("career_archetypes", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().unique().references(() => usersTable.id, { onDelete: "cascade" }),
+  archetypeName: varchar({ length: 100 }).notNull(),
+  // jsonb: { dimension: string; score: number; normalized: number }[]
+  traits: jsonb().notNull().default([]),
+  strengths: text().array().notNull().default([]),
+  growthAreas: text().array().notNull().default([]),
+  assessedAt: timestamp().notNull().defaultNow(),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const careerArchetypesRelations = relations(careerArchetypesTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [careerArchetypesTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
+// ============================================
+// CAREER PLANNING MODELS (LP7)
+// ============================================
+
+export const careerMilestonesTable = pgTable("career_milestones", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  title: varchar({ length: 255 }).notNull(),
+  description: text(),
+  targetDate: timestamp(),
+  status: varchar({ length: 20 }).notNull().default("planned"),
+  orderIndex: integer().notNull().default(0),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const careerMilestonesRelations = relations(careerMilestonesTable, ({ one, many }) => ({
+  user: one(usersTable, {
+    fields: [careerMilestonesTable.userId],
+    references: [usersTable.id],
+  }),
+  resources: many(careerResourcesTable),
+}));
+
+export const careerResourcesTable = pgTable("career_resources", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  milestoneId: integer().notNull().references(() => careerMilestonesTable.id, { onDelete: "cascade" }),
+  title: varchar({ length: 255 }).notNull(),
+  url: varchar({ length: 1024 }).notNull(),
+  resourceType: varchar({ length: 50 }).notNull().default("article"),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const careerResourcesRelations = relations(careerResourcesTable, ({ one }) => ({
+  milestone: one(careerMilestonesTable, {
+    fields: [careerResourcesTable.milestoneId],
+    references: [careerMilestonesTable.id],
+  }),
+}));
+
+// ============================================
+// MENTOR NETWORK MODELS (LP8)
+// ============================================
+
+export const mentorsTable = pgTable("mentors", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar({ length: 255 }).notNull(),
+  title: varchar({ length: 255 }).notNull(),
+  industry: varchar({ length: 100 }).notNull(),
+  expertise: text().array().notNull().default([]),
+  bio: text().notNull(),
+  avatarUrl: varchar({ length: 1024 }),
+  contactUrl: varchar({ length: 1024 }),
+  linkedinUrl: varchar({ length: 1024 }),
+  isActive: boolean().notNull().default(true),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const mentorsRelations = relations(mentorsTable, ({ many }) => ({
+  connections: many(mentorConnectionsTable),
+}));
+
+export const mentorConnectionsTable = pgTable("mentor_connections", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  mentorId: integer().notNull().references(() => mentorsTable.id, { onDelete: "cascade" }),
+  status: varchar({ length: 20 }).notNull().default("pending"),
+  message: text(),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const mentorConnectionsRelations = relations(mentorConnectionsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [mentorConnectionsTable.userId],
+    references: [usersTable.id],
+  }),
+  mentor: one(mentorsTable, {
+    fields: [mentorConnectionsTable.mentorId],
+    references: [mentorsTable.id],
+  }),
+}));
+
+// ============================================
+// EDUCATION EXPLORER MODELS (LP9)
+// ============================================
+
+export const educationProgramsTable = pgTable("education_programs", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar({ length: 255 }).notNull(),
+  provider: varchar({ length: 255 }).notNull(),
+  programType: varchar({ length: 50 }).notNull().default("bootcamp"),
+  duration: varchar({ length: 100 }).notNull(),
+  cost: integer().notNull().default(0), // in cents
+  roiScore: integer(), // 0-100
+  tags: text().array().notNull().default([]),
+  url: varchar({ length: 1024 }).notNull(),
+  description: text().notNull(),
+  isActive: boolean().notNull().default(true),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const fundingOpportunitiesTable = pgTable("funding_opportunities", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar({ length: 255 }).notNull(),
+  fundingType: varchar({ length: 50 }).notNull().default("scholarship"),
+  amount: integer(), // in cents, nullable = varies
+  eligibilityText: text().notNull(),
+  applicationUrl: varchar({ length: 1024 }).notNull(),
+  deadline: timestamp(),
+  isActive: boolean().notNull().default(true),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});

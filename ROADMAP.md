@@ -97,9 +97,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ID | Title |
 |----|-------|
 | **deeppivot-24** | Backend: Set up Supabase for Storage & Real-time |
-| **deeppivot-91** | AI/ML: Archetype Model Bias Detection |
+| **deeppivot-19** | Frontend: Initialize Next.js 15 Project |
 
-Run `bd ready` to see current ready work. Adaptive Feedback Engine (deeppivot-95) complete.
+Run `bd ready` to see current ready work. Archetype Model Bias Detection (deeppivot-91) complete.
 
 ---
 
@@ -179,6 +179,7 @@ Run `bd ready` to see current ready work. Adaptive Feedback Engine (deeppivot-95
 | 17 | ~~deeppivot-117~~ | ~~Feature: Curated Resource Recommendations~~ ✓ |
 | 18 | ~~deeppivot-96~~ | ~~AI/ML: Predictive Career Analytics~~ ✓ |
 | 19 | ~~deeppivot-95~~ | ~~AI/ML: Adaptive Feedback Engine~~ ✓ |
+| 20 | ~~deeppivot-91~~ | ~~AI/ML: Archetype Model Bias Detection~~ ✓ |
 
 ---
 
@@ -239,4 +240,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-95 (Adaptive Feedback Engine) closed. Feedback generation now fetches past feedback and instructs LLM to highlight improvement or recurring issues. Supabase (deeppivot-24) or Archetype Bias (deeppivot-91) next.*
+*Last updated: 2026-02-22 — deeppivot-91 (Archetype Model Bias Detection) closed. Post-processing step analyzes archetype distribution, flags over-representation (>45%) and concentration (top 2 >75%). Logs for human review. Supabase (deeppivot-24) or Next.js 15 (deeppivot-19) next.*

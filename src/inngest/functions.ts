@@ -440,6 +440,15 @@ export const processCareerArchetyping = inngest.createFunction(
       return runCareerArchetyping(sessionId);
     });
 
+    // Post-processing: bias detection (flags imbalances for human review)
+    await step.run("bias-check", async () => {
+      const { runBiasCheckAndLog } = await import(
+        "@/src/lib/archetype-bias-detection"
+      );
+      await runBiasCheckAndLog();
+      return { checked: true };
+    });
+
     return { sessionId, userId: result?.userId, archetypeId: result?.archetypeId };
   }
 );

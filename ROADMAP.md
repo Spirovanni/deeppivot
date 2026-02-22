@@ -88,7 +88,7 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-36** | Backend: Deepgram Integration Service *(Phase 3)* |
+| **deeppivot-37** | Backend: Hume.ai Integration Service *(Phase 3)* |
 
 Run `bd ready` to see current ready work. Phase 3 in progress — Voice & AI Services.
 
@@ -133,7 +133,7 @@ Run `bd ready` to see current ready work. Phase 3 in progress — Voice & AI Ser
 | Order | Issue | Title |
 |-------|-------|-------|
 | 1 | ~~deeppivot-35~~ | ~~Backend: Vapi Integration Service~~ ✓ |
-| 2 | deeppivot-36 | Backend: Deepgram Integration Service |
+| 2 | ~~deeppivot-36~~ | ~~Backend: Deepgram Integration Service~~ ✓ |
 | 3 | deeppivot-37 | Backend: Hume.ai Integration Service |
 | 4 | deeppivot-38 | Backend: TTS Integration Service (ElevenLabs/PlayHT) |
 | 5 | deeppivot-39 | Backend: LLM Orchestration Service (GPT-4/Claude-3) |
@@ -215,4 +215,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-35 (Vapi Integration Service) closed. New: `src/lib/vapi.ts` (full REST client — web/phone calls, assistants, interview helper), `src/lib/integrations/vapi.ts` (node config), `src/lib/node-executors/vapi.ts` (executor registered in integration index).*
+*Last updated: 2026-02-22 — deeppivot-36 (Deepgram STT Integration) closed. New: `src/lib/deepgram.ts` (SDK v4 wrapper — URL/buffer transcription, live connection factory, interview helper + speaker-segment extractor), integration config + executor registered. `@deepgram/sdk 4.11.3` added.*

@@ -1,13 +1,16 @@
 import type { IntegrationConfig, NodeExecutionContext, NodeExecutionResult } from "./types";
 import { jobTrackerIntegration } from "./job-tracker";
 import { vapiIntegration } from "./vapi";
+import { deepgramIntegration } from "./deepgram";
 import { executeJobTrackerNode } from "@/src/lib/node-executors/job-tracker";
 import { executeVapiNode } from "@/src/lib/node-executors/vapi";
+import { executeDeepgramNode } from "@/src/lib/node-executors/deepgram";
 
 /** Registry of all available integrations keyed by provider name */
 const integrations: Record<string, IntegrationConfig> = {
   [jobTrackerIntegration.provider]: jobTrackerIntegration,
   [vapiIntegration.provider]: vapiIntegration,
+  [deepgramIntegration.provider]: deepgramIntegration,
 };
 
 /** Map of provider -> executor function */
@@ -17,6 +20,7 @@ const executors: Record<
 > = {
   job_tracker: executeJobTrackerNode,
   vapi: executeVapiNode,
+  deepgram: executeDeepgramNode,
 };
 
 export function getIntegration(provider: string): IntegrationConfig | undefined {

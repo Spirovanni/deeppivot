@@ -87,6 +87,9 @@ NEXT_PUBLIC_HUME_CONFIG_ID=...
 VAPI_API_KEY=...
 VAPI_INTERVIEW_ASSISTANT_ID=...  # Default assistant for interview sessions
 VAPI_PHONE_NUMBER_ID=...         # Optional — required for outbound phone calls only
+
+# Deepgram STT (Phase 3 — optional until transcription pipeline is active)
+DEEPGRAM_API_KEY=...             # Deepgram API key (console.deepgram.com)
 ```
 
 ### 3. Database Setup

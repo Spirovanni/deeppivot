@@ -5,6 +5,7 @@ import {
   DndContext,
   closestCenter,
   PointerSensor,
+  KeyboardSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -214,7 +215,8 @@ export function MilestoneTimeline({ initialMilestones }: MilestoneTimelineProps)
   const [, startTransition] = useTransition();
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor)
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -241,13 +243,18 @@ export function MilestoneTimeline({ initialMilestones }: MilestoneTimelineProps)
           <p className="text-sm text-muted-foreground">
             {milestones.length} milestone{milestones.length !== 1 ? "s" : ""} ·{" "}
             {milestones.filter((m) => m.status === "completed").length} completed
+            {milestones.length >= 2 && (
+              <span className="ml-2 text-muted-foreground/70">
+                · Drag to reorder
+              </span>
+            )}
           </p>
         </div>
         <CreateMilestoneDialog />
       </div>
 
       {milestones.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 py-16 text-center">
+        <div className="flex flex-col items-center gap-6 py-16 text-center">
           <div className="flex size-16 items-center justify-center rounded-full bg-muted">
             <Calendar className="size-7 text-muted-foreground" />
           </div>
@@ -257,6 +264,7 @@ export function MilestoneTimeline({ initialMilestones }: MilestoneTimelineProps)
               Add your first career milestone to start building your roadmap.
             </p>
           </div>
+          <CreateMilestoneDialog />
         </div>
       ) : (
         <DndContext

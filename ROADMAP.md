@@ -92,9 +92,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-60** | Frontend: Career Plan Draggable Timeline UI *(Phase 4)* |
+| **deeppivot-61** | Backend: Career Plan CRUD APIs *(Phase 4)* |
 
-Run `bd ready` to see current ready work. Map Interview to Career Skills (deeppivot-59) complete.
+Run `bd ready` to see current ready work. Career Plan Draggable Timeline (deeppivot-60) complete.
 
 ---
 
@@ -161,6 +161,7 @@ Run `bd ready` to see current ready work. Map Interview to Career Skills (deeppi
 | 8 | ~~deeppivot-57~~ | ~~Backend: Career Archetyping Engine~~ ✓ |
 | 9 | ~~deeppivot-58~~ | ~~Frontend: Display Career Archetype~~ ✓ |
 | 10 | ~~deeppivot-59~~ | ~~Backend: Map Interview to Career Skills~~ ✓ |
+| 11 | ~~deeppivot-60~~ | ~~Frontend: Career Plan Draggable Timeline UI~~ ✓ |
 
 ---
 
@@ -221,4 +222,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-59 (Map Interview to Career Skills) closed. New: CAREER_SKILLS constant, mapInterviewToSkills (LLM), skillsMapping jsonb on interview_feedback. Feedback job now produces { skill, score, note }[] for career plan builder. Migration 0012 applied.*
+*Last updated: 2026-02-22 — deeppivot-60 (Career Plan Draggable Timeline) closed. MilestoneTimeline uses @dnd-kit for add/reorder/edit. Added KeyboardSensor, "Drag to reorder" hint, empty-state CTA. Career Plan CRUD APIs (deeppivot-61) unblocked.*

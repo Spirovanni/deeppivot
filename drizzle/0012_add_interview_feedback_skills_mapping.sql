@@ -1,0 +1,1 @@
+ALTER TABLE "interview_feedback" ADD COLUMN "skillsMapping" jsonb DEFAULT '[]'::jsonb;

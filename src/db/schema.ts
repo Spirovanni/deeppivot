@@ -204,6 +204,8 @@ export const interviewFeedbackTable = pgTable("interview_feedback", {
   content: text().notNull(),
   /** Sentiment score 0–100 if computed */
   sentimentScore: integer(),
+  /** Career skills mapping: { skill: string; score: number; note?: string }[] — used by career plan builder */
+  skillsMapping: jsonb().default([]),
   createdAt: timestamp().notNull().defaultNow(),
 });
 

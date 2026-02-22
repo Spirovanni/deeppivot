@@ -22,6 +22,7 @@ import { getSupabaseAdmin, RECORDING_BUCKET } from "@/src/lib/supabase";
 import { transcribeInterviewRecording } from "@/src/lib/deepgram";
 import { analyzeRecordingUrl } from "@/src/lib/hume";
 import { generateCompletion } from "@/src/lib/llm";
+import { mapInterviewToSkills } from "@/src/lib/career-skills";
 
 export const processInterviewRecording = inngest.createFunction(
   {
@@ -328,15 +329,23 @@ Output format:
       return content;
     });
 
-    // 5. Save to interview_feedback table
+    // 5. Map interview performance to career skills (for career plan builder)
+    const skillsMapping = await step.run("map-skills", async () => {
+      const emotionSummary =
+        emotionData.overallDominantEmotion ?? "Unknown";
+      return mapInterviewToSkills(transcript, feedbackContent, emotionSummary);
+    });
+
+    // 6. Save to interview_feedback table
     await step.run("save-feedback", async () => {
       await db.insert(interviewFeedbackTable).values({
         sessionId,
         content: feedbackContent,
+        skillsMapping: skillsMapping.length > 0 ? skillsMapping : undefined,
       });
     });
 
-    // 6. Emit for career archetyping engine
+    // 7. Emit for career archetyping engine
     await step.sendEvent("trigger-archetyping", {
       name: "feedback.complete",
       data: { sessionId },

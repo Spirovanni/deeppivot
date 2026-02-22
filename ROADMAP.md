@@ -49,17 +49,18 @@ A full kanban-style job application tracker integrated into the DeepPivot platfo
 - [x] **JT4: Dashboard UI & Kanban Shell** (`deeppivot-5`, P1) — Full Kanban UI at `/dashboard/job-tracker`. Server page with Clerk auth + Drizzle relational query. `KanbanBoard` (horizontal scrollable columns with color-coded headers), `JobApplicationCard` (dropdown with Edit/Move To/Delete), `CreateJobDialog` and `EditJobDialog` (grid-layout forms). 9 Shadcn components installed.
 - [x] **JT5: Server Actions** (`deeppivot-6`, P0) — 4 server actions in `src/lib/actions/job-applications.ts`: `createJobApplication`, `updateJobApplication`, `deleteJobApplication`, `moveJobApplication`. All with order-math (+100 spacing), tag comma-splitting, and `revalidatePath`.
 
+- [x] **JT6: Drag & Drop** (`deeppivot-7`, P1) — Full dnd-kit integration (`@dnd-kit/core@6.3.1`, `@dnd-kit/sortable@10.0.0`, `@dnd-kit/utilities@3.2.2`). `DndContext` with `closestCorners` collision detection and `PointerSensor` (8px activation). `SortableContext` per column with `verticalListSortingStrategy`. `SortableJobCard` wrapper with `useSortable` hook. `DroppableColumn` with `useDroppable` and visual hover feedback. `DragOverlay` with 2deg rotation and 90% opacity. Optimistic UI via local React state with server-state sync on prop change. Order-math: midpoint insertion between items, +100 spacing at edges. Cross-column drag via `handleDragOver`, same-column reorder via `arrayMove` in `handleDragEnd`. Background `updateJobApplication` server action call to persist.
+
 ### Up Next (Unblocked)
 
-- [ ] **JT6: Drag & Drop** (`deeppivot-7`, P1) — Full dnd-kit integration with `DndContext`, `SortableContext`, optimistic UI, and the order-math algorithm.
 - [ ] **JT7: E2E Testing** (`deeppivot-8`, P2) — Webhook pipeline test, dark mode validation, TypeScript build verification.
 
 ### Dependency Graph
 
 ```
-JT1 (DONE) ──┬──> JT2 (DONE) ────────────────> JT7
-              ├──> JT3a (DONE) ──> JT3b (DONE) ──> JT7
-              ├──> JT4 (DONE) ──> JT5 (DONE) ──> JT6 ──> JT7
+JT1 (DONE) ──┬──> JT2 (DONE) ────────────────────────> JT7
+              ├──> JT3a (DONE) ──> JT3b (DONE) ────────> JT7
+              ├──> JT4 (DONE) ──> JT5 (DONE) ──> JT6 (DONE) ──> JT7
               └──> JT5 (also needs JT4)
 ```
 
@@ -84,4 +85,4 @@ The original tutorial used MongoDB/Mongoose/Better Auth. Here's what changed:
 
 - **Workflow Model**: `workflowId` on `job_applications` is currently a plain varchar. When the Workflow model lands, add a proper FK relation.
 - **Shadcn Setup**: Installed — card, dialog, dropdown-menu, input, textarea, badge, label, separator, scroll-area.
-- **dnd-kit**: Packages `@dnd-kit/core`, `@dnd-kit/utilities`, `@dnd-kit/sortable` need to be installed before JT6.
+- **dnd-kit**: Installed — `@dnd-kit/core@6.3.1`, `@dnd-kit/sortable@10.0.0`, `@dnd-kit/utilities@3.2.2`.

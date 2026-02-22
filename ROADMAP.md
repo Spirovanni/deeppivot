@@ -96,9 +96,10 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-117** | Feature: Curated Resource Recommendations |
+| **deeppivot-96** | AI/ML: Predictive Career Analytics |
+| **deeppivot-95** | AI/ML: Adaptive Feedback Engine |
 
-Run `bd ready` to see current ready work. Emotion Inference Fallback (deeppivot-74) complete.
+Run `bd ready` to see current ready work. Curated Resource Recommendations (deeppivot-117) complete.
 
 ---
 
@@ -175,6 +176,7 @@ Run `bd ready` to see current ready work. Emotion Inference Fallback (deeppivot-
 | 14 | ~~deeppivot-115~~ | ~~Feature: Career Plan Goal Completion~~ ✓ |
 | 15 | ~~deeppivot-63~~ | ~~Feature: Printable/Shareable Career Plans~~ ✓ |
 | 16 | ~~deeppivot-74~~ | ~~Backend: Emotion Inference Fallback Logic~~ ✓ |
+| 17 | ~~deeppivot-117~~ | ~~Feature: Curated Resource Recommendations~~ ✓ |
 
 ---
 
@@ -235,4 +237,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-74 (Emotion Inference Fallback) closed. Hume failure now degrades gracefully: transcript-only feedback, UI shows "Emotion analysis unavailable." Curated Resource Recommendations (deeppivot-117) next.*
+*Last updated: 2026-02-22 — deeppivot-117 (Curated Resource Recommendations) closed. Keyword-based recommendations from curated catalog, Suggest button in Edit Milestone, GET /api/plans/[id]/resources/recommendations. Predictive Career Analytics (deeppivot-96) next.*

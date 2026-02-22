@@ -11,11 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Trash2, ExternalLink, Plus } from "lucide-react";
+import { Loader2, Trash2, ExternalLink, Plus, Sparkles } from "lucide-react";
 import {
   useUpdatePlan,
   useAddResource,
   useRemoveResource,
+  useResourceRecommendations,
   type PlanMilestone,
 } from "@/src/lib/hooks/use-career-plans";
 
@@ -33,9 +34,13 @@ export function EditMilestoneDialog({
   onOpenChange,
 }: EditMilestoneDialogProps) {
   const [addingResource, setAddingResource] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const updatePlan = useUpdatePlan();
   const addResource = useAddResource();
   const removeResource = useRemoveResource();
+  const recommendations = useResourceRecommendations(milestone.id, {
+    enabled: showSuggestions,
+  });
 
   const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -156,16 +161,94 @@ export function EditMilestoneDialog({
         <div className="border-t border-border pt-4">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-sm font-semibold">Resources</p>
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              onClick={() => setAddingResource((v) => !v)}
-            >
-              <Plus className="mr-1 size-3.5" />
-              Add
-            </Button>
+            <div className="flex gap-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => setShowSuggestions((v) => !v)}
+                disabled={recommendations.isFetching}
+              >
+                {recommendations.isFetching ? (
+                  <Loader2 className="mr-1 size-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="mr-1 size-3.5" />
+                )}
+                Suggest
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => setAddingResource((v) => !v)}
+              >
+                <Plus className="mr-1 size-3.5" />
+                Add
+              </Button>
+            </div>
           </div>
+
+          {showSuggestions && recommendations.data && recommendations.data.length > 0 && (
+            <div className="mb-3 space-y-2 rounded-lg border border-dashed border-border bg-muted/30 p-3">
+              <p className="text-xs font-medium text-muted-foreground">
+                Suggested for &quot;{milestone.title}&quot;
+              </p>
+              <ul className="space-y-1.5">
+                {recommendations.data
+                  .filter(
+                    (r) =>
+                      !milestone.resources.some(
+                        (existing) =>
+                          existing.url === r.url || existing.title === r.title
+                      )
+                  )
+                  .map((r) => (
+                    <li
+                    key={`${r.url}-${r.title}`}
+                    className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+                  >
+                    <span className="flex-1 truncate font-medium">{r.title}</span>
+                    <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] uppercase text-muted-foreground">
+                      {r.resourceType}
+                    </span>
+                    <a
+                      href={r.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 text-muted-foreground hover:text-foreground"
+                    >
+                      <ExternalLink className="size-3.5" />
+                    </a>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      className="h-7 px-2"
+                      disabled={addResource.isPending}
+                      onClick={() =>
+                        addResource.mutate({
+                          milestoneId: milestone.id,
+                          data: {
+                            title: r.title,
+                            url: r.url,
+                            resourceType: r.resourceType,
+                          },
+                        })
+                      }
+                    >
+                      Add
+                    </Button>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          )}
+
+          {showSuggestions && recommendations.data?.length === 0 && !recommendations.isFetching && (
+            <p className="mb-3 text-sm text-muted-foreground">
+              No suggestions found. Try adding a more specific title or description.
+            </p>
+          )}
 
           {milestone.resources.length > 0 && (
             <ul className="mb-3 space-y-2">

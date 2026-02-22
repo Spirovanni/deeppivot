@@ -216,6 +216,30 @@ export function useAddResource() {
   });
 }
 
+export interface RecommendedResource {
+  title: string;
+  url: string;
+  resourceType: string;
+}
+
+export function useResourceRecommendations(
+  milestoneId: number | null,
+  options?: { enabled?: boolean }
+) {
+  return useQuery({
+    queryKey: ["resource-recommendations", milestoneId],
+    queryFn: async (): Promise<RecommendedResource[]> => {
+      if (!milestoneId) return [];
+      const res = await fetch(
+        `/api/plans/${milestoneId}/resources/recommendations?limit=6`
+      );
+      if (!res.ok) throw new Error("Failed to fetch recommendations");
+      return res.json();
+    },
+    enabled: !!milestoneId && (options?.enabled ?? false),
+  });
+}
+
 export function useRemoveResource() {
   const queryClient = useQueryClient();
   return useMutation({

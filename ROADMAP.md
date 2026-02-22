@@ -47,6 +47,8 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 - **career_resources** — Resources linked to milestones (title, url, type: article/course/tool/video) (LP7)
 - **mentors** — Seeded mentor directory (12 profiles) with expertise array, industry, bio, links (LP8)
 - **mentor_connections** — User → mentor connection requests with status tracking (LP8)
+- **education_programs** — 28 seeded programmes (bootcamps, certs, degrees, workshops) with ROI scores (LP9)
+- **funding_opportunities** — 9 seeded funding sources (grants, scholarships, loans, ISAs) with eligibility and deadlines (LP9)
 
 ### Existing Routes
 
@@ -86,10 +88,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-17** | LP9: Alternative Education Explorer |
 | **deeppivot-18** | Project: Initialize GitHub Repository |
 
-Run `bd ready` to see current ready work. Start with **deeppivot-17** — Education Explorer completes Phase 1.
+Run `bd ready` to see current ready work. **Phase 1 (Foundation & Dashboard) is now complete.** Start with **deeppivot-18** — initialise the GitHub repository for Phase 2 work.
 
 ---
 
@@ -104,7 +105,9 @@ Run `bd ready` to see current ready work. Start with **deeppivot-17** — Educat
 | 3 | ~~deeppivot-14~~ | ~~LP6: Career Archetype Assessment~~ ✓ |
 | 4 | ~~deeppivot-15~~ | ~~LP7: Personalized Career Planning & Roadmap~~ ✓ |
 | 5 | ~~deeppivot-16~~ | ~~LP8: Mentor & Coach Network~~ ✓ |
-| 6 | deeppivot-17 | LP9: Alternative Education Explorer |
+| 6 | ~~deeppivot-17~~ | ~~LP9: Alternative Education Explorer~~ ✓ |
+
+**Phase 1 Status: COMPLETE ✓** — All 6 features shipped (LP1–LP9).
 
 **Unblocks**: LP3–LP5 (interview flow), plus all dashboard-dependent features.
 
@@ -212,4 +215,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-16 (LP8: Mentor & Coach Network) closed. New: `mentors` + `mentor_connections` tables (migration `0006_living_maximus.sql`), 12 seeded mentor profiles, `MentorCard` with connect dialog, `MentorGrid` with client-side search + industry/expertise filters.*
+*Last updated: 2026-02-22 — deeppivot-17 (LP9: Education Explorer) closed. Phase 1 COMPLETE. New: `education_programs` + `funding_opportunities` tables (migration `0007_perfect_hiroim.sql`), 28 seeded programmes + 9 funding sources, `ProgramCard` (ROI bar), `FundingCard` (deadline alert), `EducationExplorer` with tab filtering + search + cost toggle.*

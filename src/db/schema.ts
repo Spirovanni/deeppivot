@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgTable, real, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const usersTable = pgTable("users", {
@@ -41,6 +41,7 @@ export const usersTable = pgTable("users", {
 
 export const usersRelations = relations(usersTable, ({ many }) => ({
   jobBoards: many(jobBoardsTable),
+  interviewSessions: many(interviewSessionsTable),
 }));
 
 // ============================================
@@ -101,5 +102,64 @@ export const jobApplicationsRelations = relations(jobApplicationsTable, ({ one }
   column: one(jobColumnsTable, {
     fields: [jobApplicationsTable.columnId],
     references: [jobColumnsTable.id],
+  }),
+}));
+
+// ============================================
+// INTERVIEW SESSION MODELS (LP2)
+// ============================================
+
+export const interviewSessionsTable = pgTable("interview_sessions", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  sessionType: varchar({ length: 50 }).notNull().default("general"),
+  status: varchar({ length: 20 }).notNull().default("active"),
+  startedAt: timestamp().notNull().defaultNow(),
+  endedAt: timestamp(),
+  overallScore: integer(),
+  notes: text(),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const interviewSessionsRelations = relations(interviewSessionsTable, ({ one, many }) => ({
+  user: one(usersTable, {
+    fields: [interviewSessionsTable.userId],
+    references: [usersTable.id],
+  }),
+  questions: many(interviewQuestionsTable),
+  emotionSnapshots: many(emotionSnapshotsTable),
+}));
+
+export const interviewQuestionsTable = pgTable("interview_questions", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  sessionId: integer().notNull().references(() => interviewSessionsTable.id, { onDelete: "cascade" }),
+  questionText: text().notNull(),
+  questionCategory: varchar({ length: 100 }).notNull().default("general"),
+  responseQuality: integer(),
+  orderIndex: integer().notNull().default(0),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const interviewQuestionsRelations = relations(interviewQuestionsTable, ({ one }) => ({
+  session: one(interviewSessionsTable, {
+    fields: [interviewQuestionsTable.sessionId],
+    references: [interviewSessionsTable.id],
+  }),
+}));
+
+export const emotionSnapshotsTable = pgTable("emotion_snapshots", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  sessionId: integer().notNull().references(() => interviewSessionsTable.id, { onDelete: "cascade" }),
+  capturedAt: timestamp().notNull().defaultNow(),
+  emotions: jsonb().notNull().default({}),
+  dominantEmotion: varchar({ length: 100 }).notNull().default(""),
+  confidence: real().notNull().default(0),
+});
+
+export const emotionSnapshotsRelations = relations(emotionSnapshotsTable, ({ one }) => ({
+  session: one(interviewSessionsTable, {
+    fields: [emotionSnapshotsTable.sessionId],
+    references: [interviewSessionsTable.id],
   }),
 }));

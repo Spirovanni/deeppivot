@@ -1,0 +1,119 @@
+"use server";
+
+import { db } from "@/src/db";
+import {
+  interviewSessionsTable,
+  interviewQuestionsTable,
+  emotionSnapshotsTable,
+  usersTable,
+} from "@/src/db/schema";
+import { eq, avg, and, asc } from "drizzle-orm";
+import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+
+async function getDbUserId(): Promise<number> {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthenticated");
+
+  const [user] = await db
+    .select({ id: usersTable.id })
+    .from(usersTable)
+    .where(eq(usersTable.clerkId, userId))
+    .limit(1);
+
+  if (!user) throw new Error("User not found");
+  return user.id;
+}
+
+export async function startInterviewSession(sessionType: string): Promise<number> {
+  const userId = await getDbUserId();
+
+  const [session] = await db
+    .insert(interviewSessionsTable)
+    .values({ userId, sessionType, status: "active" })
+    .returning({ id: interviewSessionsTable.id });
+
+  return session.id;
+}
+
+export async function endInterviewSession(
+  sessionId: number
+): Promise<{ overallScore: number | null }> {
+  const [result] = await db
+    .select({ avgConfidence: avg(emotionSnapshotsTable.confidence) })
+    .from(emotionSnapshotsTable)
+    .where(eq(emotionSnapshotsTable.sessionId, sessionId));
+
+  const overallScore = result?.avgConfidence
+    ? Math.round(parseFloat(String(result.avgConfidence)) * 100)
+    : null;
+
+  await db
+    .update(interviewSessionsTable)
+    .set({
+      status: "completed",
+      endedAt: new Date(),
+      overallScore,
+      updatedAt: new Date(),
+    })
+    .where(eq(interviewSessionsTable.id, sessionId));
+
+  revalidatePath("/dashboard/interviews");
+  return { overallScore };
+}
+
+export async function getSessionDetail(sessionId: number) {
+  const userId = await getDbUserId();
+
+  const session = await db.query.interviewSessionsTable.findFirst({
+    where: and(
+      eq(interviewSessionsTable.id, sessionId),
+      eq(interviewSessionsTable.userId, userId)
+    ),
+    with: {
+      questions: { orderBy: [asc(interviewQuestionsTable.orderIndex)] },
+    },
+  });
+
+  return session ?? null;
+}
+
+export async function getSessionEmotions(sessionId: number) {
+  const userId = await getDbUserId();
+
+  const [session] = await db
+    .select({ id: interviewSessionsTable.id })
+    .from(interviewSessionsTable)
+    .where(
+      and(
+        eq(interviewSessionsTable.id, sessionId),
+        eq(interviewSessionsTable.userId, userId)
+      )
+    )
+    .limit(1);
+
+  if (!session) return [];
+
+  return db
+    .select()
+    .from(emotionSnapshotsTable)
+    .where(eq(emotionSnapshotsTable.sessionId, sessionId))
+    .orderBy(asc(emotionSnapshotsTable.capturedAt));
+}
+
+export async function captureEmotionSnapshot(
+  sessionId: number,
+  emotions: Record<string, number>
+): Promise<void> {
+  const entries = Object.entries(emotions);
+  if (entries.length === 0) return;
+
+  const [dominantEmotion, confidence] = entries.sort(([, a], [, b]) => b - a)[0];
+
+  await db.insert(emotionSnapshotsTable).values({
+    sessionId,
+    emotions,
+    dominantEmotion,
+    confidence,
+  });
+}

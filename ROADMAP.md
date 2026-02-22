@@ -1,25 +1,47 @@
 # DeepPivot Roadmap
 
+> **Project**: Career development platform with AI voice interviews, job tracking, career archetyping, and workforce development tools.  
+> **Task tracking**: `bd ready` | `bd show <id>` | Issues in `.beads/issues.jsonl`
+
+---
+
+## Project Overview
+
+DeepPivot helps users practice interviews with AI, track job applications, discover career archetypes, build career roadmaps, connect with mentors, and explore alternative education (bootcamps, certifications, funding). The landing page promises:
+
+- **AI Voice Interviews** — Practice with Hume AI, emotion detection, &lt;800ms latency
+- **Emotional Intelligence Feedback** — Feedback on emotional responses and communication style
+- **Performance Analytics** — Track progress on interview performance and emotional growth
+- **Career Archetype** — AI-powered behavioral trait modeling and NLP analysis
+- **Career Planning** — Draggable timelines, milestones, curated resources
+- **Mentor Network** — Industry mentors and workforce development partners
+- **Education Explorer** — 500+ bootcamps, certifications, funding with ROI analysis
+
+---
+
 ## What We Have Today
 
 ### Core Platform (Shipped)
 
 | Layer | Tech | Status |
-|---|---|---|
+|-------|------|--------|
 | Framework | Next.js 14.2 (App Router) | Live |
 | Database | PostgreSQL on Neon | Live |
 | ORM | Drizzle ORM 0.44 | Live |
 | Auth | Clerk (webhook + client sync) | Live |
 | AI Voice | Hume EVI integration | Live |
-| UI | Radix UI + Tailwind CSS 4 | Live |
-| Hosting | Vercel (inferred from Next.js) | Live |
+| UI | Shadcn UI + Radix + Tailwind CSS 4 | Live |
+| Hosting | Vercel | Live |
 
 ### Database Models
 
 - **users** — Full user profile with Clerk sync, credits system, role/status flags
-- **job_boards** — Per-user kanban boards (NEW, JT1)
-- **job_columns** — Ordered columns within boards (NEW, JT1)
-- **job_applications** — Job cards with tags, status, order, workflow traceability (NEW, JT1)
+- **job_boards** — Per-user kanban boards (JT1)
+- **job_columns** — Ordered columns within boards (JT1)
+- **job_applications** — Job cards with tags, status, order, workflow traceability (JT1)
+- **interview_sessions** — Per-user interview sessions with type, status, score (LP2)
+- **interview_questions** — Ordered questions per session with response quality score (LP2)
+- **emotion_snapshots** — JSONB emotion maps captured during a session with dominant emotion & confidence (LP2)
 
 ### Existing Routes
 
@@ -31,56 +53,158 @@
 /api/clerk-webhook        Clerk event sync
 /api/hume-token           Hume AI token endpoint
 /api/sync-users           Bulk user sync
-/dashboard/job-tracker    Kanban job tracker (NEW, JT4)
+/dashboard/job-tracker    Kanban job tracker (JT4)
 ```
 
 ---
 
-## Job Tracker Extension (Complete)
+## Job Tracker (Complete)
 
-A full kanban-style job application tracker integrated into the DeepPivot platform, adapted from a MongoDB/React tutorial into our Drizzle/PostgreSQL/Clerk stack. All 7 phases shipped.
+Full kanban-style job application tracker. All 7 phases shipped.
 
-### Completed
+| Phase | Issue | Description |
+|-------|-------|-------------|
+| JT1 | deeppivot-1 | Drizzle schema: `job_boards`, `job_columns`, `job_applications` |
+| JT2 | deeppivot-2 | Auth hooks, default board init (Clerk webhook + `/api/users`) |
+| JT3a | deeppivot-3 | Epicflow node config, integration registry |
+| JT3b | deeppivot-4 | Workflow execution engine (`executeJobTrackerNode`) |
+| JT4 | deeppivot-5 | Kanban UI, Create/Edit dialogs, Shadcn components |
+| JT5 | deeppivot-6 | Server actions: create, update, delete, move |
+| JT6 | deeppivot-7 | dnd-kit drag & drop, optimistic UI |
+| JT7 | deeppivot-8 | E2E testing, dark mode audit, build verification |
 
-- [x] **JT1: Database Schema** (`deeppivot-1`, P0) — Drizzle models for `job_boards`, `job_columns`, `job_applications` with cascade foreign keys, text[] tags, and workflow traceability. Migration `0002` applied to Neon.
-- [x] **JT2: Auth Hooks & Default Board Init** (`deeppivot-2`, P1) — `initializeJobBoard()` server action creates "Automated Job Hunt" board with 5 default columns. Hooked into both Clerk webhook (`user.created`) and `POST /api/users` (client-side fallback). Idempotent — safe to call multiple times.
-- [x] **JT3a: Epicflow Native Node Configuration** (`deeppivot-3`, P0) — Integration type system (`IntegrationConfig`, `ConfigField`, `NodeExecutionContext`). Job Tracker node config with 8 fields and mustache placeholders. Integration registry with `getIntegration()`, `getAllIntegrations()`, `executeNode()`.
-- [x] **JT3b: Workflow Execution Engine** (`deeppivot-4`, P1) — `executeJobTrackerNode()` creates job applications from workflow triggers. Order-math (+100 spacing), tag splitting, required field validation. Wired into integration registry dispatcher.
-- [x] **JT4: Dashboard UI & Kanban Shell** (`deeppivot-5`, P1) — Full Kanban UI at `/dashboard/job-tracker`. Server page with Clerk auth + Drizzle relational query. `KanbanBoard` (horizontal scrollable columns with color-coded headers), `JobApplicationCard` (dropdown with Edit/Move To/Delete), `CreateJobDialog` and `EditJobDialog` (grid-layout forms). 9 Shadcn components installed.
-- [x] **JT5: Server Actions** (`deeppivot-6`, P0) — 4 server actions in `src/lib/actions/job-applications.ts`: `createJobApplication`, `updateJobApplication`, `deleteJobApplication`, `moveJobApplication`. All with order-math (+100 spacing), tag comma-splitting, and `revalidatePath`.
+---
 
-- [x] **JT6: Drag & Drop** (`deeppivot-7`, P1) — Full dnd-kit integration (`@dnd-kit/core@6.3.1`, `@dnd-kit/sortable@10.0.0`, `@dnd-kit/utilities@3.2.2`). `DndContext` with `closestCorners` collision detection and `PointerSensor` (8px activation). `SortableContext` per column with `verticalListSortingStrategy`. `SortableJobCard` wrapper with `useSortable` hook. `DroppableColumn` with `useDroppable` and visual hover feedback. `DragOverlay` with 2deg rotation and 90% opacity. Optimistic UI via local React state with server-state sync on prop change. Order-math: midpoint insertion between items, +100 spacing at edges. Cross-column drag via `handleDragOver`, same-column reorder via `arrayMove` in `handleDragEnd`. Background `updateJobApplication` server action call to persist.
+## Upcoming Steps
 
-- [x] **JT7: E2E Testing & Synergy Review** (`deeppivot-8`, P2) — Production build passes (`npm run build` clean). Fixed pre-existing `MicFFT.tsx` AutoSizer type incompatibility with React 18 JSX types. Dark mode audit: all job tracker components use Shadcn semantic tokens (`bg-background`, `bg-muted/30`, `text-muted-foreground`, `border-input`, `ring-primary/20`); column accent colors use Tailwind `-500` palette which renders correctly in both modes. Workflow pipeline verified end-to-end: Clerk webhook `user.created` -> user insert -> `initializeJobBoard()` -> board + 5 columns; `executeNode("job_tracker", ctx)` -> `executeJobTrackerNode()` -> order-math -> Drizzle insert -> kanban display via relational query.
+### Next Up (Ready Now)
 
-### Dependency Graph (All Complete)
+| ID | Title |
+|----|-------|
+| **deeppivot-13** | LP5: Real-time Performance Analytics Dashboard |
+| **deeppivot-18** | Project: Initialize GitHub Repository |
+
+Run `bd ready` to see current ready work. Start with **deeppivot-13** — analytics dashboard now that session history and emotion data are fully captured.
+
+---
+
+### Phase 1: Foundation & Dashboard
+
+**Goal**: Shared dashboard shell so all features have a home.
+
+| Order | Issue | Title |
+|-------|-------|-------|
+| 1 | ~~deeppivot-9~~ | ~~LP1: Dashboard Shell & Sidebar Navigation~~ ✓ |
+| 2 | ~~deeppivot-10~~ | ~~LP2: Interview Session Database Models & Migration~~ ✓ |
+| 3 | deeppivot-14 | LP6: Career Archetype Assessment |
+| 4 | deeppivot-15 | LP7: Personalized Career Planning & Roadmap |
+| 5 | deeppivot-16 | LP8: Mentor & Coach Network |
+| 6 | deeppivot-17 | LP9: Alternative Education Explorer |
+
+**Unblocks**: LP3–LP5 (interview flow), plus all dashboard-dependent features.
+
+---
+
+### Phase 2: AI Voice Interview Pipeline
+
+**Goal**: End-to-end interview practice with Hume AI.
+
+| Order | Issue | Title |
+|-------|-------|-------|
+| 1 | ~~deeppivot-10~~ | ~~LP2: Interview Session DB (from Phase 1)~~ ✓ |
+| 2 | ~~deeppivot-11~~ | ~~LP3: AI Voice Interview Session Page~~ ✓ |
+| 3 | ~~deeppivot-12~~ | ~~LP4: Interview History & Emotion Feedback Reports~~ ✓ |
+| 4 | deeppivot-13 | LP5: Real-time Performance Analytics Dashboard |
+
+---
+
+### Phase 3: Voice & AI Services
+
+**Goal**: Vapi, Deepgram, Hume, TTS, LLM orchestration for scalable interview sessions.
+
+| Order | Issue | Title |
+|-------|-------|-------|
+| 1 | deeppivot-35 | Backend: Vapi Integration Service |
+| 2 | deeppivot-36 | Backend: Deepgram Integration Service |
+| 3 | deeppivot-37 | Backend: Hume.ai Integration Service |
+| 4 | deeppivot-38 | Backend: TTS Integration Service (ElevenLabs/PlayHT) |
+| 5 | deeppivot-39 | Backend: LLM Orchestration Service (GPT-4/Claude-3) |
+| 6 | deeppivot-40 | Backend: Core Interview Session Handler |
+
+---
+
+### Phase 4: Post-Interview & Career Archetyping
+
+**Goal**: Feedback, emotion analysis, career archetype engine.
+
+| Order | Issue | Title |
+|-------|-------|-------|
+| 1 | deeppivot-41 | Backend: Inngest Job for Recording Processing |
+| 2 | deeppivot-42 | Backend: Inngest Job for Transcription |
+| 3 | deeppivot-43 | Backend: Inngest Job for Emotional Analysis |
+| 4 | deeppivot-44 | Backend: Feedback Generation Engine (LLM) |
+| 5 | deeppivot-45 | Frontend: Display Interview Feedback UI |
+| 6 | deeppivot-46 | Frontend: Emotion-Aware Feedback Animations |
+| 7 | deeppivot-50 | AI/ML: Deploy and Integrate Custom BERT Model |
+| 8 | deeppivot-51 | Backend: Career Archetyping Engine |
+
+---
+
+### Phase 5: DevOps, Security & Polish
+
+**Goal**: Deployment, monitoring, security, and UX polish.
+
+| Order | Issue | Title |
+|-------|-------|-------|
+| 1 | deeppivot-48 | DevOps: Configure Vercel Deployment |
+| 2 | deeppivot-49 | DevOps: Set up GitHub Actions CI/CD |
+| 3 | deeppivot-52 | Security: PII Anonymization Pipeline |
+| 4 | deeppivot-53 | Security: API Rate Limiting |
+| 5 | deeppivot-54 | Security: Configure HTTP Security Headers |
+| 6 | deeppivot-55 | Frontend: Ensure WCAG-AA Color Contrast |
+| 7 | deeppivot-56 | Frontend: Implement Keyboard Navigation |
+| 8 | deeppivot-125 | Performance: Pre-launch Load Test |
+
+---
+
+## Dependency Graph
 
 ```
-JT1 (DONE) ──┬──> JT2 (DONE) ────────────────────────> JT7 (DONE)
-              ├──> JT3a (DONE) ──> JT3b (DONE) ────────> JT7 (DONE)
-              ├──> JT4 (DONE) ──> JT5 (DONE) ──> JT6 (DONE) ──> JT7 (DONE)
-              └──> JT5 (also needs JT4)
+LP1 (dashboard) ──┬──> LP2 ──> LP3 ──> LP4 ──> LP5
+                 ├──> LP6, LP7, LP8, LP9
+                 └──> Most frontend tasks
+
+Interview pipeline depends on: LP2 (DB), Vapi (35), Hume (37), TTS (38), LLM (39)
 ```
 
 ---
 
-## Tech-Stack Translation Notes
+## Task Tracking
 
-The original tutorial used MongoDB/Mongoose/Better Auth. Here's what changed:
+```bash
+bd ready              # Find next work
+bd show deeppivot-9   # Inspect issue
+bd update deeppivot-9 --status in_progress
+bd close deeppivot-9
+bd blocked            # See blocked issues
+bd sync               # Sync at session end
+```
 
-| Tutorial Stack | DeepPivot Stack | Notes |
-|---|---|---|
-| Prisma + MongoDB | Drizzle ORM + Neon PostgreSQL | `pgTable()` with `relations()` |
-| CUIDs for PKs | `integer().generatedAlwaysAsIdentity()` | Matches existing `usersTable` pattern |
-| `String[]` (Prisma) | `text().array()` (Drizzle pg-core) | Native PostgreSQL text arrays |
-| Better Auth hooks | Clerk webhook + provider sync | JT2 hooks into Clerk `user.created` webhook + `/api/users` POST |
-| `prisma migrate dev` | `drizzle-kit generate` + `drizzle-kit migrate` | Migration files in `drizzle/` |
-| API Routes for CRUD | Next.js Server Actions | `"use server"` functions with `revalidatePath` |
+Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-## Future Considerations
+## Tech-Stack Notes
 
-- **Workflow Model**: `workflowId` on `job_applications` is currently a plain varchar. When the Workflow model lands, add a proper FK relation.
-- **Shadcn Setup**: Installed — card, dialog, dropdown-menu, input, textarea, badge, label, separator, scroll-area.
-- **dnd-kit**: Installed — `@dnd-kit/core@6.3.1`, `@dnd-kit/sortable@10.0.0`, `@dnd-kit/utilities@3.2.2`.
+| Original (Tutorial) | DeepPivot | Notes |
+|---------------------|-----------|-------|
+| Prisma + MongoDB | Drizzle ORM + Neon PostgreSQL | `pgTable()`, `relations()` |
+| Better Auth | Clerk | Webhook + `/api/users` sync |
+| API Routes | Server Actions | `"use server"`, `revalidatePath` |
+| `prisma migrate` | `drizzle-kit generate` + `migrate` | `drizzle/` migrations |
+
+**Future**: `workflowId` on `job_applications` is varchar; add FK when Workflow model lands.
+
+---
+
+*Last updated: 2026-02-22 — deeppivot-12 (LP4: Interview History & Emotion Feedback Reports) closed. New: `app/dashboard/interviews/[sessionId]/`, `components/interviews/EmotionTimeline.tsx`, `components/interviews/CommunicationSummary.tsx`.*

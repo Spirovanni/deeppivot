@@ -31,9 +31,7 @@ export async function ensureUserInDb(): Promise<number | null> {
   const firstName = clerkUser.firstName ?? "";
   const lastName = clerkUser.lastName ?? "";
   const name =
-    clerkUser.fullName ??
-    `${firstName} ${lastName}`.trim() ||
-    email;
+    (clerkUser.fullName ?? `${firstName} ${lastName}`.trim()) || email;
 
   try {
     const [inserted] = await db

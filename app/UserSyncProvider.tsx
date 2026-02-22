@@ -40,7 +40,8 @@ import { useUser } from "@clerk/nextjs";
  * - Handles name construction with fallbacks (fullName -> firstName + lastName -> email)
  * - Includes email verification status from Clerk
  */
-async function syncUserToDatabase(user: { id: string; firstName?: string | null; lastName?: string | null; fullName?: string | null; primaryEmailAddress?: { emailAddress?: string; verification?: { status?: string } } | null; emailAddresses?: Array<{ emailAddress?: string }> }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function syncUserToDatabase(user: any) {
   try {
     const email = user.primaryEmailAddress?.emailAddress
       ?? user.emailAddresses?.[0]?.emailAddress
@@ -54,7 +55,7 @@ async function syncUserToDatabase(user: { id: string; firstName?: string | null;
         clerkId: user.id,
         firstName: user.firstName ?? '',
         lastName: user.lastName ?? '',
-        name: user.fullName ?? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || email || user.id,
+        name: (user.fullName ?? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim()) || email || user.id,
         email: email || undefined,
         isEmailVerified: user.primaryEmailAddress?.verification?.status === 'verified',
       }),

@@ -18,7 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ensureUserInDb } from "@/src/lib/actions/ensure-user";
 import { getArchetype } from "@/src/lib/actions/archetype";
 import { getDashboardSummary } from "@/src/lib/actions/dashboard";
 import { getPredictiveInsights } from "@/src/lib/actions/predictive-insights";
@@ -81,9 +80,6 @@ const features = [
 export default async function DashboardPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
-
-  // Ensure user exists in DB (handles sync failures)
-  await ensureUserInDb();
 
   const [archetype, summary, predictiveInsights] = await Promise.all([
     getArchetype(),

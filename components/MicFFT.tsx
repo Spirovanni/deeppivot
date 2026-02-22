@@ -4,6 +4,11 @@ import { cn } from "@/utils";
 import { motion } from "framer-motion";
 import { AutoSizer } from "react-virtualized";
 
+// Cast to work around @types/react-virtualized incompatibility with React 18 JSX types
+const SafeAutoSizer = AutoSizer as unknown as React.FC<{
+  children: (size: { width: number; height: number }) => React.ReactNode;
+}>;
+
 export default function MicFFT({
   fft,
   className,
@@ -13,7 +18,7 @@ export default function MicFFT({
 }) {
   return (
     <div className={"relative size-full"}>
-      <AutoSizer>
+      <SafeAutoSizer>
         {({ width, height }) => (
           <motion.svg
             viewBox={`0 0 ${width} ${height}`}
@@ -39,7 +44,7 @@ export default function MicFFT({
             })}
           </motion.svg>
         )}
-      </AutoSizer>
+      </SafeAutoSizer>
     </div>
   );
 }

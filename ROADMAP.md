@@ -36,9 +36,9 @@
 
 ---
 
-## What We're Building: Job Tracker Extension
+## Job Tracker Extension (Complete)
 
-A full kanban-style job application tracker integrated into the DeepPivot platform, adapted from a MongoDB/React tutorial into our Drizzle/PostgreSQL/Clerk stack.
+A full kanban-style job application tracker integrated into the DeepPivot platform, adapted from a MongoDB/React tutorial into our Drizzle/PostgreSQL/Clerk stack. All 7 phases shipped.
 
 ### Completed
 
@@ -51,16 +51,14 @@ A full kanban-style job application tracker integrated into the DeepPivot platfo
 
 - [x] **JT6: Drag & Drop** (`deeppivot-7`, P1) — Full dnd-kit integration (`@dnd-kit/core@6.3.1`, `@dnd-kit/sortable@10.0.0`, `@dnd-kit/utilities@3.2.2`). `DndContext` with `closestCorners` collision detection and `PointerSensor` (8px activation). `SortableContext` per column with `verticalListSortingStrategy`. `SortableJobCard` wrapper with `useSortable` hook. `DroppableColumn` with `useDroppable` and visual hover feedback. `DragOverlay` with 2deg rotation and 90% opacity. Optimistic UI via local React state with server-state sync on prop change. Order-math: midpoint insertion between items, +100 spacing at edges. Cross-column drag via `handleDragOver`, same-column reorder via `arrayMove` in `handleDragEnd`. Background `updateJobApplication` server action call to persist.
 
-### Up Next (Unblocked)
+- [x] **JT7: E2E Testing & Synergy Review** (`deeppivot-8`, P2) — Production build passes (`npm run build` clean). Fixed pre-existing `MicFFT.tsx` AutoSizer type incompatibility with React 18 JSX types. Dark mode audit: all job tracker components use Shadcn semantic tokens (`bg-background`, `bg-muted/30`, `text-muted-foreground`, `border-input`, `ring-primary/20`); column accent colors use Tailwind `-500` palette which renders correctly in both modes. Workflow pipeline verified end-to-end: Clerk webhook `user.created` -> user insert -> `initializeJobBoard()` -> board + 5 columns; `executeNode("job_tracker", ctx)` -> `executeJobTrackerNode()` -> order-math -> Drizzle insert -> kanban display via relational query.
 
-- [ ] **JT7: E2E Testing** (`deeppivot-8`, P2) — Webhook pipeline test, dark mode validation, TypeScript build verification.
-
-### Dependency Graph
+### Dependency Graph (All Complete)
 
 ```
-JT1 (DONE) ──┬──> JT2 (DONE) ────────────────────────> JT7
-              ├──> JT3a (DONE) ──> JT3b (DONE) ────────> JT7
-              ├──> JT4 (DONE) ──> JT5 (DONE) ──> JT6 (DONE) ──> JT7
+JT1 (DONE) ──┬──> JT2 (DONE) ────────────────────────> JT7 (DONE)
+              ├──> JT3a (DONE) ──> JT3b (DONE) ────────> JT7 (DONE)
+              ├──> JT4 (DONE) ──> JT5 (DONE) ──> JT6 (DONE) ──> JT7 (DONE)
               └──> JT5 (also needs JT4)
 ```
 

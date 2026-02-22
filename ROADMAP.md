@@ -43,24 +43,24 @@ A full kanban-style job application tracker integrated into the DeepPivot platfo
 
 - [x] **JT1: Database Schema** (`deeppivot-1`, P0) — Drizzle models for `job_boards`, `job_columns`, `job_applications` with cascade foreign keys, text[] tags, and workflow traceability. Migration `0002` applied to Neon.
 - [x] **JT2: Auth Hooks & Default Board Init** (`deeppivot-2`, P1) — `initializeJobBoard()` server action creates "Automated Job Hunt" board with 5 default columns. Hooked into both Clerk webhook (`user.created`) and `POST /api/users` (client-side fallback). Idempotent — safe to call multiple times.
+- [x] **JT3a: Epicflow Native Node Configuration** (`deeppivot-3`, P0) — Integration type system (`IntegrationConfig`, `ConfigField`, `NodeExecutionContext`). Job Tracker node config with 8 fields and mustache placeholders. Integration registry with `getIntegration()`, `getAllIntegrations()`, `executeNode()`.
+- [x] **JT3b: Workflow Execution Engine** (`deeppivot-4`, P1) — `executeJobTrackerNode()` creates job applications from workflow triggers. Order-math (+100 spacing), tag splitting, required field validation. Wired into integration registry dispatcher.
 
 ### Up Next (Unblocked)
 
-- [ ] **JT3a: Epicflow Native Node Configuration** (`deeppivot-3`, P0) — Define the Job Tracker as a visual node in the Epicflow canvas. Config fields for Board, Column, Company, Position with mustache template support.
 - [ ] **JT4: Dashboard UI & Kanban Shell** (`deeppivot-5`, P1) — Protected `/dashboard/job-tracker` route. KanbanBoard, JobApplicationCard, Create/Edit dialogs, dropdown menus using Shadcn components.
+- [ ] **JT5: Server Actions** (`deeppivot-6`, P0) — CRUD server actions (`createJobApplication`, `updateJobApplication`, `deleteJobApplication`) with session validation and order-math spacing.
 
 ### Blocked (Waiting on Dependencies)
 
-- [ ] **JT3b: Workflow Execution Engine** (`deeppivot-4`, P1) — Blocked by JT3a. The `executeJobTrackerNode` function that creates job applications from workflow triggers.
-- [ ] **JT5: Server Actions** (`deeppivot-6`, P0) — Blocked by JT4. CRUD server actions (`createJobApplication`, `updateJobApplication`, `deleteJobApplication`) with session validation and order-math spacing.
 - [ ] **JT6: Drag & Drop** (`deeppivot-7`, P1) — Blocked by JT4 + JT5. Full dnd-kit integration with `DndContext`, `SortableContext`, optimistic UI, and the order-math algorithm.
-- [ ] **JT7: E2E Testing** (`deeppivot-8`, P2) — Blocked by everything. Webhook pipeline test, dark mode validation, TypeScript build verification.
+- [ ] **JT7: E2E Testing** (`deeppivot-8`, P2) — Blocked by JT6. Webhook pipeline test, dark mode validation, TypeScript build verification.
 
 ### Dependency Graph
 
 ```
 JT1 (DONE) ──┬──> JT2 (DONE) ────────────────> JT7
-              ├──> JT3a ──> JT3b ─────────────> JT7
+              ├──> JT3a (DONE) ──> JT3b (DONE) ──> JT7
               ├──> JT4 ──> JT5 ──> JT6 ──────> JT7
               └──> JT5 (also needs JT4)
 ```

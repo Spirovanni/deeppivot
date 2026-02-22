@@ -195,13 +195,25 @@ export const processInterviewEmotionalAnalysis = inngest.createFunction(
       throw new Error("Missing sessionId or recordingUrl in event data");
     }
 
-    // 1. Submit to Hume batch API, wait for completion, get results
+    // 1. Submit to Hume batch API, wait for completion, get results (fallback on failure)
     const result = await step.run("analyze-hume-prosody", async () => {
-      return analyzeRecordingUrl(recordingUrl, { prosody: true });
+      try {
+        return await analyzeRecordingUrl(recordingUrl, { prosody: true });
+      } catch (err) {
+        console.error(`Hume emotion analysis failed for session ${sessionId}:`, err);
+        return {
+          jobId: "fallback-unavailable",
+          snapshots: [],
+          overallDominantEmotion: "Unknown",
+          aggregateEmotions: [],
+          unavailable: true,
+        } as const;
+      }
     });
 
     // 2. Save to emotional_analysis table
     await step.run("save-emotional-analysis", async () => {
+      const isFallback = "unavailable" in result && result.unavailable;
       await db.insert(emotionalAnalysesTable).values({
         sessionId,
         jobId: result.jobId,
@@ -209,6 +221,7 @@ export const processInterviewEmotionalAnalysis = inngest.createFunction(
           snapshots: result.snapshots,
           overallDominantEmotion: result.overallDominantEmotion,
           aggregateEmotions: result.aggregateEmotions,
+          ...(isFallback && { unavailable: true }),
         },
       });
     });
@@ -251,7 +264,7 @@ export const processInterviewFeedback = inngest.createFunction(
       timeout: "1h",
     });
 
-    // 3. Fetch transcript and emotion data from DB
+    // 3. Fetch transcript and emotion data from DB (emotion may be unavailable on Hume failure)
     const { transcript, emotionData } = await step.run("fetch-data", async () => {
       const [transcriptRow] = await db
         .select({ url: transcriptUrlsTable.url })
@@ -287,6 +300,7 @@ export const processInterviewFeedback = inngest.createFunction(
         overallDominantEmotion?: string;
         aggregateEmotions?: Array<{ name: string; score: number }>;
         snapshots?: Array<{ dominantEmotion: string }>;
+        unavailable?: boolean;
       };
 
       return { transcript, emotionData };
@@ -294,10 +308,16 @@ export const processInterviewFeedback = inngest.createFunction(
 
     // 4. Generate structured feedback via LLM
     const feedbackContent = await step.run("generate-feedback", async () => {
+      const emotionUnavailable = emotionData.unavailable === true;
       const emotionSummary =
-        emotionData.overallDominantEmotion ?? "Unknown";
-      const topEmotions =
-        emotionData.aggregateEmotions?.slice(0, 5).map((e) => `${e.name} (${(e.score * 100).toFixed(0)}%)`).join(", ") ?? "N/A";
+        emotionUnavailable ? "Unavailable" : (emotionData.overallDominantEmotion ?? "Unknown");
+      const topEmotions = emotionUnavailable
+        ? "N/A"
+        : (emotionData.aggregateEmotions?.slice(0, 5).map((e) => `${e.name} (${(e.score * 100).toFixed(0)}%)`).join(", ") ?? "N/A");
+
+      const emotionContext = emotionUnavailable
+        ? "Emotional analysis: Unavailable (voice emotion analysis could not be performed)."
+        : `Emotional analysis: Dominant emotion: ${emotionSummary}. Top emotions: ${topEmotions}.`;
 
       const { content } = await generateCompletion({
         messages: [
@@ -312,14 +332,14 @@ Output format:
 - Bullet points of specific, actionable suggestions
 
 ## Emotional Tone
-- Brief summary of how their emotional delivery came across
+- Brief summary of how their emotional delivery came across (or note that emotion analysis was unavailable if only transcript was used)
 
 ## Overall Recommendation
 - 1-2 sentences with next steps.`,
           },
           {
             role: "user",
-            content: `Interview transcript:\n\n${transcript}\n\n---\nEmotional analysis: Dominant emotion: ${emotionSummary}. Top emotions: ${topEmotions}.\n\nGenerate structured feedback.`,
+            content: `Interview transcript:\n\n${transcript}\n\n---\n${emotionContext}\n\nGenerate structured feedback.`,
           },
         ],
         maxTokens: 1500,
@@ -332,7 +352,7 @@ Output format:
     // 5. Map interview performance to career skills (for career plan builder)
     const skillsMapping = await step.run("map-skills", async () => {
       const emotionSummary =
-        emotionData.overallDominantEmotion ?? "Unknown";
+        emotionData.unavailable === true ? "Emotion analysis unavailable" : (emotionData.overallDominantEmotion ?? "Unknown");
       return mapInterviewToSkills(transcript, feedbackContent, emotionSummary);
     });
 

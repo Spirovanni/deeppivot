@@ -97,9 +97,8 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ID | Title |
 |----|-------|
 | **deeppivot-117** | Feature: Curated Resource Recommendations |
-| **deeppivot-74** | Backend: Emotion Inference Fallback Logic |
 
-Run `bd ready` to see current ready work. Returning User Flow (deeppivot-72) complete.
+Run `bd ready` to see current ready work. Emotion Inference Fallback (deeppivot-74) complete.
 
 ---
 
@@ -175,6 +174,7 @@ Run `bd ready` to see current ready work. Returning User Flow (deeppivot-72) com
 | 13 | ~~deeppivot-62~~ | ~~Frontend: Connect Career Plan UI to Backend~~ ✓ |
 | 14 | ~~deeppivot-115~~ | ~~Feature: Career Plan Goal Completion~~ ✓ |
 | 15 | ~~deeppivot-63~~ | ~~Feature: Printable/Shareable Career Plans~~ ✓ |
+| 16 | ~~deeppivot-74~~ | ~~Backend: Emotion Inference Fallback Logic~~ ✓ |
 
 ---
 
@@ -235,4 +235,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-23 — deeppivot-72 (Returning User Dashboard Flow) closed. RecentInterviewsWidget, Print/Export on Career Plan. Curated Resource Recommendations (deeppivot-117) and Emotion Fallback (deeppivot-74) ready.*
+*Last updated: 2026-02-22 — deeppivot-74 (Emotion Inference Fallback) closed. Hume failure now degrades gracefully: transcript-only feedback, UI shows "Emotion analysis unavailable." Curated Resource Recommendations (deeppivot-117) next.*

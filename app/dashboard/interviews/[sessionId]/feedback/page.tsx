@@ -68,32 +68,49 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
         </div>
 
         {emotionalAnalysis?.data ? (
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold">
-                Emotional Tone Timeline
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Voice emotion analysis from your interview recording.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <EmotionAwareTimeline
-                snapshots={
-                  (emotionalAnalysis.data as { snapshots?: Array<{ startTime: number; endTime: number; dominantEmotion: string; dominantScore: number }> })
-                    .snapshots ?? []
-                }
-                aggregateEmotions={
-                  (emotionalAnalysis.data as { aggregateEmotions?: Array<{ name: string; score: number }> })
-                    .aggregateEmotions ?? []
-                }
-                overallDominantEmotion={
-                  (emotionalAnalysis.data as { overallDominantEmotion?: string })
-                    .overallDominantEmotion ?? "neutral"
-                }
-              />
-            </CardContent>
-          </Card>
+          (emotionalAnalysis.data as { unavailable?: boolean }).unavailable ? (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base font-semibold">
+                  Emotional Tone Timeline
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Emotion analysis is unavailable for this session. Voice emotion
+                  analysis could not be performed, but feedback was generated from
+                  your transcript.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base font-semibold">
+                  Emotional Tone Timeline
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Voice emotion analysis from your interview recording.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <EmotionAwareTimeline
+                  snapshots={
+                    (emotionalAnalysis.data as { snapshots?: Array<{ startTime: number; endTime: number; dominantEmotion: string; dominantScore: number }> })
+                      .snapshots ?? []
+                  }
+                  aggregateEmotions={
+                    (emotionalAnalysis.data as { aggregateEmotions?: Array<{ name: string; score: number }> })
+                      .aggregateEmotions ?? []
+                  }
+                  overallDominantEmotion={
+                    (emotionalAnalysis.data as { overallDominantEmotion?: string })
+                      .overallDominantEmotion ?? "neutral"
+                  }
+                />
+              </CardContent>
+            </Card>
+          )
         ) : null}
 
         {feedback ? (
@@ -108,7 +125,8 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
               <AnimatedFeedbackContent
                 content={feedback.content}
                 dominantEmotion={
-                  emotionalAnalysis?.data
+                  emotionalAnalysis?.data &&
+                  !(emotionalAnalysis.data as { unavailable?: boolean }).unavailable
                     ? (emotionalAnalysis.data as { overallDominantEmotion?: string })
                         .overallDominantEmotion
                     : undefined

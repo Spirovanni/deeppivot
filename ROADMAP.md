@@ -91,9 +91,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-46** | Backend: Inngest Job for Emotional Analysis *(Phase 4)* |
+| **deeppivot-47** | Backend: Feedback Generation Engine (LLM) *(Phase 4)* |
 
-Run `bd ready` to see current ready work. Transcription (deeppivot-45) complete.
+Run `bd ready` to see current ready work. Emotional Analysis (deeppivot-46) complete.
 
 ---
 
@@ -152,7 +152,7 @@ Run `bd ready` to see current ready work. Transcription (deeppivot-45) complete.
 |-------|-------|-------|
 | 1 | ~~deeppivot-44~~ | ~~Backend: Inngest Job for Recording Processing~~ ✓ |
 | 2 | ~~deeppivot-45~~ | ~~Backend: Inngest Job for Transcription~~ ✓ |
-| 3 | deeppivot-46 | Backend: Inngest Job for Emotional Analysis |
+| 3 | ~~deeppivot-46~~ | ~~Backend: Inngest Job for Emotional Analysis~~ ✓ |
 | 4 | deeppivot-47 | Backend: Feedback Generation Engine (LLM) |
 | 5 | deeppivot-48 | Frontend: Display Interview Feedback UI |
 | 6 | deeppivot-49 | Frontend: Emotion-Aware Feedback Animations |
@@ -218,4 +218,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-45 (Inngest Job for Transcription) closed. New: `recording.processed` event, `processInterviewTranscription`, `transcript_urls` table, Deepgram transcription → Supabase Storage → transcript_urls. Chain: interview.completed → recording → recording.processed → transcription.*
+*Last updated: 2026-02-22 — deeppivot-46 (Inngest Job for Emotional Analysis) closed. New: `emotional_analysis` table, `processInterviewEmotionalAnalysis`, Hume batch prosody → emotional_analysis. Transcription and emotional analysis both triggered by recording.processed in parallel.*

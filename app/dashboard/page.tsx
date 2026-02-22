@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { getArchetype } from "@/src/lib/actions/archetype";
 import { getDashboardSummary } from "@/src/lib/actions/dashboard";
+import { getPredictiveInsights } from "@/src/lib/actions/predictive-insights";
 import {
   CareerArchetypeCard,
   CareerArchetypeEmptyCard,
@@ -28,6 +29,7 @@ import { CareerPlanProgressWidget } from "@/components/dashboard/CareerPlanProgr
 import { InterviewSummaryWidget } from "@/components/dashboard/InterviewSummaryWidget";
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner";
 import { RecentInterviewsWidget } from "@/components/dashboard/RecentInterviewsWidget";
+import { PredictiveInsightsWidget } from "@/components/dashboard/PredictiveInsightsWidget";
 import type { TraitScore } from "@/src/lib/archetypes";
 
 const features = [
@@ -79,9 +81,10 @@ export default async function DashboardPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const [archetype, summary] = await Promise.all([
+  const [archetype, summary, predictiveInsights] = await Promise.all([
     getArchetype(),
     getDashboardSummary(),
+    getPredictiveInsights(),
   ]);
 
   return (
@@ -120,6 +123,13 @@ export default async function DashboardPage() {
         {summary.interviews.recent.length > 0 && (
           <div className="mb-8">
             <RecentInterviewsWidget sessions={summary.interviews.recent} />
+          </div>
+        )}
+
+        {/* Predictive career insights */}
+        {predictiveInsights && predictiveInsights.length > 0 && (
+          <div className="mb-8">
+            <PredictiveInsightsWidget insights={predictiveInsights} />
           </div>
         )}
 

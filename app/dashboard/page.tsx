@@ -19,10 +19,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getArchetype } from "@/src/lib/actions/archetype";
+import { getDashboardSummary } from "@/src/lib/actions/dashboard";
 import {
   CareerArchetypeCard,
   CareerArchetypeEmptyCard,
 } from "@/components/dashboard/CareerArchetypeCard";
+import { CareerPlanProgressWidget } from "@/components/dashboard/CareerPlanProgressWidget";
+import { InterviewSummaryWidget } from "@/components/dashboard/InterviewSummaryWidget";
 import type { TraitScore } from "@/src/lib/archetypes";
 
 const features = [
@@ -74,7 +77,10 @@ export default async function DashboardPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const archetype = await getArchetype();
+  const [archetype, summary] = await Promise.all([
+    getArchetype(),
+    getDashboardSummary(),
+  ]);
 
   return (
     <div className="p-6 md:p-8">
@@ -84,8 +90,21 @@ export default async function DashboardPage() {
             Welcome back{user.firstName ? `, ${user.firstName}` : ""}
           </h1>
           <p className="mt-1 text-muted-foreground">
-            Choose a feature below to get started.
+            Overview of your progress. Choose a feature below to get started.
           </p>
+        </div>
+
+        {/* Progress overview: Career Plan + Interviews */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-2">
+          <CareerPlanProgressWidget
+            total={summary.careerPlan.total}
+            completed={summary.careerPlan.completed}
+            inProgress={summary.careerPlan.inProgress}
+          />
+          <InterviewSummaryWidget
+            total={summary.interviews.total}
+            completed={summary.interviews.completed}
+          />
         </div>
 
         {/* Career Archetype widget */}

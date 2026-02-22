@@ -96,10 +96,10 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-68** | Frontend: Learner Dashboard UI |
 | **deeppivot-117** | Feature: Curated Resource Recommendations |
+| **deeppivot-71** | Feature: First-Time User Onboarding Flow |
 
-Run `bd ready` to see current ready work. Printable Career Plans (deeppivot-63) complete.
+Run `bd ready` to see current ready work. Learner Dashboard (deeppivot-68) complete.
 
 ---
 
@@ -115,8 +115,10 @@ Run `bd ready` to see current ready work. Printable Career Plans (deeppivot-63) 
 | 4 | ~~deeppivot-15~~ | ~~LP7: Personalized Career Planning & Roadmap~~ ✓ |
 | 5 | ~~deeppivot-16~~ | ~~LP8: Mentor & Coach Network~~ ✓ |
 | 6 | ~~deeppivot-17~~ | ~~LP9: Alternative Education Explorer~~ ✓ |
+| 7 | ~~deeppivot-68~~ | ~~Frontend: Learner Dashboard UI~~ ✓ |
+| 8 | ~~deeppivot-116~~ | ~~Frontend: Career Plan Progress Widget~~ ✓ |
 
-**Phase 1 Status: COMPLETE ✓** — All 6 features shipped (LP1–LP9).
+**Phase 1 Status: COMPLETE ✓** — All 8 features shipped (LP1–LP9, Learner Dashboard, Career Plan Widget).
 
 **Unblocks**: LP3–LP5 (interview flow), plus all dashboard-dependent features.
 
@@ -231,4 +233,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-23 — deeppivot-63 (Printable/Shareable Career Plans) closed. react-to-print, CareerPlanPrintable, Print/Save PDF button. Learner Dashboard (deeppivot-68) and Curated Resource Recommendations (deeppivot-117) ready.*
+*Last updated: 2026-02-23 — deeppivot-116 (Career Plan Progress Widget) closed. Delivered as part of deeppivot-68. Curated Resource Recommendations (deeppivot-117) and First-Time Onboarding (deeppivot-71) ready.*

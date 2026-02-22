@@ -1,10 +1,14 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Clock, Mic2, Calendar, HelpCircle } from "lucide-react";
+import { ArrowLeft, Clock, Mic2, Calendar, HelpCircle, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getSessionDetail, getSessionEmotions } from "@/src/lib/actions/interview-sessions";
+import {
+  getSessionDetail,
+  getSessionEmotions,
+  getInterviewFeedback,
+} from "@/src/lib/actions/interview-sessions";
 import { EmotionTimeline } from "@/components/interviews/EmotionTimeline";
 import { CommunicationSummary } from "@/components/interviews/CommunicationSummary";
 
@@ -44,9 +48,10 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
   const sessionId = parseInt(params.sessionId, 10);
   if (isNaN(sessionId)) notFound();
 
-  const [session, snapshots] = await Promise.all([
+  const [session, snapshots, feedback] = await Promise.all([
     getSessionDetail(sessionId),
     getSessionEmotions(sessionId),
+    getInterviewFeedback(sessionId),
   ]);
 
   if (!session) notFound();
@@ -108,6 +113,33 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
             <Badge variant={statusCfg.variant}>{statusCfg.label}</Badge>
           </div>
         </div>
+
+        {/* AI Feedback link */}
+        {session.status === "completed" && (
+          <Link
+            href={`/dashboard/interviews/${sessionId}/feedback`}
+            className="block"
+          >
+            <Card className="transition-colors hover:bg-accent/30">
+              <CardContent className="flex items-center justify-between py-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <MessageSquare className="size-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">AI Feedback</p>
+                    <p className="text-sm text-muted-foreground">
+                      {feedback
+                        ? "View structured feedback from your interview"
+                        : "Feedback is being generated — check back in a few minutes"}
+                    </p>
+                  </div>
+                </div>
+                <ArrowLeft className="size-4 rotate-180 text-muted-foreground" />
+              </CardContent>
+            </Card>
+          </Link>
+        )}
 
         {/* Notes */}
         {session.notes && (

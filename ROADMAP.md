@@ -62,6 +62,7 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 /api/interview/start      Start Vapi interview (Deepgram STT, TTS, recording)
 /api/inngest              Inngest event handler (recording processing)
 /api/webhooks/vapi       Vapi webhook (end-of-call → interview.completed)
+/api/archetype/classify  BERT archetype classification proxy (Hugging Face)
 /api/sync-users           Bulk user sync
 /dashboard/job-tracker    Kanban job tracker (JT4)
 ```
@@ -91,9 +92,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-48** | Frontend: Display Interview Feedback UI *(Phase 4)* |
+| **deeppivot-57** | Backend: Career Archetyping Engine *(Phase 4)* |
 
-Run `bd ready` to see current ready work. Feedback Generation Engine (deeppivot-47) complete.
+Run `bd ready` to see current ready work. BERT archetype classification (deeppivot-56) complete.
 
 ---
 
@@ -154,9 +155,9 @@ Run `bd ready` to see current ready work. Feedback Generation Engine (deeppivot-
 | 2 | ~~deeppivot-45~~ | ~~Backend: Inngest Job for Transcription~~ ✓ |
 | 3 | ~~deeppivot-46~~ | ~~Backend: Inngest Job for Emotional Analysis~~ ✓ |
 | 4 | ~~deeppivot-47~~ | ~~Backend: Feedback Generation Engine (LLM)~~ ✓ |
-| 5 | deeppivot-48 | Frontend: Display Interview Feedback UI |
-| 6 | deeppivot-49 | Frontend: Emotion-Aware Feedback Animations |
-| 7 | deeppivot-56 | AI/ML: Deploy and Integrate Custom BERT Model |
+| 5 | ~~deeppivot-48~~ | ~~Frontend: Display Interview Feedback UI~~ ✓ |
+| 6 | ~~deeppivot-49~~ | ~~Frontend: Emotion-Aware Feedback Animations~~ ✓ |
+| 7 | ~~deeppivot-56~~ | ~~AI/ML: Deploy and Integrate Custom BERT Model~~ ✓ |
 | 8 | deeppivot-57 | Backend: Career Archetyping Engine |
 
 ---
@@ -218,4 +219,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-47 (Feedback Generation Engine) closed. New: `interview_feedback` table, `processInterviewFeedback`, waitForEvent for transcription.complete + emotion_analysis.complete, LLM-generated structured feedback (Strengths, Areas for Improvement, Emotional Tone).*
+*Last updated: 2026-02-22 — deeppivot-56 (BERT Archetype Model) closed. New: src/lib/archetype-bert.ts (Hugging Face zero-shot classification), POST /api/archetype/classify proxy route. HUGGINGFACE_API_KEY optional; facebook/bart-large-mnli default model. Career Archetyping Engine (deeppivot-57) unblocked.*

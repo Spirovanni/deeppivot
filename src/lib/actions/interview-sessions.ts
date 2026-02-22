@@ -5,9 +5,11 @@ import {
   interviewSessionsTable,
   interviewQuestionsTable,
   emotionSnapshotsTable,
+  interviewFeedbackTable,
+  emotionalAnalysesTable,
   usersTable,
 } from "@/src/db/schema";
-import { eq, avg, and, asc } from "drizzle-orm";
+import { eq, avg, and, asc, desc } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
@@ -99,6 +101,58 @@ export async function getSessionEmotions(sessionId: number) {
     .from(emotionSnapshotsTable)
     .where(eq(emotionSnapshotsTable.sessionId, sessionId))
     .orderBy(asc(emotionSnapshotsTable.capturedAt));
+}
+
+export async function getInterviewFeedback(sessionId: number) {
+  const userId = await getDbUserId();
+
+  const [session] = await db
+    .select({ id: interviewSessionsTable.id })
+    .from(interviewSessionsTable)
+    .where(
+      and(
+        eq(interviewSessionsTable.id, sessionId),
+        eq(interviewSessionsTable.userId, userId)
+      )
+    )
+    .limit(1);
+
+  if (!session) return null;
+
+  const [feedback] = await db
+    .select()
+    .from(interviewFeedbackTable)
+    .where(eq(interviewFeedbackTable.sessionId, sessionId))
+    .orderBy(desc(interviewFeedbackTable.createdAt))
+    .limit(1);
+
+  return feedback ?? null;
+}
+
+export async function getEmotionalAnalysis(sessionId: number) {
+  const userId = await getDbUserId();
+
+  const [session] = await db
+    .select({ id: interviewSessionsTable.id })
+    .from(interviewSessionsTable)
+    .where(
+      and(
+        eq(interviewSessionsTable.id, sessionId),
+        eq(interviewSessionsTable.userId, userId)
+      )
+    )
+    .limit(1);
+
+  if (!session) return null;
+
+  const [analysis] = await db
+    .select()
+    .from(emotionalAnalysesTable)
+    .where(eq(emotionalAnalysesTable.sessionId, sessionId))
+    .orderBy(desc(emotionalAnalysesTable.createdAt))
+    .limit(1);
+
+  return analysis ?? null;
 }
 
 export async function captureEmotionSnapshot(

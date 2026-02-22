@@ -1,11 +1,25 @@
 "use client";
 
-import { MapPin, Loader2 } from "lucide-react";
+import { useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+import { MapPin, Loader2, Printer } from "lucide-react";
 import { useCareerPlans } from "@/src/lib/hooks/use-career-plans";
 import { MilestoneTimeline } from "./MilestoneTimeline";
+import { CareerPlanPrintable } from "./CareerPlanPrintable";
+import { Button } from "@/components/ui/button";
 
 export function CareerPlanClient() {
   const { data: milestones = [], isLoading, error } = useCareerPlans();
+  const printRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Career Plan - DeepPivot",
+    pageStyle: `
+      @page { margin: 1.5cm; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    `,
+  });
 
   if (isLoading) {
     return (
@@ -33,8 +47,14 @@ export function CareerPlanClient() {
   return (
     <div className="p-6 md:p-8">
       <div className="mx-auto max-w-2xl">
+        {/* Hidden printable content for react-to-print */}
+        <div ref={printRef} className="hidden">
+          <CareerPlanPrintable milestones={milestones} />
+        </div>
+
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+          <div>
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
             Career Plan
           </h1>
@@ -64,6 +84,18 @@ export function CareerPlanClient() {
                 </span>
               </div>
             </div>
+          )}
+          </div>
+          {milestones.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrint}
+              className="no-print shrink-0"
+            >
+              <Printer className="mr-1.5 size-4" />
+              Print / Save PDF
+            </Button>
           )}
         </div>
 

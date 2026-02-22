@@ -121,3 +121,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Print styles for Career Plan */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .career-plan-printable,
+  .career-plan-printable * {
+    visibility: visible;
+  }
+  .career-plan-printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white;
+    color: black;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

@@ -3,6 +3,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { db } from '@/src/db';
 import { usersTable } from '@/src/db/schema';
 import { eq } from 'drizzle-orm';
+import { initializeJobBoard } from '@/src/lib/actions/job-board';
 
 export async function GET() {
   try {
@@ -58,6 +59,15 @@ export async function POST(request: NextRequest) {
     }).returning();
 
     console.log('User created successfully:', newUser[0]);
+
+    // Initialize default Job Board for new user
+    try {
+      await initializeJobBoard(newUser[0].id);
+      console.log(`Initialized job board for user: ${newUser[0].id}`);
+    } catch (boardError) {
+      console.error('Failed to initialize job board:', boardError);
+    }
+
     return NextResponse.json(newUser[0], { status: 201 });
   } catch (error) {
     console.error('Detailed error creating user:', {

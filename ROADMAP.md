@@ -42,11 +42,11 @@ A full kanban-style job application tracker integrated into the DeepPivot platfo
 ### Completed
 
 - [x] **JT1: Database Schema** (`deeppivot-1`, P0) — Drizzle models for `job_boards`, `job_columns`, `job_applications` with cascade foreign keys, text[] tags, and workflow traceability. Migration `0002` applied to Neon.
+- [x] **JT2: Auth Hooks & Default Board Init** (`deeppivot-2`, P1) — `initializeJobBoard()` server action creates "Automated Job Hunt" board with 5 default columns. Hooked into both Clerk webhook (`user.created`) and `POST /api/users` (client-side fallback). Idempotent — safe to call multiple times.
 
 ### Up Next (Unblocked)
 
 - [ ] **JT3a: Epicflow Native Node Configuration** (`deeppivot-3`, P0) — Define the Job Tracker as a visual node in the Epicflow canvas. Config fields for Board, Column, Company, Position with mustache template support.
-- [ ] **JT2: Auth Hooks & Default Board Init** (`deeppivot-2`, P1) — Auto-create a "Automated Job Hunt" board with 5 default columns (Wishlist, Applied, Interviewing, Offer, Rejected) when a new user signs up via Clerk.
 - [ ] **JT4: Dashboard UI & Kanban Shell** (`deeppivot-5`, P1) — Protected `/dashboard/job-tracker` route. KanbanBoard, JobApplicationCard, Create/Edit dialogs, dropdown menus using Shadcn components.
 
 ### Blocked (Waiting on Dependencies)
@@ -59,7 +59,7 @@ A full kanban-style job application tracker integrated into the DeepPivot platfo
 ### Dependency Graph
 
 ```
-JT1 (DONE) ──┬──> JT2 ──────────────────────> JT7
+JT1 (DONE) ──┬──> JT2 (DONE) ────────────────> JT7
               ├──> JT3a ──> JT3b ─────────────> JT7
               ├──> JT4 ──> JT5 ──> JT6 ──────> JT7
               └──> JT5 (also needs JT4)
@@ -76,7 +76,7 @@ The original tutorial used MongoDB/Mongoose/Better Auth. Here's what changed:
 | Prisma + MongoDB | Drizzle ORM + Neon PostgreSQL | `pgTable()` with `relations()` |
 | CUIDs for PKs | `integer().generatedAlwaysAsIdentity()` | Matches existing `usersTable` pattern |
 | `String[]` (Prisma) | `text().array()` (Drizzle pg-core) | Native PostgreSQL text arrays |
-| Better Auth hooks | Clerk webhook + provider sync | JT2 will use Clerk's `user.created` event |
+| Better Auth hooks | Clerk webhook + provider sync | JT2 hooks into Clerk `user.created` webhook + `/api/users` POST |
 | `prisma migrate dev` | `drizzle-kit generate` + `drizzle-kit migrate` | Migration files in `drizzle/` |
 | API Routes for CRUD | Next.js Server Actions | `"use server"` functions with `revalidatePath` |
 

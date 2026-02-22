@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { db } from '@/src/db';
 import { usersTable } from '@/src/db/schema';
 import { eq } from 'drizzle-orm';
+import { initializeJobBoard } from '@/src/lib/actions/job-board';
 
 const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
 
@@ -85,8 +86,16 @@ export async function POST(req: NextRequest) {
 
       if (existingUser.length === 0) {
         // Create new user
-        await db.insert(usersTable).values(userData);
+        const [newUser] = await db.insert(usersTable).values(userData).returning();
         console.log(`Created new user: ${primaryEmail.email_address}`);
+
+        // Initialize default Job Board for new user
+        try {
+          await initializeJobBoard(newUser.id);
+          console.log(`Initialized job board for user: ${newUser.id}`);
+        } catch (boardError) {
+          console.error('Failed to initialize job board:', boardError);
+        }
       } else {
         // Update existing user
         await db

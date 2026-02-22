@@ -44,6 +44,16 @@ export async function ensureUserInDb(): Promise<number | null> {
         email,
         age: 25,
       })
+      .onConflictDoUpdate({
+        target: usersTable.email,
+        set: {
+          clerkId: clerkUser.id,
+          firstName,
+          lastName,
+          name,
+          updatedAt: new Date(),
+        },
+      })
       .returning({ id: usersTable.id });
 
     if (inserted?.id) {
@@ -62,6 +72,19 @@ export async function ensureUserInDb(): Promise<number | null> {
       .where(eq(usersTable.clerkId, clerkUser.id))
       .limit(1);
     if (retry) return retry.id;
+    // Also check by email (Clerk account may have been recreated)
+    const [byEmail] = await db
+      .select({ id: usersTable.id })
+      .from(usersTable)
+      .where(eq(usersTable.email, email))
+      .limit(1);
+    if (byEmail) {
+      await db
+        .update(usersTable)
+        .set({ clerkId: clerkUser.id, updatedAt: new Date() })
+        .where(eq(usersTable.id, byEmail.id));
+      return byEmail.id;
+    }
     throw err;
   }
 

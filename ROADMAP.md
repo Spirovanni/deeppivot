@@ -99,7 +99,7 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | **deeppivot-63** | Feature: Printable/Shareable Career Plans |
 | **deeppivot-68** | Frontend: Learner Dashboard UI |
 
-Run `bd ready` to see current ready work. Career Plan UI connected to backend (deeppivot-62) complete.
+Run `bd ready` to see current ready work. Career Plan goal completion (deeppivot-115) complete.
 
 ---
 
@@ -169,6 +169,7 @@ Run `bd ready` to see current ready work. Career Plan UI connected to backend (d
 | 11 | ~~deeppivot-60~~ | ~~Frontend: Career Plan Draggable Timeline UI~~ ✓ |
 | 12 | ~~deeppivot-61~~ | ~~Backend: Career Plan CRUD APIs~~ ✓ |
 | 13 | ~~deeppivot-62~~ | ~~Frontend: Connect Career Plan UI to Backend~~ ✓ |
+| 14 | ~~deeppivot-115~~ | ~~Feature: Career Plan Goal Completion~~ ✓ |
 
 ---
 
@@ -229,4 +230,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-62 (Connect Career Plan UI to Backend) closed. React Query hooks (useCareerPlans, useCreatePlan, useUpdatePlan, useDeletePlan, useReorderPlans, useAddResource, useRemoveResource). CareerPlanClient, optimistic updates. Printable/Shareable Career Plans (deeppivot-63) and Learner Dashboard (deeppivot-68) ready.*
+*Last updated: 2026-02-23 — deeppivot-115 (Career Plan Goal Completion) closed. Clickable status toggle (Circle/CheckCircle2) on milestone cards, strikethrough for completed. Printable/Shareable Career Plans (deeppivot-63) and Learner Dashboard (deeppivot-68) ready.*

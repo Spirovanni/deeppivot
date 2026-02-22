@@ -35,6 +35,7 @@ import { cn } from "@/utils";
 import {
   useDeletePlan,
   useReorderPlans,
+  useUpdatePlan,
   type PlanMilestone,
 } from "@/src/lib/hooks/use-career-plans";
 import { EditMilestoneDialog } from "./EditMilestoneDialog";
@@ -82,6 +83,7 @@ function SortableMilestoneCard({
 }) {
   const [editOpen, setEditOpen] = useState(false);
   const deletePlan = useDeletePlan();
+  const updatePlan = useUpdatePlan();
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: milestone.id });
@@ -101,6 +103,12 @@ function SortableMilestoneCard({
     deletePlan.mutate(milestone.id);
   };
 
+  const handleToggleComplete = () => {
+    const nextStatus =
+      milestone.status === "completed" ? "planned" : "completed";
+    updatePlan.mutate({ id: milestone.id, data: { status: nextStatus } });
+  };
+
   const targetDate = milestone.targetDate
     ? new Date(milestone.targetDate)
     : null;
@@ -109,12 +117,28 @@ function SortableMilestoneCard({
     <>
       <div ref={setNodeRef} style={style} className="flex gap-3">
         <div className="flex flex-col items-center">
-          <div
+          <button
+            type="button"
+            onClick={handleToggleComplete}
+            disabled={updatePlan.isPending}
             className={cn(
-              "mt-4 size-3 shrink-0 rounded-full ring-2 ring-background",
-              statusCfg.dot
+              "mt-3.5 flex size-6 shrink-0 items-center justify-center rounded-full transition-colors",
+              milestone.status === "completed"
+                ? "text-green-500 hover:bg-green-500/20"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
             )}
-          />
+            aria-label={
+              milestone.status === "completed"
+                ? "Mark as not complete"
+                : "Mark as complete"
+            }
+          >
+            {milestone.status === "completed" ? (
+              <CheckCircle2 className="size-5" />
+            ) : (
+              <Circle className="size-5" strokeWidth={2} />
+            )}
+          </button>
           {!isLast && <div className="mt-1 w-px flex-1 bg-border" />}
         </div>
 
@@ -134,7 +158,14 @@ function SortableMilestoneCard({
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-start justify-between gap-2">
-                  <p className="font-semibold leading-snug">{milestone.title}</p>
+                  <p
+                    className={cn(
+                      "font-semibold leading-snug",
+                      milestone.status === "completed" && "line-through text-muted-foreground"
+                    )}
+                  >
+                    {milestone.title}
+                  </p>
                   <Badge
                     variant={statusCfg.variant}
                     className="shrink-0 gap-1 text-xs"
@@ -145,7 +176,12 @@ function SortableMilestoneCard({
                 </div>
 
                 {milestone.description && (
-                  <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                  <p
+                    className={cn(
+                      "mt-1 line-clamp-2 text-sm text-muted-foreground",
+                      milestone.status === "completed" && "line-through text-muted-foreground/70"
+                    )}
+                  >
                     {milestone.description}
                   </p>
                 )}

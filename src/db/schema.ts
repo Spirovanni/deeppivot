@@ -133,6 +133,7 @@ export const interviewSessionsRelations = relations(interviewSessionsTable, ({ o
   questions: many(interviewQuestionsTable),
   emotionSnapshots: many(emotionSnapshotsTable),
   recordingUrls: many(recordingUrlsTable),
+  transcriptUrls: many(transcriptUrlsTable),
 }));
 
 export const recordingUrlsTable = pgTable("recording_urls", {
@@ -149,6 +150,27 @@ export const recordingUrlsRelations = relations(recordingUrlsTable, ({ one }) =>
   session: one(interviewSessionsTable, {
     fields: [recordingUrlsTable.sessionId],
     references: [interviewSessionsTable.id],
+  }),
+}));
+
+export const transcriptUrlsTable = pgTable("transcript_urls", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  sessionId: integer()
+    .notNull()
+    .references(() => interviewSessionsTable.id, { onDelete: "cascade" }),
+  url: varchar({ length: 1024 }).notNull(),
+  recordingUrlId: integer().references(() => recordingUrlsTable.id, { onDelete: "set null" }),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const transcriptUrlsRelations = relations(transcriptUrlsTable, ({ one }) => ({
+  session: one(interviewSessionsTable, {
+    fields: [transcriptUrlsTable.sessionId],
+    references: [interviewSessionsTable.id],
+  }),
+  recordingUrl: one(recordingUrlsTable, {
+    fields: [transcriptUrlsTable.recordingUrlId],
+    references: [recordingUrlsTable.id],
   }),
 }));
 

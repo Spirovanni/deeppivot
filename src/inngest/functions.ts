@@ -4,16 +4,21 @@
  * interview.completed: Fetches recording from Vapi, uploads to Supabase,
  * saves URL to recording_urls table, then emits recording.processed.
  *
- * recording.processed: Transcribes via Deepgram, saves transcript to
- * Supabase Storage, links in transcript_urls table.
+ * recording.processed: Triggers transcription (Deepgram) and emotional
+ * analysis (Hume) in parallel.
  */
 
 import { inngest } from "@/src/inngest/client";
 import { db } from "@/src/db";
-import { recordingUrlsTable, transcriptUrlsTable } from "@/src/db/schema";
+import {
+  recordingUrlsTable,
+  transcriptUrlsTable,
+  emotionalAnalysesTable,
+} from "@/src/db/schema";
 import { getCall } from "@/src/lib/vapi";
 import { getSupabaseAdmin, RECORDING_BUCKET } from "@/src/lib/supabase";
 import { transcribeInterviewRecording } from "@/src/lib/deepgram";
+import { analyzeRecordingUrl } from "@/src/lib/hume";
 
 export const processInterviewRecording = inngest.createFunction(
   {
@@ -160,5 +165,44 @@ export const processInterviewTranscription = inngest.createFunction(
     });
 
     return { sessionId, transcriptUrl: transcriptFileUrl };
+  }
+);
+
+export const processInterviewEmotionalAnalysis = inngest.createFunction(
+  {
+    id: "process-interview-emotional-analysis",
+    name: "Process Interview Emotional Analysis",
+    retries: 3,
+  },
+  { event: "recording.processed" },
+  async ({ event, step }) => {
+    const { sessionId, recordingUrl } = event.data as {
+      sessionId: number;
+      recordingUrl: string;
+    };
+
+    if (!sessionId || !recordingUrl) {
+      throw new Error("Missing sessionId or recordingUrl in event data");
+    }
+
+    // 1. Submit to Hume batch API, wait for completion, get results
+    const result = await step.run("analyze-hume-prosody", async () => {
+      return analyzeRecordingUrl(recordingUrl, { prosody: true });
+    });
+
+    // 2. Save to emotional_analysis table
+    await step.run("save-emotional-analysis", async () => {
+      await db.insert(emotionalAnalysesTable).values({
+        sessionId,
+        jobId: result.jobId,
+        data: {
+          snapshots: result.snapshots,
+          overallDominantEmotion: result.overallDominantEmotion,
+          aggregateEmotions: result.aggregateEmotions,
+        },
+      });
+    });
+
+    return { sessionId, jobId: result.jobId };
   }
 );

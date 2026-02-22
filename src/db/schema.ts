@@ -134,6 +134,7 @@ export const interviewSessionsRelations = relations(interviewSessionsTable, ({ o
   emotionSnapshots: many(emotionSnapshotsTable),
   recordingUrls: many(recordingUrlsTable),
   transcriptUrls: many(transcriptUrlsTable),
+  emotionalAnalyses: many(emotionalAnalysesTable),
 }));
 
 export const recordingUrlsTable = pgTable("recording_urls", {
@@ -171,6 +172,25 @@ export const transcriptUrlsRelations = relations(transcriptUrlsTable, ({ one }) 
   recordingUrl: one(recordingUrlsTable, {
     fields: [transcriptUrlsTable.recordingUrlId],
     references: [recordingUrlsTable.id],
+  }),
+}));
+
+export const emotionalAnalysesTable = pgTable("emotional_analysis", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  sessionId: integer()
+    .notNull()
+    .references(() => interviewSessionsTable.id, { onDelete: "cascade" }),
+  /** Hume batch job ID */
+  jobId: varchar({ length: 255 }).notNull(),
+  /** Full Hume prosody result: snapshots, aggregateEmotions, overallDominantEmotion */
+  data: jsonb().notNull().default({}),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const emotionalAnalysesRelations = relations(emotionalAnalysesTable, ({ one }) => ({
+  session: one(interviewSessionsTable, {
+    fields: [emotionalAnalysesTable.sessionId],
+    references: [interviewSessionsTable.id],
   }),
 }));
 

@@ -71,6 +71,13 @@
       "when": 1771797149038,
       "tag": "0009_gifted_eddie_brock",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1771797275799,
+      "tag": "0010_careful_iceman",
+      "breakpoints": true
     }
   ]
 }

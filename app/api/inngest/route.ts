@@ -9,9 +9,14 @@ import { inngest } from "@/src/inngest/client";
 import {
   processInterviewRecording,
   processInterviewTranscription,
+  processInterviewEmotionalAnalysis,
 } from "@/src/inngest/functions";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [processInterviewRecording, processInterviewTranscription],
+  functions: [
+    processInterviewRecording,
+    processInterviewTranscription,
+    processInterviewEmotionalAnalysis,
+  ],
 });

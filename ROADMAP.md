@@ -43,6 +43,7 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 - **interview_questions** — Ordered questions per session with response quality score (LP2)
 - **emotion_snapshots** — JSONB emotion maps captured during a session with dominant emotion & confidence (LP2)
 - **career_archetypes** — Per-user archetype result with name, JSONB trait scores, strengths, and growth areas (LP6)
+- **archetype_review_queue** — Admin human review queue for AI-assigned archetypes (input, output, approve/override) (deeppivot-92)
 - **career_milestones** — Per-user draggable roadmap milestones with title, dates, status, and order (LP7)
 - **career_resources** — Resources linked to milestones (title, url, type: article/course/tool/video) (LP7)
 - **mentors** — Seeded mentor directory (12 profiles) with expertise array, industry, bio, links (LP8)
@@ -68,6 +69,10 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 /api/plans/[id]/resources Milestone resources POST
 /api/plans/reorder        PUT reorder milestones
 /api/sync-users           Bulk user sync
+/api/admin/archetype-review  Admin: list archetype review queue (GET)
+/api/admin/archetype-review/[id]  Admin: approve/override (PATCH)
+/admin                    Admin dashboard (admin role only)
+/admin/archetype-review   Admin: human review queue for archetypes
 /dashboard/job-tracker    Kanban job tracker (JT4)
 ```
 
@@ -99,7 +104,7 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | **deeppivot-24** | Backend: Set up Supabase for Storage & Real-time |
 | **deeppivot-19** | Frontend: Initialize Next.js 15 Project |
 
-Run `bd ready` to see current ready work. Archetype Model Bias Detection (deeppivot-91) complete.
+Run `bd ready` to see current ready work. Human Review Queue (deeppivot-92) complete.
 
 ---
 
@@ -180,6 +185,7 @@ Run `bd ready` to see current ready work. Archetype Model Bias Detection (deeppi
 | 18 | ~~deeppivot-96~~ | ~~AI/ML: Predictive Career Analytics~~ ✓ |
 | 19 | ~~deeppivot-95~~ | ~~AI/ML: Adaptive Feedback Engine~~ ✓ |
 | 20 | ~~deeppivot-91~~ | ~~AI/ML: Archetype Model Bias Detection~~ ✓ |
+| 21 | ~~deeppivot-92~~ | ~~Admin: Human Review Queue for Archetypes~~ ✓ |
 
 ---
 
@@ -240,4 +246,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-91 (Archetype Model Bias Detection) closed. Post-processing step analyzes archetype distribution, flags over-representation (>45%) and concentration (top 2 >75%). Logs for human review. Supabase (deeppivot-24) or Next.js 15 (deeppivot-19) next.*
+*Last updated: 2026-02-22 — deeppivot-92 (Admin: Human Review Queue for Archetypes) closed. Admin UI at /admin/archetype-review for reviewing AI-assigned archetypes; approve or override. Supabase (deeppivot-24) or Next.js 15 (deeppivot-19) next.*

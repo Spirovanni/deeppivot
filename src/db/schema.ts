@@ -266,12 +266,66 @@ export const careerArchetypesTable = pgTable("career_archetypes", {
   updatedAt: timestamp().notNull().defaultNow(),
 });
 
-export const careerArchetypesRelations = relations(careerArchetypesTable, ({ one }) => ({
+export const careerArchetypesRelations = relations(careerArchetypesTable, ({ one, many }) => ({
   user: one(usersTable, {
     fields: [careerArchetypesTable.userId],
     references: [usersTable.id],
   }),
+  reviewItems: many(archetypeReviewQueueTable),
 }));
+
+// ============================================
+// ARCHETYPE REVIEW QUEUE (Admin human review)
+// ============================================
+
+export const archetypeReviewQueueTable = pgTable("archetype_review_queue", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  careerArchetypeId: integer()
+    .notNull()
+    .references(() => careerArchetypesTable.id, { onDelete: "cascade" }),
+  sessionId: integer()
+    .notNull()
+    .references(() => interviewSessionsTable.id, { onDelete: "cascade" }),
+  userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  /** Input: interview feedback content used for archetyping */
+  feedbackContent: text().notNull(),
+  /** AI output: archetype name */
+  aiArchetypeName: varchar({ length: 100 }).notNull(),
+  /** AI output: strengths */
+  aiStrengths: jsonb().notNull().default([]),
+  /** AI output: growth areas */
+  aiGrowthAreas: jsonb().notNull().default([]),
+  /** pending | approved | overridden */
+  status: varchar({ length: 20 }).notNull().default("pending"),
+  reviewedAt: timestamp(),
+  reviewedBy: integer().references(() => usersTable.id, { onDelete: "set null" }),
+  /** If overridden, the human-selected archetype name */
+  overrideArchetypeName: varchar({ length: 100 }),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const archetypeReviewQueueRelations = relations(
+  archetypeReviewQueueTable,
+  ({ one }) => ({
+    careerArchetype: one(careerArchetypesTable, {
+      fields: [archetypeReviewQueueTable.careerArchetypeId],
+      references: [careerArchetypesTable.id],
+    }),
+    session: one(interviewSessionsTable, {
+      fields: [archetypeReviewQueueTable.sessionId],
+      references: [interviewSessionsTable.id],
+    }),
+    user: one(usersTable, {
+      fields: [archetypeReviewQueueTable.userId],
+      references: [usersTable.id],
+    }),
+    reviewer: one(usersTable, {
+      fields: [archetypeReviewQueueTable.reviewedBy],
+      references: [usersTable.id],
+    }),
+  })
+);
 
 // ============================================
 // CAREER PLANNING MODELS (LP7)

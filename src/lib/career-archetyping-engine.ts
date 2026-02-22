@@ -8,6 +8,7 @@
 import "server-only";
 import { db } from "@/src/db";
 import {
+  archetypeReviewQueueTable,
   careerArchetypesTable,
   interviewFeedbackTable,
   interviewSessionsTable,
@@ -91,7 +92,7 @@ export async function runCareerArchetyping(
   );
 
   // 5. Upsert career_archetypes
-  await db
+  const [upserted] = await db
     .insert(careerArchetypesTable)
     .values({
       userId,
@@ -111,7 +112,22 @@ export async function runCareerArchetyping(
         assessedAt: new Date(),
         updatedAt: new Date(),
       },
+    })
+    .returning({ id: careerArchetypesTable.id });
+
+  const careerArchetypeId = upserted?.id;
+  if (careerArchetypeId) {
+    await db.insert(archetypeReviewQueueTable).values({
+      careerArchetypeId,
+      sessionId,
+      userId,
+      feedbackContent,
+      aiArchetypeName: baseArchetype.name,
+      aiStrengths: strengths,
+      aiGrowthAreas: growthAreas,
+      status: "pending",
     });
+  }
 
   return {
     userId,

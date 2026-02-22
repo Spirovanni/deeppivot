@@ -90,7 +90,13 @@ VAPI_PHONE_NUMBER_ID=...         # Optional — required for outbound phone call
 
 # Deepgram STT (Phase 3 — optional until transcription pipeline is active)
 DEEPGRAM_API_KEY=...             # Deepgram API key (console.deepgram.com)
+
+# LLM (for predictive career insights on dashboard — at least one required)
+OPENAI_API_KEY=sk-proj-...       # OpenAI GPT models
+ANTHROPIC_API_KEY=sk-ant-api03-... # Anthropic Claude models (preferred when both set)
 ```
+
+**Production (Vercel):** Add the same variables in your Vercel project → **Settings → Environment Variables**. For predictive insights to work, set at least one of `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` in Production. Without them, the dashboard loads but the predictive insights widget is hidden.
 
 ### 3. Database Setup
 

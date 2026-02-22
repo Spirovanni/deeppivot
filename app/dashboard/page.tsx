@@ -19,7 +19,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getArchetype } from "@/src/lib/actions/archetype";
-import { getDashboardSummary } from "@/src/lib/actions/dashboard";
+import {
+  getDashboardSummary,
+  type DashboardSummary,
+} from "@/src/lib/actions/dashboard";
 import { getPredictiveInsights } from "@/src/lib/actions/predictive-insights";
 import {
   CareerArchetypeCard,
@@ -77,15 +80,31 @@ const features = [
   },
 ];
 
+const emptySummary: DashboardSummary = {
+  careerPlan: { total: 0, completed: 0, inProgress: 0 },
+  interviews: { total: 0, completed: 0, recent: [] },
+};
+
 export default async function DashboardPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const [archetype, summary, predictiveInsights] = await Promise.all([
-    getArchetype(),
-    getDashboardSummary(),
-    getPredictiveInsights(),
-  ]);
+  let archetype: Awaited<ReturnType<typeof getArchetype>> | null = null;
+  let summary: DashboardSummary = emptySummary;
+  let predictiveInsights: Awaited<ReturnType<typeof getPredictiveInsights>> | null = null;
+
+  try {
+    [archetype, summary, predictiveInsights] = await Promise.all([
+      getArchetype(),
+      getDashboardSummary(),
+      getPredictiveInsights(),
+    ]);
+  } catch {
+    // Fallback: user may not be in DB yet (webhook delay) or transient DB/API error
+    archetype = null;
+    summary = emptySummary;
+    predictiveInsights = null;
+  }
 
   return (
     <div className="p-6 md:p-8">

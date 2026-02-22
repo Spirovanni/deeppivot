@@ -41,6 +41,11 @@ export async function getPredictiveInsights(): Promise<PredictiveInsight[] | nul
 
   if (!hasData) return null;
 
-  const insights = await generatePredictiveInsights(context);
-  return insights.length > 0 ? insights : null;
+  try {
+    const insights = await generatePredictiveInsights(context);
+    return insights.length > 0 ? insights : null;
+  } catch {
+    // LLM unavailable (missing API keys, rate limit, etc.) — non-fatal
+    return null;
+  }
 }

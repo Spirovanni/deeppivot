@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, MapPin, Printer } from "lucide-react";
 
 interface CareerPlanProgressWidgetProps {
   total: number;
@@ -40,10 +40,20 @@ export function CareerPlanProgressWidget({
                 style={{ width: `${percent}%` }}
               />
             </div>
-            <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-              <span>{total - completed - inProgress} planned</span>
-              <span>{inProgress} in progress</span>
-              <span>{completed} completed</span>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                <span>{total - completed - inProgress} planned</span>
+                <span>{inProgress} in progress</span>
+                <span>{completed} completed</span>
+              </div>
+              <Link
+                href="/dashboard/career-plan"
+                className="inline-flex items-center gap-1 text-xs text-primary underline-offset-4 hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Printer className="size-3" />
+                Print / Export
+              </Link>
             </div>
           </CardContent>
         )}

@@ -97,9 +97,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ID | Title |
 |----|-------|
 | **deeppivot-117** | Feature: Curated Resource Recommendations |
-| **deeppivot-72** | Feature: Returning User Dashboard Flow |
+| **deeppivot-74** | Backend: Emotion Inference Fallback Logic |
 
-Run `bd ready` to see current ready work. First-Time Onboarding (deeppivot-71) complete.
+Run `bd ready` to see current ready work. Returning User Flow (deeppivot-72) complete.
 
 ---
 
@@ -118,8 +118,9 @@ Run `bd ready` to see current ready work. First-Time Onboarding (deeppivot-71) c
 | 7 | ~~deeppivot-68~~ | ~~Frontend: Learner Dashboard UI~~ ✓ |
 | 8 | ~~deeppivot-116~~ | ~~Frontend: Career Plan Progress Widget~~ ✓ |
 | 9 | ~~deeppivot-71~~ | ~~Feature: First-Time User Onboarding Flow~~ ✓ |
+| 10 | ~~deeppivot-72~~ | ~~Feature: Returning User Dashboard Flow~~ ✓ |
 
-**Phase 1 Status: COMPLETE ✓** — All 9 features shipped (LP1–LP9, Learner Dashboard, Career Plan Widget, Onboarding).
+**Phase 1 Status: COMPLETE ✓** — All 10 features shipped (LP1–LP9, Learner Dashboard, Career Plan Widget, Onboarding, Returning User Flow).
 
 **Unblocks**: LP3–LP5 (interview flow), plus all dashboard-dependent features.
 
@@ -234,4 +235,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-23 — deeppivot-71 (First-Time User Onboarding Flow) closed. OnboardingBanner with 4-step flow, progress indicators, mentor/education links. Curated Resource Recommendations (deeppivot-117) and Returning User Flow (deeppivot-72) ready.*
+*Last updated: 2026-02-23 — deeppivot-72 (Returning User Dashboard Flow) closed. RecentInterviewsWidget, Print/Export on Career Plan. Curated Resource Recommendations (deeppivot-117) and Emotion Fallback (deeppivot-74) ready.*

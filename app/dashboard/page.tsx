@@ -27,6 +27,7 @@ import {
 import { CareerPlanProgressWidget } from "@/components/dashboard/CareerPlanProgressWidget";
 import { InterviewSummaryWidget } from "@/components/dashboard/InterviewSummaryWidget";
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner";
+import { RecentInterviewsWidget } from "@/components/dashboard/RecentInterviewsWidget";
 import type { TraitScore } from "@/src/lib/archetypes";
 
 const features = [
@@ -114,6 +115,13 @@ export default async function DashboardPage() {
             completed={summary.interviews.completed}
           />
         </div>
+
+        {/* Returning user: Recent interviews list */}
+        {summary.interviews.recent.length > 0 && (
+          <div className="mb-8">
+            <RecentInterviewsWidget sessions={summary.interviews.recent} />
+          </div>
+        )}
 
         {/* Career Archetype widget */}
         <div className="mb-8">

@@ -23,6 +23,14 @@ async function getDbUserId(): Promise<number> {
   return user.id;
 }
 
+export interface RecentSession {
+  id: number;
+  sessionType: string;
+  status: string;
+  startedAt: Date;
+  overallScore: number | null;
+}
+
 export interface DashboardSummary {
   careerPlan: {
     total: number;
@@ -32,30 +40,40 @@ export interface DashboardSummary {
   interviews: {
     total: number;
     completed: number;
+    recent: RecentSession[];
   };
 }
 
 export async function getDashboardSummary(): Promise<DashboardSummary> {
   const userId = await getDbUserId();
 
-  const [milestones, sessions] = await Promise.all([
+  const [milestones, allSessions, recentSessions] = await Promise.all([
     db
       .select({ status: careerMilestonesTable.status })
       .from(careerMilestonesTable)
       .where(eq(careerMilestonesTable.userId, userId))
       .orderBy(asc(careerMilestonesTable.orderIndex)),
     db
+      .select({ status: interviewSessionsTable.status })
+      .from(interviewSessionsTable)
+      .where(eq(interviewSessionsTable.userId, userId)),
+    db
       .select({
+        id: interviewSessionsTable.id,
+        sessionType: interviewSessionsTable.sessionType,
         status: interviewSessionsTable.status,
+        startedAt: interviewSessionsTable.startedAt,
+        overallScore: interviewSessionsTable.overallScore,
       })
       .from(interviewSessionsTable)
       .where(eq(interviewSessionsTable.userId, userId))
-      .orderBy(desc(interviewSessionsTable.createdAt)),
+      .orderBy(desc(interviewSessionsTable.createdAt))
+      .limit(5),
   ]);
 
   const completedMilestones = milestones.filter((m) => m.status === "completed").length;
   const inProgressMilestones = milestones.filter((m) => m.status === "in_progress").length;
-  const completedSessions = sessions.filter((s) => s.status === "completed").length;
+  const completedSessionsCount = allSessions.filter((s) => s.status === "completed").length;
 
   return {
     careerPlan: {
@@ -64,8 +82,15 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       inProgress: inProgressMilestones,
     },
     interviews: {
-      total: sessions.length,
-      completed: completedSessions,
+      total: allSessions.length,
+      completed: completedSessionsCount,
+      recent: recentSessions.map((s) => ({
+        id: s.id,
+        sessionType: s.sessionType,
+        status: s.status,
+        startedAt: s.startedAt,
+        overallScore: s.overallScore,
+      })),
     },
   };
 }

@@ -81,11 +81,26 @@ export interface VapiAssistant {
 
 // ─── Options ──────────────────────────────────────────────────────────────────
 
+export interface TranscriberOverrides {
+  provider: "deepgram";
+  model?: string;
+  language?: string;
+  smartFormat?: boolean;
+}
+
+export interface VoiceOverrides {
+  provider: "elevenlabs" | "deepgram" | "playht";
+  voiceId: string;
+  speed?: number;
+}
+
 export interface AssistantOverrides {
   firstMessage?: string;
   maxDurationSeconds?: number;
   recordingEnabled?: boolean;
   hipaaEnabled?: boolean;
+  transcriber?: TranscriberOverrides;
+  voice?: VoiceOverrides;
   model?: {
     provider: string;
     model: string;
@@ -292,11 +307,26 @@ export async function startInterviewCall(options: {
     );
   }
 
+  const voiceId =
+    process.env.ELEVENLABS_DEFAULT_VOICE_ID ??
+    process.env.VAPI_DEFAULT_VOICE_ID ??
+    "21m00Tcm4TlvDq8ikWAM";
+
   return createWebCall({
     assistantId,
     assistantOverrides: {
       maxDurationSeconds: options.maxDurationSeconds ?? 1800, // 30 min default
       recordingEnabled: true,
+      transcriber: {
+        provider: "deepgram",
+        model: "nova-3",
+        language: "en-US",
+        smartFormat: true,
+      },
+      voice: {
+        provider: "elevenlabs",
+        voiceId,
+      },
       firstMessage: options.candidateName
         ? `Hello ${options.candidateName}! I'm your AI interviewer today. We'll be doing a ${options.interviewType ?? "general"} interview. Are you ready to begin?`
         : `Hello! I'm your AI interviewer. We'll be doing a ${options.interviewType ?? "general"} interview. Are you ready to begin?`,

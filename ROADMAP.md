@@ -59,6 +59,7 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 /api/users                User CRUD
 /api/clerk-webhook        Clerk event sync
 /api/hume-token           Hume AI token endpoint
+/api/interview/start      Start Vapi interview (Deepgram STT, TTS, recording)
 /api/sync-users           Bulk user sync
 /dashboard/job-tracker    Kanban job tracker (JT4)
 ```
@@ -88,9 +89,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-40** | Backend: Core Interview Session Handler *(Phase 3)* |
+| **deeppivot-41** | Backend: Inngest Job for Recording Processing *(Phase 4)* |
 
-Run `bd ready` to see current ready work. Phase 3 in progress — Voice & AI Services.
+Run `bd ready` to see current ready work. Phase 3 complete — Voice & AI Services.
 
 ---
 
@@ -137,7 +138,7 @@ Run `bd ready` to see current ready work. Phase 3 in progress — Voice & AI Ser
 | 3 | ~~deeppivot-37~~ | ~~Backend: Hume.ai Integration Service~~ ✓ |
 | 4 | ~~deeppivot-38~~ | ~~Backend: TTS Integration Service (ElevenLabs/PlayHT)~~ ✓ |
 | 5 | ~~deeppivot-39~~ | ~~Backend: LLM Orchestration Service (GPT-4/Claude-3)~~ ✓ |
-| 6 | deeppivot-40 | Backend: Core Interview Session Handler |
+| 6 | ~~deeppivot-40~~ | ~~Backend: Core Interview Session Handler~~ ✓ |
 
 ---
 
@@ -215,4 +216,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-39 (LLM Orchestration Service) closed. New: `src/lib/llm.ts` (GPT-4 Turbo + Claude-3 Opus routing, `generateCompletion`; env: OPENAI_API_KEY, ANTHROPIC_API_KEY, LLM_PROVIDER).*
+*Last updated: 2026-02-22 — deeppivot-40 (Core Interview Session Handler) closed. New: `POST /api/interview/start`, `src/lib/interview-handler.ts`, Vapi transcriber/voice overrides (Deepgram STT, ElevenLabs TTS, recording for Hume).*

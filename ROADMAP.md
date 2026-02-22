@@ -88,7 +88,7 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-39** | Backend: LLM Orchestration Service (GPT-4/Claude-3) *(Phase 3)* |
+| **deeppivot-40** | Backend: Core Interview Session Handler *(Phase 3)* |
 
 Run `bd ready` to see current ready work. Phase 3 in progress — Voice & AI Services.
 
@@ -136,7 +136,7 @@ Run `bd ready` to see current ready work. Phase 3 in progress — Voice & AI Ser
 | 2 | ~~deeppivot-36~~ | ~~Backend: Deepgram Integration Service~~ ✓ |
 | 3 | ~~deeppivot-37~~ | ~~Backend: Hume.ai Integration Service~~ ✓ |
 | 4 | ~~deeppivot-38~~ | ~~Backend: TTS Integration Service (ElevenLabs/PlayHT)~~ ✓ |
-| 5 | deeppivot-39 | Backend: LLM Orchestration Service (GPT-4/Claude-3) |
+| 5 | ~~deeppivot-39~~ | ~~Backend: LLM Orchestration Service (GPT-4/Claude-3)~~ ✓ |
 | 6 | deeppivot-40 | Backend: Core Interview Session Handler |
 
 ---
@@ -215,4 +215,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-38 (TTS Integration Service) closed. New: `src/lib/tts.ts` (ElevenLabs + PlayHT abstraction, `generateSpeech`, `streamSpeech`, `listVoices`; env: ELEVENLABS_API_KEY, PLAYHT_API_KEY, PLAYHT_USER_ID, TTS_PROVIDER).*
+*Last updated: 2026-02-22 — deeppivot-39 (LLM Orchestration Service) closed. New: `src/lib/llm.ts` (GPT-4 Turbo + Claude-3 Opus routing, `generateCompletion`; env: OPENAI_API_KEY, ANTHROPIC_API_KEY, LLM_PROVIDER).*

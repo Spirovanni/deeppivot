@@ -51,7 +51,7 @@ export interface LLMCompletionResult {
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const OPENAI_MODEL = "gpt-4-turbo";
-const ANTHROPIC_MODEL = "claude-3-5-sonnet-20241022";
+const ANTHROPIC_MODEL = "claude-3-opus-20240229";
 
 function getProvider(): Exclude<LLMProvider, "auto"> {
   const env = process.env.LLM_PROVIDER?.toLowerCase();

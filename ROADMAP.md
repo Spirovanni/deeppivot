@@ -88,9 +88,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-35** | Backend: Vapi Integration Service *(Phase 3)* |
+| **deeppivot-36** | Backend: Deepgram Integration Service *(Phase 3)* |
 
-Run `bd ready` to see current ready work. **Phase 1 complete. deeppivot-18 closed.** Proceed to Phase 3 — Voice & AI Services.
+Run `bd ready` to see current ready work. Phase 3 in progress — Voice & AI Services.
 
 ---
 
@@ -132,7 +132,7 @@ Run `bd ready` to see current ready work. **Phase 1 complete. deeppivot-18 close
 
 | Order | Issue | Title |
 |-------|-------|-------|
-| 1 | deeppivot-35 | Backend: Vapi Integration Service |
+| 1 | ~~deeppivot-35~~ | ~~Backend: Vapi Integration Service~~ ✓ |
 | 2 | deeppivot-36 | Backend: Deepgram Integration Service |
 | 3 | deeppivot-37 | Backend: Hume.ai Integration Service |
 | 4 | deeppivot-38 | Backend: TTS Integration Service (ElevenLabs/PlayHT) |
@@ -215,4 +215,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-18 (GitHub repo setup) closed. README rewritten, MIT LICENSE added, repo description set, `develop` branch synced to `main`, branch protection on `main` active (1 required review, stale review dismissal).*
+*Last updated: 2026-02-22 — deeppivot-35 (Vapi Integration Service) closed. New: `src/lib/vapi.ts` (full REST client — web/phone calls, assistants, interview helper), `src/lib/integrations/vapi.ts` (node config), `src/lib/node-executors/vapi.ts` (executor registered in integration index).*

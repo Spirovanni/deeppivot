@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,29 +13,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Trash2, ExternalLink, Plus } from "lucide-react";
 import {
-  updateMilestone,
-  addResource,
-  removeResource,
-} from "@/src/lib/actions/career-plan";
-
-interface Resource {
-  id: number;
-  title: string;
-  url: string;
-  resourceType: string;
-}
-
-interface Milestone {
-  id: number;
-  title: string;
-  description: string | null;
-  targetDate: Date | null;
-  status: string;
-  resources: Resource[];
-}
+  useUpdatePlan,
+  useAddResource,
+  useRemoveResource,
+  type PlanMilestone,
+} from "@/src/lib/hooks/use-career-plans";
 
 interface EditMilestoneDialogProps {
-  milestone: Milestone;
+  milestone: PlanMilestone;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -47,47 +32,62 @@ export function EditMilestoneDialog({
   open,
   onOpenChange,
 }: EditMilestoneDialogProps) {
-  const [isPending, startTransition] = useTransition();
   const [addingResource, setAddingResource] = useState(false);
+  const updatePlan = useUpdatePlan();
+  const addResource = useAddResource();
+  const removeResource = useRemoveResource();
 
   const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    startTransition(async () => {
-      await updateMilestone(milestone.id, {
-        title: fd.get("title") as string,
-        description: (fd.get("description") as string) || undefined,
-        targetDate: (fd.get("targetDate") as string) || undefined,
-        status: (fd.get("status") as string) || "planned",
-      });
-      onOpenChange(false);
-    });
+
+    updatePlan.mutate(
+      {
+        id: milestone.id,
+        data: {
+          title: fd.get("title") as string,
+          description: (fd.get("description") as string) || undefined,
+          targetDate: (fd.get("targetDate") as string) || undefined,
+          status: (fd.get("status") as string) || "planned",
+        },
+      },
+      { onSuccess: () => onOpenChange(false) }
+    );
   };
 
   const handleAddResource = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    startTransition(async () => {
-      await addResource(milestone.id, {
-        title: fd.get("resTitle") as string,
-        url: fd.get("resUrl") as string,
-        resourceType: (fd.get("resType") as string) || "article",
-      });
-      setAddingResource(false);
-      (e.target as HTMLFormElement).reset();
-    });
+
+    addResource.mutate(
+      {
+        milestoneId: milestone.id,
+        data: {
+          title: fd.get("resTitle") as string,
+          url: fd.get("resUrl") as string,
+          resourceType: (fd.get("resType") as string) || "article",
+        },
+      },
+      {
+        onSuccess: () => {
+          setAddingResource(false);
+          (e.target as HTMLFormElement).reset();
+        },
+      }
+    );
   };
 
   const handleRemoveResource = (resourceId: number) => {
-    startTransition(async () => {
-      await removeResource(resourceId);
-    });
+    removeResource.mutate({ milestoneId: milestone.id, resourceId });
   };
 
-  const toDateInputValue = (d: Date | null) => {
+  const toDateInputValue = (d: string | null) => {
     if (!d) return "";
     return new Date(d).toISOString().slice(0, 10);
   };
+
+  const isPending =
+    updatePlan.isPending || addResource.isPending || removeResource.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -96,7 +96,6 @@ export function EditMilestoneDialog({
           <DialogTitle>Edit Milestone</DialogTitle>
         </DialogHeader>
 
-        {/* Milestone form */}
         <form onSubmit={handleSave} className="space-y-4 pt-2">
           <div className="space-y-1.5">
             <Label htmlFor="edit-title">Title *</Label>
@@ -145,12 +144,15 @@ export function EditMilestoneDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={isPending}>
-              {isPending ? <Loader2 className="size-4 animate-spin" /> : "Save"}
+              {updatePlan.isPending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                "Save"
+              )}
             </Button>
           </div>
         </form>
 
-        {/* Resources section */}
         <div className="border-t border-border pt-4">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-sm font-semibold">Resources</p>
@@ -165,7 +167,6 @@ export function EditMilestoneDialog({
             </Button>
           </div>
 
-          {/* Existing resources */}
           {milestone.resources.length > 0 && (
             <ul className="mb-3 space-y-2">
               {milestone.resources.map((r) => (
@@ -198,9 +199,11 @@ export function EditMilestoneDialog({
             </ul>
           )}
 
-          {/* Add resource inline form */}
           {addingResource && (
-            <form onSubmit={handleAddResource} className="space-y-2 rounded-lg border border-dashed border-border p-3">
+            <form
+              onSubmit={handleAddResource}
+              className="space-y-2 rounded-lg border border-dashed border-border p-3"
+            >
               <Input name="resTitle" placeholder="Title" required />
               <Input name="resUrl" placeholder="https://..." type="url" required />
               <div className="flex gap-2">
@@ -215,8 +218,12 @@ export function EditMilestoneDialog({
                     </option>
                   ))}
                 </select>
-                <Button type="submit" size="sm" disabled={isPending}>
-                  {isPending ? <Loader2 className="size-3.5 animate-spin" /> : "Add"}
+                <Button type="submit" size="sm" disabled={addResource.isPending}>
+                  {addResource.isPending ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    "Add"
+                  )}
                 </Button>
               </div>
             </form>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,25 +13,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Loader2 } from "lucide-react";
-import { createMilestone } from "@/src/lib/actions/career-plan";
+import { useCreatePlan } from "@/src/lib/hooks/use-career-plans";
 
 export function CreateMilestoneDialog() {
   const [open, setOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const createPlan = useCreatePlan();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
 
-    startTransition(async () => {
-      await createMilestone({
+    createPlan.mutate(
+      {
         title: fd.get("title") as string,
         description: (fd.get("description") as string) || undefined,
         targetDate: (fd.get("targetDate") as string) || undefined,
         status: (fd.get("status") as string) || "planned",
-      });
-      setOpen(false);
-    });
+      },
+      {
+        onSuccess: () => setOpen(false),
+      }
+    );
   };
 
   return (
@@ -49,7 +51,12 @@ export function CreateMilestoneDialog() {
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           <div className="space-y-1.5">
             <Label htmlFor="title">Title *</Label>
-            <Input id="title" name="title" placeholder="e.g. Land first PM role" required />
+            <Input
+              id="title"
+              name="title"
+              placeholder="e.g. Land first PM role"
+              required
+            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="description">Description</Label>
@@ -83,8 +90,12 @@ export function CreateMilestoneDialog() {
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? <Loader2 className="size-4 animate-spin" /> : "Create"}
+            <Button type="submit" disabled={createPlan.isPending}>
+              {createPlan.isPending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                "Create"
+              )}
             </Button>
           </div>
         </form>

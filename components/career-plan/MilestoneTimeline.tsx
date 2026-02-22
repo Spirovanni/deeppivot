@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -32,26 +32,13 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/utils";
-import { deleteMilestone, reorderMilestones } from "@/src/lib/actions/career-plan";
+import {
+  useDeletePlan,
+  useReorderPlans,
+  type PlanMilestone,
+} from "@/src/lib/hooks/use-career-plans";
 import { EditMilestoneDialog } from "./EditMilestoneDialog";
 import { CreateMilestoneDialog } from "./CreateMilestoneDialog";
-
-interface Resource {
-  id: number;
-  title: string;
-  url: string;
-  resourceType: string;
-}
-
-interface Milestone {
-  id: number;
-  title: string;
-  description: string | null;
-  targetDate: Date | null;
-  status: string;
-  orderIndex: number;
-  resources: Resource[];
-}
 
 // ─── Status config ─────────────────────────────────────────────────────────────
 
@@ -64,9 +51,24 @@ const STATUS_CONFIG: Record<
     dot: string;
   }
 > = {
-  planned: { label: "Planned", variant: "outline", icon: Circle, dot: "bg-muted-foreground" },
-  in_progress: { label: "In Progress", variant: "default", icon: Clock, dot: "bg-primary" },
-  completed: { label: "Completed", variant: "secondary", icon: CheckCircle2, dot: "bg-green-500" },
+  planned: {
+    label: "Planned",
+    variant: "outline",
+    icon: Circle,
+    dot: "bg-muted-foreground",
+  },
+  in_progress: {
+    label: "In Progress",
+    variant: "default",
+    icon: Clock,
+    dot: "bg-primary",
+  },
+  completed: {
+    label: "Completed",
+    variant: "secondary",
+    icon: CheckCircle2,
+    dot: "bg-green-500",
+  },
 };
 
 // ─── Sortable milestone card ───────────────────────────────────────────────────
@@ -75,11 +77,11 @@ function SortableMilestoneCard({
   milestone,
   isLast,
 }: {
-  milestone: Milestone;
+  milestone: PlanMilestone;
   isLast: boolean;
 }) {
   const [editOpen, setEditOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const deletePlan = useDeletePlan();
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: milestone.id });
@@ -96,15 +98,16 @@ function SortableMilestoneCard({
 
   const handleDelete = () => {
     if (!confirm(`Delete "${milestone.title}"?`)) return;
-    startTransition(async () => {
-      await deleteMilestone(milestone.id);
-    });
+    deletePlan.mutate(milestone.id);
   };
+
+  const targetDate = milestone.targetDate
+    ? new Date(milestone.targetDate)
+    : null;
 
   return (
     <>
       <div ref={setNodeRef} style={style} className="flex gap-3">
-        {/* Timeline line + dot */}
         <div className="flex flex-col items-center">
           <div
             className={cn(
@@ -115,11 +118,11 @@ function SortableMilestoneCard({
           {!isLast && <div className="mt-1 w-px flex-1 bg-border" />}
         </div>
 
-        {/* Card */}
-        <Card className={cn("mb-4 flex-1 transition-shadow", isDragging && "shadow-lg")}>
+        <Card
+          className={cn("mb-4 flex-1 transition-shadow", isDragging && "shadow-lg")}
+        >
           <CardContent className="p-4">
             <div className="flex items-start gap-2">
-              {/* Drag handle */}
               <button
                 className="mt-0.5 cursor-grab touch-none text-muted-foreground/40 hover:text-muted-foreground active:cursor-grabbing"
                 {...attributes}
@@ -129,27 +132,29 @@ function SortableMilestoneCard({
                 <GripVertical className="size-4" />
               </button>
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <p className="font-semibold leading-snug">{milestone.title}</p>
-                  <Badge variant={statusCfg.variant} className="shrink-0 gap-1 text-xs">
+                  <Badge
+                    variant={statusCfg.variant}
+                    className="shrink-0 gap-1 text-xs"
+                  >
                     <StatusIcon className="size-3" />
                     {statusCfg.label}
                   </Badge>
                 </div>
 
                 {milestone.description && (
-                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                  <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
                     {milestone.description}
                   </p>
                 )}
 
                 <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                  {milestone.targetDate && (
+                  {targetDate && (
                     <span className="flex items-center gap-1">
                       <Calendar className="size-3" />
-                      {new Date(milestone.targetDate).toLocaleDateString(undefined, {
+                      {targetDate.toLocaleDateString(undefined, {
                         month: "short",
                         day: "numeric",
                         year: "numeric",
@@ -166,7 +171,6 @@ function SortableMilestoneCard({
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="flex shrink-0 items-center gap-1">
                 <Button
                   size="icon"
@@ -181,9 +185,9 @@ function SortableMilestoneCard({
                   variant="ghost"
                   className="size-7 text-muted-foreground hover:text-destructive"
                   onClick={handleDelete}
-                  disabled={isPending}
+                  disabled={deletePlan.isPending}
                 >
-                  {isPending ? (
+                  {deletePlan.isPending ? (
                     <Loader2 className="size-3.5 animate-spin" />
                   ) : (
                     <Trash2 className="size-3.5" />
@@ -207,12 +211,11 @@ function SortableMilestoneCard({
 // ─── Main timeline ─────────────────────────────────────────────────────────────
 
 interface MilestoneTimelineProps {
-  initialMilestones: Milestone[];
+  milestones: PlanMilestone[];
 }
 
-export function MilestoneTimeline({ initialMilestones }: MilestoneTimelineProps) {
-  const [milestones, setMilestones] = useState(initialMilestones);
-  const [, startTransition] = useTransition();
+export function MilestoneTimeline({ milestones }: MilestoneTimelineProps) {
+  const reorderPlans = useReorderPlans();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -223,17 +226,11 @@ export function MilestoneTimeline({ initialMilestones }: MilestoneTimelineProps)
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    setMilestones((prev) => {
-      const oldIdx = prev.findIndex((m) => m.id === active.id);
-      const newIdx = prev.findIndex((m) => m.id === over.id);
-      const reordered = arrayMove(prev, oldIdx, newIdx);
+    const oldIdx = milestones.findIndex((m) => m.id === active.id);
+    const newIdx = milestones.findIndex((m) => m.id === over.id);
+    const reordered = arrayMove(milestones, oldIdx, newIdx);
 
-      startTransition(() => {
-        reorderMilestones(reordered.map((m) => m.id));
-      });
-
-      return reordered;
-    });
+    reorderPlans.mutate(reordered.map((m) => m.id));
   };
 
   return (

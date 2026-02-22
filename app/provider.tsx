@@ -4,6 +4,7 @@ import axios from "axios";
 import { ClerkProvider, useUser } from "@clerk/nextjs";
 import UserSyncProvider from "./UserSyncProvider";
 import { UserDetailContext } from "@/context/UserDetailContext";
+import { QueryProvider } from "./QueryProvider";
 
 
 export type UsersDetail={
@@ -64,11 +65,13 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   return (
-    <UserSyncProvider>
-      <UserDetailContext.Provider value={{userDetail,setUserDetail}}>
-        {children}
-      </UserDetailContext.Provider>
-    </UserSyncProvider>
+    <QueryProvider>
+      <UserSyncProvider>
+        <UserDetailContext.Provider value={{userDetail,setUserDetail}}>
+          {children}
+        </UserDetailContext.Provider>
+      </UserSyncProvider>
+    </QueryProvider>
   );
 }
 

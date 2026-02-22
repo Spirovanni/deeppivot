@@ -15,6 +15,13 @@
       "when": 1751731937582,
       "tag": "0001_mature_timeslip",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771775003423,
+      "tag": "0002_shallow_bill_hollister",
+      "breakpoints": true
     }
   ]
 }

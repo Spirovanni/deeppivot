@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Explicit content paths for Tailwind v4 (ensures app + components are scanned) */
+@source ".";
+@source "../components";
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

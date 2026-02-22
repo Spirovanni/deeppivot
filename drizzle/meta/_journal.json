@@ -57,6 +57,13 @@
       "when": 1771792700961,
       "tag": "0007_perfect_hiroim",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1771796790363,
+      "tag": "0008_minor_paladin",
+      "breakpoints": true
     }
   ]
 }

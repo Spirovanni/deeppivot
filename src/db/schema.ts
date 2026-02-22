@@ -132,6 +132,24 @@ export const interviewSessionsRelations = relations(interviewSessionsTable, ({ o
   }),
   questions: many(interviewQuestionsTable),
   emotionSnapshots: many(emotionSnapshotsTable),
+  recordingUrls: many(recordingUrlsTable),
+}));
+
+export const recordingUrlsTable = pgTable("recording_urls", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  sessionId: integer()
+    .notNull()
+    .references(() => interviewSessionsTable.id, { onDelete: "cascade" }),
+  url: varchar({ length: 1024 }).notNull(),
+  source: varchar({ length: 50 }).notNull().default("vapi"),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const recordingUrlsRelations = relations(recordingUrlsTable, ({ one }) => ({
+  session: one(interviewSessionsTable, {
+    fields: [recordingUrlsTable.sessionId],
+    references: [interviewSessionsTable.id],
+  }),
 }));
 
 export const interviewQuestionsTable = pgTable("interview_questions", {

@@ -60,6 +60,8 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 /api/clerk-webhook        Clerk event sync
 /api/hume-token           Hume AI token endpoint
 /api/interview/start      Start Vapi interview (Deepgram STT, TTS, recording)
+/api/inngest              Inngest event handler (recording processing)
+/api/webhooks/vapi       Vapi webhook (end-of-call → interview.completed)
 /api/sync-users           Bulk user sync
 /dashboard/job-tracker    Kanban job tracker (JT4)
 ```
@@ -89,9 +91,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-41** | Backend: Inngest Job for Recording Processing *(Phase 4)* |
+| **deeppivot-45** | Backend: Inngest Job for Transcription *(Phase 4)* |
 
-Run `bd ready` to see current ready work. Phase 3 complete — Voice & AI Services.
+Run `bd ready` to see current ready work. Recording Processing (deeppivot-44) complete.
 
 ---
 
@@ -148,14 +150,14 @@ Run `bd ready` to see current ready work. Phase 3 complete — Voice & AI Servic
 
 | Order | Issue | Title |
 |-------|-------|-------|
-| 1 | deeppivot-41 | Backend: Inngest Job for Recording Processing |
-| 2 | deeppivot-42 | Backend: Inngest Job for Transcription |
-| 3 | deeppivot-43 | Backend: Inngest Job for Emotional Analysis |
-| 4 | deeppivot-44 | Backend: Feedback Generation Engine (LLM) |
-| 5 | deeppivot-45 | Frontend: Display Interview Feedback UI |
-| 6 | deeppivot-46 | Frontend: Emotion-Aware Feedback Animations |
-| 7 | deeppivot-50 | AI/ML: Deploy and Integrate Custom BERT Model |
-| 8 | deeppivot-51 | Backend: Career Archetyping Engine |
+| 1 | ~~deeppivot-44~~ | ~~Backend: Inngest Job for Recording Processing~~ ✓ |
+| 2 | deeppivot-45 | Backend: Inngest Job for Transcription |
+| 3 | deeppivot-46 | Backend: Inngest Job for Emotional Analysis |
+| 4 | deeppivot-47 | Backend: Feedback Generation Engine (LLM) |
+| 5 | deeppivot-48 | Frontend: Display Interview Feedback UI |
+| 6 | deeppivot-49 | Frontend: Emotion-Aware Feedback Animations |
+| 7 | deeppivot-56 | AI/ML: Deploy and Integrate Custom BERT Model |
+| 8 | deeppivot-57 | Backend: Career Archetyping Engine |
 
 ---
 
@@ -216,4 +218,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-40 (Core Interview Session Handler) closed. New: `POST /api/interview/start`, `src/lib/interview-handler.ts`, Vapi transcriber/voice overrides (Deepgram STT, ElevenLabs TTS, recording for Hume).*
+*Last updated: 2026-02-22 — deeppivot-44 (Inngest Job for Recording Processing) closed. New: Inngest SDK, `src/inngest/`, `recording_urls` table, `POST /api/webhooks/vapi`, `interview.completed` event. Configure Vapi Server URL to `/api/webhooks/vapi` and Supabase bucket `interview-recordings`.*

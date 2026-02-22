@@ -2,15 +2,18 @@
  * Inngest functions for interview post-processing.
  *
  * interview.completed: Fetches recording from Vapi, uploads to Supabase,
- * saves URL to recording_urls table.
+ * saves URL to recording_urls table, then emits recording.processed.
+ *
+ * recording.processed: Transcribes via Deepgram, saves transcript to
+ * Supabase Storage, links in transcript_urls table.
  */
 
 import { inngest } from "@/src/inngest/client";
 import { db } from "@/src/db";
-import { recordingUrlsTable } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
+import { recordingUrlsTable, transcriptUrlsTable } from "@/src/db/schema";
 import { getCall } from "@/src/lib/vapi";
 import { getSupabaseAdmin, RECORDING_BUCKET } from "@/src/lib/supabase";
+import { transcribeInterviewRecording } from "@/src/lib/deepgram";
 
 export const processInterviewRecording = inngest.createFunction(
   {
@@ -83,6 +86,79 @@ export const processInterviewRecording = inngest.createFunction(
       });
     });
 
+    // 4. Emit recording.processed for transcription job
+    await step.sendEvent("trigger-transcription", {
+      name: "recording.processed",
+      data: { sessionId, recordingUrl: supabaseUrl },
+    });
+
     return { sessionId, callId, recordingUrl: supabaseUrl };
+  }
+);
+
+export const processInterviewTranscription = inngest.createFunction(
+  {
+    id: "process-interview-transcription",
+    name: "Process Interview Transcription",
+    retries: 3,
+  },
+  { event: "recording.processed" },
+  async ({ event, step }) => {
+    const { sessionId, recordingUrl } = event.data as {
+      sessionId: number;
+      recordingUrl: string;
+    };
+
+    if (!sessionId || !recordingUrl) {
+      throw new Error("Missing sessionId or recordingUrl in event data");
+    }
+
+    // 1. Transcribe via Deepgram
+    const transcriptResult = await step.run("transcribe-recording", async () => {
+      return transcribeInterviewRecording(recordingUrl);
+    });
+
+    // 2. Save transcript to Supabase Storage
+    const transcriptFileUrl = await step.run("upload-transcript", async () => {
+      const content = JSON.stringify(
+        {
+          transcript: transcriptResult.transcript,
+          confidence: transcriptResult.confidence,
+          duration: transcriptResult.duration,
+          words: transcriptResult.words,
+          utterances: transcriptResult.utterances,
+        },
+        null,
+        2
+      );
+      const fileName = `transcripts/session-${sessionId}.json`;
+
+      const supabase = getSupabaseAdmin();
+      const { data, error } = await supabase.storage
+        .from(RECORDING_BUCKET)
+        .upload(fileName, content, {
+          contentType: "application/json",
+          upsert: true,
+        });
+
+      if (error) {
+        throw new Error(`Supabase transcript upload failed: ${error.message}`);
+      }
+
+      const { data: urlData } = supabase.storage
+        .from(RECORDING_BUCKET)
+        .getPublicUrl(data.path);
+      return urlData.publicUrl;
+    });
+
+    // 3. Save to transcript_urls table
+    await step.run("save-transcript-url", async () => {
+      await db.insert(transcriptUrlsTable).values({
+        sessionId,
+        url: transcriptFileUrl,
+      });
+    });
+
+    return { sessionId, transcriptUrl: transcriptFileUrl };
   }
 );

@@ -91,9 +91,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-45** | Backend: Inngest Job for Transcription *(Phase 4)* |
+| **deeppivot-46** | Backend: Inngest Job for Emotional Analysis *(Phase 4)* |
 
-Run `bd ready` to see current ready work. Recording Processing (deeppivot-44) complete.
+Run `bd ready` to see current ready work. Transcription (deeppivot-45) complete.
 
 ---
 
@@ -151,7 +151,7 @@ Run `bd ready` to see current ready work. Recording Processing (deeppivot-44) co
 | Order | Issue | Title |
 |-------|-------|-------|
 | 1 | ~~deeppivot-44~~ | ~~Backend: Inngest Job for Recording Processing~~ ✓ |
-| 2 | deeppivot-45 | Backend: Inngest Job for Transcription |
+| 2 | ~~deeppivot-45~~ | ~~Backend: Inngest Job for Transcription~~ ✓ |
 | 3 | deeppivot-46 | Backend: Inngest Job for Emotional Analysis |
 | 4 | deeppivot-47 | Backend: Feedback Generation Engine (LLM) |
 | 5 | deeppivot-48 | Frontend: Display Interview Feedback UI |
@@ -218,4 +218,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-44 (Inngest Job for Recording Processing) closed. New: Inngest SDK, `src/inngest/`, `recording_urls` table, `POST /api/webhooks/vapi`, `interview.completed` event. Configure Vapi Server URL to `/api/webhooks/vapi` and Supabase bucket `interview-recordings`.*
+*Last updated: 2026-02-22 — deeppivot-45 (Inngest Job for Transcription) closed. New: `recording.processed` event, `processInterviewTranscription`, `transcript_urls` table, Deepgram transcription → Supabase Storage → transcript_urls. Chain: interview.completed → recording → recording.processed → transcription.*

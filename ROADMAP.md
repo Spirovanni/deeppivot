@@ -88,9 +88,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-18** | Project: Initialize GitHub Repository |
+| **deeppivot-35** | Backend: Vapi Integration Service *(Phase 3)* |
 
-Run `bd ready` to see current ready work. **Phase 1 (Foundation & Dashboard) is now complete.** Start with **deeppivot-18** — initialise the GitHub repository for Phase 2 work.
+Run `bd ready` to see current ready work. **Phase 1 complete. deeppivot-18 closed.** Proceed to Phase 3 — Voice & AI Services.
 
 ---
 
@@ -215,4 +215,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-17 (LP9: Education Explorer) closed. Phase 1 COMPLETE. New: `education_programs` + `funding_opportunities` tables (migration `0007_perfect_hiroim.sql`), 28 seeded programmes + 9 funding sources, `ProgramCard` (ROI bar), `FundingCard` (deadline alert), `EducationExplorer` with tab filtering + search + cost toggle.*
+*Last updated: 2026-02-22 — deeppivot-18 (GitHub repo setup) closed. README rewritten, MIT LICENSE added, repo description set, `develop` branch synced to `main`, branch protection on `main` active (1 required review, stale review dismissal).*

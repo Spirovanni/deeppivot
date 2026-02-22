@@ -96,9 +96,10 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-95** | AI/ML: Adaptive Feedback Engine |
+| **deeppivot-24** | Backend: Set up Supabase for Storage & Real-time |
+| **deeppivot-91** | AI/ML: Archetype Model Bias Detection |
 
-Run `bd ready` to see current ready work. Predictive Career Analytics (deeppivot-96) complete.
+Run `bd ready` to see current ready work. Adaptive Feedback Engine (deeppivot-95) complete.
 
 ---
 
@@ -177,6 +178,7 @@ Run `bd ready` to see current ready work. Predictive Career Analytics (deeppivot
 | 16 | ~~deeppivot-74~~ | ~~Backend: Emotion Inference Fallback Logic~~ ✓ |
 | 17 | ~~deeppivot-117~~ | ~~Feature: Curated Resource Recommendations~~ ✓ |
 | 18 | ~~deeppivot-96~~ | ~~AI/ML: Predictive Career Analytics~~ ✓ |
+| 19 | ~~deeppivot-95~~ | ~~AI/ML: Adaptive Feedback Engine~~ ✓ |
 
 ---
 
@@ -237,4 +239,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-96 (Predictive Career Analytics) closed. LLM-based insights from archetype, skills, goals, interview performance. PredictiveInsightsWidget on dashboard. Adaptive Feedback Engine (deeppivot-95) next.*
+*Last updated: 2026-02-22 — deeppivot-95 (Adaptive Feedback Engine) closed. Feedback generation now fetches past feedback and instructs LLM to highlight improvement or recurring issues. Supabase (deeppivot-24) or Archetype Bias (deeppivot-91) next.*

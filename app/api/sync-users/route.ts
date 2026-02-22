@@ -76,13 +76,32 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if this is a single user sync request (from client)
-    const body = await req.json();
-    if (body.clerkId && body.email) {
-      return await syncSingleUser(body);
+    // Parse body safely
+    let body: Record<string, unknown> = {};
+    try {
+      body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
+    } catch {
+      // Empty or invalid JSON
     }
 
-    // Get all users from Clerk - clerkClient is a function that returns a promise
+    // Single user sync from client (UserSyncProvider)
+    if (body.clerkId && typeof body.clerkId === 'string') {
+      const email = typeof body.email === 'string' && body.email.trim()
+        ? body.email.trim()
+        : `${body.clerkId}@clerk.placeholder`;
+      return await syncSingleUser({
+        clerkId: body.clerkId,
+        firstName: typeof body.firstName === 'string' ? body.firstName : '',
+        lastName: typeof body.lastName === 'string' ? body.lastName : '',
+        name: typeof body.name === 'string' && body.name.trim()
+          ? body.name.trim()
+          : `${body.firstName || ''} ${body.lastName || ''}`.trim() || email,
+        email,
+        isEmailVerified: body.isEmailVerified === true,
+      });
+    }
+
+    // Bulk sync (admin path) - requires Clerk backend API
     const client = await clerkClient();
     const clerkUsers = await client.users.getUserList({
       limit: 100, // Adjust as needed

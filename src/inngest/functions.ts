@@ -15,8 +15,9 @@ import {
   transcriptUrlsTable,
   emotionalAnalysesTable,
   interviewFeedbackTable,
+  interviewSessionsTable,
 } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, ne, desc } from "drizzle-orm";
 import { getCall } from "@/src/lib/vapi";
 import { getSupabaseAdmin, RECORDING_BUCKET } from "@/src/lib/supabase";
 import { transcribeInterviewRecording } from "@/src/lib/deepgram";
@@ -264,8 +265,8 @@ export const processInterviewFeedback = inngest.createFunction(
       timeout: "1h",
     });
 
-    // 3. Fetch transcript and emotion data from DB (emotion may be unavailable on Hume failure)
-    const { transcript, emotionData } = await step.run("fetch-data", async () => {
+    // 3. Fetch transcript, emotion data, and past feedback from DB
+    const { transcript, emotionData, pastFeedback } = await step.run("fetch-data", async () => {
       const [transcriptRow] = await db
         .select({ url: transcriptUrlsTable.url })
         .from(transcriptUrlsTable)
@@ -303,10 +304,42 @@ export const processInterviewFeedback = inngest.createFunction(
         unavailable?: boolean;
       };
 
-      return { transcript, emotionData };
+      // Fetch past feedback for adaptive context (same user, other sessions)
+      const [session] = await db
+        .select({ userId: interviewSessionsTable.userId })
+        .from(interviewSessionsTable)
+        .where(eq(interviewSessionsTable.id, sessionId))
+        .limit(1);
+
+      let pastFeedback: string[] = [];
+      if (session?.userId) {
+        const pastRows = await db
+          .select({ content: interviewFeedbackTable.content })
+          .from(interviewFeedbackTable)
+          .innerJoin(
+            interviewSessionsTable,
+            eq(interviewSessionsTable.id, interviewFeedbackTable.sessionId)
+          )
+          .where(
+            and(
+              eq(interviewSessionsTable.userId, session.userId),
+              ne(interviewFeedbackTable.sessionId, sessionId)
+            )
+          )
+          .orderBy(desc(interviewFeedbackTable.createdAt))
+          .limit(3);
+        pastFeedback = pastRows
+          .map((r) => {
+            const c = r.content ?? "";
+            return c.slice(0, 400) + (c.length > 400 ? "…" : "");
+          })
+          .filter((s) => s.length > 0);
+      }
+
+      return { transcript, emotionData, pastFeedback };
     });
 
-    // 4. Generate structured feedback via LLM
+    // 4. Generate structured feedback via LLM (adaptive: considers past feedback)
     const feedbackContent = await step.run("generate-feedback", async () => {
       const emotionUnavailable = emotionData.unavailable === true;
       const emotionSummary =
@@ -319,11 +352,22 @@ export const processInterviewFeedback = inngest.createFunction(
         ? "Emotional analysis: Unavailable (voice emotion analysis could not be performed)."
         : `Emotional analysis: Dominant emotion: ${emotionSummary}. Top emotions: ${topEmotions}.`;
 
+      const pastFeedbackContext =
+        pastFeedback.length > 0
+          ? `\n\n---\nPrevious feedback from this candidate's past interviews (use to highlight improvement or recurring issues):\n${pastFeedback.map((f, i) => `[Past ${i + 1}]\n${f}`).join("\n\n")}`
+          : "";
+
       const { content } = await generateCompletion({
         messages: [
           {
             role: "system",
-            content: `You are an expert interview coach. Generate structured, actionable feedback for a job interview practice session. 
+            content: `You are an expert interview coach. Generate structured, actionable feedback for a job interview practice session.
+
+If previous feedback is provided, use it to:
+- Highlight areas where the candidate has improved since last time
+- Call out recurring issues that still need work
+- Tailor suggestions to build on prior recommendations
+
 Output format:
 ## Strengths
 - Bullet points of what the candidate did well
@@ -339,7 +383,7 @@ Output format:
           },
           {
             role: "user",
-            content: `Interview transcript:\n\n${transcript}\n\n---\n${emotionContext}\n\nGenerate structured feedback.`,
+            content: `Interview transcript:\n\n${transcript}\n\n---\n${emotionContext}${pastFeedbackContext}\n\nGenerate structured feedback.`,
           },
         ],
         maxTokens: 1500,

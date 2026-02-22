@@ -19,24 +19,30 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  // Add debug logging for authentication
   const user = await currentUser();
-  console.log('Current authenticated user:', user ? user.id : 'No user found');
 
   try {
-    // Test database connection first
-    console.log('Testing database connection...');
-    await db.select().from(usersTable).limit(1);
-    console.log('Database connection successful');
+    let body: Record<string, unknown> = {};
+    try {
+      body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    } catch {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    }
 
-    const body = await request.json();
-    const { firstName, lastName, name, age, email, clerkId } = body;
+    const firstName = typeof body.firstName === 'string' ? body.firstName : '';
+    const lastName = typeof body.lastName === 'string' ? body.lastName : '';
+    const name = typeof body.name === 'string' && body.name.trim()
+      ? body.name.trim()
+      : `${firstName} ${lastName}`.trim();
+    const age = typeof body.age === 'number' ? body.age : 25;
+    const clerkId = typeof body.clerkId === 'string' ? body.clerkId : '';
+    const email = typeof body.email === 'string' && body.email.trim()
+      ? body.email.trim()
+      : clerkId ? `${clerkId}@clerk.placeholder` : '';
 
-    console.log('Received user data:', { firstName, lastName, name, age, email, clerkId });
-
-    if (!firstName || !lastName || !name || !age || !email || !clerkId) {
+    if (!clerkId) {
       return NextResponse.json(
-        { error: 'Missing required fields: firstName, lastName, name, age, email, clerkId' },
+        { error: 'Missing required field: clerkId' },
         { status: 400 }
       );
     }

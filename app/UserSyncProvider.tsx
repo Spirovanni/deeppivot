@@ -40,20 +40,23 @@ import { useUser } from "@clerk/nextjs";
  * - Handles name construction with fallbacks (fullName -> firstName + lastName -> email)
  * - Includes email verification status from Clerk
  */
-async function syncUserToDatabase(user: any) {
+async function syncUserToDatabase(user: { id: string; firstName?: string | null; lastName?: string | null; fullName?: string | null; primaryEmailAddress?: { emailAddress?: string; verification?: { status?: string } } | null; emailAddresses?: Array<{ emailAddress?: string }> }) {
   try {
+    const email = user.primaryEmailAddress?.emailAddress
+      ?? user.emailAddresses?.[0]?.emailAddress
+      ?? '';
     const response = await fetch('/api/sync-users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        clerkId: user.id, // Unique Clerk identifier
-        firstName: user.firstName || '', // First name from Clerk
-        lastName: user.lastName || '', // Last name from Clerk
-        name: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.primaryEmailAddress?.emailAddress, // Name with fallbacks
-        email: user.primaryEmailAddress?.emailAddress, // Primary email
-        isEmailVerified: user.primaryEmailAddress?.verification?.status === 'verified', // Email verification status
+        clerkId: user.id,
+        firstName: user.firstName ?? '',
+        lastName: user.lastName ?? '',
+        name: user.fullName ?? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || email || user.id,
+        email: email || undefined,
+        isEmailVerified: user.primaryEmailAddress?.verification?.status === 'verified',
       }),
     });
 

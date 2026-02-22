@@ -31,6 +31,7 @@
 /api/clerk-webhook        Clerk event sync
 /api/hume-token           Hume AI token endpoint
 /api/sync-users           Bulk user sync
+/dashboard/job-tracker    Kanban job tracker (NEW, JT4)
 ```
 
 ---
@@ -45,23 +46,20 @@ A full kanban-style job application tracker integrated into the DeepPivot platfo
 - [x] **JT2: Auth Hooks & Default Board Init** (`deeppivot-2`, P1) — `initializeJobBoard()` server action creates "Automated Job Hunt" board with 5 default columns. Hooked into both Clerk webhook (`user.created`) and `POST /api/users` (client-side fallback). Idempotent — safe to call multiple times.
 - [x] **JT3a: Epicflow Native Node Configuration** (`deeppivot-3`, P0) — Integration type system (`IntegrationConfig`, `ConfigField`, `NodeExecutionContext`). Job Tracker node config with 8 fields and mustache placeholders. Integration registry with `getIntegration()`, `getAllIntegrations()`, `executeNode()`.
 - [x] **JT3b: Workflow Execution Engine** (`deeppivot-4`, P1) — `executeJobTrackerNode()` creates job applications from workflow triggers. Order-math (+100 spacing), tag splitting, required field validation. Wired into integration registry dispatcher.
+- [x] **JT4: Dashboard UI & Kanban Shell** (`deeppivot-5`, P1) — Full Kanban UI at `/dashboard/job-tracker`. Server page with Clerk auth + Drizzle relational query. `KanbanBoard` (horizontal scrollable columns with color-coded headers), `JobApplicationCard` (dropdown with Edit/Move To/Delete), `CreateJobDialog` and `EditJobDialog` (grid-layout forms). 9 Shadcn components installed.
+- [x] **JT5: Server Actions** (`deeppivot-6`, P0) — 4 server actions in `src/lib/actions/job-applications.ts`: `createJobApplication`, `updateJobApplication`, `deleteJobApplication`, `moveJobApplication`. All with order-math (+100 spacing), tag comma-splitting, and `revalidatePath`.
 
 ### Up Next (Unblocked)
 
-- [ ] **JT4: Dashboard UI & Kanban Shell** (`deeppivot-5`, P1) — Protected `/dashboard/job-tracker` route. KanbanBoard, JobApplicationCard, Create/Edit dialogs, dropdown menus using Shadcn components.
-- [ ] **JT5: Server Actions** (`deeppivot-6`, P0) — CRUD server actions (`createJobApplication`, `updateJobApplication`, `deleteJobApplication`) with session validation and order-math spacing.
-
-### Blocked (Waiting on Dependencies)
-
-- [ ] **JT6: Drag & Drop** (`deeppivot-7`, P1) — Blocked by JT4 + JT5. Full dnd-kit integration with `DndContext`, `SortableContext`, optimistic UI, and the order-math algorithm.
-- [ ] **JT7: E2E Testing** (`deeppivot-8`, P2) — Blocked by JT6. Webhook pipeline test, dark mode validation, TypeScript build verification.
+- [ ] **JT6: Drag & Drop** (`deeppivot-7`, P1) — Full dnd-kit integration with `DndContext`, `SortableContext`, optimistic UI, and the order-math algorithm.
+- [ ] **JT7: E2E Testing** (`deeppivot-8`, P2) — Webhook pipeline test, dark mode validation, TypeScript build verification.
 
 ### Dependency Graph
 
 ```
 JT1 (DONE) ──┬──> JT2 (DONE) ────────────────> JT7
               ├──> JT3a (DONE) ──> JT3b (DONE) ──> JT7
-              ├──> JT4 ──> JT5 ──> JT6 ──────> JT7
+              ├──> JT4 (DONE) ──> JT5 (DONE) ──> JT6 ──> JT7
               └──> JT5 (also needs JT4)
 ```
 
@@ -85,5 +83,5 @@ The original tutorial used MongoDB/Mongoose/Better Auth. Here's what changed:
 ## Future Considerations
 
 - **Workflow Model**: `workflowId` on `job_applications` is currently a plain varchar. When the Workflow model lands, add a proper FK relation.
-- **Shadcn Setup**: Several Shadcn components need to be installed (dialog, card, dropdown-menu, badge, input, textarea) before JT4.
+- **Shadcn Setup**: Installed — card, dialog, dropdown-menu, input, textarea, badge, label, separator, scroll-area.
 - **dnd-kit**: Packages `@dnd-kit/core`, `@dnd-kit/utilities`, `@dnd-kit/sortable` need to be installed before JT6.

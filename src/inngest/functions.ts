@@ -336,6 +336,37 @@ Output format:
       });
     });
 
+    // 6. Emit for career archetyping engine
+    await step.sendEvent("trigger-archetyping", {
+      name: "feedback.complete",
+      data: { sessionId },
+    });
+
     return { sessionId };
+  }
+);
+
+export const processCareerArchetyping = inngest.createFunction(
+  {
+    id: "process-career-archetyping",
+    name: "Process Career Archetyping",
+    retries: 2,
+  },
+  { event: "feedback.complete" },
+  async ({ event, step }) => {
+    const { sessionId } = event.data as { sessionId: number };
+
+    if (!sessionId) {
+      throw new Error("Missing sessionId in feedback.complete event");
+    }
+
+    const result = await step.run("run-archetyping-engine", async () => {
+      const { runCareerArchetyping } = await import(
+        "@/src/lib/career-archetyping-engine"
+      );
+      return runCareerArchetyping(sessionId);
+    });
+
+    return { sessionId, userId: result?.userId, archetypeId: result?.archetypeId };
   }
 );

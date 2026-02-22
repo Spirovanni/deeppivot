@@ -92,9 +92,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-57** | Backend: Career Archetyping Engine *(Phase 4)* |
+| **deeppivot-58** | Frontend: Display Career Archetype *(Phase 4)* |
 
-Run `bd ready` to see current ready work. BERT archetype classification (deeppivot-56) complete.
+Run `bd ready` to see current ready work. Career Archetyping Engine (deeppivot-57) complete.
 
 ---
 
@@ -158,7 +158,7 @@ Run `bd ready` to see current ready work. BERT archetype classification (deeppiv
 | 5 | ~~deeppivot-48~~ | ~~Frontend: Display Interview Feedback UI~~ ✓ |
 | 6 | ~~deeppivot-49~~ | ~~Frontend: Emotion-Aware Feedback Animations~~ ✓ |
 | 7 | ~~deeppivot-56~~ | ~~AI/ML: Deploy and Integrate Custom BERT Model~~ ✓ |
-| 8 | deeppivot-57 | Backend: Career Archetyping Engine |
+| 8 | ~~deeppivot-57~~ | ~~Backend: Career Archetyping Engine~~ ✓ |
 
 ---
 
@@ -219,4 +219,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-56 (BERT Archetype Model) closed. New: src/lib/archetype-bert.ts (Hugging Face zero-shot classification), POST /api/archetype/classify proxy route. HUGGINGFACE_API_KEY optional; facebook/bart-large-mnli default model. Career Archetyping Engine (deeppivot-57) unblocked.*
+*Last updated: 2026-02-22 — deeppivot-57 (Career Archetyping Engine) closed. New: src/lib/career-archetyping-engine.ts (BERT + LLM pipeline), processCareerArchetyping Inngest job triggered by feedback.complete. BERT classifies, GPT personalizes strengths/growth areas, upserts career_archetypes. Frontend Display (deeppivot-58) unblocked.*

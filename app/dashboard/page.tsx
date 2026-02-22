@@ -26,6 +26,7 @@ import {
 } from "@/components/dashboard/CareerArchetypeCard";
 import { CareerPlanProgressWidget } from "@/components/dashboard/CareerPlanProgressWidget";
 import { InterviewSummaryWidget } from "@/components/dashboard/InterviewSummaryWidget";
+import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner";
 import type { TraitScore } from "@/src/lib/archetypes";
 
 const features = [
@@ -93,6 +94,13 @@ export default async function DashboardPage() {
             Overview of your progress. Choose a feature below to get started.
           </p>
         </div>
+
+        {/* First-time user onboarding */}
+        <OnboardingBanner
+          hasCompletedInterviews={summary.interviews.completed > 0}
+          hasArchetype={!!archetype}
+          hasCareerPlan={summary.careerPlan.total > 0}
+        />
 
         {/* Progress overview: Career Plan + Interviews */}
         <div className="mb-8 grid gap-4 sm:grid-cols-2">

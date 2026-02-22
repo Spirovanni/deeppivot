@@ -97,9 +97,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ID | Title |
 |----|-------|
 | **deeppivot-117** | Feature: Curated Resource Recommendations |
-| **deeppivot-71** | Feature: First-Time User Onboarding Flow |
+| **deeppivot-72** | Feature: Returning User Dashboard Flow |
 
-Run `bd ready` to see current ready work. Learner Dashboard (deeppivot-68) complete.
+Run `bd ready` to see current ready work. First-Time Onboarding (deeppivot-71) complete.
 
 ---
 
@@ -117,8 +117,9 @@ Run `bd ready` to see current ready work. Learner Dashboard (deeppivot-68) compl
 | 6 | ~~deeppivot-17~~ | ~~LP9: Alternative Education Explorer~~ ✓ |
 | 7 | ~~deeppivot-68~~ | ~~Frontend: Learner Dashboard UI~~ ✓ |
 | 8 | ~~deeppivot-116~~ | ~~Frontend: Career Plan Progress Widget~~ ✓ |
+| 9 | ~~deeppivot-71~~ | ~~Feature: First-Time User Onboarding Flow~~ ✓ |
 
-**Phase 1 Status: COMPLETE ✓** — All 8 features shipped (LP1–LP9, Learner Dashboard, Career Plan Widget).
+**Phase 1 Status: COMPLETE ✓** — All 9 features shipped (LP1–LP9, Learner Dashboard, Career Plan Widget, Onboarding).
 
 **Unblocks**: LP3–LP5 (interview flow), plus all dashboard-dependent features.
 
@@ -233,4 +234,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-23 — deeppivot-116 (Career Plan Progress Widget) closed. Delivered as part of deeppivot-68. Curated Resource Recommendations (deeppivot-117) and First-Time Onboarding (deeppivot-71) ready.*
+*Last updated: 2026-02-23 — deeppivot-71 (First-Time User Onboarding Flow) closed. OnboardingBanner with 4-step flow, progress indicators, mentor/education links. Curated Resource Recommendations (deeppivot-117) and Returning User Flow (deeppivot-72) ready.*

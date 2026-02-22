@@ -92,9 +92,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-58** | Frontend: Display Career Archetype *(Phase 4)* |
+| **deeppivot-59** | Backend: Map Interview to Career Skills *(Phase 4)* |
 
-Run `bd ready` to see current ready work. Career Archetyping Engine (deeppivot-57) complete.
+Run `bd ready` to see current ready work. Display Career Archetype (deeppivot-58) complete.
 
 ---
 
@@ -159,6 +159,7 @@ Run `bd ready` to see current ready work. Career Archetyping Engine (deeppivot-5
 | 6 | ~~deeppivot-49~~ | ~~Frontend: Emotion-Aware Feedback Animations~~ ✓ |
 | 7 | ~~deeppivot-56~~ | ~~AI/ML: Deploy and Integrate Custom BERT Model~~ ✓ |
 | 8 | ~~deeppivot-57~~ | ~~Backend: Career Archetyping Engine~~ ✓ |
+| 9 | ~~deeppivot-58~~ | ~~Frontend: Display Career Archetype~~ ✓ |
 
 ---
 
@@ -219,4 +220,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-57 (Career Archetyping Engine) closed. New: src/lib/career-archetyping-engine.ts (BERT + LLM pipeline), processCareerArchetyping Inngest job triggered by feedback.complete. BERT classifies, GPT personalizes strengths/growth areas, upserts career_archetypes. Frontend Display (deeppivot-58) unblocked.*
+*Last updated: 2026-02-22 — deeppivot-58 (Display Career Archetype) closed. New: CareerArchetypeCard + CareerArchetypeEmptyCard on main dashboard. Shows archetype name, description, key traits, strengths. Links to /dashboard/archetype for full view. Map Interview to Career Skills (deeppivot-59) unblocked.*

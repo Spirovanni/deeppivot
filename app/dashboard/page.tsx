@@ -18,6 +18,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getArchetype } from "@/src/lib/actions/archetype";
+import {
+  CareerArchetypeCard,
+  CareerArchetypeEmptyCard,
+} from "@/components/dashboard/CareerArchetypeCard";
+import type { TraitScore } from "@/src/lib/archetypes";
 
 const features = [
   {
@@ -68,6 +74,8 @@ export default async function DashboardPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
+  const archetype = await getArchetype();
+
   return (
     <div className="p-6 md:p-8">
       <div className="mx-auto max-w-4xl">
@@ -78,6 +86,21 @@ export default async function DashboardPage() {
           <p className="mt-1 text-muted-foreground">
             Choose a feature below to get started.
           </p>
+        </div>
+
+        {/* Career Archetype widget */}
+        <div className="mb-8">
+          {archetype ? (
+            <CareerArchetypeCard
+              archetypeName={archetype.archetypeName}
+              traits={(archetype.traits ?? []) as TraitScore[]}
+              strengths={archetype.strengths ?? []}
+              growthAreas={archetype.growthAreas ?? []}
+              assessedAt={archetype.assessedAt}
+            />
+          ) : (
+            <CareerArchetypeEmptyCard />
+          )}
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -96,10 +96,10 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-63** | Feature: Printable/Shareable Career Plans |
 | **deeppivot-68** | Frontend: Learner Dashboard UI |
+| **deeppivot-117** | Feature: Curated Resource Recommendations |
 
-Run `bd ready` to see current ready work. Career Plan goal completion (deeppivot-115) complete.
+Run `bd ready` to see current ready work. Printable Career Plans (deeppivot-63) complete.
 
 ---
 
@@ -170,6 +170,7 @@ Run `bd ready` to see current ready work. Career Plan goal completion (deeppivot
 | 12 | ~~deeppivot-61~~ | ~~Backend: Career Plan CRUD APIs~~ ✓ |
 | 13 | ~~deeppivot-62~~ | ~~Frontend: Connect Career Plan UI to Backend~~ ✓ |
 | 14 | ~~deeppivot-115~~ | ~~Feature: Career Plan Goal Completion~~ ✓ |
+| 15 | ~~deeppivot-63~~ | ~~Feature: Printable/Shareable Career Plans~~ ✓ |
 
 ---
 
@@ -230,4 +231,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-23 — deeppivot-115 (Career Plan Goal Completion) closed. Clickable status toggle (Circle/CheckCircle2) on milestone cards, strikethrough for completed. Printable/Shareable Career Plans (deeppivot-63) and Learner Dashboard (deeppivot-68) ready.*
+*Last updated: 2026-02-23 — deeppivot-63 (Printable/Shareable Career Plans) closed. react-to-print, CareerPlanPrintable, Print/Save PDF button. Learner Dashboard (deeppivot-68) and Curated Resource Recommendations (deeppivot-117) ready.*

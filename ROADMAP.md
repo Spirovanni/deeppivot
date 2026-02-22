@@ -91,9 +91,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-47** | Backend: Feedback Generation Engine (LLM) *(Phase 4)* |
+| **deeppivot-48** | Frontend: Display Interview Feedback UI *(Phase 4)* |
 
-Run `bd ready` to see current ready work. Emotional Analysis (deeppivot-46) complete.
+Run `bd ready` to see current ready work. Feedback Generation Engine (deeppivot-47) complete.
 
 ---
 
@@ -153,7 +153,7 @@ Run `bd ready` to see current ready work. Emotional Analysis (deeppivot-46) comp
 | 1 | ~~deeppivot-44~~ | ~~Backend: Inngest Job for Recording Processing~~ ✓ |
 | 2 | ~~deeppivot-45~~ | ~~Backend: Inngest Job for Transcription~~ ✓ |
 | 3 | ~~deeppivot-46~~ | ~~Backend: Inngest Job for Emotional Analysis~~ ✓ |
-| 4 | deeppivot-47 | Backend: Feedback Generation Engine (LLM) |
+| 4 | ~~deeppivot-47~~ | ~~Backend: Feedback Generation Engine (LLM)~~ ✓ |
 | 5 | deeppivot-48 | Frontend: Display Interview Feedback UI |
 | 6 | deeppivot-49 | Frontend: Emotion-Aware Feedback Animations |
 | 7 | deeppivot-56 | AI/ML: Deploy and Integrate Custom BERT Model |
@@ -218,4 +218,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-46 (Inngest Job for Emotional Analysis) closed. New: `emotional_analysis` table, `processInterviewEmotionalAnalysis`, Hume batch prosody → emotional_analysis. Transcription and emotional analysis both triggered by recording.processed in parallel.*
+*Last updated: 2026-02-22 — deeppivot-47 (Feedback Generation Engine) closed. New: `interview_feedback` table, `processInterviewFeedback`, waitForEvent for transcription.complete + emotion_analysis.complete, LLM-generated structured feedback (Strengths, Areas for Improvement, Emotional Tone).*

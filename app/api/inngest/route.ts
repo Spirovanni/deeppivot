@@ -10,6 +10,7 @@ import {
   processInterviewRecording,
   processInterviewTranscription,
   processInterviewEmotionalAnalysis,
+  processInterviewFeedback,
 } from "@/src/inngest/functions";
 
 export const { GET, POST, PUT } = serve({
@@ -18,5 +19,6 @@ export const { GET, POST, PUT } = serve({
     processInterviewRecording,
     processInterviewTranscription,
     processInterviewEmotionalAnalysis,
+    processInterviewFeedback,
   ],
 });

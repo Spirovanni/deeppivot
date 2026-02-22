@@ -135,6 +135,7 @@ export const interviewSessionsRelations = relations(interviewSessionsTable, ({ o
   recordingUrls: many(recordingUrlsTable),
   transcriptUrls: many(transcriptUrlsTable),
   emotionalAnalyses: many(emotionalAnalysesTable),
+  interviewFeedback: many(interviewFeedbackTable),
 }));
 
 export const recordingUrlsTable = pgTable("recording_urls", {
@@ -190,6 +191,25 @@ export const emotionalAnalysesTable = pgTable("emotional_analysis", {
 export const emotionalAnalysesRelations = relations(emotionalAnalysesTable, ({ one }) => ({
   session: one(interviewSessionsTable, {
     fields: [emotionalAnalysesTable.sessionId],
+    references: [interviewSessionsTable.id],
+  }),
+}));
+
+export const interviewFeedbackTable = pgTable("interview_feedback", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  sessionId: integer()
+    .notNull()
+    .references(() => interviewSessionsTable.id, { onDelete: "cascade" }),
+  /** Structured feedback content (e.g. Strengths, Areas for Improvement) */
+  content: text().notNull(),
+  /** Sentiment score 0–100 if computed */
+  sentimentScore: integer(),
+  createdAt: timestamp().notNull().defaultNow(),
+});
+
+export const interviewFeedbackRelations = relations(interviewFeedbackTable, ({ one }) => ({
+  session: one(interviewSessionsTable, {
+    fields: [interviewFeedbackTable.sessionId],
     references: [interviewSessionsTable.id],
   }),
 }));

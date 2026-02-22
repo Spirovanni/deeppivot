@@ -14,11 +14,14 @@ import {
   recordingUrlsTable,
   transcriptUrlsTable,
   emotionalAnalysesTable,
+  interviewFeedbackTable,
 } from "@/src/db/schema";
+import { eq } from "drizzle-orm";
 import { getCall } from "@/src/lib/vapi";
 import { getSupabaseAdmin, RECORDING_BUCKET } from "@/src/lib/supabase";
 import { transcribeInterviewRecording } from "@/src/lib/deepgram";
 import { analyzeRecordingUrl } from "@/src/lib/hume";
+import { generateCompletion } from "@/src/lib/llm";
 
 export const processInterviewRecording = inngest.createFunction(
   {
@@ -164,6 +167,12 @@ export const processInterviewTranscription = inngest.createFunction(
       });
     });
 
+    // 4. Emit for feedback job
+    await step.sendEvent("transcription-complete", {
+      name: "transcription.complete",
+      data: { sessionId },
+    });
+
     return { sessionId, transcriptUrl: transcriptFileUrl };
   }
 );
@@ -203,6 +212,130 @@ export const processInterviewEmotionalAnalysis = inngest.createFunction(
       });
     });
 
+    // 3. Emit for feedback job
+    await step.sendEvent("emotion-analysis-complete", {
+      name: "emotion_analysis.complete",
+      data: { sessionId },
+    });
+
     return { sessionId, jobId: result.jobId };
+  }
+);
+
+export const processInterviewFeedback = inngest.createFunction(
+  {
+    id: "process-interview-feedback",
+    name: "Process Interview Feedback",
+    retries: 2,
+  },
+  { event: "recording.processed" },
+  async ({ event, step }) => {
+    const { sessionId } = event.data as { sessionId: number; recordingUrl: string };
+
+    if (!sessionId) {
+      throw new Error("Missing sessionId in event data");
+    }
+
+    // 1. Wait for transcription to complete
+    await step.waitForEvent("wait-for-transcription", {
+      event: "transcription.complete",
+      match: "data.sessionId",
+      timeout: "1h",
+    });
+
+    // 2. Wait for emotion analysis to complete
+    await step.waitForEvent("wait-for-emotion-analysis", {
+      event: "emotion_analysis.complete",
+      match: "data.sessionId",
+      timeout: "1h",
+    });
+
+    // 3. Fetch transcript and emotion data from DB
+    const { transcript, emotionData } = await step.run("fetch-data", async () => {
+      const [transcriptRow] = await db
+        .select({ url: transcriptUrlsTable.url })
+        .from(transcriptUrlsTable)
+        .where(eq(transcriptUrlsTable.sessionId, sessionId))
+        .limit(1);
+
+      const [emotionRow] = await db
+        .select({ data: emotionalAnalysesTable.data })
+        .from(emotionalAnalysesTable)
+        .where(eq(emotionalAnalysesTable.sessionId, sessionId))
+        .limit(1);
+
+      if (!transcriptRow?.url) {
+        throw new Error(`No transcript found for session ${sessionId}`);
+      }
+      if (!emotionRow?.data) {
+        throw new Error(`No emotion analysis found for session ${sessionId}`);
+      }
+
+      const res = await fetch(transcriptRow.url);
+      if (!res.ok) throw new Error(`Failed to fetch transcript: ${res.status}`);
+      const transcriptJson = (await res.json()) as {
+        transcript?: string;
+        utterances?: Array<{ transcript: string }>;
+      };
+      const transcript =
+        transcriptJson.transcript ??
+        transcriptJson.utterances?.map((u) => u.transcript).join(" ") ??
+        "";
+
+      const emotionData = emotionRow.data as {
+        overallDominantEmotion?: string;
+        aggregateEmotions?: Array<{ name: string; score: number }>;
+        snapshots?: Array<{ dominantEmotion: string }>;
+      };
+
+      return { transcript, emotionData };
+    });
+
+    // 4. Generate structured feedback via LLM
+    const feedbackContent = await step.run("generate-feedback", async () => {
+      const emotionSummary =
+        emotionData.overallDominantEmotion ?? "Unknown";
+      const topEmotions =
+        emotionData.aggregateEmotions?.slice(0, 5).map((e) => `${e.name} (${(e.score * 100).toFixed(0)}%)`).join(", ") ?? "N/A";
+
+      const { content } = await generateCompletion({
+        messages: [
+          {
+            role: "system",
+            content: `You are an expert interview coach. Generate structured, actionable feedback for a job interview practice session. 
+Output format:
+## Strengths
+- Bullet points of what the candidate did well
+
+## Areas for Improvement
+- Bullet points of specific, actionable suggestions
+
+## Emotional Tone
+- Brief summary of how their emotional delivery came across
+
+## Overall Recommendation
+- 1-2 sentences with next steps.`,
+          },
+          {
+            role: "user",
+            content: `Interview transcript:\n\n${transcript}\n\n---\nEmotional analysis: Dominant emotion: ${emotionSummary}. Top emotions: ${topEmotions}.\n\nGenerate structured feedback.`,
+          },
+        ],
+        maxTokens: 1500,
+        temperature: 0.5,
+      });
+
+      return content;
+    });
+
+    // 5. Save to interview_feedback table
+    await step.run("save-feedback", async () => {
+      await db.insert(interviewFeedbackTable).values({
+        sessionId,
+        content: feedbackContent,
+      });
+    });
+
+    return { sessionId };
   }
 );

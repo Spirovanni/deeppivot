@@ -55,26 +55,50 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(existingUser[0], { status: 200 });
     }
 
-    const newUser = await db.insert(usersTable).values({
-      clerkId,
-      firstName,
-      lastName,
-      name,
-      age,
-      email,
-    }).returning();
+    const [newUser] = await db
+      .insert(usersTable)
+      .values({
+        clerkId,
+        firstName,
+        lastName,
+        name,
+        age,
+        email,
+      })
+      .onConflictDoUpdate({
+        target: usersTable.clerkId,
+        set: {
+          firstName,
+          lastName,
+          name,
+          email,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
 
-    console.log('User created successfully:', newUser[0]);
+    if (!newUser) {
+      const [existing] = await db
+        .select()
+        .from(usersTable)
+        .where(eq(usersTable.clerkId, clerkId));
+      if (existing) return NextResponse.json(existing, { status: 200 });
+      return NextResponse.json(
+        { error: 'Failed to create user' },
+        { status: 500 }
+      );
+    }
 
-    // Initialize default Job Board for new user
+    console.log('User created successfully:', newUser);
+
     try {
-      await initializeJobBoard(newUser[0].id);
-      console.log(`Initialized job board for user: ${newUser[0].id}`);
+      await initializeJobBoard(newUser.id);
+      console.log(`Initialized job board for user: ${newUser.id}`);
     } catch (boardError) {
       console.error('Failed to initialize job board:', boardError);
     }
 
-    return NextResponse.json(newUser[0], { status: 201 });
+    return NextResponse.json(newUser, { status: 201 });
   } catch (error) {
     console.error('Detailed error creating user:', {
       message: error instanceof Error ? error.message : 'Unknown error',

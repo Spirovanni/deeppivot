@@ -45,12 +45,12 @@ export async function ensureUserInDb(): Promise<number | null> {
         age: 25,
       })
       .onConflictDoUpdate({
-        target: usersTable.email,
+        target: usersTable.clerkId,
         set: {
-          clerkId: clerkUser.id,
           firstName,
           lastName,
           name,
+          email,
           updatedAt: new Date(),
         },
       })

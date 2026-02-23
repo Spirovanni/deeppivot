@@ -31,8 +31,36 @@ async function syncSingleUser(userData: {
     };
 
     if (existingUser.length === 0) {
-      // Create new user
-      await db.insert(usersTable).values(userRecord);
+      try {
+        await db
+          .insert(usersTable)
+          .values(userRecord)
+          .onConflictDoUpdate({
+            target: usersTable.clerkId,
+            set: {
+              firstName: userRecord.firstName,
+              lastName: userRecord.lastName,
+              name: userRecord.name,
+              email: userRecord.email,
+              isEmailVerified: userRecord.isEmailVerified,
+              updatedAt: new Date(),
+            },
+          });
+      } catch (insertErr) {
+        const [retry] = await db
+          .select()
+          .from(usersTable)
+          .where(eq(usersTable.clerkId, userData.clerkId))
+          .limit(1);
+        if (retry) {
+          return NextResponse.json({
+            message: 'User already exists (race)',
+            status: 'created',
+            user: userRecord,
+          });
+        }
+        throw insertErr;
+      }
       return NextResponse.json({
         message: 'User created successfully',
         status: 'created',

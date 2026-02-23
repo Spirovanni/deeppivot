@@ -5,6 +5,7 @@ import Image from "next/image";
 import { SignUpButton, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { useState, useLayoutEffect } from "react";
+import { Sparkles, Zap, TrendingUp } from "lucide-react";
 
 interface HeroSectionProps {
   onGetStarted?: () => void;
@@ -21,122 +22,172 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
     if (onGetStarted) {
       onGetStarted();
     } else {
-      // Fallback: Calculate the scroll position that will trigger the chat to show
-      // Based on the logic in page.tsx: rect.bottom < windowHeight * 0.3
-      // We need to scroll past the FeatureBentoGrid section
       const windowHeight = window.innerHeight;
-      const targetScroll = windowHeight * 2; // Scroll past hero + feature bento grid
-      
-      window.scrollTo({ 
+      const targetScroll = windowHeight * 2;
+
+      window.scrollTo({
         top: targetScroll,
         behavior: 'smooth'
       });
-      
-      // Alternative approach: try to find and scroll to chat-section after a delay
+
       setTimeout(() => {
         const chatSection = document.getElementById('chat-section');
         if (chatSection) {
-          chatSection.scrollIntoView({ 
+          chatSection.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
           });
         }
-      }, 1000); // Give time for the chat to appear
+      }, 1000);
     }
   };
 
   return (
-    <div className="relative my-10 flex flex-col items-center justify-center">
-      {/* <Navbar /> */}
+    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-violet-50 via-white to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-violet-950">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-200/30 blur-3xl dark:bg-violet-500/10" />
+        <div className="absolute top-1/2 -left-40 h-80 w-80 rounded-full bg-pink-200/30 blur-3xl dark:bg-pink-500/10" />
+        <div className="absolute bottom-0 right-1/4 h-60 w-60 rounded-full bg-blue-200/20 blur-3xl dark:bg-blue-500/10" />
+      </div>
 
-      <div className="absolute inset-y-0 left-0 h-full w-px bg-neutral-200/80 dark:bg-neutral-800/80">
-        <div className="absolute top-0 h-40 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent" />
-      </div>
-      <div className="absolute inset-y-0 right-0 h-full w-px bg-neutral-200/80 dark:bg-neutral-800/80">
-        <div className="absolute h-40 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent" />
-      </div>
-      <div className="absolute inset-x-0 bottom-0 h-px w-full bg-neutral-200/80 dark:bg-neutral-800/80">
-        <div className="absolute mx-auto h-px w-40 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
-      </div>
-      <div className="px-4 py-10 md:py-20">
-        <h1 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold text-slate-700 md:text-4xl lg:text-7xl dark:text-slate-300">
-          {"Ace your next interview with AI coaching"
-            .split(" ")
-            .map((word, index) => (
-              <motion.span
-                key={index}
-                initial={{ opacity: 0, filter: "blur(4px)", y: 10 }}
-                animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-                transition={{
-                  duration: 0.3,
-                  delay: index * 0.1,
-                  ease: "easeInOut",
-                }}
-                className="mr-2 inline-block"
-              >
-                {word}
-              </motion.span>
-            ))}
-        </h1>
-        <motion.p
-          initial={{
-            opacity: 0,
-          }}
-          animate={{
-            opacity: 1,
-          }}
-          transition={{
-            duration: 0.3,
-            delay: 0.8,
-          }}
-          className="relative z-10 mx-auto max-w-xl py-4 text-center text-lg font-normal text-neutral-600 dark:text-neutral-400"
-        >
-          Practice with our AI career coach that understands your emotions and provides personalized feedback to help you succeed.
-        </motion.p>
-        <motion.div
-          initial={{
-            opacity: 0,
-          }}
-          animate={{
-            opacity: 1,
-          }}
-          transition={{
-            duration: 0.3,
-            delay: 1,
-          }}
-          className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-4"
-        >
-          {isClient && <HeroButtons onGetStarted={scrollToChat} />}
-        </motion.div>
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 10,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 0.3,
-            delay: 1.2,
-          }}
-          className="relative z-10 mt-20 mx-auto max-w-2xl"
-        >
-          <div 
-            id="hero-image"
-            className="rounded-2xl border border-gray-300 bg-white p-2 shadow-xl dark:border-gray-600 dark:bg-gray-800"
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+
+      <div className="relative mx-auto grid min-h-screen max-w-7xl grid-cols-1 gap-8 px-6 py-12 lg:grid-cols-2 lg:gap-12 lg:px-8">
+        {/* Left side - Content */}
+        <div className="flex flex-col justify-center space-y-8">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex"
           >
-            <Image
-              src="/landing-mock.png"
-              alt="Deep Pivot interview coaching platform preview"
-              width={1024}
-              height={1536}
-              className="aspect-[2/3] w-full h-auto object-cover rounded-xl"
-              priority
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-            />
+            <div className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-white/80 px-4 py-2 text-sm font-medium text-violet-700 shadow-sm backdrop-blur-sm dark:border-violet-800 dark:bg-slate-900/80 dark:text-violet-300">
+              <Sparkles className="h-4 w-4" />
+              Powered by Epicarcana FlowArcs
+            </div>
+          </motion.div>
+
+          {/* Main heading */}
+          <div className="space-y-4">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-5xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-6xl lg:text-7xl"
+            >
+              Transform Your
+              <span className="block bg-gradient-to-r from-violet-600 via-pink-600 to-violet-600 bg-clip-text text-transparent">
+                Career Journey
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-xl leading-relaxed text-slate-600 dark:text-slate-300"
+            >
+              AI-powered voice interviews with emotional intelligence, career archetyping, and personalized development paths.
+            </motion.p>
+          </div>
+
+          {/* Feature pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex flex-wrap gap-3"
+          >
+            <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+              <Zap className="h-4 w-4 text-violet-500" />
+              <800ms Latency
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+              <TrendingUp className="h-4 w-4 text-pink-500" />
+              Real-time Emotion AI
+            </div>
+          </motion.div>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex flex-wrap items-center gap-4"
+          >
+            {isClient && <HeroButtons onGetStarted={scrollToChat} />}
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="grid grid-cols-3 gap-6 pt-8"
+          >
+            <div>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">500+</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">Education Programs</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">6</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">Career Archetypes</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">AI</div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">Voice Coach</div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Right side - Visual */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="relative flex items-center justify-center lg:justify-end"
+        >
+          <div className="relative">
+            {/* Glow effect */}
+            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-violet-600 via-pink-600 to-violet-600 opacity-20 blur-2xl" />
+
+            {/* Image container */}
+            <div className="relative rounded-2xl border border-slate-200/50 bg-white/80 p-3 shadow-2xl backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-900/80">
+              <Image
+                src="/landing-mock.png"
+                alt="Deep Pivot interview coaching platform"
+                width={600}
+                height={900}
+                className="aspect-[2/3] w-full rounded-xl object-cover"
+                priority
+              />
+            </div>
+
+            {/* Floating elements */}
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="absolute -right-4 top-20 rounded-xl border border-violet-200 bg-white/90 p-4 shadow-lg backdrop-blur-sm dark:border-violet-800 dark:bg-slate-900/90"
+            >
+              <div className="text-sm font-semibold text-violet-600 dark:text-violet-400">
+                FlowArcs Integration
+              </div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">Workflow automation ready</div>
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 4, repeat: Infinity }}
+              className="absolute -left-4 bottom-20 rounded-xl border border-pink-200 bg-white/90 p-4 shadow-lg backdrop-blur-sm dark:border-pink-800 dark:bg-slate-900/90"
+            >
+              <div className="text-sm font-semibold text-pink-600 dark:text-pink-400">
+                Emotion Detection
+              </div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">Powered by Hume AI</div>
+            </motion.div>
           </div>
         </motion.div>
       </div>
@@ -151,23 +202,23 @@ const HeroButtons = ({ onGetStarted }: { onGetStarted: () => void }) => {
   if (isSignedIn) {
     return (
       <>
-        <button 
+        <button
           onClick={onGetStarted}
-          className="w-44 transform rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-600 hover:to-pink-600"
+          className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
         >
-          Start Session
+          <span className="absolute inset-0 bg-gradient-to-r from-violet-700 to-pink-700 opacity-0 transition-opacity group-hover:opacity-100" />
+          <span className="relative">Start Practice Session</span>
         </button>
-        <button 
+        <button
           onClick={() => {
-            // Scroll to features section for logged in users
             const featuresSection = document.querySelector('[data-features-section]');
             if (featuresSection) {
               featuresSection.scrollIntoView({ behavior: 'smooth' });
             }
           }}
-          className="w-44 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:from-gray-800 dark:hover:to-gray-900"
+          className="inline-flex items-center justify-center rounded-xl border-2 border-slate-300 bg-white px-8 py-4 text-lg font-semibold text-slate-900 shadow-sm transition-all hover:border-slate-400 hover:shadow-md dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:border-slate-500"
         >
-          Learn More
+          Explore Features
         </button>
       </>
     );
@@ -176,21 +227,21 @@ const HeroButtons = ({ onGetStarted }: { onGetStarted: () => void }) => {
   return (
     <>
       <SignUpButton mode="modal">
-        <button className="w-44 transform rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 px-6 py-3 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:from-violet-600 hover:to-pink-600">
-          Get Started Free
+        <button className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl">
+          <span className="absolute inset-0 bg-gradient-to-r from-violet-700 to-pink-700 opacity-0 transition-opacity group-hover:opacity-100" />
+          <span className="relative">Get Started Free</span>
         </button>
       </SignUpButton>
-      <button 
+      <button
         onClick={() => {
-          // Scroll to features section for non-logged in users
           const featuresSection = document.querySelector('[data-features-section]');
           if (featuresSection) {
             featuresSection.scrollIntoView({ behavior: 'smooth' });
           }
         }}
-        className="w-44 transform rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-black transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:from-gray-800 dark:hover:to-gray-900"
+        className="inline-flex items-center justify-center rounded-xl border-2 border-slate-300 bg-white px-8 py-4 text-lg font-semibold text-slate-900 shadow-sm transition-all hover:border-slate-400 hover:shadow-md dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:border-slate-500"
       >
-        Learn More
+        Explore Features
       </button>
     </>
   );

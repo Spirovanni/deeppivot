@@ -15,7 +15,7 @@ import {
 
 export function FeatureBentoGrid() {
   return (
-    <BentoGrid className="max-w-4xl mx-auto">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {items.map((item, i) => (
         <BentoGridItem
           key={i}
@@ -23,10 +23,13 @@ export function FeatureBentoGrid() {
           description={item.description}
           header={item.header}
           icon={item.icon}
-          className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+          className={cn(
+            "group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg dark:border-slate-800 dark:bg-slate-900",
+            i === 3 || i === 6 ? "md:col-span-2 lg:col-span-2" : ""
+          )}
         />
       ))}
-    </BentoGrid>
+    </div>
   );
 }
 
@@ -129,45 +132,51 @@ const RocketLaunch = () => (
 const items = [
   {
     title: "AI Voice Interviews",
-    description: "Practice with realistic voice and video interviews powered by advanced AI with <800ms latency.",
+    description: "Practice with realistic voice interviews powered by Hume AI with <800ms latency. Integrate interview sessions into FlowArcs workflows for automated career development.",
     header: <VoiceWaveform />,
     icon: <IconMicrophone className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Emotional Intelligence",
-    description: "Get feedback on your emotional responses and communication style using Hume AI emotion detection.",
+    title: "Emotional Intelligence Feedback",
+    description: "Real-time emotion detection and communication analysis using Hume AI's empathic technology. Track emotional patterns across sessions.",
     header: <EmotionChart />,
     icon: <IconHeart className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Career Archetyping",
-    description: "Discover your unique career persona through AI-powered behavioral trait modeling and NLP analysis.",
+    title: "Career Archetype Assessment",
+    description: "Discover your unique career persona through AI-powered 18-question assessment with 6 distinct archetypes and behavioral trait modeling.",
     header: <CareerPath />,
     icon: <IconTarget className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Personalized Career Planning",
+    title: "Dynamic Career Planning",
     description:
-      "Build dynamic career roadmaps with draggable timelines, milestones, and curated resource recommendations.",
+      "Build interactive career roadmaps with draggable timelines, milestones, and curated resource recommendations. Export to FlowArcs for workflow automation.",
     header: <AnalyticsGraph />,
     icon: <IconChartLine className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Real-time Performance Analytics",
-    description: "Track your progress with detailed analytics on interview performance, skills development, and emotional growth.",
+    title: "Performance Analytics Dashboard",
+    description: "Track your progress with detailed analytics on interview performance, skills development, emotional growth, and session history over time.",
     header: <AnalyticsGraph />,
     icon: <IconBrain className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Mentor & Coach Network",
-    description: "Connect with industry mentors and workforce development partners for personalized guidance.",
+    description: "Connect with industry mentors, career coaches, and workforce development partners for personalized guidance and professional connections.",
     header: <NetworkNodes />,
     icon: <IconUsers className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Alternative Education Explorer",
-    description: "Discover 500+ bootcamps, certifications, and funding opportunities with ROI analysis and eligibility matching.",
+    title: "Education Explorer",
+    description: "Discover 500+ bootcamps, certifications, and funding opportunities with ROI analysis, eligibility matching, and application tracking.",
     header: <EducationStack />,
     icon: <IconSchool className="h-4 w-4 text-neutral-500" />,
+  },
+  {
+    title: "Job Application Tracker",
+    description: "Organize your job search with a drag-and-drop Kanban board. Track applications across stages and integrate with FlowArcs for automated follow-ups.",
+    header: <RocketLaunch />,
+    icon: <IconRocket className="h-4 w-4 text-neutral-500" />,
   },
 ];

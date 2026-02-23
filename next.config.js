@@ -8,17 +8,6 @@ const nextConfig = {
       { protocol: "https", hostname: "images.clerk.dev", pathname: "/**" },
     ],
   },
-  async redirects() {
-    return [
-      // Redirect www to apex to avoid Clerk CORS issues (clerk.deeppivots.com)
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "www.deeppivots.com" }],
-        destination: "https://deeppivots.com/:path*",
-        permanent: true,
-      },
-    ];
-  },
 };
 
 module.exports = nextConfig;

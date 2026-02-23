@@ -86,8 +86,8 @@ function Provider({ children }: { children: React.ReactNode }) {
     <ThemeProvider
       attribute="class"
       defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
+      enableSystem={true}
+      storageKey="deeppivot-theme"
     >
       <ClerkProvider
         {...(isProduction ? {

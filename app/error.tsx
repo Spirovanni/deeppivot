@@ -1,7 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Link from "next/link";
+import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 
 export default function Error({
   error,
@@ -10,26 +12,41 @@ export default function Error({
   error: Error;
   reset: () => void;
 }) {
+  const isDev = process.env.NODE_ENV === "development";
+
   return (
-    <div className={"absolute inset-0 grid place-content-center"}>
-      <div className={"p-4 border border-border rounded-xl max-w-sm"}>
-        <div>
-          <h1 className={"text-foreground font-medium text-base"}>
-            An error occurred
+    <div className="flex min-h-[50vh] flex-col items-center justify-center p-6">
+      <Card className="w-full max-w-md border-destructive/30">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-destructive/10">
+            <AlertTriangle className="size-6 text-destructive" />
+          </div>
+          <h1 className="text-xl font-semibold text-foreground">
+            Something went wrong
           </h1>
-          <p className={"text-muted-foreground text-sm"}>{error.message}</p>
-        </div>
-        <div className={"pt-4 flex gap-2"}>
-          <Button className={"rounded-full flex-1"} variant={"secondary"} asChild>
-            <Link href={"https://dev.hume.ai/"} target={"_blank"}>
-              View Documentation
+          <p className="mt-1 text-sm text-muted-foreground">
+            We encountered an unexpected error. Please try again or return to the
+            homepage.
+          </p>
+          {isDev && (
+            <p className="mt-2 rounded-md bg-muted px-3 py-2 font-mono text-xs text-muted-foreground">
+              {error.message}
+            </p>
+          )}
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2 sm:flex-row">
+          <Button variant="outline" className="flex-1" asChild>
+            <Link href="/">
+              <Home className="mr-2 size-4" />
+              Go home
             </Link>
           </Button>
-          <Button className={"rounded-full flex-1"} onClick={reset}>
+          <Button className="flex-1" onClick={reset}>
+            <RefreshCw className="mr-2 size-4" />
             Try again
           </Button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -104,8 +104,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ~~deeppivot-24~~ | ~~Backend: Set up Cloudflare R2 for Storage~~ ✓ |
 | ~~deeppivot-19~~ | ~~Frontend: Initialize Next.js 15 Project~~ ✓ |
 | ~~deeppivot-104~~ | ~~Frontend: Global Notification Toasts~~ ✓ |
+| ~~deeppivot-107~~ | ~~Frontend: Custom 500 Error Page~~ ✓ |
 
-Run `bd ready` to see current ready work. Global toasts (deeppivot-104) complete.
+Run `bd ready` to see current ready work. Custom 500 error page (deeppivot-107) complete.
 
 ---
 
@@ -247,4 +248,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-104 (Global Notification Toasts) closed. react-hot-toast integrated; career plan mutations and interview errors show toasts. Run `bd ready` for next work.*
+*Last updated: 2026-02-22 — deeppivot-107 (Custom 500 Error Page) closed. error.tsx and global-error.tsx; user-friendly message, no technical details in prod. Run `bd ready` for next work.*

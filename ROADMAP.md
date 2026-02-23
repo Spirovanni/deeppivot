@@ -105,8 +105,10 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ~~deeppivot-19~~ | ~~Frontend: Initialize Next.js 15 Project~~ ✓ |
 | ~~deeppivot-104~~ | ~~Frontend: Global Notification Toasts~~ ✓ |
 | ~~deeppivot-107~~ | ~~Frontend: Custom 500 Error Page~~ ✓ |
+| ~~deeppivot-112~~ | ~~Frontend: Global Footer Component~~ ✓ |
+| ~~deeppivot-128~~ | ~~SEO: Create robots.txt~~ ✓ |
 
-Run `bd ready` to see current ready work. Custom 500 error page (deeppivot-107) complete.
+Run `bd ready` to see current ready work. robots.txt (deeppivot-128) complete.
 
 ---
 
@@ -248,4 +250,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-107 (Custom 500 Error Page) closed. error.tsx and global-error.tsx; user-friendly message, no technical details in prod. Run `bd ready` for next work.*
+*Last updated: 2026-02-22 — deeppivot-128 (robots.txt) closed. app/robots.ts: disallow /dashboard, /settings, /admin, /api; sitemap. Run `bd ready` for next work.*

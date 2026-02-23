@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { cn } from "@/utils";
 import Provider from "./provider";
+import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Deep Pivot",
@@ -32,7 +33,8 @@ export default function RootLayout({
             "flex flex-col min-h-screen"
           )}
         >
-          {children}
+          <div className="flex flex-1 flex-col">{children}</div>
+          <Footer />
         </body>
       </html>
     </Provider>

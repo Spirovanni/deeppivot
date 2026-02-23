@@ -1,5 +1,4 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import type { NextRequest } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
   '/',
@@ -12,7 +11,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/sync-users'
 ]);
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
+export default clerkMiddleware(async (auth, req) => {
   // Redirect www to apex domain (only in production, not localhost)
   const url = req.nextUrl.clone();
   if (url.hostname.startsWith('www.') && !url.hostname.includes('localhost')) {
@@ -20,8 +19,9 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     return Response.redirect(url, 301);
   }
 
+  // Protect non-public routes
   if (!isPublicRoute(req)) {
-    await auth().protect();
+    await auth.protect();
   }
 });
 

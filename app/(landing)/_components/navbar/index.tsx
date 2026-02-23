@@ -23,11 +23,9 @@ import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 
 export const Navbar = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const [scrollY, setScrollY] = useState(0);
 
   useLayoutEffect(() => {
-    setIsClient(true);
     const el = document.documentElement;
     setIsDarkMode(el.classList.contains("dark"));
   }, []);
@@ -120,7 +118,7 @@ export const Navbar = () => {
             {isDarkMode ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </Button>
 
-          {isClient && <AuthSection />}
+          <AuthSection />
         </div>
       </motion.nav>
 
@@ -145,9 +143,9 @@ export const Navbar = () => {
 };
 
 const AuthSection = () => {
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn, user, isLoaded } = useUser();
 
-  if (isSignedIn) {
+  if (isLoaded && isSignedIn) {
     return (
       <div className="flex items-center gap-3">
         <Link href="/dashboard">

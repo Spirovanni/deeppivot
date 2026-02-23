@@ -108,8 +108,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ~~deeppivot-112~~ | ~~Frontend: Global Footer Component~~ ✓ |
 | ~~deeppivot-128~~ | ~~SEO: Create robots.txt~~ ✓ |
 | ~~deeppivot-106~~ | ~~Frontend: Custom 404 Page~~ ✓ |
+| ~~deeppivot-123~~ | ~~Performance: Image Optimization~~ ✓ |
 
-Run `bd ready` to see current ready work. Custom 404 (deeppivot-106) complete.
+Run `bd ready` to see current ready work. Image optimization (deeppivot-123) complete.
 
 ---
 
@@ -251,4 +252,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-106 (Custom 404) closed. app/not-found.tsx with branded 404 UI. Run `bd ready` for next work.*
+*Last updated: 2026-02-22 — deeppivot-123 (Image Optimization) closed. All images use next/image; MentorCard avatars when avatarUrl present; remotePatterns for R2/Clerk. Run `bd ready` for next work.*

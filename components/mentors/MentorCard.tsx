@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -79,11 +80,24 @@ export function MentorCard({ mentor, connectionStatus: initialStatus }: MentorCa
         <CardContent className="flex flex-1 flex-col gap-4 p-5">
           {/* Avatar + name */}
           <div className="flex items-start gap-3">
-            <div
-              className={`flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${avatarColor}`}
-            >
-              {initials}
-            </div>
+            {mentor.avatarUrl ? (
+              <div className="relative size-12 shrink-0 overflow-hidden rounded-full">
+                <Image
+                  src={mentor.avatarUrl}
+                  alt={mentor.name}
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                  sizes="48px"
+                />
+              </div>
+            ) : (
+              <div
+                className={`flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${avatarColor}`}
+              >
+                {initials}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="font-semibold leading-tight">{mentor.name}</p>
               <p className="text-sm text-muted-foreground">{mentor.title}</p>

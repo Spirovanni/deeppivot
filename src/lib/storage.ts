@@ -1,37 +1,29 @@
 /**
  * Cloudflare R2 storage for interview recordings and transcripts.
  *
- * Uses S3-compatible API. Env: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID,
- * R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_ENDPOINT
+ * Uses aws4fetch (Cloudflare-recommended) - no AWS SDK. S3-compatible API.
+ * Env: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_ENDPOINT
  */
 
 import "server-only";
-import {
-  S3Client,
-  PutObjectCommand,
-  GetObjectCommand,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { AwsClient } from "aws4fetch";
 
-const endpoint = process.env.R2_ENDPOINT;
+const endpoint = process.env.R2_ENDPOINT?.replace(/\/$/, "");
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
 const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
 const bucketName = process.env.R2_BUCKET_NAME ?? "deeppivots";
 
-function getR2Client(): S3Client {
+function getR2Client(): AwsClient {
   if (!endpoint || !accessKeyId || !secretAccessKey) {
     throw new Error(
       "R2_ENDPOINT, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY must be set for storage operations"
     );
   }
-  return new S3Client({
+  return new AwsClient({
+    accessKeyId,
+    secretAccessKey,
+    service: "s3",
     region: "auto",
-    endpoint,
-    credentials: {
-      accessKeyId,
-      secretAccessKey,
-    },
-    forcePathStyle: true,
   });
 }
 
@@ -45,20 +37,30 @@ export async function uploadToR2(
 ): Promise<string> {
   const client = getR2Client();
   const bucket = bucketName;
+  const objectUrl = `${endpoint}/${bucket}/${key}`;
 
-  await client.send(
-    new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body: typeof body === "string" ? Buffer.from(body, "utf-8") : body,
-      ContentType: contentType,
-    })
+  const bodyBuffer =
+    typeof body === "string" ? Buffer.from(body, "utf-8") : body;
+
+  const res = await client.fetch(objectUrl, {
+    method: "PUT",
+    body: bodyBuffer as BodyInit,
+    headers: {
+      "Content-Type": contentType,
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`R2 upload failed: ${res.status} ${text}`);
+  }
+
+  // Generate presigned GET URL (7 days)
+  const expiresIn = 60 * 60 * 24 * 7;
+  const signed = await client.sign(
+    new Request(`${objectUrl}?X-Amz-Expires=${expiresIn}`),
+    { aws: { signQuery: true } }
   );
 
-  const url = await getSignedUrl(
-    client,
-    new GetObjectCommand({ Bucket: bucket, Key: key }),
-    { expiresIn: 60 * 60 * 24 * 7 }
-  );
-  return url;
+  return signed.url.toString();
 }

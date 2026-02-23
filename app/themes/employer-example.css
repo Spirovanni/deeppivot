@@ -1,0 +1,30 @@
+/**
+ * Example white-label theme for employer branding.
+ *
+ * To use: add data-theme="employer" to <html> and import this file.
+ * Or copy these overrides into your tenant-specific CSS.
+ *
+ * All variables from globals.css can be overridden here.
+ */
+
+[data-theme="employer"] {
+  /* Brand colors - override primary/accent for employer branding */
+  --primary: oklch(0.45 0.2 250);
+  --primary-foreground: oklch(0.985 0 0);
+  --accent: oklch(0.95 0.02 250);
+  --accent-foreground: oklch(0.25 0.1 250);
+
+  /* Slightly larger UI for accessibility */
+  --spacing-unit: 1.05;
+  --radius-unit: 1.1;
+
+  /* Optional: custom font stack for employer branding */
+  /* --font-family-sans: "Inter", "Helvetica Neue", sans-serif; */
+}
+
+[data-theme="employer"].dark {
+  --primary: oklch(0.65 0.2 250);
+  --primary-foreground: oklch(0.985 0 0);
+  --accent: oklch(0.3 0.05 250);
+  --accent-foreground: oklch(0.9 0.02 250);
+}

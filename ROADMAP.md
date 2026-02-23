@@ -109,8 +109,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ~~deeppivot-128~~ | ~~SEO: Create robots.txt~~ ✓ |
 | ~~deeppivot-106~~ | ~~Frontend: Custom 404 Page~~ ✓ |
 | ~~deeppivot-123~~ | ~~Performance: Image Optimization~~ ✓ |
+| ~~deeppivot-125~~ | ~~Scaling: Theming for White-Labeling~~ ✓ |
 
-Run `bd ready` to see current ready work. Image optimization (deeppivot-123) complete.
+Run `bd ready` to see current ready work. Theming (deeppivot-125) complete.
 
 ---
 
@@ -252,4 +253,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-123 (Image Optimization) closed. All images use next/image; MentorCard avatars when avatarUrl present; remotePatterns for R2/Clerk. Run `bd ready` for next work.*
+*Last updated: 2026-02-22 — deeppivot-125 (Theming for White-Labeling) closed. CSS variables for colors, fonts, spacing, radius; app/themes/employer-example.css. Run `bd ready` for next work.*

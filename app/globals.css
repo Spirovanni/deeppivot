@@ -7,7 +7,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ─── Theme variables for white-labeling ─────────────────────────────────────
+ * Override these in [data-theme="..."] or per-tenant to customize branding.
+ * Colors, fonts, spacing, and radius are all variable-driven.
+ */
 :root {
+  /* Spacing scale multiplier (1 = default). White-label: set to 1.1 for slightly larger UI */
+  --spacing-unit: 1;
+  /* Base radius multiplier for rounded corners */
+  --radius-unit: 1;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -32,7 +40,7 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  --radius: calc(0.625rem * var(--radius-unit, 1));
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -79,6 +87,21 @@
 }
 
 @theme inline {
+  --font-sans: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
+  /* Spacing scale: base 0.25rem, scaled by --spacing-unit for white-labeling */
+  --spacing-1: calc(0.25rem * var(--spacing-unit, 1));
+  --spacing-2: calc(0.5rem * var(--spacing-unit, 1));
+  --spacing-3: calc(0.75rem * var(--spacing-unit, 1));
+  --spacing-4: calc(1rem * var(--spacing-unit, 1));
+  --spacing-5: calc(1.25rem * var(--spacing-unit, 1));
+  --spacing-6: calc(1.5rem * var(--spacing-unit, 1));
+  --spacing-8: calc(2rem * var(--spacing-unit, 1));
+  --spacing-10: calc(2.5rem * var(--spacing-unit, 1));
+  --spacing-12: calc(3rem * var(--spacing-unit, 1));
+  --spacing-16: calc(4rem * var(--spacing-unit, 1));
+  --spacing-20: calc(5rem * var(--spacing-unit, 1));
+  --spacing-24: calc(6rem * var(--spacing-unit, 1));
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -123,6 +146,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Font variables for white-labeling (Geist applied via layout className) */
+    --font-family-sans: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    --font-family-mono: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
   }
 }
 

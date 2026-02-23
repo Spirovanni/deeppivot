@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
+
+export const dynamic = "force-dynamic";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { ensureUserInDb } from "@/src/lib/actions/ensure-user";

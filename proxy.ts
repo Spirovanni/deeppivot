@@ -12,9 +12,9 @@ const isPublicRoute = createRouteMatcher([
   '/api/sync-users'
 ]);
 
-export default clerkMiddleware((auth: any, req: NextRequest) => {
+export default clerkMiddleware(async (auth, req: NextRequest) => {
   if (!isPublicRoute(req)) {
-    auth().protect();
+    await auth().protect();
   }
 });
 
@@ -25,4 +25,4 @@ export const config = {
     // Always run for API routes
     '/(api|trpc)(.*)',
   ],
-}; 
+};

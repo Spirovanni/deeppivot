@@ -105,8 +105,8 @@ export function DashboardSidebar() {
       {/* Mobile: header with menu trigger */}
       <div className="flex h-16 items-center justify-between border-b border-border bg-muted/30 px-4 md:hidden">
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
+          <SheetTrigger asChild suppressHydrationWarning>
+            <Button variant="ghost" size="icon" suppressHydrationWarning>
               <Menu className="size-5" />
               <span className="sr-only">Open menu</span>
             </Button>

@@ -87,6 +87,7 @@ function Provider({ children }: { children: React.ReactNode }) {
       attribute="class"
       defaultTheme="system"
       enableSystem={true}
+      enableColorScheme={false}
       storageKey="deeppivot-theme"
     >
       <ClerkProvider

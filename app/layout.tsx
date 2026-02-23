@@ -26,6 +26,20 @@ export default function RootLayout({
   return (
     <Provider>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                try {
+                  var theme = localStorage.getItem('deeppivot-theme');
+                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {}
+              `,
+            }}
+          />
+        </head>
         <body
           className={cn(
             GeistSans.variable,

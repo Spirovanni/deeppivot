@@ -71,8 +71,8 @@ export const Navbar = () => {
             </Link>
 
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+              <DropdownMenuTrigger asChild suppressHydrationWarning>
+                <button suppressHydrationWarning className="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
                   Product
                   <ChevronDown className="size-4" />
                 </button>

@@ -25,7 +25,7 @@ export function FeatureBentoGrid() {
           icon={item.icon}
           className={cn(
             "group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg dark:border-slate-800 dark:bg-slate-900",
-            i === 3 || i === 6 ? "md:col-span-2 lg:col-span-2" : ""
+            i === 3 ? "md:col-span-2 lg:col-span-2" : ""
           )}
         />
       ))}

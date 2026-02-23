@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import UserSyncProvider from "./UserSyncProvider";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { QueryProvider } from "./QueryProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 
 export type UsersDetail={
@@ -82,16 +83,23 @@ function Provider({ children }: { children: React.ReactNode }) {
   const isProduction = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_live_');
 
   return (
-    <ClerkProvider
-      {...(isProduction ? {
-        clerkJSUrl: "/api/clerk-js",
-        proxyUrl: "/api/clerk-proxy"
-      } : {})}
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
     >
-      <InnerProvider>
-        {children}
-      </InnerProvider>
-    </ClerkProvider>
+      <ClerkProvider
+        {...(isProduction ? {
+          clerkJSUrl: "/api/clerk-js",
+          proxyUrl: "/api/clerk-proxy"
+        } : {})}
+      >
+        <InnerProvider>
+          {children}
+        </InnerProvider>
+      </ClerkProvider>
+    </ThemeProvider>
   );
 }
 

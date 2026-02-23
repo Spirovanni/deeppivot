@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <Provider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
           className={cn(
             GeistSans.variable,

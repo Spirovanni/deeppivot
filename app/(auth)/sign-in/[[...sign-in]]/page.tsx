@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSignIn } from "@clerk/nextjs";
-import type { OAuthStrategy } from "@clerk/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -16,7 +15,7 @@ export default function Page() {
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
-  const signInWithOAuth = (strategy: OAuthStrategy) => {
+  const signInWithOAuth = (strategy: "oauth_google") => {
     if (!signIn) return;
     setError("");
     signIn

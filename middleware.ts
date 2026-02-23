@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/hume-token',
   '/api/clerk-webhook',
   '/api/clerk-js',
+  '/api/clerk-proxy(.*)',
   '/api/sync-users'
 ]);
 

@@ -81,6 +81,7 @@ function Provider({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider
       clerkJSUrl="/api/clerk-js"
+      proxyUrl="/api/clerk-proxy"
     >
       <InnerProvider>
         {children}

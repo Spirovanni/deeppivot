@@ -7,6 +7,7 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up(.*)',
   '/api/hume-token',
   '/api/clerk-webhook',
+  '/api/clerk-js',
   '/api/sync-users'
 ]);
 

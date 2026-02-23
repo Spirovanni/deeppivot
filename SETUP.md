@@ -72,11 +72,11 @@ The app now includes:
 3. **User data synced** to your Neon database
 4. **Application uses** database data for user profiles, preferences, etc.
 
-## Troubleshooting Sign-In Form Not Loading
+## Troubleshooting Sign-In Form Not Loading / "Failed to load Clerk"
 
-The app now uses a **custom sign-in form** (not Clerk's prebuilt component). If you see infinite loading or CORS errors:
+The app uses a **Clerk JS proxy** (`/api/clerk-js`) to avoid CORS with custom domain `clerk.deeppivots.com`. If you still see infinite loading or "Failed to load Clerk":
 
-1. **www vs apex**: Use a consistent domain. Add both `deeppivots.com` and `www.deeppivots.com` to Clerk Dashboard → Configure → Domains if you use both
+1. **Clerk Dashboard → Paths**: Use "Sign-in page on application domain" with `https://deeppivots.com/sign-in` (not Account Portal)
 2. **Verify Clerk env vars in Vercel**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` must be set for Production
 3. **Clerk custom domain**: If using `clerk.deeppivots.com`, ensure DNS is configured per Clerk Dashboard → Domains
 4. **Enable auth methods in Clerk**: Clerk Dashboard → Configure → Email, Phone, Username → enable "Email address" and "Password". Enable Google under Social connections for "Continue with Google"

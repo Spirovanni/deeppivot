@@ -79,7 +79,9 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
 
 function Provider({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      clerkJSUrl="/api/clerk-js"
+    >
       <InnerProvider>
         {children}
       </InnerProvider>

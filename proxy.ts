@@ -13,9 +13,9 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
-  // Redirect www to apex domain
+  // Redirect www to apex domain (only in production, not localhost)
   const url = req.nextUrl.clone();
-  if (url.hostname.startsWith('www.')) {
+  if (url.hostname.startsWith('www.') && !url.hostname.includes('localhost')) {
     url.hostname = url.hostname.replace(/^www\./, '');
     return Response.redirect(url, 301);
   }

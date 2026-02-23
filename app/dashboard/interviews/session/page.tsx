@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 interface InterviewSessionPageProps {
-  searchParams: { type?: string };
+  searchParams: Promise<{ type?: string }>;
 }
 
 export default async function InterviewSessionPage({
@@ -15,7 +15,8 @@ export default async function InterviewSessionPage({
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const sessionType = searchParams.type ?? "general";
+  const { type } = await searchParams;
+  const sessionType = type ?? "general";
 
   let accessToken: string | null = null;
   try {

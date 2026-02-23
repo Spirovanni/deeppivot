@@ -37,14 +37,15 @@ async function getMilestoneWithAuth(milestoneId: number, userId: number) {
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const userId = await getDbUserId();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const id = parseInt(params.id, 10);
+  const { id: idStr } = await params;
+  const id = parseInt(idStr, 10);
   if (isNaN(id)) {
     return NextResponse.json({ error: "Invalid plan ID" }, { status: 400 });
   }

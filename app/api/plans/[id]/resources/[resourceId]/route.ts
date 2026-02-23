@@ -27,16 +27,17 @@ async function getDbUserId(): Promise<number | null> {
  */
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string; resourceId: string } }
+  { params }: { params: Promise<{ id: string; resourceId: string }> }
 ) {
   const userId = await getDbUserId();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const milestoneId = parseInt(params.id, 10);
-  const resourceId = parseInt(params.resourceId, 10);
-  if (isNaN(milestoneId) || isNaN(resourceId)) {
+  const { id, resourceId } = await params;
+  const milestoneId = parseInt(id, 10);
+  const resourceIdNum = parseInt(resourceId, 10);
+  if (isNaN(milestoneId) || isNaN(resourceIdNum)) {
     return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
   }
 
@@ -53,7 +54,7 @@ export async function DELETE(
     )
     .where(
       and(
-        eq(careerResourcesTable.id, resourceId),
+        eq(careerResourcesTable.id, resourceIdNum),
         eq(careerResourcesTable.milestoneId, milestoneId),
         eq(careerMilestonesTable.userId, userId)
       )
@@ -67,7 +68,7 @@ export async function DELETE(
   try {
     await db
       .delete(careerResourcesTable)
-      .where(eq(careerResourcesTable.id, resourceId));
+      .where(eq(careerResourcesTable.id, resourceIdNum));
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[api/plans] DELETE resource error:", error);

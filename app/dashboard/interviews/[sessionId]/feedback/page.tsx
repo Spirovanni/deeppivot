@@ -19,14 +19,15 @@ const SESSION_TYPE_LABELS: Record<string, string> = {
 };
 
 interface FeedbackPageProps {
-  params: { sessionId: string };
+  params: Promise<{ sessionId: string }>;
 }
 
 export default async function FeedbackPage({ params }: FeedbackPageProps) {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const sessionId = parseInt(params.sessionId, 10);
+  const { sessionId: sessionIdStr } = await params;
+  const sessionId = parseInt(sessionIdStr, 10);
   if (isNaN(sessionId)) notFound();
 
   const [session, feedback, emotionalAnalysis] = await Promise.all([

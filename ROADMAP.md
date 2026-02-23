@@ -25,7 +25,7 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 
 | Layer | Tech | Status |
 |-------|------|--------|
-| Framework | Next.js 14.2 (App Router) | Live |
+| Framework | Next.js 16.1 (App Router, Turbopack) | Live |
 | Database | PostgreSQL on Neon | Live |
 | ORM | Drizzle ORM 0.44 | Live |
 | Auth | Clerk (webhook + client sync) | Live |
@@ -101,10 +101,10 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-24** | Backend: Set up Cloudflare R2 for Storage |
-| **deeppivot-19** | Frontend: Initialize Next.js 15 Project |
+| ~~deeppivot-24~~ | ~~Backend: Set up Cloudflare R2 for Storage~~ ✓ |
+| ~~deeppivot-19~~ | ~~Frontend: Initialize Next.js 15 Project~~ ✓ |
 
-Run `bd ready` to see current ready work. Human Review Queue (deeppivot-92) complete.
+Run `bd ready` to see current ready work. Cloudflare R2 (deeppivot-24) and Next.js 16 (deeppivot-19) complete.
 
 ---
 
@@ -246,4 +246,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-92 (Admin: Human Review Queue for Archetypes) closed. Admin UI at /admin/archetype-review for reviewing AI-assigned archetypes; approve or override. Cloudflare R2 (deeppivot-24) or Next.js 15 (deeppivot-19) next.*
+*Last updated: 2026-02-22 — deeppivot-24 (Cloudflare R2) and deeppivot-19 (Next.js 16 + React 19) closed. Run `bd ready` for next work.*

@@ -1,6 +1,6 @@
-# Database Setup with Drizzle + Supabase
+# Database Setup with Drizzle + Neon
 
-This directory contains the database configuration and schema files for the Drizzle-Supabase integration.
+This directory contains the database configuration and schema files for the Drizzle-Neon PostgreSQL integration.
 
 ## File Structure
 
@@ -15,8 +15,9 @@ src/db/
 
 1. **Environment Variables**: Make sure your `.env` file contains:
    ```
-   DATABASE_URL=your_supabase_database_url_here
+   DATABASE_URL=postgresql://...@neon.tech/...
    ```
+   Use your [Neon](https://neon.tech) PostgreSQL connection string.
 
 2. **Generate Migration**: Create migration files from your schema
    ```bash
@@ -57,6 +58,6 @@ const users = await db.select().from(usersTable);
 
 ## Important Notes
 
-- The connection is configured with `prepare: false` to support Supabase's Transaction pool mode
+- The connection uses `drizzle-orm/neon-http` for Neon PostgreSQL (serverless)
 - All database operations should be performed server-side (API routes or server components)
-- Never expose database credentials in client-side code 
+- Never expose database credentials in client-side code

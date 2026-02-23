@@ -1,7 +1,7 @@
 /**
  * Inngest functions for interview post-processing.
  *
- * interview.completed: Fetches recording from Vapi, uploads to Supabase,
+ * interview.completed: Fetches recording from Vapi, uploads to Cloudflare R2,
  * saves URL to recording_urls table, then emits recording.processed.
  *
  * recording.processed: Triggers transcription (Deepgram) and emotional
@@ -19,7 +19,7 @@ import {
 } from "@/src/db/schema";
 import { eq, and, ne, desc } from "drizzle-orm";
 import { getCall } from "@/src/lib/vapi";
-import { getSupabaseAdmin, RECORDING_BUCKET } from "@/src/lib/supabase";
+import { uploadToR2 } from "@/src/lib/storage";
 import { transcribeInterviewRecording } from "@/src/lib/deepgram";
 import { analyzeRecordingUrl } from "@/src/lib/hume";
 import { generateCompletion } from "@/src/lib/llm";
@@ -58,8 +58,8 @@ export const processInterviewRecording = inngest.createFunction(
       throw new Error("No recording URL available from Vapi");
     }
 
-    // 2. Download recording and upload to Supabase
-    const supabaseUrl = await step.run("upload-to-supabase", async () => {
+    // 2. Download recording and upload to Cloudflare R2
+    const storageUrl = await step.run("upload-to-r2", async () => {
       const res = await fetch(recordingUrl);
       if (!res.ok) {
         throw new Error(`Failed to fetch recording: ${res.status} ${res.statusText}`);
@@ -67,31 +67,16 @@ export const processInterviewRecording = inngest.createFunction(
       const buffer = await res.arrayBuffer();
       const contentType = res.headers.get("content-type") ?? "audio/mpeg";
       const ext = contentType.includes("mp3") ? "mp3" : "m4a";
-      const fileName = `session-${sessionId}-${callId}.${ext}`;
+      const key = `recordings/session-${sessionId}-${callId}.${ext}`;
 
-      const supabase = getSupabaseAdmin();
-      const { data, error } = await supabase.storage
-        .from(RECORDING_BUCKET)
-        .upload(fileName, buffer, {
-          contentType,
-          upsert: true,
-        });
-
-      if (error) {
-        throw new Error(`Supabase upload failed: ${error.message}`);
-      }
-
-      const { data: urlData } = supabase.storage
-        .from(RECORDING_BUCKET)
-        .getPublicUrl(data.path);
-      return urlData.publicUrl;
+      return uploadToR2(key, Buffer.from(buffer), contentType);
     });
 
     // 3. Save to recording_urls table
     await step.run("save-recording-url", async () => {
       await db.insert(recordingUrlsTable).values({
         sessionId,
-        url: supabaseUrl,
+        url: storageUrl,
         source: "vapi",
       });
     });
@@ -99,10 +84,10 @@ export const processInterviewRecording = inngest.createFunction(
     // 4. Emit recording.processed for transcription job
     await step.sendEvent("trigger-transcription", {
       name: "recording.processed",
-      data: { sessionId, recordingUrl: supabaseUrl },
+      data: { sessionId, recordingUrl: storageUrl },
     });
 
-    return { sessionId, callId, recordingUrl: supabaseUrl };
+    return { sessionId, callId, recordingUrl: storageUrl };
   }
 );
 
@@ -128,7 +113,7 @@ export const processInterviewTranscription = inngest.createFunction(
       return transcribeInterviewRecording(recordingUrl);
     });
 
-    // 2. Save transcript to Supabase Storage
+    // 2. Save transcript to Cloudflare R2
     const transcriptFileUrl = await step.run("upload-transcript", async () => {
       const content = JSON.stringify(
         {
@@ -141,24 +126,8 @@ export const processInterviewTranscription = inngest.createFunction(
         null,
         2
       );
-      const fileName = `transcripts/session-${sessionId}.json`;
-
-      const supabase = getSupabaseAdmin();
-      const { data, error } = await supabase.storage
-        .from(RECORDING_BUCKET)
-        .upload(fileName, content, {
-          contentType: "application/json",
-          upsert: true,
-        });
-
-      if (error) {
-        throw new Error(`Supabase transcript upload failed: ${error.message}`);
-      }
-
-      const { data: urlData } = supabase.storage
-        .from(RECORDING_BUCKET)
-        .getPublicUrl(data.path);
-      return urlData.publicUrl;
+      const key = `transcripts/session-${sessionId}.json`;
+      return uploadToR2(key, content, "application/json");
     });
 
     // 3. Save to transcript_urls table

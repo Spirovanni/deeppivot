@@ -101,7 +101,7 @@ Full kanban-style job application tracker. All 7 phases shipped.
 
 | ID | Title |
 |----|-------|
-| **deeppivot-24** | Backend: Set up Supabase for Storage & Real-time |
+| **deeppivot-24** | Backend: Set up Cloudflare R2 for Storage |
 | **deeppivot-19** | Frontend: Initialize Next.js 15 Project |
 
 Run `bd ready` to see current ready work. Human Review Queue (deeppivot-92) complete.
@@ -246,4 +246,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-92 (Admin: Human Review Queue for Archetypes) closed. Admin UI at /admin/archetype-review for reviewing AI-assigned archetypes; approve or override. Supabase (deeppivot-24) or Next.js 15 (deeppivot-19) next.*
+*Last updated: 2026-02-22 — deeppivot-92 (Admin: Human Review Queue for Archetypes) closed. Admin UI at /admin/archetype-review for reviewing AI-assigned archetypes; approve or override. Cloudflare R2 (deeppivot-24) or Next.js 15 (deeppivot-19) next.*

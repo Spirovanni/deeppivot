@@ -66,8 +66,8 @@ cp .env.example .env.local
 Required variables:
 
 ```env
-# Database
-DATABASE_URL=postgresql://...
+# Database (Neon PostgreSQL)
+DATABASE_URL=postgresql://...@neon.tech/...
 
 # Clerk Auth
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_...
@@ -90,6 +90,13 @@ VAPI_PHONE_NUMBER_ID=...         # Optional — required for outbound phone call
 
 # Deepgram STT (Phase 3 — optional until transcription pipeline is active)
 DEEPGRAM_API_KEY=...             # Deepgram API key (console.deepgram.com)
+
+# Cloudflare R2 (interview recordings and transcripts)
+R2_ACCOUNT_ID=...
+R2_ENDPOINT=https://....r2.cloudflarestorage.com
+R2_ACCESS_KEY_ID=...
+R2_SECRET_ACCESS_KEY=...
+R2_BUCKET_NAME=deeppivots
 
 # LLM (for predictive career insights on dashboard — at least one required)
 OPENAI_API_KEY=sk-proj-...       # OpenAI GPT models

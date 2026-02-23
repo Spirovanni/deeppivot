@@ -26,10 +26,10 @@ HUME_SECRET_KEY=your_hume_secret_key_here
 NEXT_PUBLIC_HUME_CONFIG_ID=your_hume_config_id_here
 ```
 
-### Database
+### Database (Neon PostgreSQL)
 ```bash
-# Your PostgreSQL database connection string
-DATABASE_URL=your_database_url_here
+# Your Neon PostgreSQL connection string (https://neon.tech)
+DATABASE_URL=postgresql://...@neon.tech/...
 ```
 
 ## Setup Steps
@@ -50,7 +50,7 @@ DATABASE_URL=your_database_url_here
    - Get your API credentials
    - Add them to your `.env.local` file
 5. **Set up Database**:
-   - Set up a PostgreSQL database
+   - Create a [Neon](https://neon.tech) PostgreSQL database
    - Add the connection string to your `.env.local` file
    - Run `pnpm db:push` to set up the database schema
 6. **Run the development server**: `pnpm dev`
@@ -63,18 +63,18 @@ The app now includes:
 - Authentication state management in the navbar
 - Protected routes (configured in `middleware.ts`)
 - User profile management with Clerk's UserButton component
-- **Automatic user sync to Supabase** via webhooks
+- **Automatic user sync to Neon database** via webhooks
 
 ## User Data Flow
 
 1. **User signs up/in** with Google/Facebook through Clerk
 2. **Clerk webhook** automatically triggers `/api/clerk-webhook`
-3. **User data synced** to your Supabase database
-4. **Application uses** Supabase data for user profiles, preferences, etc.
+3. **User data synced** to your Neon database
+4. **Application uses** database data for user profiles, preferences, etc.
 
 ## Troubleshooting User Sync Issues
 
-If Google/Facebook users aren't appearing in Supabase:
+If Google/Facebook users aren't appearing in the database:
 
 1. **Check webhook configuration** in Clerk Dashboard
 2. **Verify webhook endpoint** is accessible: `https://yourdomain.com/api/clerk-webhook`

@@ -64,7 +64,7 @@
 | 3 | deeppivot-21 | Backend: Provision Neon Postgres Database |
 | 4 | deeppivot-22 | Backend: Configure Drizzle ORM |
 | 5 | deeppivot-20 | Frontend: Integrate Shadcn UI |
-| 6 | deeppivot-24 | Backend: Set up Supabase for Storage & Real-time |
+| 6 | deeppivot-24 | Backend: Set up Cloudflare R2 for Storage |
 | 7 | deeppivot-25 | Auth: Implement User Authentication (Clerk) |
 | 8 | deeppivot-28 | Frontend: Build Auth Forms (Login/Register) |
 | 9 | deeppivot-29 | Auth: Implement Role-Based Access Control (RBAC) |

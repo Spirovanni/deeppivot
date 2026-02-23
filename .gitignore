@@ -57,3 +57,4 @@ dev-debug.log
 # tasks.json
 # tasks/ 
 tsconfig.tsbuildinfo
+.vercel

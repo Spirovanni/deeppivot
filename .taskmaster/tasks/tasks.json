@@ -444,10 +444,10 @@
     },
     {
       "id": 7,
-      "title": "Backend: Set up Supabase for Storage & Real-time",
-      "description": "Set up a Supabase project for real-time data features and file storage.",
-      "details": "Create a new project in Supabase. Note the project URL and anon/service keys. Create a storage bucket named 'interview-recordings' with appropriate access policies (e.g., private with signed URLs for access).",
-      "testStrategy": "Use the Supabase client library in a test script to upload a dummy file to the 'interview-recordings' bucket and then delete it. A successful round trip confirms setup.",
+      "title": "Backend: Set up Cloudflare R2 for Storage",
+      "description": "Set up Cloudflare R2 for file storage (interview recordings, transcripts, avatars).",
+      "details": "Create an R2 bucket in the Cloudflare dashboard. Create API tokens (R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY). Configure R2_ENDPOINT and R2_BUCKET_NAME in environment variables. Use S3-compatible API for uploads. See docs/CLOUDFLARE_R2_SETUP.md.",
+      "testStrategy": "Use uploadToR2 in src/lib/storage.ts to upload a dummy file and verify it appears in the R2 bucket.",
       "priority": "high",
       "dependencies": [
         1
@@ -456,10 +456,10 @@
       "subtasks": [
         {
           "id": 1,
-          "title": "Create Supabase Project",
-          "description": "Set up a new Supabase project instance with proper naming and region selection",
+          "title": "Create Cloudflare R2 Bucket",
+          "description": "Set up a new R2 bucket with proper naming and region selection",
           "dependencies": [],
-          "details": "Navigate to Supabase dashboard, create new project with appropriate name, select optimal region for performance, configure initial database settings, and wait for project provisioning to complete",
+          "details": "Navigate to Cloudflare dashboard → R2, create new bucket with appropriate name, select region if needed",
           "status": "pending",
           "testStrategy": ""
         },
@@ -470,7 +470,7 @@
           "dependencies": [
             1
           ],
-          "details": "Locate project API keys in Supabase dashboard, identify anon/public key for client-side usage, secure service role key for server-side operations, configure environment variables for both development and production environments",
+          "details": "Create R2 API token in Cloudflare dashboard, configure R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT, R2_BUCKET_NAME in environment variables",
           "status": "pending",
           "testStrategy": ""
         },
@@ -481,7 +481,7 @@
           "dependencies": [
             1
           ],
-          "details": "Access Supabase Storage section, create new bucket with meaningful name, configure file size limits, set allowed MIME types for security, enable/disable public access based on requirements",
+          "details": "Create R2 bucket with meaningful name, configure as needed; R2 uses S3-compatible API",
           "status": "pending",
           "testStrategy": ""
         },
@@ -499,12 +499,12 @@
         {
           "id": 5,
           "title": "Integrate Client Library",
-          "description": "Install and configure Supabase client library in the application",
+          "description": "Install and configure AWS S3 SDK for R2 (S3-compatible) in the application",
           "dependencies": [
             2,
             4
           ],
-          "details": "Install @supabase/supabase-js package, initialize Supabase client with project URL and anon key, implement authentication methods if needed, create utility functions for storage operations, test connection and basic operations",
+          "details": "Use @aws-sdk/client-s3 and @aws-sdk/s3-request-presigner. Implement uploadToR2 in src/lib/storage.ts. Test upload and presigned URL generation.",
           "status": "pending",
           "testStrategy": ""
         }
@@ -2235,8 +2235,8 @@
       "id": 27,
       "title": "Backend: Inngest Job for Recording Processing",
       "description": "Create an Inngest job to process interview recordings post-session.",
-      "details": "Define an Inngest function triggered by an 'interview.completed' event. This job will: 1. Fetch the raw recording URL from Vapi/Stream. 2. Upload the recording to the Supabase Storage bucket. 3. Save the final Supabase URL to the `recording_url` table.",
-      "testStrategy": "Manually trigger an 'interview.completed' event with mock data. Verify that the Inngest job runs and a file is successfully uploaded to Supabase Storage. Check the database for the new URL entry.",
+      "details": "Define an Inngest function triggered by an 'interview.completed' event. This job will: 1. Fetch the raw recording URL from Vapi/Stream. 2. Upload the recording to Cloudflare R2. 3. Save the final presigned URL to the `recording_url` table.",
+      "testStrategy": "Manually trigger an 'interview.completed' event with mock data. Verify that the Inngest job runs and a file is successfully uploaded to R2. Check the database for the new URL entry.",
       "priority": "high",
       "dependencies": [
         7,
@@ -2280,20 +2280,20 @@
         },
         {
           "id": 4,
-          "title": "Implement Supabase Upload",
-          "description": "Implement logic to download the recording from the source URL and upload it to the 'interview-recordings' bucket in Supabase.",
+          "title": "Implement R2 Upload",
+          "description": "Implement logic to download the recording from the source URL and upload it to R2 using uploadToR2.",
           "dependencies": [
             3,
             7
           ],
           "status": "pending",
           "priority": "high",
-          "testStrategy": "Test with a sample file and verify it appears in the Supabase bucket."
+          "testStrategy": "Test with a sample file and verify it appears in the R2 bucket."
         },
         {
           "id": 5,
           "title": "Update 'recording_url' Table",
-          "description": "After successful upload, save the public or signed URL of the recording from Supabase into the 'recording_url' table against the interview ID.",
+          "description": "After successful upload, save the presigned URL of the recording from R2 into the 'recording_url' table against the interview ID.",
           "dependencies": [
             4,
             12
@@ -2319,8 +2319,8 @@
       "id": 28,
       "title": "Backend: Inngest Job for Transcription",
       "description": "Create an Inngest job for audio transcription.",
-      "details": "Chain another Inngest function to run after the recording is saved. This job will: 1. Get the recording from Supabase. 2. Send it to Deepgram for transcription. 3. Save the resulting transcript to a file in Supabase Storage and link it in the `transcript_url` table.",
-      "testStrategy": "Trigger the job with a sample recording. Verify that a transcript file is created in Supabase and that the `transcript_url` table is updated with the correct URL.",
+      "details": "Chain another Inngest function to run after the recording is saved. This job will: 1. Get the recording from R2. 2. Send it to Deepgram for transcription. 3. Save the resulting transcript to R2 and link it in the `transcript_url` table.",
+      "testStrategy": "Trigger the job with a sample recording. Verify that a transcript file is created in R2 and that the `transcript_url` table is updated with the correct URL.",
       "priority": "high",
       "dependencies": [
         19,
@@ -2331,7 +2331,7 @@
         {
           "id": 1,
           "title": "Define 'recording.processed' Event",
-          "description": "Define a new event schema ('recording.processed') to be sent by the recording job on success, containing the Supabase URL.",
+          "description": "Define a new event schema ('recording.processed') to be sent by the recording job on success, containing the R2 presigned URL.",
           "dependencies": [
             27
           ],
@@ -2352,15 +2352,15 @@
         },
         {
           "id": 3,
-          "title": "Fetch Recording from Supabase",
-          "description": "Implement logic to get the recording audio file from the Supabase URL provided in the event.",
+          "title": "Fetch Recording from R2",
+          "description": "Implement logic to get the recording audio file from the R2 presigned URL provided in the event.",
           "dependencies": [
             2,
             7
           ],
           "status": "pending",
           "priority": "high",
-          "testStrategy": "Test with a valid Supabase URL."
+          "testStrategy": "Test with a valid R2 presigned URL."
         },
         {
           "id": 4,
@@ -2376,15 +2376,15 @@
         },
         {
           "id": 5,
-          "title": "Save Transcript to Supabase",
-          "description": "Save the resulting transcript text as a .txt or .json file to a 'transcripts' bucket in Supabase Storage.",
+          "title": "Save Transcript to R2",
+          "description": "Save the resulting transcript text as a .txt or .json file to R2 (e.g. transcripts/ prefix).",
           "dependencies": [
             4,
             7
           ],
           "status": "pending",
           "priority": "high",
-          "testStrategy": "Verify the transcript file is created in the Supabase bucket."
+          "testStrategy": "Verify the transcript file is created in the R2 bucket."
         },
         {
           "id": 6,
@@ -2427,7 +2427,7 @@
         {
           "id": 2,
           "title": "Get Recording URL",
-          "description": "Get the recording's Supabase URL from the event payload.",
+          "description": "Get the recording's R2 presigned URL from the event payload.",
           "dependencies": [
             1
           ],
@@ -3445,8 +3445,8 @@
     {
       "id": 48,
       "title": "DevOps: Configure Global Replicas",
-      "description": "Configure global replicas for Salesforce and Supabase.",
-      "details": "For Supabase, enable read replicas in different geographical regions via the Supabase dashboard. For Salesforce, configure the integration to connect to the appropriate regional endpoint. This is crucial for global scalability and low latency.",
+      "description": "Configure global replicas for Salesforce and Cloudflare.",
+      "details": "For Cloudflare R2, leverage Cloudflare's global edge network for low-latency access. For Salesforce, configure the integration to connect to the appropriate regional endpoint. This is crucial for global scalability and low latency.",
       "testStrategy": "Run performance tests from different geographic locations (using a VPN or cloud VMs) to measure read latency from the replicas. Verify that the latency is lower when accessing a nearby replica.",
       "priority": "low",
       "dependencies": [
@@ -3466,9 +3466,9 @@
         },
         {
           "id": 2,
-          "title": "Enable Supabase Read Replicas",
-          "description": "Configure read replicas in strategic geographic regions through Supabase dashboard",
-          "details": "Access Supabase project settings and enable read replicas in regions identified from usage analysis (e.g., US-East, EU-West, Asia-Pacific). Configure replication lag monitoring and alerting. Set up proper connection strings for each region. Priority: HIGH - core implementation task.",
+          "title": "Configure Cloudflare R2 for Global Access",
+          "description": "Leverage Cloudflare's edge network for R2 access",
+          "details": "R2 is served from Cloudflare's global network. For custom domains, configure R2 public access or Workers for presigned URL generation at the edge. Priority: HIGH - core implementation task.",
           "status": "pending",
           "dependencies": [
             1
@@ -5433,7 +5433,7 @@
       "id": 84,
       "title": "Frontend: User Profile Settings Page",
       "description": "Create user profile settings page.",
-      "details": "Build a page (`/settings/profile`) where users can update their personal information, such as first name, last name, and avatar image. The avatar image should be uploaded to Supabase Storage.",
+      "details": "Build a page (`/settings/profile`) where users can update their personal information, such as first name, last name, and avatar image. The avatar image should be uploaded to Cloudflare R2.",
       "testStrategy": "Update a user's name and upload a new avatar. Save the changes. Reload the page and verify that the new information is persisted and the new avatar is displayed.",
       "priority": "medium",
       "dependencies": [
@@ -5454,10 +5454,10 @@
     },
     {
       "id": 85,
-      "title": "Backend: Avatar Upload to Supabase",
-      "description": "Implement avatar upload to Supabase Storage.",
-      "details": "In the profile settings page, handle the file upload logic. When a user selects an image, upload it directly from the client to the Supabase Storage bucket using a signed upload URL. Update the `avatar_url` in the `user_profiles` table.",
-      "testStrategy": "Upload an image file. Check the Supabase Storage dashboard to confirm the file was uploaded. Check the `user_profiles` table to verify the `avatar_url` was updated.",
+      "title": "Backend: Avatar Upload to Cloudflare R2",
+      "description": "Implement avatar upload to Cloudflare R2.",
+      "details": "In the profile settings page, handle the file upload logic. When a user selects an image, upload it via a server API that stores it in Cloudflare R2. Update the `avatar_url` in the `user_profiles` table.",
+      "testStrategy": "Upload an image file. Check the R2 bucket to confirm the file was uploaded. Check the `user_profiles` table to verify the `avatar_url` was updated.",
       "priority": "medium",
       "dependencies": [
         84
@@ -5697,7 +5697,7 @@
           "id": 1,
           "title": "Configure Content Security Policy",
           "description": "Implement comprehensive CSP headers to prevent XSS attacks",
-          "details": "Define CSP directives for: script-src, style-src, img-src, connect-src, font-src, frame-src. Whitelist necessary domains for external services (Supabase, AI APIs, analytics). Use nonce or hash for inline scripts. Test thoroughly to avoid breaking functionality. Priority: HIGH - critical security feature.",
+          "details": "Define CSP directives for: script-src, style-src, img-src, connect-src, font-src, frame-src. Whitelist necessary domains for external services (Cloudflare R2, AI APIs, analytics). Use nonce or hash for inline scripts. Test thoroughly to avoid breaking functionality. Priority: HIGH - critical security feature.",
           "status": "pending",
           "dependencies": [],
           "parentTaskId": 93

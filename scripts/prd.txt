@@ -77,7 +77,7 @@ To democratize career development through scalable, emotionally-intelligent AI c
 
 ## Backend  
 - API Routes + Neon Postgres via DrizzleORM  
-- Supabase for real-time data + file storage  
+- Cloudflare R2 for file storage  
 - Inngest for background processing  
 - Better Auth for login / social auth  
 - Polar for billing
@@ -102,7 +102,7 @@ emotional_analysis
 - Vercel + Cloudflare CDN deployments  
 - GitHub Actions CI/CD with Node.js 20 runtime  
 - Axiom, PostHog, Sentry for logs & monitoring  
-- Global replicas: Salesforce + Supabase
+- Global replicas: Salesforce + Cloudflare
 
 # Development Roadmap  
 1. **Phase 1 – MVP**  

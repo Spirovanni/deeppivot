@@ -76,11 +76,19 @@ The app now includes:
 
 The app uses a **Clerk JS proxy** (`/api/clerk-js`) to avoid CORS with custom domain `clerk.deeppivots.com`. If you still see infinite loading or "Failed to load Clerk":
 
-1. **Clerk Dashboard → Paths**: Use "Sign-in page on application domain" with `https://deeppivots.com/sign-in` (not Account Portal)
-2. **Verify Clerk env vars in Vercel**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` must be set for Production
-3. **Clerk custom domain**: If using `clerk.deeppivots.com`, ensure DNS is configured per Clerk Dashboard → Domains
-4. **Enable auth methods in Clerk**: Clerk Dashboard → Configure → Email, Phone, Username → enable "Email address" and "Password". Enable Google under Social connections for "Continue with Google"
-5. **Redeploy** after changing env vars
+1. **Use apex domain**: Always access the site via `https://deeppivots.com` (not `www.deeppivots.com`). The app automatically redirects www to apex.
+2. **Clerk Dashboard → Domains**:
+   - Add `deeppivots.com` as your primary domain
+   - If you must support www, also add `www.deeppivots.com`
+   - Configure DNS for `clerk.deeppivots.com` per Clerk Dashboard instructions
+3. **Clerk Dashboard → Paths**: Use "Sign-in page on application domain" with `https://deeppivots.com/sign-in` (not Account Portal)
+4. **Verify Clerk env vars in Vercel**:
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` must be set for Production
+   - `CLERK_SECRET_KEY` must be set for Production
+5. **Enable auth methods in Clerk**:
+   - Clerk Dashboard → Configure → Email, Phone, Username → enable "Email address" and "Password"
+   - Enable Google under Social connections for "Continue with Google"
+6. **Redeploy** after changing env vars or domain configuration
 
 ## Troubleshooting User Sync Issues
 

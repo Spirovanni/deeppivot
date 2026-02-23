@@ -13,6 +13,13 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
+  // Redirect www to apex domain
+  const url = req.nextUrl.clone();
+  if (url.hostname.startsWith('www.')) {
+    url.hostname = url.hostname.replace(/^www\./, '');
+    return Response.redirect(url, 301);
+  }
+
   if (!isPublicRoute(req)) {
     await auth().protect();
   }

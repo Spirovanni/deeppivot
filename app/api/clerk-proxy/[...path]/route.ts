@@ -42,6 +42,20 @@ export async function DELETE(
   return proxyRequest(req, ctx);
 }
 
+export async function OPTIONS(req: NextRequest) {
+  const origin = req.headers.get("origin");
+  const headers = new Headers();
+
+  if (origin) {
+    headers.set("Access-Control-Allow-Origin", origin);
+    headers.set("Access-Control-Allow-Credentials", "true");
+    headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, Clerk-Secret-Key, X-Forwarded-For, X-Forwarded-Proto, X-Forwarded-Host");
+  }
+
+  return new NextResponse(null, { status: 204, headers });
+}
+
 async function proxyRequest(
   req: NextRequest,
   ctx: { params: Promise<{ path: string[] }> }
@@ -56,7 +70,9 @@ async function proxyRequest(
     return new NextResponse("Proxy misconfigured", { status: 500 });
   }
 
-  const proxyUrl = req.nextUrl.origin + "/api/clerk-proxy";
+  // Normalize domain to apex (remove www) for Clerk
+  const normalizedHost = req.nextUrl.host.replace(/^www\./, '');
+  const proxyUrl = `https://${normalizedHost}/api/clerk-proxy`;
   const forwardedFor = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "127.0.0.1";
 
   const headers = new Headers(req.headers);
@@ -64,7 +80,7 @@ async function proxyRequest(
   headers.set("Clerk-Secret-Key", secretKey);
   headers.set("X-Forwarded-For", forwardedFor);
   headers.set("X-Forwarded-Proto", req.headers.get("x-forwarded-proto") ?? "https");
-  headers.set("X-Forwarded-Host", req.headers.get("x-forwarded-host") ?? req.nextUrl.host);
+  headers.set("X-Forwarded-Host", normalizedHost);
 
   try {
     let body: string | undefined;
@@ -82,8 +98,15 @@ async function proxyRequest(
     const resHeaders = new Headers();
     const contentType = res.headers.get("Content-Type");
     if (contentType) resHeaders.set("Content-Type", contentType);
+
+    // Handle CORS for both www and apex domain
     const origin = req.headers.get("origin");
-    if (origin) resHeaders.set("Access-Control-Allow-Origin", origin);
+    if (origin) {
+      resHeaders.set("Access-Control-Allow-Origin", origin);
+      resHeaders.set("Access-Control-Allow-Credentials", "true");
+      resHeaders.set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+      resHeaders.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    }
 
     return new NextResponse(resBody, {
       status: res.status,

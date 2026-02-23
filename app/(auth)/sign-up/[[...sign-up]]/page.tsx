@@ -24,7 +24,7 @@ export default function Page() {
     signUp
       .authenticateWithRedirect({
         strategy,
-        redirectUrl: "/sign-up/sso-callback",
+        redirectUrl: "/sign-in/sso-callback",
         redirectUrlComplete: "/dashboard",
       })
       .catch((err: unknown) => {

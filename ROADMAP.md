@@ -103,8 +103,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 |----|-------|
 | ~~deeppivot-24~~ | ~~Backend: Set up Cloudflare R2 for Storage~~ ✓ |
 | ~~deeppivot-19~~ | ~~Frontend: Initialize Next.js 15 Project~~ ✓ |
+| ~~deeppivot-104~~ | ~~Frontend: Global Notification Toasts~~ ✓ |
 
-Run `bd ready` to see current ready work. Cloudflare R2 (deeppivot-24) and Next.js 16 (deeppivot-19) complete.
+Run `bd ready` to see current ready work. Global toasts (deeppivot-104) complete.
 
 ---
 
@@ -246,4 +247,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-24 (Cloudflare R2) and deeppivot-19 (Next.js 16 + React 19) closed. Run `bd ready` for next work.*
+*Last updated: 2026-02-22 — deeppivot-104 (Global Notification Toasts) closed. react-hot-toast integrated; career plan mutations and interview errors show toasts. Run `bd ready` for next work.*

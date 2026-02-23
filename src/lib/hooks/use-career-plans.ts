@@ -6,6 +6,7 @@ import {
   useQueryClient,
   type QueryClient,
 } from "@tanstack/react-query";
+import { toast } from "@/src/lib/toast";
 
 export const PLANS_QUERY_KEY = ["career-plans"] as const;
 
@@ -109,10 +110,11 @@ export function useUpdatePlan() {
       );
       return { previous };
     },
-    onError: (_err, _vars, context) => {
+    onError: (err, _vars, context) => {
       if (context?.previous) {
         queryClient.setQueryData(PLANS_QUERY_KEY, context.previous);
       }
+      toast.error(err instanceof Error ? err.message : "Failed to update milestone");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: PLANS_QUERY_KEY });
@@ -138,10 +140,11 @@ export function useDeletePlan() {
       );
       return { previous };
     },
-    onError: (_err, _vars, context) => {
+    onError: (err, _vars, context) => {
       if (context?.previous) {
         queryClient.setQueryData(PLANS_QUERY_KEY, context.previous);
       }
+      toast.error(err instanceof Error ? err.message : "Failed to delete milestone");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: PLANS_QUERY_KEY });
@@ -178,10 +181,11 @@ export function useReorderPlans() {
       });
       return { previous };
     },
-    onError: (_err, _vars, context) => {
+    onError: (err, _vars, context) => {
       if (context?.previous) {
         queryClient.setQueryData(PLANS_QUERY_KEY, context.previous);
       }
+      toast.error(err instanceof Error ? err.message : "Failed to reorder milestones");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: PLANS_QUERY_KEY });
@@ -212,6 +216,10 @@ export function useAddResource() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PLANS_QUERY_KEY });
+      toast.success("Resource added");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to add resource");
     },
   });
 }
@@ -258,6 +266,10 @@ export function useRemoveResource() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PLANS_QUERY_KEY });
+      toast.success("Resource removed");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to remove resource");
     },
   });
 }

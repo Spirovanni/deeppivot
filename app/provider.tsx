@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ClerkProvider, useUser } from "@clerk/nextjs";
+import { Toaster } from "react-hot-toast";
 import UserSyncProvider from "./UserSyncProvider";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { QueryProvider } from "./QueryProvider";
@@ -69,6 +70,7 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
       <UserSyncProvider>
         <UserDetailContext.Provider value={{userDetail,setUserDetail}}>
           {children}
+          <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
         </UserDetailContext.Provider>
       </UserSyncProvider>
     </QueryProvider>

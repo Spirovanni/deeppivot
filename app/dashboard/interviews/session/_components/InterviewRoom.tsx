@@ -12,6 +12,7 @@ import {
   endInterviewSession,
   captureEmotionSnapshot,
 } from "@/src/lib/actions/interview-sessions";
+import { toast } from "@/src/lib/toast";
 import { useVoice } from "@humeai/voice-react";
 
 const SESSION_TYPE_META: Record<string, { label: string; icon: React.ElementType; tagline: string }> = {
@@ -224,7 +225,7 @@ export function InterviewRoom({ accessToken, sessionType }: InterviewRoomProps) 
         }}
         onError={(error) => {
           console.error("VoiceProvider error:", error);
-          alert(error.message ?? "Something went wrong");
+          toast.error(error.message ?? "Error connecting to interview");
         }}
       >
         <EmotionCapture sessionId={sessionIdRef.current} />

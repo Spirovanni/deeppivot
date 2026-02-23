@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { ensureUserInDb } from "@/src/lib/actions/ensure-user";
+import { DashboardConnectionError } from "@/components/dashboard/DashboardConnectionError";
 
 export default async function DashboardLayout({
   children,
@@ -14,7 +15,10 @@ export default async function DashboardLayout({
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  await ensureUserInDb();
+  const dbUserId = await ensureUserInDb();
+  if (dbUserId === null) {
+    return <DashboardConnectionError />;
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background md:flex-row">

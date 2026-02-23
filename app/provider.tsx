@@ -78,10 +78,15 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
 }
 
 function Provider({ children }: { children: React.ReactNode }) {
+  // Only use custom proxy in production (with live keys)
+  const isProduction = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_live_');
+
   return (
     <ClerkProvider
-      clerkJSUrl="/api/clerk-js"
-      proxyUrl="/api/clerk-proxy"
+      {...(isProduction ? {
+        clerkJSUrl: "/api/clerk-js",
+        proxyUrl: "/api/clerk-proxy"
+      } : {})}
     >
       <InnerProvider>
         {children}

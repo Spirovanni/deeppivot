@@ -72,6 +72,14 @@ The app now includes:
 3. **User data synced** to your Neon database
 4. **Application uses** database data for user profiles, preferences, etc.
 
+## Troubleshooting Sign-In Form Not Loading
+
+If the sign-in page shows the logo and welcome message but no form:
+
+1. **Verify Clerk env vars in Vercel**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` must be set for Production
+2. **Add production domain to Clerk**: Clerk Dashboard → Configure → Domains → add `deeppivots.com`
+3. **Redeploy** after changing env vars
+
 ## Troubleshooting User Sync Issues
 
 If Google/Facebook users aren't appearing in the database:

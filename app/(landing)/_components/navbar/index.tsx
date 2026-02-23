@@ -19,7 +19,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Moon, Sun, ChevronDown, Mic2, UserCircle, MapPin, BarChart3 } from "lucide-react";
-import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 
 export const Navbar = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -107,7 +107,7 @@ export const Navbar = () => {
           </nav>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Button
             onClick={toggleDark}
             variant="ghost"
@@ -165,21 +165,23 @@ const AuthSection = () => {
     );
   }
 
+  // Use Link instead of SignInButton/SignUpButton so auth section always renders
+  // even if Clerk modal components fail to load (e.g. in production)
   return (
     <div className="flex items-center gap-2">
-      <SignInButton mode="modal">
+      <Link href="/sign-in">
         <Button variant="ghost" size="sm" className="rounded-lg">
           Sign In
         </Button>
-      </SignInButton>
-      <SignUpButton mode="modal">
+      </Link>
+      <Link href="/sign-up">
         <Button
           size="sm"
           className="rounded-lg bg-gradient-to-r from-violet-500 to-pink-500 text-white shadow-sm hover:from-violet-600 hover:to-pink-600"
         >
           Get Started
         </Button>
-      </SignUpButton>
+      </Link>
     </div>
   );
 };

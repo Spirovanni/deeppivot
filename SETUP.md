@@ -74,12 +74,13 @@ The app now includes:
 
 ## Troubleshooting Sign-In Form Not Loading
 
-The app now uses a **custom sign-in form** (not Clerk's prebuilt component). If you still see issues:
+The app now uses a **custom sign-in form** (not Clerk's prebuilt component). If you see infinite loading or CORS errors:
 
-1. **Verify Clerk env vars in Vercel**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` must be set for Production
-2. **Add production domain to Clerk**: Clerk Dashboard → Configure → Domains → add `deeppivots.com`
-3. **Enable auth methods in Clerk**: Clerk Dashboard → Configure → Email, Phone, Username → enable "Email address" and "Password" for sign-in/sign-up if using email/password. Enable Google under Social connections for "Continue with Google"
-4. **Redeploy** after changing env vars
+1. **www vs apex**: The app redirects `www.deeppivots.com` → `deeppivots.com` to avoid Clerk CORS. Use `deeppivots.com` (no www), or add `www.deeppivots.com` to Clerk Dashboard → Configure → Domains
+2. **Verify Clerk env vars in Vercel**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` must be set for Production
+3. **Clerk custom domain**: If using `clerk.deeppivots.com`, ensure DNS is configured per Clerk Dashboard → Domains
+4. **Enable auth methods in Clerk**: Clerk Dashboard → Configure → Email, Phone, Username → enable "Email address" and "Password". Enable Google under Social connections for "Continue with Google"
+5. **Redeploy** after changing env vars
 
 ## Troubleshooting User Sync Issues
 

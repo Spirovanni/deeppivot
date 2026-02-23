@@ -7,6 +7,8 @@ import { useSignIn } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+const CLERK_LOAD_TIMEOUT_MS = 8000;
+
 export default function Page() {
   const router = useRouter();
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -14,6 +16,13 @@ export default function Page() {
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [clerkLoadFailed, setClerkLoadFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isLoaded) return;
+    const t = setTimeout(() => setClerkLoadFailed(true), CLERK_LOAD_TIMEOUT_MS);
+    return () => clearTimeout(t);
+  }, [isLoaded]);
 
   const signInWithOAuth = (strategy: "oauth_google") => {
     if (!signIn) return;
@@ -59,6 +68,44 @@ export default function Page() {
   };
 
   if (!isLoaded) {
+    if (clerkLoadFailed) {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4">
+          <div className="max-w-md rounded-lg border border-amber-200 bg-amber-50 p-6 dark:border-amber-800 dark:bg-amber-950/50">
+            <h2 className="text-lg font-semibold text-amber-800 dark:text-amber-200">
+              Authentication failed to load
+            </h2>
+            <p className="mt-2 text-sm text-amber-700 dark:text-amber-300">
+              This is usually caused by a CORS or domain mismatch. Try:
+            </p>
+            <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-amber-700 dark:text-amber-300">
+              <li>
+                Use <strong>deeppivots.com</strong> (without www) instead of
+                www.deeppivots.com
+              </li>
+              <li>
+                Add <strong>www.deeppivots.com</strong> to Clerk Dashboard →
+                Configure → Domains
+              </li>
+              <li>
+                Ensure <strong>clerk.deeppivots.com</strong> DNS is configured
+                per Clerk Dashboard
+              </li>
+            </ul>
+            <Button
+              className="mt-4 w-full"
+              variant="outline"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </Button>
+            <Link href="/" className="mt-3 block text-center text-sm text-amber-600 hover:underline dark:text-amber-400">
+              ← Back to home
+            </Link>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <div className="flex flex-col items-center gap-4">

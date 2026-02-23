@@ -107,8 +107,9 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ~~deeppivot-107~~ | ~~Frontend: Custom 500 Error Page~~ ✓ |
 | ~~deeppivot-112~~ | ~~Frontend: Global Footer Component~~ ✓ |
 | ~~deeppivot-128~~ | ~~SEO: Create robots.txt~~ ✓ |
+| ~~deeppivot-106~~ | ~~Frontend: Custom 404 Page~~ ✓ |
 
-Run `bd ready` to see current ready work. robots.txt (deeppivot-128) complete.
+Run `bd ready` to see current ready work. Custom 404 (deeppivot-106) complete.
 
 ---
 
@@ -250,4 +251,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 
 ---
 
-*Last updated: 2026-02-22 — deeppivot-128 (robots.txt) closed. app/robots.ts: disallow /dashboard, /settings, /admin, /api; sitemap. Run `bd ready` for next work.*
+*Last updated: 2026-02-22 — deeppivot-106 (Custom 404) closed. app/not-found.tsx with branded 404 UI. Run `bd ready` for next work.*

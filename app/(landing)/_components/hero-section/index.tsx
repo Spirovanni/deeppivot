@@ -170,7 +170,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
-              className="absolute -right-4 top-4 rounded-xl border border-violet-200 bg-white/90 p-4 shadow-lg backdrop-blur-sm dark:border-violet-800 dark:bg-slate-900/90"
+              className="absolute -right-4 bottom-4 rounded-xl border border-violet-200 bg-white/90 p-4 shadow-lg backdrop-blur-sm dark:border-violet-800 dark:bg-slate-900/90"
             >
               <div className="text-sm font-semibold text-violet-600 dark:text-violet-400">
                 FlowArcs Integration
@@ -181,7 +181,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 4, repeat: Infinity }}
-              className="absolute -left-4 bottom-20 rounded-xl border border-pink-200 bg-white/90 p-4 shadow-lg backdrop-blur-sm dark:border-pink-800 dark:bg-slate-900/90"
+              className="absolute -left-4 bottom-32 rounded-xl border border-pink-200 bg-white/90 p-4 shadow-lg backdrop-blur-sm dark:border-pink-800 dark:bg-slate-900/90"
             >
               <div className="text-sm font-semibold text-pink-600 dark:text-pink-400">
                 Emotion Detection

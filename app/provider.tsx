@@ -83,15 +83,7 @@ function Provider({ children }: { children: React.ReactNode }) {
   const isProduction = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_live_');
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem={true}
-      enableColorScheme={false}
-      disableTransitionOnChange
-      storageKey="deeppivot-theme"
-      nonce=""
-    >
+    <ThemeProvider defaultTheme="system" storageKey="deeppivot-theme">
       <ClerkProvider
         {...(isProduction ? {
           clerkJSUrl: "/api/clerk-js",

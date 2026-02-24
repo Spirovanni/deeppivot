@@ -10,8 +10,8 @@
 
 | Feature | Status |
 |---------|--------|
-| **AI Voice Interviews** — Hume EVI, emotion detection, <800ms latency | ✅ Live |
-| **Emotional Intelligence Feedback** — Per-session emotion timeline & insights | ✅ Live |
+| **AI Voice Interviews** — ElevenLabs Conversational AI with natural voice interactions | ✅ Live |
+| **Interview Feedback** — Per-session feedback and insights | ✅ Live |
 | **Performance Analytics** — Sessions over time, score trend, emotion pie, skills radar | ✅ Live |
 | **Career Archetype Assessment** — 18-question Likert assessment, 6 archetypes, trait radar | ✅ Live |
 | **Career Planning** — Draggable milestone timeline, linked resources | ✅ Live |
@@ -29,7 +29,7 @@
 | Database | PostgreSQL on Neon |
 | ORM | Drizzle ORM 0.44 |
 | Auth | Clerk (webhook + client sync) |
-| AI Voice | Hume EVI (`@humeai/voice-react`) |
+| AI Voice | ElevenLabs Conversational AI |
 | Charts | Recharts 3 |
 | Drag & Drop | dnd-kit |
 | UI | Shadcn UI + Radix + Tailwind CSS 4 |
@@ -45,7 +45,7 @@
 - pnpm
 - A [Neon](https://neon.tech) PostgreSQL database
 - A [Clerk](https://clerk.com) application
-- A [Hume AI](https://hume.ai) API key
+- An [ElevenLabs](https://elevenlabs.io) account and API key
 
 ### 1. Clone & Install
 
@@ -78,12 +78,12 @@ NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
 NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 CLERK_WEBHOOK_SECRET=whsec_...
 
-# Hume AI
-HUME_API_KEY=...
-HUME_SECRET_KEY=...
-NEXT_PUBLIC_HUME_CONFIG_ID=...
+# ElevenLabs AI Voice
+ELEVENLABS_API_KEY=sk_...
+NEXT_PUBLIC_ELEVENLABS_API_KEY=sk_...
+NEXT_PUBLIC_ELEVENLABS_AGENT_ID=agent_...
 
-# Vapi Voice AI (Phase 3 — optional until AI interview pipeline is complete)
+# Vapi Voice AI (optional)
 VAPI_API_KEY=...
 VAPI_INTERVIEW_ASSISTANT_ID=...  # Default assistant for interview sessions
 VAPI_PHONE_NUMBER_ID=...         # Optional — required for outbound phone calls only
@@ -131,7 +131,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ├── app/
 │   ├── (auth)/                    # Clerk sign-in/sign-up
 │   ├── (landing)/                 # Marketing landing page
-│   ├── api/                       # Route handlers (Hume token, Clerk webhook)
+│   ├── api/                       # Route handlers (ElevenLabs, Clerk webhook)
 │   └── dashboard/
 │       ├── analytics/             # LP5: Performance Analytics
 │       ├── archetype/             # LP6: Career Archetype Assessment

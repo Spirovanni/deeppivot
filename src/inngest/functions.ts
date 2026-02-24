@@ -4,8 +4,7 @@
  * interview.completed: Fetches recording from Vapi, uploads to Cloudflare R2,
  * saves URL to recording_urls table, then emits recording.processed.
  *
- * recording.processed: Triggers transcription (Deepgram) and emotional
- * analysis (Hume) in parallel.
+ * recording.processed: Triggers transcription (Deepgram).
  */
 
 import { inngest } from "@/src/inngest/client";
@@ -21,7 +20,6 @@ import { eq, and, ne, desc } from "drizzle-orm";
 import { getCall } from "@/src/lib/vapi";
 import { uploadToR2 } from "@/src/lib/storage";
 import { transcribeInterviewRecording } from "@/src/lib/deepgram";
-import { analyzeRecordingUrl } from "@/src/lib/hume";
 import { generateCompletion } from "@/src/lib/llm";
 import { mapInterviewToSkills } from "@/src/lib/career-skills";
 
@@ -148,6 +146,8 @@ export const processInterviewTranscription = inngest.createFunction(
   }
 );
 
+// Emotional analysis disabled (previously used Hume.ai)
+// To re-enable: integrate a voice emotion analysis provider and uncomment this function
 export const processInterviewEmotionalAnalysis = inngest.createFunction(
   {
     id: "process-interview-emotional-analysis",
@@ -156,53 +156,36 @@ export const processInterviewEmotionalAnalysis = inngest.createFunction(
   },
   { event: "recording.processed" },
   async ({ event, step }) => {
-    const { sessionId, recordingUrl } = event.data as {
+    const { sessionId } = event.data as {
       sessionId: number;
       recordingUrl: string;
     };
 
-    if (!sessionId || !recordingUrl) {
-      throw new Error("Missing sessionId or recordingUrl in event data");
+    if (!sessionId) {
+      throw new Error("Missing sessionId in event data");
     }
 
-    // 1. Submit to Hume batch API, wait for completion, get results (fallback on failure)
-    const result = await step.run("analyze-hume-prosody", async () => {
-      try {
-        return await analyzeRecordingUrl(recordingUrl, { prosody: true });
-      } catch (err) {
-        console.error(`Hume emotion analysis failed for session ${sessionId}:`, err);
-        return {
-          jobId: "fallback-unavailable",
+    // Placeholder: Insert fallback emotional analysis (unavailable)
+    await step.run("save-emotional-analysis-fallback", async () => {
+      await db.insert(emotionalAnalysesTable).values({
+        sessionId,
+        jobId: "emotional-analysis-disabled",
+        data: {
           snapshots: [],
           overallDominantEmotion: "Unknown",
           aggregateEmotions: [],
           unavailable: true,
-        } as const;
-      }
-    });
-
-    // 2. Save to emotional_analysis table
-    await step.run("save-emotional-analysis", async () => {
-      const isFallback = "unavailable" in result && result.unavailable;
-      await db.insert(emotionalAnalysesTable).values({
-        sessionId,
-        jobId: result.jobId,
-        data: {
-          snapshots: result.snapshots,
-          overallDominantEmotion: result.overallDominantEmotion,
-          aggregateEmotions: result.aggregateEmotions,
-          ...(isFallback && { unavailable: true }),
         },
       });
     });
 
-    // 3. Emit for feedback job
+    // Emit for feedback job to continue pipeline
     await step.sendEvent("emotion-analysis-complete", {
       name: "emotion_analysis.complete",
       data: { sessionId },
     });
 
-    return { sessionId, jobId: result.jobId };
+    return { sessionId, jobId: "emotional-analysis-disabled" };
   }
 );
 

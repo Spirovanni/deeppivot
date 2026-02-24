@@ -8,7 +8,7 @@ import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Deep Pivot",
-  description: "A Career Coach using Hume AI's Empathic Voice Interface",
+  description: "AI-powered career development platform with voice interviews powered by ElevenLabs",
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '16x16 32x32 48x48', type: 'image/x-icon' },

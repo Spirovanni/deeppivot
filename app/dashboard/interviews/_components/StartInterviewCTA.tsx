@@ -8,26 +8,30 @@ const SESSION_TYPES = [
   {
     type: "behavioral",
     label: "Behavioral",
-    description: "Discuss past experiences using the STAR method.",
+    description: "Practice answering questions about past experiences. Perfect for mastering the STAR method.",
     icon: Users,
+    gradient: "from-blue-500/10 to-cyan-500/10",
   },
   {
     type: "technical",
     label: "Technical",
-    description: "Problem-solving, system design, and coding concepts.",
+    description: "Solve problems and explain technical concepts. Great for engineering roles.",
     icon: Code2,
+    gradient: "from-purple-500/10 to-pink-500/10",
   },
   {
     type: "situational",
     label: "Situational",
-    description: "How you'd handle hypothetical scenarios on the job.",
+    description: "Navigate hypothetical workplace scenarios. Build your decision-making skills.",
     icon: Lightbulb,
+    gradient: "from-amber-500/10 to-orange-500/10",
   },
   {
     type: "general",
     label: "General",
-    description: "Open-ended practice across all interview dimensions.",
+    description: "Comprehensive interview practice covering all types. Best for overall preparation.",
     icon: Mic2,
+    gradient: "from-emerald-500/10 to-teal-500/10",
   },
 ];
 
@@ -36,28 +40,36 @@ export function StartInterviewCTA() {
 
   return (
     <div>
-      <h2 className="mb-3 text-lg font-semibold">Start New Interview</h2>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Choose Your Interview Type</h2>
+        <span className="text-xs text-muted-foreground">~10-15 minutes</span>
+      </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {SESSION_TYPES.map(({ type, label, description, icon: Icon }) => (
+        {SESSION_TYPES.map(({ type, label, description, icon: Icon, gradient }) => (
           <button
             key={type}
             onClick={() => router.push(`/dashboard/interviews/session?type=${type}`)}
-            className="text-left"
+            className="group text-left"
           >
-            <Card className="h-full cursor-pointer transition-all hover:bg-accent/50 hover:shadow-md active:scale-[0.98]">
+            <Card className="h-full cursor-pointer border-2 transition-all hover:border-primary/50 hover:shadow-lg active:scale-[0.98]">
               <CardContent className="flex flex-col gap-3 p-5">
-                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
-                  <Icon className="size-5 text-primary" />
+                <div className={`flex size-12 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} transition-transform group-hover:scale-110`}>
+                  <Icon className="size-6 text-primary" />
                 </div>
                 <div>
-                  <p className="font-semibold">{label}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+                  <p className="font-semibold text-foreground">{label}</p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    {description}
+                  </p>
                 </div>
               </CardContent>
             </Card>
           </button>
         ))}
       </div>
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        💬 Click any interview type to start a voice conversation with Sarah
+      </p>
     </div>
   );
 }

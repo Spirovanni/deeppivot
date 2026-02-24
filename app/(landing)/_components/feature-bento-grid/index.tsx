@@ -132,13 +132,13 @@ const RocketLaunch = () => (
 const items = [
   {
     title: "AI Voice Interviews",
-    description: "Practice with realistic voice interviews powered by Hume AI with <800ms latency. Integrate interview sessions into FlowArcs workflows for automated career development.",
+    description: "Practice with realistic voice interviews powered by ElevenLabs Conversational AI. Get real-time feedback and integrate interview sessions into FlowArcs workflows for automated career development.",
     header: <VoiceWaveform />,
     icon: <IconMicrophone className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Emotional Intelligence Feedback",
-    description: "Real-time emotion detection and communication analysis using Hume AI's empathic technology. Track emotional patterns across sessions.",
+    title: "Interview Feedback & Analysis",
+    description: "Receive constructive feedback on interview performance. Track progress across sessions and identify areas for improvement.",
     header: <EmotionChart />,
     icon: <IconHeart className="h-4 w-4 text-neutral-500" />,
   },

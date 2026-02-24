@@ -184,9 +184,9 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
               className="absolute -left-4 bottom-32 rounded-xl border border-pink-200 bg-white/90 p-4 shadow-lg backdrop-blur-sm dark:border-pink-800 dark:bg-slate-900/90"
             >
               <div className="text-sm font-semibold text-pink-600 dark:text-pink-400">
-                Emotion Detection
+                Voice AI Coach
               </div>
-              <div className="text-xs text-slate-600 dark:text-slate-400">Powered by Hume AI</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400">Powered by ElevenLabs</div>
             </motion.div>
           </div>
         </motion.div>

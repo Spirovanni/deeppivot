@@ -5,11 +5,11 @@ import { interviewSessionsTable } from "@/src/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-export async function deleteInterviewSession(sessionId: string) {
+export async function deleteInterviewSession(sessionId: string | number) {
   try {
     await db
       .delete(interviewSessionsTable)
-      .where(eq(interviewSessionsTable.id, sessionId));
+      .where(eq(interviewSessionsTable.id, Number(sessionId)));
 
     revalidatePath("/dashboard/interviews");
     return { success: true };
@@ -19,7 +19,7 @@ export async function deleteInterviewSession(sessionId: string) {
   }
 }
 
-export async function deleteInterviewSessions(sessionIds: string[]) {
+export async function deleteInterviewSessions(sessionIds: (string | number)[]) {
   try {
     if (sessionIds.length === 0) {
       return { success: false, error: "No sessions selected" };
@@ -27,7 +27,7 @@ export async function deleteInterviewSessions(sessionIds: string[]) {
 
     await db
       .delete(interviewSessionsTable)
-      .where(inArray(interviewSessionsTable.id, sessionIds));
+      .where(inArray(interviewSessionsTable.id, sessionIds.map(Number)));
 
     revalidatePath("/dashboard/interviews");
     return { success: true, count: sessionIds.length };

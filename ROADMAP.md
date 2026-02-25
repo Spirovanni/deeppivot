@@ -298,3 +298,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 *Last updated: 2026-02-25 — deeppivot-30 (DB Schema: Career Plans, Goals, Archetypes) closed. Tables present: career_archetypes, archetype_review_queue, career_milestones, career_resources. Full FK + Drizzle relations wired.*
 *Last updated: 2026-02-25 — deeppivot-31 (DB Schema: Subscriptions and Agent Config) implemented. subscriptions and agent_configs tables added to schema.ts; migration 0014 generated and applied to Neon.*
 *Last updated: 2026-02-25 — deeppivot-32 (Vercel Deployment) implemented. vercel.json, next.config.js (security headers, image domains, compression), .vercelignore, and comprehensive .env.example created and pushed.*
+*Last updated: 2026-02-25 — deeppivot-33 (GitHub Actions CI/CD) implemented. .github/workflows/ci.yml: lint + type-check + build jobs on push/PR to main; pnpm cache, concurrency cancel-in-progress. .github/pull_request_template.md added.*

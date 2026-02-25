@@ -130,6 +130,7 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ~~deeppivot-28~~ | ~~Backend: Set up Inngest for Background Jobs~~ ✓ |
 | ~~deeppivot-29~~ | ~~DB Schema: Interviews and Feedback~~ ✓ |
 | ~~deeppivot-30~~ | ~~DB Schema: Career Plans, Goals, Archetypes~~ ✓ |
+| ~~deeppivot-32~~ | ~~DevOps: Configure Vercel Deployment~~ ✓ |
 | ~~deeppivot-104~~ | ~~Frontend: Global Notification Toasts~~ ✓ |
 | ~~deeppivot-107~~ | ~~Frontend: Custom 500 Error Page~~ ✓ |
 | ~~deeppivot-112~~ | ~~Frontend: Global Footer Component~~ ✓ |
@@ -294,3 +295,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 *Last updated: 2026-02-25 — deeppivot-28 (Inngest) closed. inngest ^3.52.3 installed; client, 5 production functions (recording → transcription → emotion → feedback → archetyping), and /api/inngest route all live.*
 *Last updated: 2026-02-25 — deeppivot-29 (DB Schema: Interviews and Feedback) closed. All 7 interview tables present: interview_sessions, interview_questions, emotion_snapshots, recording_urls, transcript_urls, emotional_analysis, interview_feedback. Full FK + Drizzle relations wired.*
 *Last updated: 2026-02-25 — deeppivot-30 (DB Schema: Career Plans, Goals, Archetypes) closed. Tables present: career_archetypes, archetype_review_queue, career_milestones, career_resources. Full FK + Drizzle relations wired.*
+*Last updated: 2026-02-25 — deeppivot-32 (Vercel Deployment) implemented. vercel.json, next.config.js (security headers, image domains, compression), .vercelignore, and comprehensive .env.example created and pushed.*

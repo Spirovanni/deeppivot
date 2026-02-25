@@ -44,13 +44,13 @@ async function main() {
     const voices = await client.voices.getAll();
 
     const sarahVoice = voices.voices.find(
-      (v) => v.name.toLowerCase() === "sarah"
+      (v) => v.name?.toLowerCase() === "sarah"
     );
 
     if (!sarahVoice) {
       console.error("❌ Sarah voice not found. Available voices:");
       voices.voices.slice(0, 10).forEach((v) => {
-        console.log(`   - ${v.name} (${v.voice_id})`);
+        console.log(`   - ${v.name ?? "unnamed"} (${v.voice_id})`);
       });
       process.exit(1);
     }

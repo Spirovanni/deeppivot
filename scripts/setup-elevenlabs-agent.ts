@@ -31,12 +31,13 @@ async function main() {
   try {
     // List existing agents
     console.log("📋 Checking existing agents...\n");
-    const agents = await client.conversationalAi.getAgents();
+    const agentsPage = await client.conversationalAi.getAgents();
+    const agents = agentsPage.agents ?? [];
 
-    if (agents && agents.length > 0) {
+    if (agents.length > 0) {
       console.log("Found existing agents:");
-      agents.forEach((agent: any, idx: number) => {
-        console.log(`${idx + 1}. ${agent.name || "Unnamed"} (ID: ${agent.agent_id || agent.id})`);
+      agents.forEach((agent, idx: number) => {
+        console.log(`${idx + 1}. ${agent.name || "Unnamed"} (ID: ${agent.agent_id})`);
       });
       console.log();
 
@@ -44,7 +45,7 @@ async function main() {
       if (useExisting.toLowerCase() === "y") {
         const agentNum = await question("Enter agent number: ");
         const selectedAgent = agents[parseInt(agentNum) - 1];
-        const agentId = selectedAgent.agent_id || selectedAgent.id;
+        const agentId = selectedAgent.agent_id;
 
         console.log(`\n✅ Selected agent: ${selectedAgent.name}`);
         console.log(`\n📝 Add this to your .env file:`);

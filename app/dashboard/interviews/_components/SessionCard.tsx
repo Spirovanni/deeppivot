@@ -35,7 +35,7 @@ function formatDuration(startedAt: Date, endedAt: Date | null): string | null {
 
 interface SessionCardProps {
   session: {
-    id: string;
+    id: number;
     sessionType: string;
     status: string;
     startedAt: Date;

@@ -7,7 +7,7 @@ import { toast } from "@/src/lib/toast";
 import { Trash2, Edit3, X } from "lucide-react";
 
 interface Session {
-  id: string;
+  id: number;
   sessionType: string;
   status: string;
   startedAt: Date;
@@ -21,7 +21,7 @@ interface SessionsListProps {
 
 export function SessionsList({ sessions }: SessionsListProps) {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleToggleEdit = () => {
@@ -37,7 +37,7 @@ export function SessionsList({ sessions }: SessionsListProps) {
     }
   };
 
-  const handleToggleSelect = (id: string) => {
+  const handleToggleSelect = (id: number) => {
     const newSelected = new Set(selectedIds);
     if (newSelected.has(id)) {
       newSelected.delete(id);

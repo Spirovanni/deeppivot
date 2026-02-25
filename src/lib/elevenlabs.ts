@@ -13,6 +13,7 @@
 
 import "server-only";
 import { ElevenLabsClient } from "elevenlabs";
+import type { Llm } from "elevenlabs/api/types";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -89,21 +90,17 @@ export async function createConversationalAgent(config: {
         agent: {
           prompt: {
             prompt: config.systemPrompt,
-            llm: config.modelId || "gpt-4o",
+            llm: (config.modelId || "gpt-4o") as Llm,
           },
           first_message: config.firstMessage,
         },
         tts: {
           voice_id: config.voiceId,
-          model_id: "eleven_turbo_v2_5",
           stability: config.stability ?? 0.5,
           similarity_boost: config.similarityBoost ?? 0.75,
-          style: config.style ?? 0.3,
         },
       },
-      platform_settings: {
-        name: config.name,
-      },
+      platform_settings: {},
     });
 
     return agent;

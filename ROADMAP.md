@@ -128,6 +128,7 @@ Full kanban-style job application tracker. All 7 phases shipped.
 | ~~deeppivot-26~~ | ~~Frontend: Build Auth Forms (Login/Register)~~ ✓ |
 | ~~deeppivot-27~~ | ~~Auth: Implement Role-Based Access Control (RBAC)~~ ✓ |
 | ~~deeppivot-28~~ | ~~Backend: Set up Inngest for Background Jobs~~ ✓ |
+| ~~deeppivot-29~~ | ~~DB Schema: Interviews and Feedback~~ ✓ |
 | ~~deeppivot-104~~ | ~~Frontend: Global Notification Toasts~~ ✓ |
 | ~~deeppivot-107~~ | ~~Frontend: Custom 500 Error Page~~ ✓ |
 | ~~deeppivot-112~~ | ~~Frontend: Global Footer Component~~ ✓ |
@@ -290,3 +291,4 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 *Last updated: 2026-02-25 — deeppivot-26 (Auth Forms) closed. Sign-in and sign-up pages built with Shadcn Button/Input: email/password, Google OAuth, email verification flow, typed error handling, loading states, dark mode.*
 *Last updated: 2026-02-25 — deeppivot-27 (RBAC) implemented. src/lib/rbac.ts: AppRole (admin/employer/user), requireRole/requireAdmin/requireEmployer/requireLearner/getCurrentUser/hasRole. proxy.ts: admin + employer route matchers with DB role check → /unauthorized redirect. app/unauthorized/page.tsx created.*
 *Last updated: 2026-02-25 — deeppivot-28 (Inngest) closed. inngest ^3.52.3 installed; client, 5 production functions (recording → transcription → emotion → feedback → archetyping), and /api/inngest route all live.*
+*Last updated: 2026-02-25 — deeppivot-29 (DB Schema: Interviews and Feedback) closed. All 7 interview tables present: interview_sessions, interview_questions, emotion_snapshots, recording_urls, transcript_urls, emotional_analysis, interview_feedback. Full FK + Drizzle relations wired.*

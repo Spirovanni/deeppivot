@@ -99,6 +99,13 @@
       "when": 1771802731543,
       "tag": "0013_open_nighthawk",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1772048201062,
+      "tag": "0014_sticky_lord_hawal",
+      "breakpoints": true
     }
   ]
 }

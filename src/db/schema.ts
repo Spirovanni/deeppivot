@@ -45,6 +45,8 @@ export const usersRelations = relations(usersTable, ({ many, one }) => ({
   careerArchetype: one(careerArchetypesTable),
   careerMilestones: many(careerMilestonesTable),
   mentorConnections: many(mentorConnectionsTable),
+  subscription: one(subscriptionsTable),
+  agentConfigs: many(agentConfigsTable),
 }));
 
 // ============================================
@@ -429,6 +431,77 @@ export const educationProgramsTable = pgTable("education_programs", {
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
+
+// ============================================
+// SUBSCRIPTIONS MODEL (Billing / Stripe)
+// ============================================
+
+export const subscriptionsTable = pgTable("subscriptions", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().unique().references(() => usersTable.id, { onDelete: "cascade" }),
+  /** Stripe subscription ID (sub_...) */
+  stripeSubscriptionId: varchar({ length: 255 }).unique(),
+  /** Stripe customer ID (cus_...) */
+  stripeCustomerId: varchar({ length: 255 }),
+  /** Stripe price ID (price_...) */
+  stripePriceId: varchar({ length: 255 }),
+  /** active | trialing | past_due | canceled | incomplete | incomplete_expired | unpaid */
+  status: varchar({ length: 50 }).notNull().default("inactive"),
+  /** Plan tier: free | pro | enterprise */
+  planId: varchar({ length: 50 }).notNull().default("free"),
+  /** When the current billing period ends (null for free tier) */
+  currentPeriodEnd: timestamp(),
+  /** When the subscription was canceled (null if active) */
+  canceledAt: timestamp(),
+  /** Whether scheduled to cancel at period end */
+  cancelAtPeriodEnd: boolean().notNull().default(false),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const subscriptionsRelations = relations(subscriptionsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [subscriptionsTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
+// ============================================
+// AGENT CONFIG MODEL (Custom Interview Agents)
+// ============================================
+
+export const agentConfigsTable = pgTable("agent_configs", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  /** Owner — null means a global/system default config */
+  userId: integer().references(() => usersTable.id, { onDelete: "cascade" }),
+  /** Human-readable name, e.g. "Behavioral Coach" */
+  name: varchar({ length: 255 }).notNull(),
+  /** Full system prompt sent to the LLM */
+  systemPrompt: text().notNull(),
+  /** ElevenLabs voice ID */
+  voiceId: varchar({ length: 255 }),
+  /** ElevenLabs Conversational AI agent ID */
+  elevenLabsAgentId: varchar({ length: 255 }),
+  /** Interview category: behavioral | technical | situational | general */
+  interviewType: varchar({ length: 50 }).notNull().default("general"),
+  /** Whether this config is the active default for the owner */
+  isDefault: boolean().notNull().default(false),
+  /** Whether this config is visible to all users (system preset) */
+  isPublic: boolean().notNull().default(false),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const agentConfigsRelations = relations(agentConfigsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [agentConfigsTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
+// ============================================
+// EDUCATION EXPLORER MODELS (LP9)
+// ============================================
 
 export const fundingOpportunitiesTable = pgTable("funding_opportunities", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

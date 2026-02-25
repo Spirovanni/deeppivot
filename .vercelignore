@@ -1,0 +1,39 @@
+# Files/dirs to exclude from Vercel deployment uploads
+# (reduces bundle upload size and avoids leaking dev files)
+
+# Dev tooling
+.taskmaster
+scripts
+*.local
+*.log
+
+# Test artifacts
+coverage
+__tests__
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Local dev
+.env
+.env.local
+.env.development.local
+
+# Docs
+ROADMAP.md
+PLAN.md
+STRUCTURE.md
+CLAUDE.md
+AGENTS.md
+prd*.md
+*.md
+
+# Editor
+.cursor
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db

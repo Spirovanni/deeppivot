@@ -24,7 +24,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useUser } from "@clerk/nextjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -37,9 +37,15 @@ const navItems = [
   { href: "/dashboard/job-tracker", label: "Job Tracker", icon: Briefcase },
 ];
 
+function UserButtonPlaceholder() {
+  return <div className="size-8 shrink-0 rounded-full bg-muted" aria-hidden />;
+}
+
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { user } = useUser();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <div className="flex h-full flex-col">
@@ -67,17 +73,21 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
       <div className="border-t border-border p-4">
         <div className="flex items-center gap-3">
-          <UserButton
-            appearance={{
-              elements: { avatarBox: "size-8" },
-            }}
-          />
+          {mounted ? (
+            <UserButton
+              appearance={{
+                elements: { avatarBox: "size-8" },
+              }}
+            />
+          ) : (
+            <UserButtonPlaceholder />
+          )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-foreground">
-              {user?.firstName || user?.username || "User"}
+              {mounted ? (user?.firstName || user?.username || "User") : "User"}
             </p>
             <p className="truncate text-xs text-muted-foreground">
-              {user?.primaryEmailAddress?.emailAddress}
+              {mounted ? (user?.primaryEmailAddress?.emailAddress ?? "") : ""}
             </p>
           </div>
         </div>
@@ -88,6 +98,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
 export function DashboardSidebar() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <>
@@ -105,8 +117,8 @@ export function DashboardSidebar() {
       {/* Mobile: header with menu trigger */}
       <div className="flex h-16 items-center justify-between border-b border-border bg-muted/30 px-4 md:hidden">
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild suppressHydrationWarning>
-            <Button variant="ghost" size="icon" suppressHydrationWarning>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon">
               <Menu className="size-5" />
               <span className="sr-only">Open menu</span>
             </Button>
@@ -124,7 +136,11 @@ export function DashboardSidebar() {
         <Link href="/dashboard" className="font-semibold text-foreground">
           Deep Pivot
         </Link>
-        <UserButton appearance={{ elements: { avatarBox: "size-8" } }} />
+        {mounted ? (
+          <UserButton appearance={{ elements: { avatarBox: "size-8" } }} />
+        ) : (
+          <UserButtonPlaceholder />
+        )}
       </div>
     </>
   );

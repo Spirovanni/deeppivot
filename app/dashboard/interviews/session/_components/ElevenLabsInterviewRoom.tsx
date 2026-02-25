@@ -10,6 +10,25 @@ import {
 } from "@/src/lib/actions/interview-sessions";
 import { toast } from "@/src/lib/toast";
 
+/** Downsample float audio from srcRate to dstRate using linear interpolation */
+function resample(
+  input: Float32Array,
+  srcRate: number,
+  dstRate: number
+): Float32Array {
+  const ratio = srcRate / dstRate;
+  const outLen = Math.floor(input.length / ratio);
+  const output = new Float32Array(outLen);
+  for (let i = 0; i < outLen; i++) {
+    const srcIdx = i * ratio;
+    const lo = Math.floor(srcIdx);
+    const hi = Math.min(lo + 1, input.length - 1);
+    const frac = srcIdx - lo;
+    output[i] = input[lo] * (1 - frac) + input[hi] * frac;
+  }
+  return output;
+}
+
 const SESSION_TYPE_META: Record<
   string,
   { label: string; icon: React.ElementType; tagline: string }
@@ -52,7 +71,6 @@ export function ElevenLabsInterviewRoom({
   const [sessionEnded, setSessionEnded] = useState(false);
   const [messages, setMessages] = useState<Array<{ role: string; text: string }>>([]);
   const sessionIdRef = useRef<number | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const router = useRouter();
@@ -89,31 +107,70 @@ export function ElevenLabsInterviewRoom({
       // Initialize WebSocket connection
       const websocket = new WebSocket(signedUrl);
 
-      websocket.onopen = () => {
+      websocket.onopen = async () => {
         console.log("✅ Connected to ElevenLabs");
         setIsConnected(true);
         setWs(websocket);
 
-        // Set up MediaRecorder to send audio to ElevenLabs
-        const mediaRecorder = new MediaRecorder(stream);
-        mediaRecorderRef.current = mediaRecorder;
+        // Set up Web Audio API to capture PCM audio at 16kHz
+        // Use default sample rate if 16kHz not supported (some devices restrict)
+        let audioContext: AudioContext;
+        try {
+          audioContext = new AudioContext({ sampleRate: 16000 });
+        } catch {
+          audioContext = new AudioContext();
+        }
+        audioContextRef.current = audioContext;
 
-        mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0 && websocket.readyState === WebSocket.OPEN) {
-            const reader = new FileReader();
-            reader.readAsDataURL(event.data);
-            reader.onloadend = () => {
-              const base64 = (reader.result as string).split(",")[1];
-              websocket.send(
-                JSON.stringify({
-                  user_audio_chunk: base64,
-                })
-              );
-            };
+        // Resume if suspended (Chrome requires user gesture - we're inside click handler)
+        if (audioContext.state === "suspended") {
+          await audioContext.resume();
+        }
+
+        // Load AudioWorklet processor (replaces deprecated ScriptProcessorNode)
+        await audioContext.audioWorklet.addModule("/pcm-capture-processor.js");
+
+        const source = audioContext.createMediaStreamSource(stream);
+        const workletNode = new AudioWorkletNode(audioContext, "pcm-capture-processor", {
+          numberOfInputs: 1,
+          numberOfOutputs: 1,
+        });
+
+        const inputSampleRate = audioContext.sampleRate;
+        const targetSampleRate = 16000;
+        const needsResample = inputSampleRate !== targetSampleRate;
+
+        workletNode.port.onmessage = (e: MessageEvent<{ audio: Float32Array }>) => {
+          if (websocket.readyState !== WebSocket.OPEN) return;
+
+          let floatData = e.data.audio;
+          if (needsResample && inputSampleRate > targetSampleRate) {
+            floatData = resample(floatData, inputSampleRate, targetSampleRate);
           }
+
+          // Convert Float32Array to Int16Array (PCM 16-bit)
+          const pcmData = new Int16Array(floatData.length);
+          for (let i = 0; i < floatData.length; i++) {
+            const s = Math.max(-1, Math.min(1, floatData[i]));
+            pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+          }
+
+          const base64 = btoa(
+            String.fromCharCode(...new Uint8Array(pcmData.buffer))
+          );
+
+          // ElevenLabs expects user_audio_chunk with base64 PCM at 16kHz
+          websocket.send(
+            JSON.stringify({
+              user_audio_chunk: base64,
+              sample_rate: targetSampleRate,
+            })
+          );
         };
 
-        mediaRecorder.start(100); // Send chunks every 100ms
+        source.connect(workletNode);
+        workletNode.connect(audioContext.destination);
+
         toast.success("Interview started! Sarah is ready to talk.");
       };
 
@@ -121,35 +178,70 @@ export function ElevenLabsInterviewRoom({
         try {
           const message = JSON.parse(event.data);
 
-          // Handle audio response from agent
-          if (message.audio) {
-            const audioContext = audioContextRef.current || new AudioContext();
-            audioContextRef.current = audioContext;
+          // Handle agent audio: ElevenLabs sends { type: "audio", audio_event: { audio_base_64: "..." } }
+          const audioBase64 =
+            message.audio_event?.audio_base_64 ?? message.audio?.chunk;
+          if (audioBase64) {
+            const audioContext = audioContextRef.current;
+            if (!audioContext || audioContext.state === "closed") return;
 
-            const audioData = Uint8Array.from(atob(message.audio), (c) =>
-              c.charCodeAt(0)
-            );
-            const audioBuffer = await audioContext.decodeAudioData(
-              audioData.buffer
-            );
+            try {
+              const binaryString = atob(audioBase64);
+              const bytes = new Uint8Array(binaryString.length);
+              for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+              }
+              const pcmData = new Int16Array(bytes.buffer);
 
-            const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
-            source.start(0);
-          }
+              const float32Data = new Float32Array(pcmData.length);
+              for (let i = 0; i < pcmData.length; i++) {
+                float32Data[i] =
+                  pcmData[i] / (pcmData[i] < 0 ? 0x8000 : 0x7fff);
+              }
 
-          // Handle transcript messages
-          if (message.type === "transcript" || message.transcript) {
-            const role = message.role || "assistant";
-            const text = message.transcript || message.message || "";
+              // ElevenLabs agent output format is pcm_44100 per conversation_initiation_metadata
+              const sampleRate = 44100;
+              const audioBuffer = audioContext.createBuffer(
+                1,
+                float32Data.length,
+                sampleRate
+              );
+              audioBuffer.getChannelData(0).set(float32Data);
 
-            if (text) {
-              setMessages((prev) => [...prev, { role, text }]);
+              const source = audioContext.createBufferSource();
+              source.buffer = audioBuffer;
+              source.connect(audioContext.destination);
+              source.start(0);
+            } catch (e) {
+              console.warn("Failed to play agent audio:", e);
             }
           }
 
-          // Log all messages for debugging
+          // Handle agent transcript from agent_response_event
+          const agentText =
+            message.agent_response_event?.agent_response ??
+            message.transcript ??
+            message.message;
+          if (agentText && typeof agentText === "string") {
+            setMessages((prev) => [
+              ...prev,
+              { role: "assistant", text: agentText },
+            ]);
+          }
+
+          // Handle user transcript from user_transcription_event
+          const userText = message.user_transcription_event?.user_transcript;
+          if (userText && typeof userText === "string") {
+            setMessages((prev) => [...prev, { role: "user", text: userText }]);
+          }
+
+          // Respond to server ping to keep connection alive
+          if (message.type === "ping") {
+            websocket.send(JSON.stringify({ type: "pong" }));
+            return;
+          }
+
+          // Log non-ping messages for debugging
           console.log("📩 ElevenLabs message:", message);
         } catch (error) {
           console.error("Error processing message:", error);
@@ -176,11 +268,6 @@ export function ElevenLabsInterviewRoom({
   }, [agentId, sessionType, isConnected, isStarting]);
 
   const handleEnd = useCallback(async () => {
-    // Stop media recorder
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      mediaRecorderRef.current.stop();
-    }
-
     // Stop media stream
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
@@ -194,11 +281,12 @@ export function ElevenLabsInterviewRoom({
     setWs(null);
     setIsConnected(false);
 
-    // Close audio context
-    if (audioContextRef.current) {
-      await audioContextRef.current.close();
-      audioContextRef.current = null;
+    // Close audio context (check state to avoid "Cannot close a closed AudioContext")
+    const ctx = audioContextRef.current;
+    if (ctx && ctx.state !== "closed") {
+      await ctx.close();
     }
+    audioContextRef.current = null;
 
     // End database session
     if (sessionIdRef.current) {
@@ -215,22 +303,27 @@ export function ElevenLabsInterviewRoom({
   const toggleMute = useCallback(() => {
     if (!streamRef.current) return;
 
+    const newMuted = !isMuted;
     streamRef.current.getAudioTracks().forEach((track) => {
-      track.enabled = isMuted; // Toggle enabled state
+      track.enabled = !newMuted; // enabled=false when muted
     });
-    setIsMuted(!isMuted);
-    toast(isMuted ? "Microphone unmuted" : "Microphone muted");
+    setIsMuted(newMuted);
+    toast(newMuted ? "Microphone muted" : "Microphone unmuted");
   }, [isMuted]);
 
   useEffect(() => {
     return () => {
       // Cleanup on unmount
-      if (ws) ws.close();
-      if (mediaRecorderRef.current) mediaRecorderRef.current.stop();
+      if (ws && ws.readyState === WebSocket.OPEN) ws.close();
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
       }
-      if (audioContextRef.current) audioContextRef.current.close();
+      const ctx = audioContextRef.current;
+      if (ctx && ctx.state !== "closed") {
+        ctx.close();
+      }
+      audioContextRef.current = null;
     };
   }, [ws]);
 

@@ -9,8 +9,8 @@
 
 DeepPivot helps users practice interviews with AI, track job applications, discover career archetypes, build career roadmaps, connect with mentors, and explore alternative education (bootcamps, certifications, funding). The landing page promises:
 
-- **AI Voice Interviews** — Practice with Hume AI, emotion detection, &lt;800ms latency
-- **Emotional Intelligence Feedback** — Feedback on emotional responses and communication style
+- **AI Voice Interviews** — Practice with Sarah, an ElevenLabs Conversational AI voice coach, with emotion-aware feedback and &lt;800ms latency
+- **Emotional Intelligence Feedback** — Feedback on emotional responses, communication style, and confidence
 - **Performance Analytics** — Track progress on interview performance and emotional growth
 - **Career Archetype** — AI-powered behavioral trait modeling and NLP analysis
 - **Career Planning** — Draggable timelines, milestones, curated resources
@@ -29,7 +29,7 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 | Database | PostgreSQL on Neon | Live |
 | ORM | Drizzle ORM 0.44 | Live |
 | Auth | Clerk (webhook + client sync) | Live |
-| AI Voice | Hume EVI integration | Live |
+| AI Voice | ElevenLabs Conversational AI (Sarah voice coach) | MVP live (v2; replaces earlier Hume prototype) |
 | UI | Shadcn UI + Radix + Tailwind CSS 4 | Live |
 | Hosting | Vercel | Live |
 
@@ -54,26 +54,43 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 ### Existing Routes
 
 ```
-/                         Landing page (Hume AI chat)
+/                         Landing page (Deep Pivot marketing + ElevenLabs voice coach positioning)
 /(auth)/sign-in           Clerk sign-in
 /(auth)/sign-up           Clerk sign-up
-/api/users                User CRUD
+/api/users                User CRUD + Clerk user sync
+/api/users/current        Get current user profile
 /api/clerk-webhook        Clerk event sync
-/api/hume-token           Hume AI token endpoint
-/api/interview/start      Start Vapi interview (Deepgram STT, TTS, recording)
-/api/inngest              Inngest event handler (recording processing)
-/api/webhooks/vapi       Vapi webhook (end-of-call → interview.completed)
-/api/archetype/classify  BERT archetype classification proxy (Hugging Face)
-/api/plans                Career plan CRUD (GET, POST milestones)
-/api/plans/[id]           Milestone GET, PATCH, DELETE
-/api/plans/[id]/resources Milestone resources POST
-/api/plans/reorder        PUT reorder milestones
+/api/clerk-js             Clerk JS loader (prod proxy)
+/api/clerk-proxy/[...path] Clerk proxy (prod)
+/api/plans                Career plan CRUD (milestones)
+/api/plans/[id]           Single plan CRUD
+/api/plans/[id]/resources Milestone resources CRUD
+/api/plans/[id]/resources/[resourceId]  Resource delete/update
+/api/plans/[id]/resources/recommendations  Curated resource recommendations
+/api/plans/reorder        Reorder milestones in a plan
+/api/archetype/classify   BERT/LLM archetype classification proxy
+/api/elevenlabs-signed-url  Signed URL for ElevenLabs ConvAI WebSocket
+/api/elevenlabs-agent-info  Helper to introspect ElevenLabs agent config
+/api/inngest              Inngest event handler (recording/feedback jobs)
+/api/webhooks/vapi        Legacy Vapi webhook (v1 pipeline; kept for reference)
 /api/sync-users           Bulk user sync
-/api/admin/archetype-review  Admin: list archetype review queue (GET)
-/api/admin/archetype-review/[id]  Admin: approve/override (PATCH)
+/api/admin/archetype-review        Admin: list archetype review queue (GET)
+/api/admin/archetype-review/[id]   Admin: approve/override (PATCH)
+
 /admin                    Admin dashboard (admin role only)
 /admin/archetype-review   Admin: human review queue for archetypes
+
+/dashboard                Authenticated learner dashboard shell
+/dashboard/interviews     Interview sessions list + “Start Practice Session”
+/dashboard/interviews/session      Live interview room (ElevenLabs ConvAI)
+/dashboard/interviews/[sessionId]  Session detail
+/dashboard/interviews/[sessionId]/feedback  Post‑interview feedback view
 /dashboard/job-tracker    Kanban job tracker (JT4)
+/dashboard/career-plan    Career plan builder (LP7)
+/dashboard/archetype      Career archetype result + strengths/growth areas
+/dashboard/mentors        Mentor directory + connection flow
+/dashboard/education      Education Explorer (programs + funding)
+/dashboard/analytics      Performance & skills analytics (LP5 shell)
 ```
 
 ---
@@ -103,6 +120,11 @@ Full kanban-style job application tracker. All 7 phases shipped.
 |----|-------|
 | ~~deeppivot-24~~ | ~~Backend: Set up Cloudflare R2 for Storage~~ ✓ |
 | ~~deeppivot-19~~ | ~~Frontend: Initialize Next.js 15 Project~~ ✓ |
+| ~~deeppivot-20~~ | ~~Frontend: Integrate Shadcn UI~~ ✓ |
+| ~~deeppivot-21~~ | ~~Backend: Provision Neon Postgres Database~~ ✓ |
+| ~~deeppivot-22~~ | ~~Backend: Configure Drizzle ORM~~ ✓ |
+| ~~deeppivot-23~~ | ~~DB Schema: Users and Profiles~~ ✓ |
+| ~~deeppivot-25~~ | ~~Auth: Implement User Authentication (Clerk)~~ ✓ |
 | ~~deeppivot-104~~ | ~~Frontend: Global Notification Toasts~~ ✓ |
 | ~~deeppivot-107~~ | ~~Frontend: Custom 500 Error Page~~ ✓ |
 | ~~deeppivot-112~~ | ~~Frontend: Global Footer Component~~ ✓ |
@@ -140,7 +162,8 @@ Run `bd ready` to see current ready work. Theming (deeppivot-125) complete.
 
 ### Phase 2: AI Voice Interview Pipeline
 
-**Goal**: End-to-end interview practice with Hume AI.
+**Goal**: End-to-end interview practice with a real-time voice coach.  
+**Stack v2**: ElevenLabs Conversational AI (Sarah), ElevenLabs TTS/STT, LLM for feedback.
 
 | Order | Issue | Title |
 |-------|-------|-------|
@@ -153,7 +176,8 @@ Run `bd ready` to see current ready work. Theming (deeppivot-125) complete.
 
 ### Phase 3: Voice & AI Services
 
-**Goal**: Vapi, Deepgram, Hume, TTS, LLM orchestration for scalable interview sessions.
+**Goal**: Orchestrate external voice/LLM services for scalable interview sessions.  
+**Note**: Original plan used Vapi + Deepgram + Hume; production path has consolidated onto ElevenLabs ConvAI + LLM services, while keeping these issues as historical context.
 
 | Order | Issue | Title |
 |-------|-------|-------|
@@ -254,3 +278,9 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 ---
 
 *Last updated: 2026-02-22 — deeppivot-125 (Theming for White-Labeling) closed. CSS variables for colors, fonts, spacing, radius; app/themes/employer-example.css. Run `bd ready` for next work.*
+*Last updated: 2026-02-24 — ElevenLabs Conversational AI interview room (Sarah behavioral coach) integrated; dashboard shell, career archetype engine, career plan builder, mentors, and education explorer wired into the unified dashboard.*
+*Last updated: 2026-02-25 — deeppivot-20 (Shadcn UI) closed. components.json configured (new-york style, neutral base, cssVariables), 14 components in components/ui/. Run `bd ready` for next work.*
+*Last updated: 2026-02-25 — deeppivot-21 (Neon Postgres) closed. DATABASE_URL live on us-west-2 Neon pooler, @neondatabase/serverless installed, Drizzle connected, 10 migrations applied.*
+*Last updated: 2026-02-25 — deeppivot-22 (Drizzle ORM) closed. drizzle-orm ^0.44.2 + drizzle-kit ^0.31.4 + pg ^8.8.0 installed; drizzle.config.ts configured; db:generate/migrate/push/studio scripts present.*
+*Last updated: 2026-02-25 — deeppivot-23 (DB Schema: Users and Profiles) closed. usersTable defined with Clerk sync, role/status flags, credits system, and full Drizzle relations across 14 tables (job tracker, interviews, archetypes, career plan, mentors, education).*
+*Last updated: 2026-02-25 — deeppivot-25 (Auth) closed. Clerk (@clerk/nextjs ^6.38.1) implemented: clerkMiddleware in proxy.ts, sign-in/sign-up pages with SSO callbacks, currentUser() dashboard guard, Clerk webhook → Neon DB sync.*

@@ -5,7 +5,7 @@ import { interviewSessionsTable, usersTable } from "@/src/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { Mic2 } from "lucide-react";
 import { StartInterviewCTA } from "./_components/StartInterviewCTA";
-import { SessionCard } from "./_components/SessionCard";
+import { SessionsList } from "./_components/SessionsList";
 
 export default async function InterviewsPage() {
   const user = await currentUser();
@@ -74,21 +74,7 @@ export default async function InterviewsPage() {
 
         <StartInterviewCTA />
 
-        {sessions.length > 0 && (
-          <div className="mt-10">
-            <h2 className="mb-4 text-lg font-semibold">
-              Past Sessions{" "}
-              <span className="text-sm font-normal text-muted-foreground">
-                ({sessions.length})
-              </span>
-            </h2>
-            <div className="flex flex-col gap-3">
-              {sessions.map((session) => (
-                <SessionCard key={session.id} session={session} />
-              ))}
-            </div>
-          </div>
-        )}
+        {sessions.length > 0 && <SessionsList sessions={sessions} />}
 
         {sessions.length === 0 && (
           <div className="mt-12 space-y-6">

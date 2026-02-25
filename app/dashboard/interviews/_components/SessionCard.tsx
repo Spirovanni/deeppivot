@@ -42,9 +42,17 @@ interface SessionCardProps {
     endedAt: Date | null;
     overallScore: number | null;
   };
+  isEditMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
 }
 
-export function SessionCard({ session }: SessionCardProps) {
+export function SessionCard({
+  session,
+  isEditMode = false,
+  isSelected = false,
+  onToggleSelect
+}: SessionCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const statusCfg = STATUS_CONFIG[session.status] ?? STATUS_CONFIG.completed;
@@ -70,57 +78,96 @@ export function SessionCard({ session }: SessionCardProps) {
     }
   };
 
+  const cardContent = (
+    <Card
+      className={`transition-all ${
+        isEditMode
+          ? isSelected
+            ? "border-primary bg-primary/5"
+            : "hover:border-muted-foreground/30"
+          : "hover:bg-accent/30 hover:shadow-sm"
+      }`}
+    >
+      <CardContent className="flex items-center justify-between py-4">
+        <div className="flex items-center gap-4">
+          {isEditMode && onToggleSelect && (
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={(e) => {
+                e.stopPropagation();
+                onToggleSelect();
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="size-5 cursor-pointer rounded border-gray-300"
+            />
+          )}
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+            <Mic2 className="size-5 text-primary" />
+          </div>
+          <div>
+            <p className="font-medium">{typeLabel} Interview</p>
+            <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+              <span suppressHydrationWarning>
+                {new Date(session.startedAt).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })}
+              </span>
+              {duration && (
+                <>
+                  <span className="opacity-40">·</span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="size-3" />
+                    {duration}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          {session.overallScore !== null && (
+            <span className="text-sm font-semibold tabular-nums">
+              {session.overallScore}%
+            </span>
+          )}
+          <Badge variant={statusCfg.variant}>{statusCfg.label}</Badge>
+          {!isEditMode && (
+            <>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+                aria-label="Delete interview"
+              >
+                <Trash2 className="size-4" />
+              </button>
+              <ArrowRight className="size-4 text-muted-foreground" />
+            </>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  if (isEditMode) {
+    return (
+      <div
+        onClick={onToggleSelect}
+        className="cursor-pointer"
+      >
+        {cardContent}
+      </div>
+    );
+  }
+
   return (
     <Link href={`/dashboard/interviews/${session.id}`}>
-      <Card className="transition-all hover:bg-accent/30 hover:shadow-sm">
-        <CardContent className="flex items-center justify-between py-4">
-          <div className="flex items-center gap-4">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-              <Mic2 className="size-5 text-primary" />
-            </div>
-            <div>
-              <p className="font-medium">{typeLabel} Interview</p>
-              <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
-                <span suppressHydrationWarning>
-                  {new Date(session.startedAt).toLocaleDateString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
-                </span>
-                {duration && (
-                  <>
-                    <span className="opacity-40">·</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="size-3" />
-                      {duration}
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            {session.overallScore !== null && (
-              <span className="text-sm font-semibold tabular-nums">
-                {session.overallScore}%
-              </span>
-            )}
-            <Badge variant={statusCfg.variant}>{statusCfg.label}</Badge>
-            <button
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
-              aria-label="Delete interview"
-            >
-              <Trash2 className="size-4" />
-            </button>
-            <ArrowRight className="size-4 text-muted-foreground" />
-          </div>
-        </CardContent>
-      </Card>
+      {cardContent}
     </Link>
   );
 }

@@ -23,7 +23,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useUser } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 
 const navItems = [
@@ -43,7 +42,6 @@ function UserButtonPlaceholder() {
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
-  const { user } = useUser();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -84,10 +82,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-foreground">
-              {mounted ? (user?.firstName || user?.username || "User") : "User"}
-            </p>
-            <p className="truncate text-xs text-muted-foreground">
-              {mounted ? (user?.primaryEmailAddress?.emailAddress ?? "") : ""}
+              {mounted ? "Account" : "User"}
             </p>
           </div>
         </div>

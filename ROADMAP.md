@@ -444,3 +444,45 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 ---
 
 *Last updated: 2026-02-26 — Phase 7 (Admin Dashboard, User Management, Agent Config) complete. deeppivot-118/119/120 shipped. Admin stats dashboard, searchable user table with role/suspend/delete management, and full agent config CRUD. pnpm build exit 0.*
+
+---
+
+### Phase 8: SEO & Content Pages (Complete ✓)
+
+**Goal**: Improve search discoverability and add all missing public-facing content pages.
+
+| ID | Title | Status |
+|----|-------|--------|
+| ~~deeppivot-111~~ | ~~Content: Legal Pages (ToS, Privacy)~~ | ✓ |
+| ~~deeppivot-127~~ | ~~SEO: Generate sitemap.xml~~ | ✓ |
+| ~~deeppivot-129~~ | ~~SEO: Add Structured Data (JSON-LD)~~ | ✓ |
+| ~~deeppivot-130~~ | ~~Feature: Contact Us Form~~ | ✓ |
+| ~~deeppivot-131~~ | ~~Content: FAQ Page~~ | ✓ |
+| ~~deeppivot-132~~ | ~~Content: Blog Setup (MDX)~~ | ✓ |
+
+**New routes:**
+```
+/sitemap.xml                      Dynamic sitemap (MetadataRoute.Sitemap)
+/terms                            10-section Terms of Service (static)
+/privacy                          8-section Privacy Policy with third-party table (static)
+/contact                          Contact form with 3 info cards (static SSR + client form)
+/faq                              12 Q&As with Shadcn Accordion (static)
+/blog                             MDX blog listing (reads content/blog/*.mdx via gray-matter)
+/blog/[slug]                      Individual MDX post (next-mdx-remote/rsc)
+/api/contact                      POST handler — validates fields, logs, ready for Resend
+```
+
+**New/updated components & files:**
+- `app/sitemap.ts` — Next.js sitemap API with all public routes + blog slugs
+- `app/(landing)/layout.tsx` — JSON-LD `@graph` (Organization + SoftwareApplication) injected as `<script type=application/ld+json>` on all landing pages; Footer added
+- `components/ContactForm.tsx` — client form with success screen
+- `components/ui/accordion.tsx` — installed via shadcn CLI
+- `components/Footer.tsx` — added `/blog` and `/faq` nav links
+- `content/blog/introducing-deeppivot.mdx` — seed launch announcement post
+- Deps added: `gray-matter`, `next-mdx-remote`, `@next/mdx`, `@mdx-js/react`
+
+**Phase 8 Status: COMPLETE ✓** — Build passes with exit code 0 (8 new routes in output).
+
+---
+
+*Last updated: 2026-02-26 — Phase 8 (SEO & Content Pages) complete. deeppivot-111/127/129/130/131/132 shipped. sitemap.xml, JSON-LD structured data, Terms, Privacy, Contact form, FAQ (Shadcn accordion), Blog/MDX listing and detail pages, seed post. pnpm build exit 0.*

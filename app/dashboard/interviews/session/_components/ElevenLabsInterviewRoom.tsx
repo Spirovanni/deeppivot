@@ -130,7 +130,7 @@ export function ElevenLabsInterviewRoom({
       const response = await fetch("/api/elevenlabs-signed-url", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agentId }),
+        body: JSON.stringify({ agentId, interviewType: sessionType }),
       });
 
       if (!response.ok) {

@@ -95,9 +95,6 @@ importers:
       aws4fetch:
         specifier: ^1.0.20
         version: 1.0.20
-      axios:
-        specifier: ^1.10.0
-        version: 1.10.0
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.1

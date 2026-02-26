@@ -2,9 +2,6 @@
 
 import { useState } from 'react';
 import { useCurrentUser } from './useCurrentUser';
-import axios from 'axios';
-
-// Duplicate the CreateNewUser function here to avoid circular imports
 const CreateNewUser = async (userData: {
   clerkId: string;
   firstName: string;
@@ -14,9 +11,21 @@ const CreateNewUser = async (userData: {
   email: string;
 }) => {
   try {
-    const result = await axios.post('/api/users', userData);
-    console.log('User created successfully:', result.data);
-    return result.data;
+    const response = await fetch('/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('User created successfully:', data);
+    return data;
   } catch (error) {
     console.error('Error creating user:', error);
     throw error;
@@ -38,7 +47,7 @@ interface UseUserManagementReturn {
   loading: boolean;
   error: string | null;
   refetchCurrentUser: () => Promise<void>;
-  
+
   // User creation functionality
   createUser: (userData: CreateUserData) => Promise<any>;
   creating: boolean;
@@ -59,13 +68,13 @@ interface UseUserManagementReturn {
  * @returns Object with current user data and user creation functions
  */
 export function useUserManagement(): UseUserManagementReturn {
-  const { 
-    user: currentUser, 
-    loading, 
-    error, 
-    refetch: refetchCurrentUser 
+  const {
+    user: currentUser,
+    loading,
+    error,
+    refetch: refetchCurrentUser
   } = useCurrentUser();
-  
+
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
@@ -73,14 +82,14 @@ export function useUserManagement(): UseUserManagementReturn {
     try {
       setCreating(true);
       setCreateError(null);
-      
+
       const result = await CreateNewUser(userData);
-      
+
       // Optionally refetch current user data if the created user is the current user
       if (userData.clerkId === currentUser?.clerkId) {
         await refetchCurrentUser();
       }
-      
+
       return result;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create user';
@@ -97,7 +106,7 @@ export function useUserManagement(): UseUserManagementReturn {
     loading,
     error,
     refetchCurrentUser,
-    
+
     // User creation functionality
     createUser,
     creating,

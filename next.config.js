@@ -57,6 +57,7 @@ const nextConfig = {
         isDev ? "'unsafe-eval'" : "", // Next.js HMR needs eval in dev
         "'unsafe-inline'",            // Inline scripts from Next.js runtime
         "https://clerk.deeppivots.com",
+        "https://*.clerk.accounts.dev",
         "https://js.clerk.dev",
         "https://clerk.dev",
         "https://cdn.jsdelivr.net",   // Potential Clerk dependency

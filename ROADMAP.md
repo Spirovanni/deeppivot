@@ -486,3 +486,49 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 ---
 
 *Last updated: 2026-02-26 — Phase 8 (SEO & Content Pages) complete. deeppivot-111/127/129/130/131/132 shipped. sitemap.xml, JSON-LD structured data, Terms, Privacy, Contact form, FAQ (Shadcn accordion), Blog/MDX listing and detail pages, seed post. pnpm build exit 0.*
+
+---
+
+### Phase 9: UX Polish & Transactional Email (Complete ✓)
+
+**Goal**: Improve UX polish with skeleton screens, session safety, user feedback tooling, GDPR-compliant cookie consent, and a full transactional email pipeline.
+
+| ID | Title | Status |
+|----|-------|--------|
+| ~~deeppivot-113~~ | ~~Backend: Transactional Email Service Setup~~ | ✓ |
+| ~~deeppivot-114~~ | ~~Feature: Welcome Email on Signup~~ | ✓ |
+| ~~deeppivot-133~~ | ~~Feature: Cookie Consent Banner~~ | ✓ |
+| ~~deeppivot-135~~ | ~~Frontend: Loading Skeleton UI~~ | ✓ |
+| ~~deeppivot-136~~ | ~~Security: Session Timeout~~ | ✓ |
+| ~~deeppivot-138~~ | ~~Feature: User Feedback Widget~~ | ✓ |
+
+**New/modified files:**
+```
+src/lib/email.ts                           Resend singleton + sendEmail() helper (RESEND_API_KEY guard)
+emails/WelcomeEmail.tsx                    Branded React Email dark theme template
+src/inngest/functions/send-welcome-email.ts Inngest function: user/created → welcome email
+app/api/inngest/route.ts                   +sendWelcomeEmail registered
+app/api/sync-users/route.ts                +inngest.send("user/created") after new user insert
+app/api/contact/route.ts                   Upgraded to send HTML email via Resend (with guard)
+app/api/feedback/route.ts                  POST: validates 1–5 rating, logs, returns 200
+components/CookieConsent.tsx               Banner w/ Accept All / Essential Only + useCookieConsent() hook
+components/SessionTimeoutWarning.tsx       25min idle → 5min countdown modal → auto sign-out
+components/FeedbackWidget.tsx              Floating side tab → star rating + freetext popover
+app/layout.tsx                             +<CookieConsent /> site-wide
+app/dashboard/layout.tsx                   +<SessionTimeoutWarning /> +<FeedbackWidget />
+app/dashboard/loading.tsx                  Stats row + 6 card skeleton
+app/dashboard/job-tracker/loading.tsx      5 Kanban column skeletons
+app/dashboard/interviews/loading.tsx       Header + 6 session card skeletons
+app/dashboard/career-plan/loading.tsx      Header + progress bar + 5 milestone skeletons
+components/ui/skeleton.tsx                 Installed via shadcn CLI
+```
+
+**Deps added:** `resend@6.9.2`, `@react-email/components@1.0.8`, `@react-email/render@2.0.4`
+
+> **Note:** Set `RESEND_API_KEY` in production env to activate email sending. All email code gracefully no-ops when key is absent.
+
+**Phase 9 Status: COMPLETE ✓** — Build passes with exit code 0.
+
+---
+
+*Last updated: 2026-02-26 — Phase 9 (UX Polish & Transactional Email) complete. deeppivot-113/114/133/135/136/138 shipped. Resend email pipeline (WelcomeEmail template + Inngest function), cookie consent banner, 4 skeleton loading screens, session timeout modal, feedback widget. pnpm build exit 0.*

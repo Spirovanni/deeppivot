@@ -1,9 +1,3 @@
-/**
- * Inngest API route — serves as the event handler for Inngest.
- *
- * Inngest Dev Server: npx inngest dev
- */
-
 import { serve } from "inngest/next";
 import { inngest } from "@/src/inngest/client";
 import {
@@ -14,6 +8,7 @@ import {
   processCareerArchetyping,
 } from "@/src/inngest/functions";
 import { salesforceDailySync } from "@/src/inngest/salesforce-sync";
+import { sendWelcomeEmail } from "@/src/inngest/functions/send-welcome-email";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -24,5 +19,7 @@ export const { GET, POST, PUT } = serve({
     processInterviewFeedback,
     processCareerArchetyping,
     salesforceDailySync,
+    sendWelcomeEmail,
   ],
 });
+

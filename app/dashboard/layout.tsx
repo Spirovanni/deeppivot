@@ -6,6 +6,8 @@ import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { ensureUserInDb } from "@/src/lib/actions/ensure-user";
 import { DashboardConnectionError } from "@/components/dashboard/DashboardConnectionError";
+import { SessionTimeoutWarning } from "@/components/SessionTimeoutWarning";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
 
 export default async function DashboardLayout({
   children,
@@ -27,6 +29,9 @@ export default async function DashboardLayout({
         <DashboardTopBar />
         <div className="flex-1">{children}</div>
       </main>
+      <SessionTimeoutWarning />
+      <FeedbackWidget />
     </div>
   );
 }
+

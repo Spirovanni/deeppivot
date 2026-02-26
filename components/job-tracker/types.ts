@@ -13,6 +13,10 @@ export interface JobApplication {
   columnId: number;
   userId: number;
   workflowId: string | null;
+  /** 'external' | 'marketplace' — indicates origin of this card */
+  sourceType?: string;
+  /** FK to the marketplace job (populated for sourceType=marketplace) */
+  marketplaceJobId?: number | null;
   createdAt: Date;
   updatedAt: Date;
 }

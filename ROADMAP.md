@@ -338,3 +338,72 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 *Last updated: 2026-02-26 — deeppivot-110 (HTTP Security Headers): next.config.js headers() enhanced with full CSP (Content-Security-Policy-Report-Only in dev, enforced in prod) covering all directives for ElevenLabs, Clerk, Sentry, PostHog, R2. HSTS (max-age=63072000 includeSubDomains preload) in production. Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy added. All existing headers retained.*
 *Last updated: 2026-02-26 — deeppivot-85 (WDB Career Plan Sync): src/lib/actions/wdb-career-plan.ts with getWdbStatus, linkWdbRecord, createWdbAlignedMilestones, generateWdbMilestoneTemplates. 12 WIOA IEP goal categories with pre-built milestone templates. WdbCareerPlanBanner component on career-plan page shows for WDB clients with goal selector + credential input → auto-populates milestones. Inngest Salesforce sync now auto-links wdbSalesforceContactId on contact match.*
 *Last updated: 2026-02-26 — deeppivot-90 (WDB Dashboard Visualizations): WDB dashboard rebuilt with real data. src/lib/actions/wdb-analytics.ts: getWdbCohortStats (total learners, sessions, completion rate, archetype coverage), getWdbArchetypeBreakdown (per-archetype counts), getWdbSessionTrend (30-day sparkline), getWdbMilestoneBreakdown (status donut). WdbChartsClient.tsx: CSS bar chart, SVG sparkline, SVG donut chart. No external charting library required.*
+
+---
+
+### Phase 6: Job Marketplace (Complete ✓)
+
+**Goal**: Full two-sided job marketplace connecting employers and job-seeking learners.
+
+| ID | Title | Status |
+|----|-------|--------|
+| ~~deeppivot-143~~ | ~~DB: companies table (schema + migration 0015)~~ | ✓ |
+| ~~deeppivot-144~~ | ~~DB: jobs table (schema + migration 0015)~~ | ✓ |
+| ~~deeppivot-145~~ | ~~DB: job_marketplace_applications table~~ | ✓ |
+| ~~deeppivot-146~~ | ~~DB: Extend job_applications with marketplace linkage~~ | ✓ |
+| ~~deeppivot-147~~ | ~~API: Companies CRUD routes~~ | ✓ |
+| ~~deeppivot-148~~ | ~~API: Jobs CRUD routes~~ | ✓ |
+| ~~deeppivot-149~~ | ~~API: Applications + Job Tracker sync~~ | ✓ |
+| ~~deeppivot-150~~ | ~~Auth: Employer RBAC extension~~ | ✓ |
+| ~~deeppivot-151~~ | ~~Frontend: Employer onboarding flow~~ | ✓ |
+| ~~deeppivot-152~~ | ~~Frontend: Employer company profile page~~ | ✓ |
+| ~~deeppivot-153~~ | ~~Frontend: Employer job posting form (JobForm component)~~ | ✓ |
+| ~~deeppivot-154~~ | ~~Frontend: Employer job management dashboard~~ | ✓ |
+| ~~deeppivot-155~~ | ~~Frontend: Employer application review dashboard~~ | ✓ |
+| ~~deeppivot-156~~ | ~~Frontend: Job Marketplace listing page (/jobs)~~ | ✓ |
+| ~~deeppivot-157~~ | ~~Frontend: Job search and filter UI (JobSearchFilters)~~ | ✓ |
+| ~~deeppivot-158~~ | ~~Frontend: Job detail page (/jobs/[jobId])~~ | ✓ |
+| ~~deeppivot-159~~ | ~~Frontend: Apply modal (ApplyModal)~~ | ✓ |
+| ~~deeppivot-160~~ | ~~Frontend: Save job + saved jobs list~~ | ✓ |
+| ~~deeppivot-161~~ | ~~Frontend: Dashboard nav — Job Marketplace~~ | ✓ |
+| ~~deeppivot-162~~ | ~~Admin: Job moderation tools (/admin/jobs)~~ | ✓ |
+| ~~deeppivot-163~~ | ~~Admin: Employer and company moderation (/admin/employers)~~ | ✓ |
+| ~~deeppivot-164~~ | ~~Integration: Job Tracker — Via DeepPivot badge~~ | ✓ |
+| ~~deeppivot-165~~ | ~~Integration: Post-interview job suggestions hook~~ | ✓ |
+| ~~deeppivot-166~~ | ~~Integration: Career plan → marketplace job defaults~~ | ✓ |
+| ~~deeppivot-167~~ | ~~QA & E2E: Job Marketplace end-to-end verification~~ | ✓ |
+
+**New routes added:**
+
+```
+/jobs                         Job marketplace listing (SSR, filterable, paginated)
+/jobs/[jobId]                 Job detail page (company sidebar, apply button, already-applied state)
+/employer/onboarding          3-step employer onboarding wizard
+/employer/jobs                Employer job management dashboard
+/employer/jobs/new            Create new job posting
+/employer/jobs/[jobId]/edit   Edit existing job posting
+/employer/jobs/[jobId]/applications   Applicant review page with status-update panel
+/admin/jobs                   Admin job moderation table
+/admin/employers              Admin employer management table
+
+/api/companies                GET (list) / POST (employer creates)
+/api/companies/[id]           GET / PATCH
+/api/jobs                     GET (filterable) / POST (employer)
+/api/jobs/[jobId]             GET / PATCH / DELETE
+/api/jobs/[jobId]/apply       POST (atomically creates application + tracker card)
+/api/employer/jobs/[jobId]/applications  GET (employer views applicants)
+/api/employer/applications/[appId]       PATCH (status update propagates to tracker)
+/api/me/applications          GET (learner's own applications)
+```
+
+**New components:**
+- `components/employer/JobForm.tsx` — reusable create/edit job form
+- `components/jobs/JobSearchFilters.tsx` — debounced URL-synced filter panel
+- `components/jobs/ApplyModal.tsx` — apply form with 409/410 error handling
+- `JobApplicationCard.tsx` — updated with "✦ Via DeepPivot" badge for marketplace cards
+
+**Phase 6 Status: COMPLETE ✓** — All 25 issues shipped. Build passes with `exit code 0`.
+
+---
+
+*Last updated: 2026-02-26 — Phase 6 (Job Marketplace) complete. 25 issues shipped: companies/jobs/applications DB schema (migration 0015), employer RBAC, employer onboarding + job management UI, job seeker marketplace listing/detail/apply flow, admin moderation pages, Job Tracker badge integration, E2E test spec. pnpm build exit 0.*

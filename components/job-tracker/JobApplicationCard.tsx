@@ -31,7 +31,14 @@ export function JobApplicationCard({ job, columns, onEdit }: JobApplicationCardP
       <CardContent className="p-3">
         <div className="flex items-start justify-between">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold">{job.position}</p>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <p className="truncate text-sm font-semibold">{job.position}</p>
+              {job.sourceType === "marketplace" && (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 shrink-0">
+                  ✦ Via DeepPivot
+                </span>
+              )}
+            </div>
             <p className="truncate text-xs text-muted-foreground">{job.company}</p>
           </div>
 
@@ -65,11 +72,19 @@ export function JobApplicationCard({ job, columns, onEdit }: JobApplicationCardP
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               )}
-              {job.jobUrl && (
+              {(job.jobUrl || job.sourceType === "marketplace") && (
                 <DropdownMenuItem asChild>
-                  <a href={job.jobUrl} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={
+                      job.sourceType === "marketplace" && job.marketplaceJobId
+                        ? `/jobs/${job.marketplaceJobId}`
+                        : job.jobUrl ?? "#"
+                    }
+                    target={job.sourceType === "marketplace" ? undefined : "_blank"}
+                    rel="noopener noreferrer"
+                  >
                     <ExternalLink className="mr-2 h-4 w-4" />
-                    View Posting
+                    {job.sourceType === "marketplace" ? "View Marketplace Listing" : "View Posting"}
                   </a>
                 </DropdownMenuItem>
               )}

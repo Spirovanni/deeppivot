@@ -141,10 +141,10 @@ export function SessionCard({
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
-                className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
-                aria-label="Delete interview"
+                className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                aria-label="Delete interview session"
               >
-                <Trash2 className="size-4" />
+                <Trash2 className="size-4" aria-hidden="true" />
               </button>
               <ArrowRight className="size-4 text-muted-foreground" />
             </>
@@ -156,12 +156,15 @@ export function SessionCard({
 
   if (isEditMode) {
     return (
-      <div
+      <button
+        type="button"
         onClick={onToggleSelect}
-        className="cursor-pointer"
+        aria-pressed={isSelected}
+        aria-label={`${isSelected ? "Deselect" : "Select"} interview session from ${new Date(session.startedAt).toLocaleDateString()}`}
+        className="w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
       >
         {cardContent}
-      </div>
+      </button>
     );
   }
 

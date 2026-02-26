@@ -49,12 +49,13 @@ export function StartInterviewCTA() {
           <button
             key={type}
             onClick={() => router.push(`/dashboard/interviews/session?type=${type}`)}
-            className="group text-left"
+            aria-label={`Start ${label} interview — ${description}`}
+            className="group rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <Card className="h-full cursor-pointer border-2 transition-all hover:border-primary/50 hover:shadow-lg active:scale-[0.98]">
               <CardContent className="flex flex-col gap-3 p-5">
-                <div className={`flex size-12 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} transition-transform group-hover:scale-110`}>
-                  <Icon className="size-6 text-primary" />
+                <div className={`flex size-12 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} transition-transform group-hover:scale-110`} aria-hidden="true">
+                  <Icon className="size-6 text-primary" aria-hidden="true" />
                 </div>
                 <div>
                   <p className="font-semibold text-foreground">{label}</p>

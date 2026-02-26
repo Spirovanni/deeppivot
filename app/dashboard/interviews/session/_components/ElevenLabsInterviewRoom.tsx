@@ -732,7 +732,7 @@ export function ElevenLabsInterviewRoom({
         </div>
         <button
           onClick={() => router.push("/dashboard/interviews")}
-          className="rounded-lg bg-primary px-6 py-2.5 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          className="rounded-lg bg-primary px-6 py-2.5 font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           View All Sessions
         </button>
@@ -789,16 +789,18 @@ export function ElevenLabsInterviewRoom({
             <button
               onClick={handleStart}
               disabled={isStarting}
-              className="flex items-center gap-2 rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50"
+              aria-disabled={isStarting}
+              aria-busy={isStarting}
+              className="flex items-center gap-2 rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               {isStarting ? (
                 <>
-                  <div className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  <div className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
                   Connecting...
                 </>
               ) : (
                 <>
-                  <Mic className="size-5" />
+                  <Mic className="size-5" aria-hidden="true" />
                   Start Interview
                 </>
               )}
@@ -934,26 +936,33 @@ export function ElevenLabsInterviewRoom({
             </div>
 
             {/* Controls */}
-            <div className="flex items-center justify-center gap-4">
+            <div
+              className="flex items-center justify-center gap-4"
+              role="toolbar"
+              aria-label="Interview controls"
+            >
               <button
                 onClick={toggleMute}
-                className={`flex size-14 items-center justify-center rounded-full border-2 transition-all ${
+                aria-label={isMuted ? "Unmute microphone" : "Mute microphone"}
+                aria-pressed={isMuted}
+                className={`flex size-14 items-center justify-center rounded-full border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                   isMuted
                     ? "border-red-500 bg-red-500/10 text-red-600 hover:bg-red-500/20"
                     : "border-border bg-card hover:bg-accent"
                 }`}
               >
                 {isMuted ? (
-                  <MicOff className="size-6" />
+                  <MicOff className="size-6" aria-hidden="true" />
                 ) : (
-                  <Mic className="size-6" />
+                  <Mic className="size-6" aria-hidden="true" />
                 )}
               </button>
               <button
                 onClick={handleEnd}
-                className="flex size-14 items-center justify-center rounded-full bg-red-500 text-white transition-all hover:bg-red-600"
+                aria-label="End interview session"
+                className="flex size-14 items-center justify-center rounded-full bg-red-500 text-white transition-all hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                <Phone className="size-6 rotate-135" />
+                <Phone className="size-6 rotate-135" aria-hidden="true" />
               </button>
             </div>
           </div>

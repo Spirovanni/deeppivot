@@ -93,24 +93,26 @@ export function SessionsList({ sessions }: SessionsListProps) {
             <button
               onClick={handleBulkDelete}
               disabled={isDeleting}
-              className="flex items-center gap-2 rounded-lg bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 disabled:opacity-50"
+              aria-disabled={isDeleting}
+              className="flex items-center gap-2 rounded-lg bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              <Trash2 className="size-4" />
+              <Trash2 className="size-4" aria-hidden="true" />
               Delete {selectedIds.size === 1 ? "Session" : `${selectedIds.size} Sessions`}
             </button>
           )}
           <button
             onClick={handleToggleEdit}
-            className="flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
+            aria-expanded={isEditMode}
+            className="flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             {isEditMode ? (
               <>
-                <X className="size-4" />
+                <X className="size-4" aria-hidden="true" />
                 Cancel
               </>
             ) : (
               <>
-                <Edit3 className="size-4" />
+                <Edit3 className="size-4" aria-hidden="true" />
                 Edit
               </>
             )}

@@ -24,9 +24,9 @@ import {
   WDB_GOAL_CATEGORIES,
   generateWdbMilestoneTemplates,
   type WdbGoalCategory,
+  type WdbStatus,
 } from "@/src/lib/wdb-templates";
 import { createWdbAlignedMilestones } from "@/src/lib/actions/wdb-career-plan";
-import type { WdbStatus } from "@/src/lib/actions/wdb-career-plan";
 
 interface Props {
   wdbStatus: WdbStatus;

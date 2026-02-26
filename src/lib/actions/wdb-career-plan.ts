@@ -16,7 +16,7 @@ import {
 import { eq, isNull, and } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import type { WdbGoalCategory, WdbAlignedMilestone } from "@/src/lib/wdb-templates";
+import type { WdbAlignedMilestone, WdbStatus } from "@/src/lib/wdb-templates";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -26,15 +26,7 @@ export interface WdbLinkInput {
   enrolledAt?: string; // ISO date string
 }
 
-export interface WdbStatus {
-  isWdbClient: boolean;
-  salesforceContactId: string | null;
-  casePlanId: string | null;
-  enrolledAt: Date | null;
-}
-
-// Re-export types so callers can import from one place if desired
-export type { WdbGoalCategory, WdbAlignedMilestone };
+// WdbStatus is defined in wdb-templates.ts (client-safe); re-used here.
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

@@ -5,6 +5,15 @@
  * these types and helpers directly without violating Next.js server/client rules.
  */
 
+// ─── WDB status (shared type used by server actions + client components) ─────
+
+export interface WdbStatus {
+  isWdbClient: boolean;
+  salesforceContactId: string | null;
+  casePlanId: string | null;
+  enrolledAt: Date | null;
+}
+
 // ─── Goal categories ──────────────────────────────────────────────────────────
 
 /**

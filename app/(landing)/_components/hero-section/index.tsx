@@ -130,15 +130,15 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
           >
             <div>
               <div className="text-3xl font-bold text-slate-900 dark:text-white">500+</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Education Programs</div>
+              <div className="text-sm text-slate-700 dark:text-slate-300">Education Programs</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-slate-900 dark:text-white">6</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Career Archetypes</div>
+              <div className="text-sm text-slate-700 dark:text-slate-300">Career Archetypes</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-slate-900 dark:text-white">AI</div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">Voice Coach</div>
+              <div className="text-sm text-slate-700 dark:text-slate-300">Voice Coach</div>
             </div>
           </motion.div>
         </div>
@@ -175,7 +175,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
               <div className="text-sm font-semibold text-violet-600 dark:text-violet-400">
                 FlowArcs Integration
               </div>
-              <div className="text-xs text-slate-600 dark:text-slate-400">Workflow automation ready</div>
+              <div className="text-xs text-slate-700 dark:text-slate-300">Workflow automation ready</div>
             </motion.div>
 
             <motion.div
@@ -186,7 +186,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
               <div className="text-sm font-semibold text-pink-600 dark:text-pink-400">
                 Voice AI Coach
               </div>
-              <div className="text-xs text-slate-600 dark:text-slate-400">Powered by ElevenLabs</div>
+              <div className="text-xs text-slate-700 dark:text-slate-300">Powered by ElevenLabs</div>
             </motion.div>
           </div>
         </motion.div>

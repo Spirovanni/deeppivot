@@ -1,5 +1,6 @@
 const { withSentryConfig } = require("@sentry/nextjs");
-const { withAxiom } = require("@axiomhq/nextjs");
+// @axiomhq/nextjs v0.2+ no longer exports a withAxiom next.config wrapper;
+// request logging is handled via instrumentation.ts instead.
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -149,10 +150,8 @@ const nextConfig = {
   },
 };
 
-// Wrap with Axiom (request logging) then Sentry (error tracking + source maps)
-const axiomConfig = withAxiom(nextConfig);
-
-module.exports = withSentryConfig(axiomConfig, {
+// Wrap with Sentry (error tracking + source maps)
+module.exports = withSentryConfig(nextConfig, {
   // Sentry build-time options
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
@@ -161,12 +160,13 @@ module.exports = withSentryConfig(axiomConfig, {
   // Upload source maps only in CI/production; silence in local dev
   silent: !process.env.CI,
 
-  // Automatically tree-shake Sentry logger statements in production
-  disableLogger: true,
-
   // Route Sentry tunnel through own domain to avoid ad-blockers
   tunnelRoute: "/monitoring",
 
-  // Automatically annotate React components with Sentry for better error context
-  reactComponentAnnotation: { enabled: true },
+  webpack: {
+    // Tree-shake Sentry logger statements in production
+    treeshake: { removeDebugLogging: true },
+    // Annotate React components for better error context
+    reactComponentAnnotation: { enabled: true },
+  },
 });

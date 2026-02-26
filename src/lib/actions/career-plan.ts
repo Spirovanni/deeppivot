@@ -12,16 +12,21 @@ import { revalidatePath } from "next/cache";
 
 const REVALIDATE = "/dashboard/career-plan";
 
-async function getDbUserId(): Promise<number> {
-  const { userId } = await auth();
+async function getDbUser(): Promise<{ id: number; organizationId: string | null }> {
+  const { userId, orgId } = await auth();
   if (!userId) throw new Error("Unauthenticated");
   const [user] = await db
-    .select({ id: usersTable.id })
+    .select({ id: usersTable.id, organizationId: usersTable.organizationId })
     .from(usersTable)
     .where(eq(usersTable.clerkId, userId))
     .limit(1);
   if (!user) throw new Error("User not found");
-  return user.id;
+
+  if (orgId && orgId !== user.organizationId) {
+    user.organizationId = orgId;
+  }
+
+  return user;
 }
 
 // ─── Milestone CRUD ───────────────────────────────────────────────────────────
@@ -34,19 +39,24 @@ export interface MilestoneInput {
 }
 
 export async function createMilestone(data: MilestoneInput): Promise<void> {
-  const userId = await getDbUserId();
+  const user = await getDbUser();
+  const userId = user.id;
 
   // Get max orderIndex to append at the end
   const rows = await db
     .select({ orderIndex: careerMilestonesTable.orderIndex })
     .from(careerMilestonesTable)
-    .where(eq(careerMilestonesTable.userId, userId))
+    .where(and(
+      eq(careerMilestonesTable.userId, userId),
+      user.organizationId ? eq(careerMilestonesTable.organizationId, user.organizationId) : undefined
+    ))
     .orderBy(asc(careerMilestonesTable.orderIndex));
 
   const nextOrder = rows.length > 0 ? rows[rows.length - 1].orderIndex + 1 : 0;
 
   await db.insert(careerMilestonesTable).values({
     userId,
+    organizationId: user.organizationId,
     title: data.title,
     description: data.description ?? null,
     targetDate: data.targetDate ? new Date(data.targetDate) : null,
@@ -61,7 +71,8 @@ export async function updateMilestone(
   milestoneId: number,
   data: MilestoneInput
 ): Promise<void> {
-  const userId = await getDbUserId();
+  const user = await getDbUser();
+  const userId = user.id;
 
   await db
     .update(careerMilestonesTable)
@@ -83,7 +94,8 @@ export async function updateMilestone(
 }
 
 export async function deleteMilestone(milestoneId: number): Promise<void> {
-  const userId = await getDbUserId();
+  const user = await getDbUser();
+  const userId = user.id;
 
   await db
     .delete(careerMilestonesTable)

@@ -13,26 +13,32 @@ import { eq, avg, and, asc, desc } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-async function getDbUserId(): Promise<number> {
-  const { userId } = await auth();
+async function getDbUser(): Promise<{ id: number; organizationId: string | null }> {
+  const { userId, orgId } = await auth();
   if (!userId) throw new Error("Unauthenticated");
 
   const [user] = await db
-    .select({ id: usersTable.id })
+    .select({ id: usersTable.id, organizationId: usersTable.organizationId })
     .from(usersTable)
     .where(eq(usersTable.clerkId, userId))
     .limit(1);
 
   if (!user) throw new Error("User not found");
-  return user.id;
+
+  // Optionally sync orgId if relying on auth().orgId logic
+  if (orgId && orgId !== user.organizationId) {
+    user.organizationId = orgId;
+  }
+
+  return user;
 }
 
 export async function startInterviewSession(sessionType: string): Promise<number> {
-  const userId = await getDbUserId();
+  const user = await getDbUser();
 
   const [session] = await db
     .insert(interviewSessionsTable)
-    .values({ userId, sessionType, status: "active" })
+    .values({ userId: user.id, organizationId: user.organizationId, sessionType, status: "active" })
     .returning();
 
   return session.id;
@@ -65,7 +71,8 @@ export async function endInterviewSession(
 }
 
 export async function getSessionDetail(sessionId: number) {
-  const userId = await getDbUserId();
+  const user = await getDbUser();
+  const userId = user.id;
 
   const session = await db.query.interviewSessionsTable.findFirst({
     where: and(
@@ -81,7 +88,8 @@ export async function getSessionDetail(sessionId: number) {
 }
 
 export async function getSessionEmotions(sessionId: number) {
-  const userId = await getDbUserId();
+  const user = await getDbUser();
+  const userId = user.id;
 
   const [session] = await db
     .select({ id: interviewSessionsTable.id })
@@ -104,7 +112,8 @@ export async function getSessionEmotions(sessionId: number) {
 }
 
 export async function getInterviewFeedback(sessionId: number) {
-  const userId = await getDbUserId();
+  const user = await getDbUser();
+  const userId = user.id;
 
   const [session] = await db
     .select({ id: interviewSessionsTable.id })
@@ -130,7 +139,8 @@ export async function getInterviewFeedback(sessionId: number) {
 }
 
 export async function getEmotionalAnalysis(sessionId: number) {
-  const userId = await getDbUserId();
+  const user = await getDbUser();
+  const userId = user.id;
 
   const [session] = await db
     .select({ id: interviewSessionsTable.id })

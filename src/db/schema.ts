@@ -56,6 +56,10 @@ export const usersTable = pgTable("users", {
   // ── Soft delete ───────────────────────────────────────────────────────────
   /** Set when the user requests account deletion; row is preserved for analytics */
   deletedAt: timestamp(),
+
+  // ── Multi-tenancy ─────────────────────────────────────────────────────────
+  /** Clerk Organization ID for white-labeling / B2B multi-tenancy */
+  organizationId: varchar({ length: 255 }),
 });
 
 // ============================================
@@ -167,6 +171,7 @@ export const interviewSessionsTable = pgTable("interview_sessions", {
   endedAt: timestamp(),
   overallScore: integer(),
   notes: text(),
+  organizationId: varchar({ length: 255 }),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
   /** Soft delete — row preserved for analytics after user removes it */
@@ -175,6 +180,7 @@ export const interviewSessionsTable = pgTable("interview_sessions", {
   return [
     index("interview_sessions_user_idx").on(table.userId),
     index("interview_sessions_status_idx").on(table.status),
+    index("interview_sessions_org_idx").on(table.organizationId),
   ];
 });
 
@@ -392,6 +398,7 @@ export const careerMilestonesTable = pgTable("career_milestones", {
   targetDate: timestamp(),
   status: varchar({ length: 20 }).notNull().default("planned"),
   orderIndex: integer().notNull().default(0),
+  organizationId: varchar({ length: 255 }),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
   /** Soft delete */

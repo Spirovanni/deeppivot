@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { useLayoutEffect, useState, useEffect } from "react";
 import Link from "next/link";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -117,6 +118,8 @@ export const Navbar = () => {
           >
             {isDarkMode ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </Button>
+
+          <LanguageSwitcher />
 
           <AuthSection />
         </div>

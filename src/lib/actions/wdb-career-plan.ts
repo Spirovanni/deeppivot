@@ -100,7 +100,8 @@ export async function createWdbAlignedMilestones(
     .from(careerMilestonesTable)
     .where(and(
       eq(careerMilestonesTable.userId, user.id),
-      isNull(careerMilestonesTable.deletedAt)
+      isNull(careerMilestonesTable.deletedAt),
+      user.organizationId ? eq(careerMilestonesTable.organizationId, user.organizationId) : undefined
     ))
     .orderBy(careerMilestonesTable.orderIndex);
 
@@ -110,6 +111,7 @@ export async function createWdbAlignedMilestones(
 
   const values = milestones.map((m, i) => ({
     userId: user.id,
+    organizationId: user.organizationId,
     title: m.title,
     description: `[WDB: ${m.category}]\n\n${m.description}`.trim(),
     targetDate: m.targetDate ? new Date(m.targetDate) : null,

@@ -6,6 +6,8 @@ import { cn } from "@/utils";
 import Provider from "./provider";
 import { Footer } from "@/components/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Deep Pivot",
@@ -19,18 +21,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
     <Provider>
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
+      <NextIntlClientProvider messages={messages}>
+        <html lang={locale} suppressHydrationWarning>
+          <head>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
                 try {
                   var theme = localStorage.getItem('deeppivot-theme');
                   if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -38,28 +44,29 @@ export default function RootLayout({
                   }
                 } catch (e) {}
               `,
-            }}
-          />
-        </head>
-        <body
-          className={cn(
-            GeistSans.variable,
-            GeistMono.variable,
-            "flex flex-col min-h-screen"
-          )}
-        >
-          {/* Skip-to-content link for keyboard and screen-reader users (WCAG 2.4.1) */}
-          <a
-            href="#main-content"
-            className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:z-[9999] focus-visible:rounded-md focus-visible:bg-primary focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium focus-visible:text-primary-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+              }}
+            />
+          </head>
+          <body
+            className={cn(
+              GeistSans.variable,
+              GeistMono.variable,
+              "flex flex-col min-h-screen"
+            )}
           >
-            Skip to main content
-          </a>
-          <div id="main-content" className="flex flex-1 flex-col">{children}</div>
-          <Footer />
-          <CookieConsent />
-        </body>
-      </html>
+            {/* Skip-to-content link for keyboard and screen-reader users (WCAG 2.4.1) */}
+            <a
+              href="#main-content"
+              className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:z-[9999] focus-visible:rounded-md focus-visible:bg-primary focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium focus-visible:text-primary-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+            >
+              Skip to main content
+            </a>
+            <div id="main-content" className="flex flex-1 flex-col">{children}</div>
+            <Footer />
+            <CookieConsent />
+          </body>
+        </html>
+      </NextIntlClientProvider>
     </Provider>
   ) as any;
 }

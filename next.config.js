@@ -4,6 +4,8 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 });
 // @axiomhq/nextjs v0.2+ no longer exports a withAxiom next.config wrapper;
 // request logging is handled via instrumentation.ts instead.
+const createNextIntlPlugin = require("next-intl/plugin");
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 /** @type {import('next').NextConfig} */
 
@@ -154,8 +156,8 @@ const nextConfig = {
   },
 };
 
-// Wrap with Sentry (error tracking + source maps), then bundle analyzer
-module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, {
+// Wrap with Sentry (error tracking + source maps), next-intl, then bundle analyzer
+module.exports = withBundleAnalyzer(withNextIntl(withSentryConfig(nextConfig, {
   // Sentry build-time options
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
@@ -173,5 +175,5 @@ module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, {
     // Annotate React components for better error context
     reactComponentAnnotation: { enabled: true },
   },
-}));
+})));
 

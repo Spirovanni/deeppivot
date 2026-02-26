@@ -504,6 +504,7 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 |----|-------|--------|
 | ~~deeppivot-121~~ | ~~Performance: Bundle Size Optimization~~ | ✓ |
 | ~~deeppivot-122~~ | ~~DB: Analyze & Optimize Queries~~ | ✓ |
+| ~~deeppivot-124~~ | ~~Scaling: API Prep for Mobile App~~ | ✓ |
 | ~~deeppivot-137~~ | ~~Infra: Feature Flag System~~ | ✓ |
 | ~~deeppivot-139~~ | ~~Analytics: Track Key User Actions~~ | ✓ |
 | ~~deeppivot-141~~ | ~~UX: Responsive Polish~~ | ✓ |

@@ -6,18 +6,23 @@ import {
   careerMilestonesTable,
   careerResourcesTable,
 } from "@/src/db/schema";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, and, isNull } from "drizzle-orm";
 import { captureServerEvent } from "@/src/lib/posthog-server";
 
-async function getDbUserInfo(): Promise<{ id: number; clerkId: string } | null> {
-  const { userId } = await auth();
+async function getDbUserInfo(): Promise<{ id: number; clerkId: string; organizationId: string | null } | null> {
+  const { userId, orgId } = await auth();
   if (!userId) return null;
 
   const [user] = await db
-    .select({ id: usersTable.id, clerkId: usersTable.clerkId })
+    .select({ id: usersTable.id, clerkId: usersTable.clerkId, organizationId: usersTable.organizationId })
     .from(usersTable)
     .where(eq(usersTable.clerkId, userId))
     .limit(1);
+
+  if (user && orgId && orgId !== user.organizationId) {
+    // Optional syncing if needed
+    user.organizationId = orgId;
+  }
 
   return user ?? null;
 }
@@ -34,7 +39,10 @@ export async function GET() {
 
   try {
     const milestones = await db.query.careerMilestonesTable.findMany({
-      where: eq(careerMilestonesTable.userId, userInfo.id),
+      where: and(
+        eq(careerMilestonesTable.userId, userInfo.id),
+        userInfo.organizationId ? eq(careerMilestonesTable.organizationId, userInfo.organizationId) : undefined
+      ),
       orderBy: [asc(careerMilestonesTable.orderIndex)],
       with: {
         resources: {
@@ -77,7 +85,10 @@ export async function POST(request: NextRequest) {
     const rows = await db
       .select({ orderIndex: careerMilestonesTable.orderIndex })
       .from(careerMilestonesTable)
-      .where(eq(careerMilestonesTable.userId, userInfo.id))
+      .where(and(
+        eq(careerMilestonesTable.userId, userInfo.id),
+        userInfo.organizationId ? eq(careerMilestonesTable.organizationId, userInfo.organizationId) : undefined
+      ))
       .orderBy(asc(careerMilestonesTable.orderIndex));
 
     const nextOrder = rows.length > 0 ? rows[rows.length - 1].orderIndex + 1 : 0;
@@ -86,6 +97,7 @@ export async function POST(request: NextRequest) {
       .insert(careerMilestonesTable)
       .values({
         userId: userInfo.id,
+        organizationId: userInfo.organizationId,
         title,
         description: body.description?.trim() || null,
         targetDate: body.targetDate ? new Date(body.targetDate) : null,

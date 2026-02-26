@@ -3,11 +3,15 @@
 import { motion } from "motion/react";
 import Image from "next/image";
 
+import { useTranslations } from "next-intl";
+
 export function HeroSectionOne() {
+  const t = useTranslations("Hero");
+
   const scrollToChat = () => {
     const chatSection = document.getElementById('chat-section');
     if (chatSection) {
-      chatSection.scrollIntoView({ 
+      chatSection.scrollIntoView({
         behavior: 'smooth',
         block: 'start'
       });
@@ -29,7 +33,7 @@ export function HeroSectionOne() {
       </div>
       <div className="px-4 py-10 md:py-20">
         <h1 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold text-slate-700 md:text-4xl lg:text-7xl dark:text-slate-300">
-          {"Ace your next interview with AI coaching"
+          {t("title")
             .split(" ")
             .map((word, index) => (
               <motion.span
@@ -60,7 +64,7 @@ export function HeroSectionOne() {
           }}
           className="relative z-10 mx-auto max-w-xl py-4 text-center text-lg font-normal text-neutral-600 dark:text-neutral-400"
         >
-          Practice with our AI career coach that understands your emotions and provides personalized feedback to help you succeed.
+          {t("subtitle")}
         </motion.p>
         <motion.div
           initial={{
@@ -75,14 +79,14 @@ export function HeroSectionOne() {
           }}
           className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-4"
         >
-          <button 
+          <button
             onClick={scrollToChat}
             className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
           >
-            Start Practice Interview
+            {t("cta")}
           </button>
           <button className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
-            Learn More
+            {t("secondaryCta")}
           </button>
         </motion.div>
         <motion.div
@@ -100,7 +104,7 @@ export function HeroSectionOne() {
           }}
           className="relative z-10 mt-20 mx-auto max-w-2xl"
         >
-          <div 
+          <div
             id="hero-image"
             className="rounded-2xl border border-gray-300 bg-white p-2 shadow-xl dark:border-gray-600 dark:bg-gray-800"
           >

@@ -51,15 +51,15 @@ export async function POST(req: NextRequest) {
 
   // Handle the webhook
   const eventType = evt.type;
-  
+
   console.log(`Webhook with an ID of ${evt.data.id} and type of ${eventType}`);
   console.log('Webhook body:', body);
 
   if (eventType === 'user.created' || eventType === 'user.updated') {
     const { id, email_addresses, first_name, last_name, image_url, created_at } = evt.data;
-    
+
     const primaryEmail = email_addresses.find((email: any) => email.id === evt.data.primary_email_address_id);
-    
+
     if (!primaryEmail) {
       console.error('No primary email found for user');
       return new Response('No primary email found', { status: 400 });
@@ -81,6 +81,7 @@ export async function POST(req: NextRequest) {
         email: primaryEmail.email_address,
         age: 25, // Default age since Clerk doesn't provide this
         isEmailVerified: primaryEmail.verification?.status === 'verified',
+        organizationId: evt.data.public_metadata?.orgId || null,
         // Add any other fields you want to sync
       };
 
@@ -106,6 +107,7 @@ export async function POST(req: NextRequest) {
             name: userData.name,
             email: userData.email,
             isEmailVerified: userData.isEmailVerified,
+            organizationId: userData.organizationId,
             updatedAt: new Date(),
           })
           .where(eq(usersTable.clerkId, id));

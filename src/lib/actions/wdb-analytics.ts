@@ -53,7 +53,7 @@ async function getCohortLearnerIds(mentorIds: number[]): Promise<number[]> {
     .select({ userId: mentorConnectionsTable.userId })
     .from(mentorConnectionsTable)
     .where(
-      sql`${mentorConnectionsTable.mentorId} = ANY(${mentorIds})`
+      sql`${mentorConnectionsTable.mentorId} = ANY(ARRAY[${sql.join(mentorIds.map(id => sql`${id}`), sql`, `)}]::int[])`
     );
 
   return [...new Set(connections.map((c) => c.userId))];
@@ -108,6 +108,8 @@ export async function getWdbCohortStats(): Promise<WdbCohortStats> {
     };
   }
 
+  const idArray = sql`ARRAY[${sql.join(learnerIds.map(id => sql`${id}`), sql`, `)}]::int[]`;
+
   const [sessionsResult, archetypeResult, milestoneResult] = await Promise.all([
     db
       .select({
@@ -118,7 +120,7 @@ export async function getWdbCohortStats(): Promise<WdbCohortStats> {
       .from(interviewSessionsTable)
       .where(
         and(
-          sql`${interviewSessionsTable.userId} = ANY(${learnerIds})`,
+          sql`${interviewSessionsTable.userId} = ANY(${idArray})`,
           isNull(interviewSessionsTable.deletedAt)
         )
       )
@@ -127,14 +129,14 @@ export async function getWdbCohortStats(): Promise<WdbCohortStats> {
     db
       .select({ userId: careerArchetypesTable.userId })
       .from(careerArchetypesTable)
-      .where(sql`${careerArchetypesTable.userId} = ANY(${learnerIds})`),
+      .where(sql`${careerArchetypesTable.userId} = ANY(${idArray})`),
 
     db
       .select({ userId: careerMilestonesTable.userId })
       .from(careerMilestonesTable)
       .where(
         and(
-          sql`${careerMilestonesTable.userId} = ANY(${learnerIds})`,
+          sql`${careerMilestonesTable.userId} = ANY(${idArray})`,
           isNull(careerMilestonesTable.deletedAt)
         )
       )
@@ -169,13 +171,15 @@ export async function getWdbArchetypeBreakdown(): Promise<ArchetypeBreakdown[]> 
   const learnerIds = await getCohortLearnerIds(mentorIds);
   if (learnerIds.length === 0) return [];
 
+  const idArray2 = sql`ARRAY[${sql.join(learnerIds.map(id => sql`${id}`), sql`, `)}]::int[]`;
+
   const rows = await db
     .select({
       archetypeName: careerArchetypesTable.archetypeName,
       count: count(),
     })
     .from(careerArchetypesTable)
-    .where(sql`${careerArchetypesTable.userId} = ANY(${learnerIds})`)
+    .where(sql`${careerArchetypesTable.userId} = ANY(${idArray2})`)
     .groupBy(careerArchetypesTable.archetypeName)
     .orderBy(desc(count()));
 
@@ -198,6 +202,8 @@ export async function getWdbSessionTrend(days = 30): Promise<SessionTrend[]> {
 
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
+  const idArray3 = sql`ARRAY[${sql.join(learnerIds.map(id => sql`${id}`), sql`, `)}]::int[]`;
+
   const rows = await db
     .select({
       date: sql<string>`date_trunc('day', ${interviewSessionsTable.startedAt})::date::text`,
@@ -206,7 +212,7 @@ export async function getWdbSessionTrend(days = 30): Promise<SessionTrend[]> {
     .from(interviewSessionsTable)
     .where(
       and(
-        sql`${interviewSessionsTable.userId} = ANY(${learnerIds})`,
+        sql`${interviewSessionsTable.userId} = ANY(${idArray3})`,
         gte(interviewSessionsTable.startedAt, since),
         isNull(interviewSessionsTable.deletedAt)
       )
@@ -226,6 +232,8 @@ export async function getWdbMilestoneBreakdown(): Promise<MilestoneStatusBreakdo
   const learnerIds = await getCohortLearnerIds(mentorIds);
   if (learnerIds.length === 0) return [];
 
+  const idArray4 = sql`ARRAY[${sql.join(learnerIds.map(id => sql`${id}`), sql`, `)}]::int[]`;
+
   const rows = await db
     .select({
       status: careerMilestonesTable.status,
@@ -234,7 +242,7 @@ export async function getWdbMilestoneBreakdown(): Promise<MilestoneStatusBreakdo
     .from(careerMilestonesTable)
     .where(
       and(
-        sql`${careerMilestonesTable.userId} = ANY(${learnerIds})`,
+        sql`${careerMilestonesTable.userId} = ANY(${idArray4})`,
         isNull(careerMilestonesTable.deletedAt)
       )
     )

@@ -50,7 +50,7 @@ function BarChart({
   colors,
   maxValue,
 }: {
-  data: Record<string, string | number>[];
+  data: { [key: string]: string | number }[];
   valueKey: string;
   labelKey: string;
   colors: string[];
@@ -283,7 +283,7 @@ export function WdbChartsClient({ archetypes, sessionTrend, milestones }: Props)
         </CardHeader>
         <CardContent>
           <BarChart
-            data={archetypes}
+            data={archetypes as unknown as { [key: string]: string | number }[]}
             valueKey="count"
             labelKey="archetypeName"
             colors={ARCHETYPE_COLORS}

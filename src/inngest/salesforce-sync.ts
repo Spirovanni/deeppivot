@@ -80,7 +80,8 @@ export const salesforceDailySync = inngest.createFunction(
       const { getSalesforceClient } = await import("@/src/lib/salesforce");
       const conn = await getSalesforceClient();
 
-      const result = await conn.query<SFContact>(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await (conn.query as (soql: string) => Promise<{ records: SFContact[]; totalSize: number }>)(
         `SELECT Id, FirstName, LastName, Email, Phone, Title,
                 DeepPivot_User_ID__c, WDB_Referral_Mentor_Email__c, SystemModstamp
          FROM Contact
@@ -112,7 +113,7 @@ export const salesforceDailySync = inngest.createFunction(
           try {
             // Find matching DeepPivot user by email
             const [user] = await db
-              .select({ id: usersTable.id, name: usersTable.name, email: usersTable.email })
+              .select({ id: usersTable.id, name: usersTable.name, email: usersTable.email, wdbSalesforceContactId: usersTable.wdbSalesforceContactId })
               .from(usersTable)
               .where(eq(usersTable.email, contact.Email))
               .limit(1);
@@ -120,14 +121,26 @@ export const salesforceDailySync = inngest.createFunction(
             if (!user) continue;
             stats.usersMatched++;
 
-            // Update user name if Salesforce has a more complete version
+            // Update user name + link WDB record if Salesforce data is present
             const sfName = [contact.FirstName, contact.LastName].filter(Boolean).join(" ").trim();
+            const updatePayload: Record<string, unknown> = {};
+
             if (sfName && sfName !== user.name) {
+              updatePayload.name = sfName;
+              stats.usersUpdated++;
+            }
+
+            // Link Salesforce Contact ID as WDB record if not already linked
+            if (contact.Id && !user.wdbSalesforceContactId) {
+              updatePayload.wdbSalesforceContactId = contact.Id;
+              updatePayload.wdbEnrolledAt = new Date();
+            }
+
+            if (Object.keys(updatePayload).length > 0) {
               await db
                 .update(usersTable)
-                .set({ name: sfName })
+                .set({ ...updatePayload, updatedAt: new Date() })
                 .where(eq(usersTable.id, user.id));
-              stats.usersUpdated++;
             }
 
             // Create mentor connection if WDB referred this contact to a mentor
@@ -174,20 +187,18 @@ async function createMentorConnectionIfNeeded(
   mentorEmail: string,
   stats: SyncStats
 ): Promise<void> {
-  // Look up the mentor by their user email → mentors table
-  const [mentorUser] = await db
-    .select({ id: usersTable.id })
-    .from(usersTable)
-    .where(eq(usersTable.email, mentorEmail))
-    .limit(1);
-
-  if (!mentorUser) return;
-
-  const [mentor] = await db
-    .select({ id: mentorsTable.id })
+  // Look up mentor by their contact URL or name heuristic.
+  // Since mentorsTable has no userId or email, we do a best-effort match by
+  // checking if any active mentor's contactUrl contains the email.
+  // In a production deployment, add an email column to mentors.
+  const allMentors = await db
+    .select({ id: mentorsTable.id, contactUrl: mentorsTable.contactUrl })
     .from(mentorsTable)
-    .where(eq(mentorsTable.userId, mentorUser.id))
-    .limit(1);
+    .where(eq(mentorsTable.isActive, true));
+
+  const mentor = allMentors.find(
+    (m) => m.contactUrl && m.contactUrl.toLowerCase().includes(mentorEmail.toLowerCase())
+  );
 
   if (!mentor) return;
 

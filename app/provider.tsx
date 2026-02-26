@@ -7,7 +7,28 @@ import UserSyncProvider from "./UserSyncProvider";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { QueryProvider } from "./QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { PHProvider } from "@/src/lib/posthog";
+import { usePathname, useSearchParams } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
+import { Suspense } from "react";
 
+
+function PageViewTracker() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    if (pathname && posthog) {
+      const url =
+        window.location.origin + pathname +
+        (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+      posthog.capture("$pageview", { $current_url: url });
+    }
+  }, [pathname, searchParams, posthog]);
+
+  return null;
+}
 
 export type UsersDetail={
     clerkId:string,
@@ -70,6 +91,9 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
     <QueryProvider>
       <UserSyncProvider>
         <UserDetailContext.Provider value={{userDetail,setUserDetail}}>
+          <Suspense fallback={null}>
+            <PageViewTracker />
+          </Suspense>
           {children}
           <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
         </UserDetailContext.Provider>
@@ -83,18 +107,20 @@ function Provider({ children }: { children: React.ReactNode }) {
   const isProduction = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_live_');
 
   return (
-    <ThemeProvider defaultTheme="system" storageKey="deeppivot-theme">
-      <ClerkProvider
-        {...(isProduction ? {
-          clerkJSUrl: "/api/clerk-js",
-          proxyUrl: "/api/clerk-proxy"
-        } : {})}
-      >
-        <InnerProvider>
-          {children}
-        </InnerProvider>
-      </ClerkProvider>
-    </ThemeProvider>
+    <PHProvider>
+      <ThemeProvider defaultTheme="system" storageKey="deeppivot-theme">
+        <ClerkProvider
+          {...(isProduction ? {
+            clerkJSUrl: "/api/clerk-js",
+            proxyUrl: "/api/clerk-proxy"
+          } : {})}
+        >
+          <InnerProvider>
+            {children}
+          </InnerProvider>
+        </ClerkProvider>
+      </ThemeProvider>
+    </PHProvider>
   );
 }
 

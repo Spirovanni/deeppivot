@@ -24,8 +24,7 @@ export function FeatureBentoGrid() {
           header={item.header}
           icon={item.icon}
           className={cn(
-            "group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg dark:border-slate-800 dark:bg-slate-900",
-            i === 3 ? "md:col-span-2 lg:col-span-2" : ""
+            "group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
           )}
         />
       ))}
@@ -36,7 +35,7 @@ export function FeatureBentoGrid() {
 const VoiceWaveform = () => {
   // Use fixed heights that are consistent between server and client
   const heights = [15, 28, 22, 35, 18, 32, 25, 38, 20, 30, 16, 33];
-  
+
   return (
     <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 to-blue-50 items-center justify-center p-4">
       <div className="flex items-end space-x-1">
@@ -174,9 +173,15 @@ const items = [
     icon: <IconSchool className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Job Application Tracker",
-    description: "Organize your job search with a drag-and-drop Kanban board. Track applications across stages and integrate with FlowArcs for automated follow-ups.",
+    title: "Job Marketplace & Tracker",
+    description: "Discover and apply to exclusive roles directly within DeepPivot, and track all your applications with a drag-and-drop Kanban board.",
     header: <RocketLaunch />,
     icon: <IconRocket className="h-4 w-4 text-neutral-500" />,
+  },
+  {
+    title: "Employer Insights",
+    description: "For hiring managers: tap into an AI-verified talent pool. Review behavioral insights, technical scores, and archetype fit before you interview.",
+    header: <AnalyticsGraph />,
+    icon: <IconUsers className="h-4 w-4 text-neutral-500" />,
   },
 ];

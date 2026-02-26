@@ -90,7 +90,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-xl leading-relaxed text-slate-600 dark:text-slate-300"
             >
-              AI-powered voice interviews with emotional intelligence, career archetyping, and personalized development paths.
+              AI-powered voice interviews, career archetyping, and direct connections to hiring employers in our Job Marketplace.
             </motion.p>
           </div>
 
@@ -137,8 +137,8 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
               <div className="text-sm text-slate-700 dark:text-slate-300">Career Archetypes</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">AI</div>
-              <div className="text-sm text-slate-700 dark:text-slate-300">Voice Coach</div>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">100+</div>
+              <div className="text-sm text-slate-700 dark:text-slate-300">Employers Hiring</div>
             </div>
           </motion.div>
         </div>

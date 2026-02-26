@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { RoiCalculator } from "./RoiCalculator";
+import { FundingPanel } from "./FundingPanel";
 import {
   Search,
   X,
@@ -16,6 +18,8 @@ import {
   DollarSign,
   ChevronDown,
   ChevronUp,
+  Calculator,
+  HandCoins,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -33,8 +37,19 @@ interface Program {
   description: string;
 }
 
+interface FundingOpportunity {
+  id: number;
+  name: string;
+  fundingType: string;
+  amount: number | null;
+  eligibilityText: string;
+  applicationUrl: string;
+  deadline: Date | null;
+}
+
 interface AltEdExplorerProps {
   initialPrograms: Program[];
+  fundingOpportunities: FundingOpportunity[];
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -110,10 +125,19 @@ function roiColor(score: number | null): string {
 
 // ─── Program Card ─────────────────────────────────────────────────────────────
 
-function ProgramCard({ program }: { program: Program }) {
+function ProgramCard({
+  program,
+  fundingOpportunities,
+}: {
+  program: Program;
+  fundingOpportunities: FundingOpportunity[];
+}) {
   const [expanded, setExpanded] = useState(false);
+  const [showRoi, setShowRoi] = useState(false);
+  const [showFunding, setShowFunding] = useState(false);
 
   return (
+    <>
     <Card className="flex flex-col transition-shadow hover:shadow-md">
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-2">
@@ -183,8 +207,8 @@ function ProgramCard({ program }: { program: Program }) {
           </div>
         )}
 
-        {/* CTA */}
-        <div className="mt-auto pt-1">
+        {/* Action row */}
+        <div className="mt-auto pt-1 flex items-center gap-3 flex-wrap">
           <a
             href={program.url}
             target="_blank"
@@ -194,9 +218,48 @@ function ProgramCard({ program }: { program: Program }) {
             Visit program
             <ExternalLink className="size-3" aria-hidden="true" />
           </a>
+          <button
+            type="button"
+            onClick={() => setShowRoi(true)}
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+            aria-label="Calculate ROI"
+          >
+            <Calculator className="size-3" aria-hidden="true" />
+            ROI
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowFunding((v) => !v)}
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+            aria-label="View funding options"
+            aria-expanded={showFunding}
+          >
+            <HandCoins className="size-3" aria-hidden="true" />
+            Funding
+          </button>
         </div>
+
+        {/* Funding panel (inline) */}
+        {showFunding && (
+          <div className="border-t pt-3">
+            <FundingPanel
+              opportunities={fundingOpportunities}
+              programType={program.programType}
+              programTags={program.tags}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
+
+    {/* ROI Calculator modal */}
+    {showRoi && (
+      <RoiCalculator
+        program={program}
+        onClose={() => setShowRoi(false)}
+      />
+    )}
+    </>
   );
 }
 
@@ -328,7 +391,7 @@ function FilterPanel({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export function AltEdExplorer({ initialPrograms }: AltEdExplorerProps) {
+export function AltEdExplorer({ initialPrograms, fundingOpportunities }: AltEdExplorerProps) {
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     programTypes: new Set(),
@@ -560,9 +623,13 @@ export function AltEdExplorer({ initialPrograms }: AltEdExplorerProps) {
                 aria-live="polite"
                 aria-atomic="false"
               >
-                {filtered.map((program) => (
-                  <ProgramCard key={program.id} program={program} />
-                ))}
+              {filtered.map((program) => (
+                <ProgramCard
+                  key={program.id}
+                  program={program}
+                  fundingOpportunities={fundingOpportunities}
+                />
+              ))}
               </div>
             </>
           )}

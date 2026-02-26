@@ -16,6 +16,7 @@ import {
   recordingUrlsTable,
   transcriptUrlsTable,
   interviewFeedbackTable,
+  mentorFeedbackTable,
 } from "@/src/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
@@ -407,4 +408,142 @@ export async function deleteMentorResource(resourceId: string): Promise<void> {
     .update(mentorsTable)
     .set({ expertise })
     .where(eq(mentorsTable.id, mentor.id));
+}
+
+// ─── Mentor feedback/commenting ───────────────────────────────────────────────
+
+export interface MentorFeedbackEntry {
+  id: number;
+  sessionId: number;
+  comment: string;
+  rating: number | null;
+  isPrivate: boolean;
+  createdAt: Date;
+}
+
+export interface MentorFeedbackInput {
+  sessionId: number;
+  learnerId: number;
+  comment: string;
+  rating?: number;
+  isPrivate?: boolean;
+}
+
+/**
+ * Add a mentor comment/rating to a learner's interview session.
+ */
+export async function addMentorFeedback(input: MentorFeedbackInput): Promise<MentorFeedbackEntry> {
+  await requireRole("mentor");
+  const userId = await getDbUserId();
+  const mentorId = await getMentorId(userId);
+
+  const [connection] = await db
+    .select({ id: mentorConnectionsTable.id })
+    .from(mentorConnectionsTable)
+    .where(
+      and(
+        eq(mentorConnectionsTable.mentorId, mentorId),
+        eq(mentorConnectionsTable.userId, input.learnerId)
+      )
+    )
+    .limit(1);
+
+  if (!connection) {
+    throw new Error("You can only comment on sessions for your assigned learners");
+  }
+
+  const [session] = await db
+    .select({ id: interviewSessionsTable.id })
+    .from(interviewSessionsTable)
+    .where(
+      and(
+        eq(interviewSessionsTable.id, input.sessionId),
+        eq(interviewSessionsTable.userId, input.learnerId)
+      )
+    )
+    .limit(1);
+
+  if (!session) throw new Error("Session not found for this learner");
+
+  const [inserted] = await db
+    .insert(mentorFeedbackTable)
+    .values({
+      sessionId: input.sessionId,
+      mentorUserId: userId,
+      comment: input.comment,
+      rating: input.rating ?? null,
+      isPrivate: input.isPrivate ?? false,
+    })
+    .returning();
+
+  return {
+    id: inserted.id,
+    sessionId: inserted.sessionId,
+    comment: inserted.comment,
+    rating: inserted.rating,
+    isPrivate: inserted.isPrivate,
+    createdAt: inserted.createdAt,
+  };
+}
+
+/**
+ * Get all mentor feedback entries for a specific session.
+ */
+export async function getMentorFeedbackForSession(
+  sessionId: number,
+  learnerId: number
+): Promise<MentorFeedbackEntry[]> {
+  await requireRole("mentor");
+  const userId = await getDbUserId();
+  const mentorId = await getMentorId(userId);
+
+  const [connection] = await db
+    .select({ id: mentorConnectionsTable.id })
+    .from(mentorConnectionsTable)
+    .where(
+      and(
+        eq(mentorConnectionsTable.mentorId, mentorId),
+        eq(mentorConnectionsTable.userId, learnerId)
+      )
+    )
+    .limit(1);
+
+  if (!connection) throw new Error("Access denied to this learner's sessions");
+
+  return db
+    .select({
+      id: mentorFeedbackTable.id,
+      sessionId: mentorFeedbackTable.sessionId,
+      comment: mentorFeedbackTable.comment,
+      rating: mentorFeedbackTable.rating,
+      isPrivate: mentorFeedbackTable.isPrivate,
+      createdAt: mentorFeedbackTable.createdAt,
+    })
+    .from(mentorFeedbackTable)
+    .where(
+      and(
+        eq(mentorFeedbackTable.sessionId, sessionId),
+        eq(mentorFeedbackTable.mentorUserId, userId)
+      )
+    )
+    .orderBy(desc(mentorFeedbackTable.createdAt));
+}
+
+/**
+ * Delete a mentor feedback entry (author only).
+ */
+export async function deleteMentorFeedback(feedbackId: number): Promise<void> {
+  await requireRole("mentor");
+  const userId = await getDbUserId();
+
+  const [row] = await db
+    .select({ id: mentorFeedbackTable.id, mentorUserId: mentorFeedbackTable.mentorUserId })
+    .from(mentorFeedbackTable)
+    .where(eq(mentorFeedbackTable.id, feedbackId))
+    .limit(1);
+
+  if (!row) throw new Error("Feedback entry not found");
+  if (row.mentorUserId !== userId) throw new Error("You can only delete your own feedback");
+
+  await db.delete(mentorFeedbackTable).where(eq(mentorFeedbackTable.id, feedbackId));
 }

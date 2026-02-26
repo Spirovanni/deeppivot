@@ -413,6 +413,45 @@ export const mentorConnectionsRelations = relations(mentorConnectionsTable, ({ o
 }));
 
 // ============================================
+// MENTOR FEEDBACK MODEL
+// ============================================
+
+/**
+ * Mentor-authored comments layered on top of AI-generated interview feedback.
+ * One mentor may leave multiple feedback entries on the same session.
+ */
+export const mentorFeedbackTable = pgTable("mentor_feedback", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  /** The interview session this feedback is attached to */
+  sessionId: integer()
+    .notNull()
+    .references(() => interviewSessionsTable.id, { onDelete: "cascade" }),
+  /** The mentor (users.id — the mentor's user record, not mentors.id) */
+  mentorUserId: integer()
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  /** Free-form comment text */
+  comment: text().notNull(),
+  /** Optional rating 1–5 overlaid on the session */
+  rating: integer(),
+  /** Internal note — not shown to the learner */
+  isPrivate: boolean().notNull().default(false),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const mentorFeedbackRelations = relations(mentorFeedbackTable, ({ one }) => ({
+  session: one(interviewSessionsTable, {
+    fields: [mentorFeedbackTable.sessionId],
+    references: [interviewSessionsTable.id],
+  }),
+  mentorUser: one(usersTable, {
+    fields: [mentorFeedbackTable.mentorUserId],
+    references: [usersTable.id],
+  }),
+}));
+
+// ============================================
 // EDUCATION EXPLORER MODELS (LP9)
 // ============================================
 

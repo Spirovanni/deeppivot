@@ -13,6 +13,7 @@ import {
   processInterviewFeedback,
   processCareerArchetyping,
 } from "@/src/inngest/functions";
+import { salesforceDailySync } from "@/src/inngest/salesforce-sync";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -22,5 +23,6 @@ export const { GET, POST, PUT } = serve({
     processInterviewEmotionalAnalysis,
     processInterviewFeedback,
     processCareerArchetyping,
+    salesforceDailySync,
   ],
 });

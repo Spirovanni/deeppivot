@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { AltEdExplorer } from "./_components/AltEdExplorer";
-import { getPrograms } from "@/src/lib/actions/education";
+import { getPrograms, getFunding } from "@/src/lib/actions/education";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,12 +12,15 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AltEdPage() {
-  const programs = await getPrograms();
+  const [programs, funding] = await Promise.all([
+    getPrograms(),
+    getFunding(),
+  ]);
 
   return (
     <div className="min-h-screen bg-background">
       <Suspense fallback={<ExplorerSkeleton />}>
-        <AltEdExplorer initialPrograms={programs} />
+        <AltEdExplorer initialPrograms={programs} fundingOpportunities={funding} />
       </Suspense>
     </div>
   );

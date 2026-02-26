@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgTable, real, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgTable, real, text, timestamp, unique, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const usersTable = pgTable("users", {
@@ -70,6 +70,8 @@ export const usersRelations = relations(usersTable, ({ many, one }) => ({
   mentorConnections: many(mentorConnectionsTable),
   subscription: one(subscriptionsTable),
   agentConfigs: many(agentConfigsTable),
+  companies: many(companiesTable),
+  jobMarketplaceApplications: many(jobMarketplaceApplicationsTable),
 }));
 
 // ============================================
@@ -122,6 +124,12 @@ export const jobApplicationsTable = pgTable("job_applications", {
   columnId: integer().notNull().references(() => jobColumnsTable.id, { onDelete: "cascade" }),
   userId: integer().notNull(),
   workflowId: varchar({ length: 255 }),
+  /** Source: 'external' (manually added) | 'marketplace' (applied via DeepPivot marketplace) */
+  sourceType: varchar({ length: 20 }).notNull().default("external"),
+  /** FK to marketplace job (null for external entries) */
+  marketplaceJobId: integer().references(() => jobsTable.id, { onDelete: "set null" }),
+  /** FK to the marketplace application row (null for external entries) */
+  marketplaceApplicationId: integer().references(() => jobMarketplaceApplicationsTable.id, { onDelete: "set null" }),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
@@ -130,6 +138,14 @@ export const jobApplicationsRelations = relations(jobApplicationsTable, ({ one }
   column: one(jobColumnsTable, {
     fields: [jobApplicationsTable.columnId],
     references: [jobColumnsTable.id],
+  }),
+  marketplaceJob: one(jobsTable, {
+    fields: [jobApplicationsTable.marketplaceJobId],
+    references: [jobsTable.id],
+  }),
+  marketplaceApplication: one(jobMarketplaceApplicationsTable, {
+    fields: [jobApplicationsTable.marketplaceApplicationId],
+    references: [jobMarketplaceApplicationsTable.id],
   }),
 }));
 
@@ -583,3 +599,102 @@ export const fundingOpportunitiesTable = pgTable("funding_opportunities", {
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 });
+
+// ============================================
+// JOB MARKETPLACE MODELS (deeppivot-143 to 146)
+// ============================================
+
+/**
+ * Employer-managed company profiles.
+ * One user (employer role) may own one company.
+ */
+export const companiesTable = pgTable("companies", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  /** The employer user who owns this profile */
+  ownerUserId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  name: varchar({ length: 255 }).notNull(),
+  logoUrl: varchar({ length: 1024 }),
+  website: varchar({ length: 1024 }),
+  description: text(),
+  /** Size bucket: 1-10, 11-50, 51-200, 201-500, 500+ */
+  size: varchar({ length: 50 }),
+  industry: varchar({ length: 100 }),
+  location: varchar({ length: 255 }),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const companiesRelations = relations(companiesTable, ({ one, many }) => ({
+  owner: one(usersTable, {
+    fields: [companiesTable.ownerUserId],
+    references: [usersTable.id],
+  }),
+  jobs: many(jobsTable),
+}));
+
+/**
+ * Job postings published by employers.
+ */
+export const jobsTable = pgTable("jobs", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  companyId: integer().notNull().references(() => companiesTable.id, { onDelete: "cascade" }),
+  title: varchar({ length: 255 }).notNull(),
+  description: text().notNull(),
+  location: varchar({ length: 255 }),
+  /** full_time | part_time | contract | internship */
+  jobType: varchar({ length: 50 }).notNull().default("full_time"),
+  /** entry | mid | senior | executive */
+  experienceLevel: varchar({ length: 50 }).notNull().default("mid"),
+  /** Annual salary in cents (nullable = not disclosed) */
+  salaryMin: integer(),
+  salaryMax: integer(),
+  remoteFlag: boolean().notNull().default(false),
+  /** draft | published | closed */
+  status: varchar({ length: 20 }).notNull().default("draft"),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const jobsRelations = relations(jobsTable, ({ one, many }) => ({
+  company: one(companiesTable, {
+    fields: [jobsTable.companyId],
+    references: [companiesTable.id],
+  }),
+  applications: many(jobMarketplaceApplicationsTable),
+  trackerCards: many(jobApplicationsTable),
+}));
+
+/**
+ * Job-seeker applications submitted through the marketplace.
+ * Unique per (jobId, userId) — no duplicate applications.
+ */
+export const jobMarketplaceApplicationsTable = pgTable(
+  "job_marketplace_applications",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    jobId: integer().notNull().references(() => jobsTable.id, { onDelete: "cascade" }),
+    userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    resumeUrl: varchar({ length: 1024 }),
+    coverLetter: text(),
+    /** new | reviewing | rejected | hired */
+    status: varchar({ length: 20 }).notNull().default("new"),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (t) => [unique("uq_marketplace_app_job_user").on(t.jobId, t.userId)]
+);
+
+export const jobMarketplaceApplicationsRelations = relations(
+  jobMarketplaceApplicationsTable,
+  ({ one, many }) => ({
+    job: one(jobsTable, {
+      fields: [jobMarketplaceApplicationsTable.jobId],
+      references: [jobsTable.id],
+    }),
+    user: one(usersTable, {
+      fields: [jobMarketplaceApplicationsTable.userId],
+      references: [usersTable.id],
+    }),
+    trackerCards: many(jobApplicationsTable),
+  })
+);

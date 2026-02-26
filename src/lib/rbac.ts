@@ -33,6 +33,7 @@ export type UserRole =
   | "mentor"
   | "wdb_partner"
   | "enterprise_manager"
+  | "employer"
   | "admin";
 
 // ─── Enterprise Manager permissions ──────────────────────────────────────────
@@ -181,4 +182,35 @@ export async function requireAdmin(): Promise<AuthorizedUser> {
   }
 
   return { clerkId: clerkUser.id, dbId: row.id, id: row.id, role: row.role as UserRole };
+}
+
+// ─── Employer helpers ─────────────────────────────────────────────────────────
+
+/**
+ * Require the employer (or admin) role.
+ * Returns the authenticated user record.
+ */
+export async function requireEmployer(): Promise<AuthorizedUser> {
+  const clerkUser = await currentUser();
+  if (!clerkUser?.id) redirect("/sign-in");
+
+  const [row] = await db
+    .select({ id: usersTable.id, role: usersTable.role })
+    .from(usersTable)
+    .where(eq(usersTable.clerkId, clerkUser.id))
+    .limit(1);
+
+  if (!row || (row.role !== "employer" && row.role !== "admin")) {
+    redirect("/unauthorized");
+  }
+
+  return { clerkId: clerkUser.id, dbId: row.id, id: row.id, role: row.role as UserRole };
+}
+
+/**
+ * Check whether a role is an employer or admin (used for non-redirect guards).
+ */
+export function isEmployerOrAdmin(role: UserRole | null | undefined): boolean {
+  if (!role) return false;
+  return role === "employer" || role === "admin";
 }

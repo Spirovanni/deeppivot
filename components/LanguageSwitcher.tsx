@@ -2,7 +2,8 @@
 
 import { useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { setUserLocale, Locale } from "@/services/locale";
+import { setUserLocale } from "@/services/locale";
+import type { Locale } from "@/services/locale";
 import {
     DropdownMenu,
     DropdownMenuContent,

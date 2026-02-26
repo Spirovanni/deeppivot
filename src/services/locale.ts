@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 // Define supported locales
 export type Locale = "en" | "es";
-export const defaultLocale: Locale = "en";
+const defaultLocale: Locale = "en";
 
 // Key for the cookie that stores the user's preferred language
 const LOCALE_COOKIE_NAME = "NEXT_LOCALE";

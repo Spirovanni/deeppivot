@@ -407,3 +407,40 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 ---
 
 *Last updated: 2026-02-26 — Phase 6 (Job Marketplace) complete. 25 issues shipped: companies/jobs/applications DB schema (migration 0015), employer RBAC, employer onboarding + job management UI, job seeker marketplace listing/detail/apply flow, admin moderation pages, Job Tracker badge integration, E2E test spec. pnpm build exit 0.*
+
+---
+
+### Phase 7: Admin Dashboard, User Management & Agent Config (Complete ✓)
+
+**Goal**: Give admins real-time platform stats, full user lifecycle control, and a CRUD interface for AI agent presets.
+
+| ID | Title | Status |
+|----|-------|--------|
+| ~~deeppivot-118~~ | ~~Admin: Basic Dashboard UI~~ | ✓ |
+| ~~deeppivot-119~~ | ~~Admin: User Management Feature~~ | ✓ |
+| ~~deeppivot-120~~ | ~~Admin: Agent Configuration Management~~ | ✓ |
+
+**New routes:**
+```
+/admin                         Stats dashboard (total users, active subs, interviews, agent configs)
+/admin/users                   Searchable/paginated user table (50/page, query param q)
+/admin/users/[userId]          User detail + role picker + suspend/restore/delete
+/admin/agents                  Agent config list with type/public/default badges
+/admin/agents/new              Create new agent config
+/admin/agents/[agentId]/edit   Edit existing agent config
+
+/api/admin/users/[userId]      PATCH (role, isSuspended, isDeleted/deletedAt)
+/api/admin/agents              GET / POST
+/api/admin/agents/[agentId]    GET / PATCH / DELETE
+```
+
+**New components:**
+- `components/admin/UserDetailForm.tsx` — client role picker + suspend/delete/restore actions
+- `components/admin/AgentConfigForm.tsx` — reusable create/edit form (name, type, systemPrompt, voiceId, elevenLabsAgentId, isPublic, isDefault)
+- `components/admin/DeleteAgentButton.tsx` — confirm-dialog delete button
+
+**Phase 7 Status: COMPLETE ✓** — Build passes with exit code 0.
+
+---
+
+*Last updated: 2026-02-26 — Phase 7 (Admin Dashboard, User Management, Agent Config) complete. deeppivot-118/119/120 shipped. Admin stats dashboard, searchable user table with role/suspend/delete management, and full agent config CRUD. pnpm build exit 0.*

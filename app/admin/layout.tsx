@@ -3,6 +3,14 @@ import Link from "next/link";
 import { requireAdmin } from "@/src/lib/admin-auth";
 import { Shield, ArrowLeft } from "lucide-react";
 
+const NAV_LINKS = [
+  { href: "/admin/users", label: "Users" },
+  { href: "/admin/agents", label: "Agent Configs" },
+  { href: "/admin/archetype-review", label: "Archetype Review" },
+  { href: "/admin/jobs", label: "Jobs" },
+  { href: "/admin/employers", label: "Employers" },
+];
+
 export default async function AdminLayout({
   children,
 }: {
@@ -26,13 +34,16 @@ export default async function AdminLayout({
               <Shield className="size-5" />
               Admin
             </Link>
-            <nav className="flex gap-4 text-sm text-muted-foreground">
-              <Link
-                href="/admin/archetype-review"
-                className="hover:text-foreground transition-colors"
-              >
-                Archetype Review
-              </Link>
+            <nav className="flex gap-3 text-sm text-muted-foreground overflow-x-auto">
+              {NAV_LINKS.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="hover:text-foreground transition-colors whitespace-nowrap"
+                >
+                  {l.label}
+                </Link>
+              ))}
             </nav>
           </div>
           <Link

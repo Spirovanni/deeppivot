@@ -30,11 +30,11 @@ export function FeedbackWidget() {
 
     return (
         <>
-            {/* Floating tab */}
+            {/* Floating tab - hide on mobile */}
             <button
                 onClick={() => setOpen((v) => !v)}
                 aria-label="Open feedback"
-                className="fixed right-0 top-1/2 -translate-y-1/2 z-50 flex items-center gap-1.5 rounded-l-lg bg-primary px-2.5 py-3 text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
+                className="hidden sm:flex fixed right-0 top-1/2 -translate-y-1/2 z-50 items-center gap-1.5 rounded-l-lg bg-primary px-2.5 py-3 text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
                 style={{ writingMode: "vertical-rl", textOrientation: "mixed" }}
             >
                 <MessageSquarePlus className="size-4 rotate-90" />
@@ -75,8 +75,8 @@ export function FeedbackWidget() {
                                         >
                                             <Star
                                                 className={`size-7 transition-colors ${star <= (hovered || rating)
-                                                        ? "fill-amber-400 text-amber-400"
-                                                        : "text-muted-foreground"
+                                                    ? "fill-amber-400 text-amber-400"
+                                                    : "text-muted-foreground"
                                                     }`}
                                             />
                                         </button>

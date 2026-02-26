@@ -13,7 +13,7 @@ export function Footer() {
             </p>
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
-            <nav className="flex flex-wrap gap-4" aria-label="Footer links">
+            <nav className="flex flex-wrap gap-x-4 gap-y-2" aria-label="Footer links">
               <Link
                 href="/blog"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"

@@ -9,6 +9,7 @@ import {
     usersTable,
 } from "@/src/db/schema";
 import { and, eq } from "drizzle-orm";
+import { captureServerEvent } from "@/src/lib/posthog-server";
 
 /**
  * POST /api/jobs/[jobId]/apply
@@ -109,6 +110,13 @@ export async function POST(
                 status: "applied",
             })
             .returning();
+
+        // Analytics: track job application submission
+        captureServerEvent({
+            distinctId: clerkUser.id,
+            event: "job_application_submitted",
+            properties: { job_id: jobId, job_title: job.title, has_resume: !!resumeUrl, has_cover_letter: !!coverLetter },
+        }).catch(() => { });
 
         return NextResponse.json(
             { application: marketplaceApp, trackerCard },

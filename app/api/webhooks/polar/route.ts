@@ -3,6 +3,8 @@ import { db } from "@/src/db";
 import { subscriptionsTable, usersTable } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
 import { getPlanByProductId } from "@/src/lib/polar";
+import { captureServerEvent } from "@/src/lib/posthog-server";
+
 
 const webhookSecret = process.env.POLAR_WEBHOOK_SECRET ?? "";
 
@@ -92,6 +94,13 @@ export const POST = Webhooks({
       currentPeriodEnd: sub.currentPeriodEnd ? new Date(sub.currentPeriodEnd) : null,
       cancelAtPeriodEnd: sub.cancelAtPeriodEnd ?? false,
     });
+
+    // Analytics: Track new subscription
+    captureServerEvent({
+      distinctId: clerkId,
+      event: "subscription_started",
+      properties: { plan_id: sub.productId, status: sub.status },
+    }).catch(() => { });
 
     console.log(`✅ Polar subscription created for userId=${userId}, plan=${sub.productId}`);
   },

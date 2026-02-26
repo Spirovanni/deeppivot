@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgTable, real, text, timestamp, unique, varchar } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgTable, real, text, timestamp, unique, varchar, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const usersTable = pgTable("users", {
@@ -132,6 +132,11 @@ export const jobApplicationsTable = pgTable("job_applications", {
   marketplaceApplicationId: integer().references(() => jobMarketplaceApplicationsTable.id, { onDelete: "set null" }),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
+}, (table) => {
+  return [
+    index("job_applications_user_column_idx").on(table.userId, table.columnId),
+    index("job_applications_status_idx").on(table.status),
+  ];
 });
 
 export const jobApplicationsRelations = relations(jobApplicationsTable, ({ one }) => ({
@@ -166,6 +171,11 @@ export const interviewSessionsTable = pgTable("interview_sessions", {
   updatedAt: timestamp().notNull().defaultNow(),
   /** Soft delete — row preserved for analytics after user removes it */
   deletedAt: timestamp(),
+}, (table) => {
+  return [
+    index("interview_sessions_user_idx").on(table.userId),
+    index("interview_sessions_status_idx").on(table.status),
+  ];
 });
 
 export const interviewSessionsRelations = relations(interviewSessionsTable, ({ one, many }) => ({
@@ -574,6 +584,11 @@ export const agentConfigsTable = pgTable("agent_configs", {
   isPublic: boolean().notNull().default(false),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
+}, (table) => {
+  return [
+    index("agent_configs_user_idx").on(table.userId),
+    index("agent_configs_type_idx").on(table.interviewType),
+  ];
 });
 
 export const agentConfigsRelations = relations(agentConfigsTable, ({ one }) => ({
@@ -622,6 +637,10 @@ export const companiesTable = pgTable("companies", {
   location: varchar({ length: 255 }),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
+}, (table) => {
+  return [
+    index("companies_owner_idx").on(table.ownerUserId),
+  ];
 });
 
 export const companiesRelations = relations(companiesTable, ({ one, many }) => ({

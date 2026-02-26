@@ -74,9 +74,9 @@ export default function BlogPage() {
                                 <h2 className="text-lg font-semibold mb-2 group-hover:text-primary">{post.title}</h2>
                                 <p className="text-sm text-muted-foreground leading-relaxed">{post.excerpt}</p>
                                 {post.tags.length > 0 && (
-                                    <div className="flex flex-wrap gap-1.5 mt-4">
+                                    <div className="flex flex-wrap gap-1.5 mt-4 overflow-hidden">
                                         {post.tags.map((tag) => (
-                                            <span key={tag} className="px-2 py-0.5 rounded text-[11px] bg-primary/10 text-primary">
+                                            <span key={tag} className="px-2 py-0.5 rounded text-[11px] bg-primary/10 text-primary truncate max-w-[120px]">
                                                 {tag}
                                             </span>
                                         ))}

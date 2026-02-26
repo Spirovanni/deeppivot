@@ -1,0 +1,11 @@
+{
+  "blog_enabled": true,
+  "job_marketplace_enabled": true,
+  "mentor_enabled": true,
+  "alt_ed_enabled": true,
+  "analytics_kpi_dashboard": false,
+  "avatar_upload_r2": false,
+  "i18n_enabled": false,
+  "mobile_app_api": false,
+  "multi_tenancy": false
+}

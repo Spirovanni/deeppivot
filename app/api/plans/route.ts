@@ -7,18 +7,19 @@ import {
   careerResourcesTable,
 } from "@/src/db/schema";
 import { eq, asc } from "drizzle-orm";
+import { captureServerEvent } from "@/src/lib/posthog-server";
 
-async function getDbUserId(): Promise<number | null> {
+async function getDbUserInfo(): Promise<{ id: number; clerkId: string } | null> {
   const { userId } = await auth();
   if (!userId) return null;
 
   const [user] = await db
-    .select({ id: usersTable.id })
+    .select({ id: usersTable.id, clerkId: usersTable.clerkId })
     .from(usersTable)
     .where(eq(usersTable.clerkId, userId))
     .limit(1);
 
-  return user?.id ?? null;
+  return user ?? null;
 }
 
 /**
@@ -26,14 +27,14 @@ async function getDbUserId(): Promise<number | null> {
  * List all career milestones (plans) for the authenticated user.
  */
 export async function GET() {
-  const userId = await getDbUserId();
-  if (!userId) {
+  const userInfo = await getDbUserInfo();
+  if (!userInfo) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const milestones = await db.query.careerMilestonesTable.findMany({
-      where: eq(careerMilestonesTable.userId, userId),
+      where: eq(careerMilestonesTable.userId, userInfo.id),
       orderBy: [asc(careerMilestonesTable.orderIndex)],
       with: {
         resources: {
@@ -58,8 +59,8 @@ export async function GET() {
  * Body: { title, description?, targetDate?, status? }
  */
 export async function POST(request: NextRequest) {
-  const userId = await getDbUserId();
-  if (!userId) {
+  const userInfo = await getDbUserInfo();
+  if (!userInfo) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
     const rows = await db
       .select({ orderIndex: careerMilestonesTable.orderIndex })
       .from(careerMilestonesTable)
-      .where(eq(careerMilestonesTable.userId, userId))
+      .where(eq(careerMilestonesTable.userId, userInfo.id))
       .orderBy(asc(careerMilestonesTable.orderIndex));
 
     const nextOrder = rows.length > 0 ? rows[rows.length - 1].orderIndex + 1 : 0;
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
     const [milestone] = await db
       .insert(careerMilestonesTable)
       .values({
-        userId,
+        userId: userInfo.id,
         title,
         description: body.description?.trim() || null,
         targetDate: body.targetDate ? new Date(body.targetDate) : null,
@@ -92,6 +93,13 @@ export async function POST(request: NextRequest) {
         orderIndex: nextOrder,
       })
       .returning();
+
+    // Analytics: track career plan creation
+    captureServerEvent({
+      distinctId: userInfo.clerkId,
+      event: "career_plan_created",
+      properties: { milestone_id: milestone.id, title, status: milestone.status },
+    }).catch(() => { });
 
     return NextResponse.json(milestone, { status: 201 });
   } catch (error) {
@@ -102,3 +110,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

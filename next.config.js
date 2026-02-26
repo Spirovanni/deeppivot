@@ -1,8 +1,12 @@
 const { withSentryConfig } = require("@sentry/nextjs");
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
 // @axiomhq/nextjs v0.2+ no longer exports a withAxiom next.config wrapper;
 // request logging is handled via instrumentation.ts instead.
 
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -110,11 +114,11 @@ const nextConfig = {
         source: "/(.*)",
         headers: [
           // ── Standard security headers ───────────────────────────────────────
-          { key: "X-DNS-Prefetch-Control",      value: "on" },
-          { key: "X-Content-Type-Options",      value: "nosniff" },
-          { key: "X-Frame-Options",             value: "DENY" },
-          { key: "X-XSS-Protection",            value: "1; mode=block" },
-          { key: "Referrer-Policy",             value: "strict-origin-when-cross-origin" },
+          { key: "X-DNS-Prefetch-Control", value: "on" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-XSS-Protection", value: "1; mode=block" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Permissions-Policy",
             value: "camera=(), geolocation=(), microphone=(self), payment=()",
@@ -130,7 +134,7 @@ const nextConfig = {
             value: cspDirectives,
           },
           // ── Cross-origin isolation (needed for SharedArrayBuffer in future) ──
-          { key: "Cross-Origin-Opener-Policy",  value: "same-origin-allow-popups" },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
           { key: "Cross-Origin-Resource-Policy", value: "same-site" },
         ],
       },
@@ -150,8 +154,8 @@ const nextConfig = {
   },
 };
 
-// Wrap with Sentry (error tracking + source maps)
-module.exports = withSentryConfig(nextConfig, {
+// Wrap with Sentry (error tracking + source maps), then bundle analyzer
+module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, {
   // Sentry build-time options
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
@@ -169,4 +173,5 @@ module.exports = withSentryConfig(nextConfig, {
     // Annotate React components for better error context
     reactComponentAnnotation: { enabled: true },
   },
-});
+}));
+

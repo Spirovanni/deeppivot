@@ -15,6 +15,18 @@ export function Footer() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
             <nav className="flex flex-wrap gap-4" aria-label="Footer links">
               <Link
+                href="/blog"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Blog
+              </Link>
+              <Link
+                href="/faq"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                FAQ
+              </Link>
+              <Link
                 href="/terms"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >

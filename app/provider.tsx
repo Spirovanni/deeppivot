@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { ClerkProvider, useUser } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import UserSyncProvider from "./UserSyncProvider";
@@ -30,14 +29,14 @@ function PageViewTracker() {
   return null;
 }
 
-export type UsersDetail={
-    clerkId:string,
-    firstName:string,
-    lastName:string,
-    credits:number,
-    name:string,
-    age:number,
-    email:string
+export type UsersDetail = {
+  clerkId: string,
+  firstName: string,
+  lastName: string,
+  credits: number,
+  name: string,
+  age: number,
+  email: string
 }
 /**
  * Provider Component
@@ -57,25 +56,34 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
   // Define CreateNewUser inside Provider
   const CreateNewUser = async () => {
     if (!user) return;
-    
+
     try {
-      const response = await axios.post('/api/users', {
-        clerkId: user.id,
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        name: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-        age: 25, // Default age since Clerk does not provide this
-        email: user.primaryEmailAddress?.emailAddress || '',
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          clerkId: user.id,
+          firstName: user.firstName || '',
+          lastName: user.lastName || '',
+          name: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+          age: 25, // Default age since Clerk does not provide this
+          email: user.primaryEmailAddress?.emailAddress || '',
+        }),
       });
-      
-      console.log('User creation/sync successful:', response.data);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('User creation/sync successful:', data);
     } catch (error) {
       console.warn('Failed to create/sync user - continuing without database sync:', {
         message: error instanceof Error ? error.message : 'Unknown error',
-        response: axios.isAxiosError(error) ? error.response?.data : undefined,
-        status: axios.isAxiosError(error) ? error.response?.status : undefined
       });
-      
+
       // Don't throw the error - just log it to avoid breaking the app
       // The user can still use the app even if backend sync fails
     }
@@ -90,7 +98,7 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
   return (
     <QueryProvider>
       <UserSyncProvider>
-        <UserDetailContext.Provider value={{userDetail,setUserDetail}}>
+        <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
           <Suspense fallback={null}>
             <PageViewTracker />
           </Suspense>

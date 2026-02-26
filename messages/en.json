@@ -9,5 +9,16 @@
     "label": "Language",
     "en": "English",
     "es": "Español"
+  },
+  "Footer": {
+    "description": "AI-powered career development and interview practice",
+    "links": {
+      "blog": "Blog",
+      "faq": "FAQ",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "contact": "Contact"
+    },
+    "copyright": "© {year} Deep Pivot. All rights reserved."
   }
 }

@@ -9,5 +9,16 @@
     "label": "Idioma",
     "en": "English",
     "es": "Español"
+  },
+  "Footer": {
+    "description": "Desarrollo profesional impulsado por IA y práctica de entrevistas",
+    "links": {
+      "blog": "Blog",
+      "faq": "Preguntas Frecuentes",
+      "terms": "Términos de Servicio",
+      "privacy": "Política de Privacidad",
+      "contact": "Contacto"
+    },
+    "copyright": "© {year} Deep Pivot. Todos los derechos reservados."
   }
 }

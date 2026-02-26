@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Github, Linkedin, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function Footer() {
+  const t = useTranslations("Footer");
   return (
     <footer className="mt-auto border-t border-border bg-muted/30">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -9,7 +11,7 @@ export function Footer() {
           <div className="flex flex-col gap-2">
             <p className="text-sm font-medium text-foreground">Deep Pivot</p>
             <p className="text-xs text-muted-foreground">
-              AI-powered career development and interview practice
+              {t("description")}
             </p>
           </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
@@ -18,31 +20,31 @@ export function Footer() {
                 href="/blog"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                Blog
+                {t("links.blog")}
               </Link>
               <Link
                 href="/faq"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                FAQ
+                {t("links.faq")}
               </Link>
               <Link
                 href="/terms"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                Terms of Service
+                {t("links.terms")}
               </Link>
               <Link
                 href="/privacy"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                Privacy Policy
+                {t("links.privacy")}
               </Link>
               <Link
                 href="/contact"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                Contact
+                {t("links.contact")}
               </Link>
             </nav>
             <div className="flex items-center gap-4" aria-label="Social links">
@@ -76,7 +78,7 @@ export function Footer() {
         </div>
         <div className="mt-6 border-t border-border pt-6">
           <p className="text-center text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Deep Pivot. All rights reserved.
+            {t("copyright", { year: new Date().getFullYear() })}
           </p>
         </div>
       </div>

@@ -113,7 +113,7 @@ export async function runCareerArchetyping(
         updatedAt: new Date(),
       },
     })
-    .returning({ id: careerArchetypesTable.id });
+    .returning();
 
   const careerArchetypeId = upserted?.id;
   if (careerArchetypeId) {

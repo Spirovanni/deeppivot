@@ -402,6 +402,8 @@ export const careerResourcesRelations = relations(careerResourcesTable, ({ one }
 
 export const mentorsTable = pgTable("mentors", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  /** FK to the user account that owns this mentor profile (nullable for seed/admin-created mentors) */
+  userId: integer().references(() => usersTable.id, { onDelete: "set null" }),
   name: varchar({ length: 255 }).notNull(),
   title: varchar({ length: 255 }).notNull(),
   industry: varchar({ length: 100 }).notNull(),

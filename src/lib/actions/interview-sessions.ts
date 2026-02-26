@@ -33,7 +33,7 @@ export async function startInterviewSession(sessionType: string): Promise<number
   const [session] = await db
     .insert(interviewSessionsTable)
     .values({ userId, sessionType, status: "active" })
-    .returning({ id: interviewSessionsTable.id });
+    .returning();
 
   return session.id;
 }

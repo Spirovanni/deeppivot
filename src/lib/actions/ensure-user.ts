@@ -55,7 +55,7 @@ export async function ensureUserInDb(): Promise<number | null> {
           updatedAt: new Date(),
         },
       })
-      .returning({ id: usersTable.id });
+      .returning();
 
       if (inserted?.id) {
         try {

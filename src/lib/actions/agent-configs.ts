@@ -220,7 +220,7 @@ export async function deleteAgentConfig(id: number): Promise<void> {
   const deleted = await db
     .delete(agentConfigsTable)
     .where(and(eq(agentConfigsTable.id, id), eq(agentConfigsTable.userId, userId)))
-    .returning({ id: agentConfigsTable.id });
+    .returning();
 
   if (deleted.length === 0) throw new Error("Agent config not found or access denied");
 

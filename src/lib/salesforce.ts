@@ -145,7 +145,8 @@ export async function findContactByEmail(
   email: string
 ): Promise<SalesforceContact | null> {
   const conn = await getSalesforceClient();
-  const result = await conn.query<SalesforceContact>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await (conn.query as (soql: string) => Promise<{ records: SalesforceContact[] }>)(
     `SELECT Id, Name, Email, Phone, Title, Account.Name FROM Contact WHERE Email = '${email.replace(/'/g, "\\'")}' LIMIT 1`
   );
   return result.records[0] ?? null;
@@ -198,7 +199,8 @@ export async function upsertLearnerContact(learner: {
 export async function searchAccounts(query: string, limit = 10): Promise<SalesforceAccount[]> {
   const conn = await getSalesforceClient();
   const safe = query.replace(/'/g, "\\'");
-  const result = await conn.query<SalesforceAccount>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await (conn.query as (soql: string) => Promise<{ records: SalesforceAccount[] }>)(
     `SELECT Id, Name, Type, BillingCity, BillingState, Website FROM Account WHERE Name LIKE '%${safe}%' LIMIT ${limit}`
   );
   return result.records;
@@ -270,7 +272,8 @@ export async function createReferralTask(referral: WDBReferral): Promise<string>
  */
 export async function soqlQuery<T = Record<string, unknown>>(soql: string): Promise<T[]> {
   const conn = await getSalesforceClient();
-  const result = await conn.query<T>(soql);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await (conn.query as (soql: string) => Promise<{ records: T[] }>)(soql);
   return result.records;
 }
 

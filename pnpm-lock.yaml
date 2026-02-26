@@ -32,6 +32,12 @@ importers:
       '@neondatabase/serverless':
         specifier: ^1.0.1
         version: 1.0.1
+      '@polar-sh/nextjs':
+        specifier: ^0.9.3
+        version: 0.9.3(next@16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
+      '@polar-sh/sdk':
+        specifier: ^0.45.0
+        version: 0.45.0
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@19.2.14)(react@19.2.4)
@@ -1496,6 +1502,21 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@polar-sh/adapter-utils@0.4.3':
+    resolution: {integrity: sha512-9xjOyaAVWRFaFZKkSdZr8J6i5LToUoFKeoczXCEu6+uxAhKmkjA3Qlc8otI4be1DSouWgrYB/VUGHOW7dIgCuQ==}
+
+  '@polar-sh/nextjs@0.9.3':
+    resolution: {integrity: sha512-3laah76J2qqt/dln/GFL5XaVFdwVaY5xsrMqIX2nNf/5/6frrodth88eGie0UOIhA6OUvmZMuKnW2tGaroMi5g==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      next: ^15.0.0 || ^16.0.0
+
+  '@polar-sh/sdk@0.42.5':
+    resolution: {integrity: sha512-GzC3/ElCtMO55+KeXwFTANlydZzw5qI3DU/F9vAFIsUKuegSmh+Xu03KCL+ct9/imJOvLUQucYhUSsNKqo2j2Q==}
+
+  '@polar-sh/sdk@0.45.0':
+    resolution: {integrity: sha512-5/xfFkSHBJ7DfXUEe728E1YkJPGA5dPhr/x0FwtAHadv1/Z/qjyaJWajjiKitCOcxN8jUoNOEEjiLOgVzMXD5g==}
 
   '@protobufjs/aspromise@1.1.2':
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
@@ -6433,6 +6454,26 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@polar-sh/adapter-utils@0.4.3':
+    dependencies:
+      '@polar-sh/sdk': 0.42.5
+
+  '@polar-sh/nextjs@0.9.3(next@16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))':
+    dependencies:
+      '@polar-sh/adapter-utils': 0.4.3
+      '@polar-sh/sdk': 0.42.5
+      next: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+
+  '@polar-sh/sdk@0.42.5':
+    dependencies:
+      standardwebhooks: 1.0.0
+      zod: 3.25.73
+
+  '@polar-sh/sdk@0.45.0':
+    dependencies:
+      standardwebhooks: 1.0.0
+      zod: 3.25.73
 
   '@protobufjs/aspromise@1.1.2': {}
 

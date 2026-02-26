@@ -240,7 +240,7 @@ Run `bd ready` to see current ready work. Theming (deeppivot-125) complete.
 | 5 | deeppivot-54 | Security: Configure HTTP Security Headers |
 | 6 | deeppivot-55 | Frontend: Ensure WCAG-AA Color Contrast |
 | 7 | deeppivot-56 | Frontend: Implement Keyboard Navigation |
-| 8 | deeppivot-125 | Performance: Pre-launch Load Test |
+| 8 | ~~deeppivot-142~~ | ~~Performance: Pre-launch Load Test~~ |
 
 ---
 

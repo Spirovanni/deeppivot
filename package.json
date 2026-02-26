@@ -19,7 +19,8 @@
     "build-storybook": "storybook build",
     "e2e": "playwright test",
     "e2e:ci": "playwright test --project=chromium",
-    "e2e:ui": "playwright test --ui"
+    "e2e:ui": "playwright test --ui",
+    "test:load": "k6 run load-testing/k6-script.js"
   },
   "dependencies": {
     "@anthropic-ai/claude-code": "^1.0.38",

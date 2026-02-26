@@ -1,0 +1,51 @@
+{/* Introduction.mdx */}
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Introduction" />
+
+# DeepPivot Component Library
+
+Welcome to the DeepPivot Storybook — a living style guide and component documentation for all UI building blocks used in the DeepPivot platform.
+
+## What's here
+
+| Section | Contents |
+| --- | --- |
+| **UI/** | Core Shadcn/UI primitives (Button, Badge, Card, Input, etc.) |
+| **Dashboard/** | Feature-specific composite components |
+| **Explorer/** | Alt-Ed Explorer search and filter components |
+
+## Design principles
+
+- **Accessible by default** — all interactive components meet WCAG-AA contrast, support keyboard navigation, and include appropriate ARIA attributes.
+- **Dark mode ready** — all components are built with CSS variables that respect `prefers-color-scheme` and the manual `dark` class toggle.
+- **Composable** — use Radix UI primitives and Tailwind utilities to compose new components from existing building blocks.
+- **Motion-aware** — transitions respect `prefers-reduced-motion` via Tailwind's `motion-reduce:` utilities.
+
+## Running locally
+
+```bash
+pnpm storybook        # Start dev server on http://localhost:6006
+pnpm build-storybook  # Build static output to storybook-static/
+```
+
+## Adding stories
+
+Create a `.stories.tsx` file alongside any component:
+
+```tsx
+// components/ui/MyComponent.stories.tsx
+import type { Meta, StoryObj } from "@storybook/react";
+import { MyComponent } from "./MyComponent";
+
+const meta: Meta<typeof MyComponent> = {
+  title: "UI/MyComponent",
+  component: MyComponent,
+  tags: ["autodocs"],
+};
+export default meta;
+
+export const Default: StoryObj<typeof MyComponent> = {
+  args: { /* props */ },
+};
+```

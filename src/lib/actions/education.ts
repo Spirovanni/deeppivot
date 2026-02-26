@@ -468,6 +468,62 @@ export async function getPrograms() {
     .where(eq(educationProgramsTable.isActive, true));
 }
 
+export interface ProgramFilters {
+  search?: string;
+  programTypes?: string[];
+  maxCostCents?: number;
+  minRoiScore?: number;
+  tags?: string[];
+}
+
+export async function getFilteredPrograms(filters: ProgramFilters = {}) {
+  const { and, ilike, lte, gte, arrayOverlaps, sql } = await import("drizzle-orm");
+
+  const conditions = [eq(educationProgramsTable.isActive, true)];
+
+  if (filters.programTypes && filters.programTypes.length > 0) {
+    const { inArray } = await import("drizzle-orm");
+    conditions.push(
+      inArray(educationProgramsTable.programType, filters.programTypes)
+    );
+  }
+
+  if (filters.maxCostCents !== undefined) {
+    conditions.push(lte(educationProgramsTable.cost, filters.maxCostCents));
+  }
+
+  if (filters.minRoiScore !== undefined) {
+    conditions.push(gte(educationProgramsTable.roiScore, filters.minRoiScore));
+  }
+
+  if (filters.tags && filters.tags.length > 0) {
+    conditions.push(
+      sql`${educationProgramsTable.tags} && ${filters.tags}`
+    );
+  }
+
+  let query = db
+    .select()
+    .from(educationProgramsTable)
+    .where(and(...conditions));
+
+  const results = await query;
+
+  // Client-side text search (Neon HTTP doesn't support full-text easily without pg_trgm)
+  if (filters.search && filters.search.trim()) {
+    const term = filters.search.toLowerCase();
+    return results.filter(
+      (p) =>
+        p.name.toLowerCase().includes(term) ||
+        p.provider.toLowerCase().includes(term) ||
+        p.description.toLowerCase().includes(term) ||
+        p.tags.some((t) => t.toLowerCase().includes(term))
+    );
+  }
+
+  return results;
+}
+
 export async function getFunding() {
   return db
     .select()

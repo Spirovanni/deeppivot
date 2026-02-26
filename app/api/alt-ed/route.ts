@@ -18,12 +18,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/src/db";
 import { educationProgramsTable } from "@/src/db/schema";
 import { and, eq, lte, gte, inArray, asc, desc, sql, ilike, or } from "drizzle-orm";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 24;
 const MAX_LIMIT = 100;
 
 export async function GET(request: NextRequest) {
+  const rl = await rateLimit(request, "ALT_ED_SEARCH");
+  if (!rl.success) return rl.response;
+
   try {
     const { searchParams } = request.nextUrl;
 

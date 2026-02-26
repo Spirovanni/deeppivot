@@ -33,6 +33,29 @@ export const usersTable = pgTable("users", {
   creditsExhaustedReason: varchar({ length: 255 }).notNull().default(""),
   creditsExhaustedReasonDescription: varchar({ length: 255 }).notNull().default(""),
 
+  // ── Profile fields ────────────────────────────────────────────────────────
+  /** Public avatar URL — stored in R2; null = use Clerk avatar */
+  avatarUrl: varchar({ length: 1024 }),
+  /** Short personal bio for the learner profile */
+  bio: text(),
+  /** Phone number (optional) */
+  phone: varchar({ length: 50 }),
+  /** Preferred pronoun string (e.g. "he/him") */
+  pronouns: varchar({ length: 50 }),
+  /** LinkedIn profile URL */
+  linkedinUrl: varchar({ length: 1024 }),
+
+  // ── WDB integration ───────────────────────────────────────────────────────
+  /** Salesforce Contact ID for this user's WDB record (null = not a WDB client) */
+  wdbSalesforceContactId: varchar({ length: 255 }),
+  /** The WDB case plan number or reference ID */
+  wdbCasePlanId: varchar({ length: 255 }),
+  /** WDB enrollment date */
+  wdbEnrolledAt: timestamp(),
+
+  // ── Soft delete ───────────────────────────────────────────────────────────
+  /** Set when the user requests account deletion; row is preserved for analytics */
+  deletedAt: timestamp(),
 });
 
 // ============================================
@@ -125,6 +148,8 @@ export const interviewSessionsTable = pgTable("interview_sessions", {
   notes: text(),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
+  /** Soft delete — row preserved for analytics after user removes it */
+  deletedAt: timestamp(),
 });
 
 export const interviewSessionsRelations = relations(interviewSessionsTable, ({ one, many }) => ({
@@ -343,6 +368,8 @@ export const careerMilestonesTable = pgTable("career_milestones", {
   orderIndex: integer().notNull().default(0),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
+  /** Soft delete */
+  deletedAt: timestamp(),
 });
 
 export const careerMilestonesRelations = relations(careerMilestonesTable, ({ one, many }) => ({

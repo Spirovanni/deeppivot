@@ -12,6 +12,7 @@ import {
   GraduationCap,
   Briefcase,
   CreditCard,
+  Settings,
   Menu,
 } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
@@ -36,6 +37,7 @@ const navItems = [
   { href: "/dashboard/education", label: "Education Explorer", icon: GraduationCap },
   { href: "/dashboard/job-tracker", label: "Job Tracker", icon: Briefcase },
   { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
+  { href: "/dashboard/settings/profile", label: "Settings", icon: Settings },
 ];
 
 function UserButtonPlaceholder() {

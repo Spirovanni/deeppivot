@@ -1,8 +1,12 @@
 import { getConversationalAISignedUrl } from "@/src/lib/elevenlabs";
 import { resolveAgentConfig } from "@/src/lib/actions/agent-configs";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/src/lib/rate-limit";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const rl = await rateLimit(request, "ELEVENLABS_URL");
+  if (!rl.success) return rl.response;
+
   try {
     const body = await request.json();
     const { agentId, interviewType } = body as {

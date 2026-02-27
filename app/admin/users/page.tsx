@@ -4,12 +4,16 @@ import { usersTable } from "@/src/db/schema";
 import { count, ilike, isNull, or, desc } from "drizzle-orm";
 import Link from "next/link";
 import { Users } from "lucide-react";
+import { QuickRoleSelect } from "@/components/admin/QuickRoleSelect";
 
+// kept for status badges only
 const ROLE_COLORS: Record<string, string> = {
     admin: "bg-red-500/20 text-red-400 border-red-500/30",
     employer: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
     user: "bg-white/10 text-white/60 border-white/20",
     enterprise_manager: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+    mentor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    wdb_partner: "bg-teal-500/20 text-teal-400 border-teal-500/30",
 };
 
 interface SearchProps {
@@ -106,9 +110,7 @@ export default async function AdminUsersPage({ searchParams }: SearchProps) {
                                     <div className="text-xs text-muted-foreground">{u.email}</div>
                                 </td>
                                 <td className="px-4 py-3">
-                                    <span className={`px-2 py-0.5 rounded-md text-xs border capitalize ${ROLE_COLORS[u.role] ?? ROLE_COLORS.user}`}>
-                                        {u.role}
-                                    </span>
+                                    <QuickRoleSelect userId={u.id} currentRole={u.role} />
                                 </td>
                                 <td className="px-4 py-3">
                                     {u.isDeleted ? (

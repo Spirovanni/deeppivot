@@ -3,7 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const ROLES = ["user", "employer", "enterprise_manager", "admin"] as const;
+const ROLES = [
+    { value: "user", label: "User" },
+    { value: "mentor", label: "Mentor" },
+    { value: "employer", label: "Employer" },
+    { value: "wdb_partner", label: "WDB Partner" },
+    { value: "enterprise_manager", label: "Enterprise Manager" },
+    { value: "admin", label: "Admin" },
+] as const;
+
+type RoleValue = (typeof ROLES)[number]["value"];
 
 interface User {
     id: number;
@@ -24,7 +33,7 @@ interface User {
 
 export function UserDetailForm({ user }: { user: User }) {
     const router = useRouter();
-    const [role, setRole] = useState(user.role);
+    const [role, setRole] = useState<RoleValue>(user.role as RoleValue);
     const [loading, setLoading] = useState<string | null>(null);
     const [msg, setMsg] = useState<string | null>(null);
 
@@ -57,20 +66,20 @@ export function UserDetailForm({ user }: { user: User }) {
             <div className="rounded-xl border bg-card p-5">
                 <h3 className="font-semibold mb-3">Role</h3>
                 <div className="flex flex-wrap gap-2">
-                    {ROLES.map((r) => (
+                    {ROLES.map(({ value, label }) => (
                         <button
-                            key={r}
+                            key={value}
                             onClick={() => {
-                                setRole(r);
-                                patch({ role: r }, `Role updated to '${r}'`);
+                                setRole(value);
+                                patch({ role: value }, `Role updated to '${label}'`);
                             }}
                             disabled={loading !== null}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors capitalize ${role === r
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${role === value
                                     ? "bg-primary text-primary-foreground"
                                     : "border bg-muted hover:bg-muted/80"
                                 }`}
                         >
-                            {r.replace("_", " ")}
+                            {label}
                         </button>
                     ))}
                 </div>
@@ -89,8 +98,8 @@ export function UserDetailForm({ user }: { user: User }) {
                         }
                         disabled={loading !== null}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${user.isSuspended
-                                ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
-                                : "bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30"
+                            ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                            : "bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30"
                             }`}
                     >
                         {loading === "User suspended" || loading === "User unsuspended"

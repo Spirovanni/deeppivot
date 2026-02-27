@@ -2,15 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "@/src/db";
 import {
+    careerArchetypesTable,
+    companiesTable,
+    interviewSessionsTable,
     jobApplicationsTable,
     jobColumnsTable,
     jobMarketplaceApplicationsTable,
     jobsTable,
     usersTable,
 } from "@/src/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, avg, eq } from "drizzle-orm";
 import { captureServerEvent } from "@/src/lib/posthog-server";
 import { rateLimit } from "@/src/lib/rate-limit";
+import { sendNewApplicantEmail } from "@/src/lib/email";
 
 /**
  * POST /api/jobs/[jobId]/apply
@@ -121,6 +125,58 @@ export async function POST(
             event: "job_application_submitted",
             properties: { job_id: jobId, job_title: job.title, has_resume: !!resumeUrl, has_cover_letter: !!coverLetter },
         }).catch(() => { });
+
+        // Notify employer by email (non-blocking)
+        (async () => {
+            try {
+                // Look up employer via company owner
+                const [company] = await db
+                    .select({ ownerUserId: companiesTable.ownerUserId })
+                    .from(companiesTable)
+                    .where(eq(companiesTable.id, job.companyId))
+                    .limit(1);
+                if (!company) return;
+
+                const [employer] = await db
+                    .select({ email: usersTable.email, name: usersTable.firstName })
+                    .from(usersTable)
+                    .where(eq(usersTable.id, company.ownerUserId))
+                    .limit(1);
+                if (!employer?.email) return;
+
+                // Applicant display name
+                const [applicant] = await db
+                    .select({ name: usersTable.name })
+                    .from(usersTable)
+                    .where(eq(usersTable.id, dbUser.id))
+                    .limit(1);
+
+                // Career archetype (optional)
+                const [archetype] = await db
+                    .select({ archetypeName: careerArchetypesTable.archetypeName })
+                    .from(careerArchetypesTable)
+                    .where(eq(careerArchetypesTable.userId, dbUser.id))
+                    .limit(1);
+
+                // Avg interview score (optional)
+                const [scoreRow] = await db
+                    .select({ avg: avg(interviewSessionsTable.overallScore) })
+                    .from(interviewSessionsTable)
+                    .where(eq(interviewSessionsTable.userId, dbUser.id));
+                const avgScore = scoreRow?.avg ? Math.round(Number(scoreRow.avg)) : null;
+
+                await sendNewApplicantEmail(employer.email, {
+                    employerName: employer.name,
+                    jobTitle: job.title,
+                    applicantName: applicant?.name ?? "An applicant",
+                    archetypeName: archetype?.archetypeName ?? null,
+                    avgInterviewScore: avgScore,
+                    jobId: job.id,
+                });
+            } catch (err) {
+                console.error("[apply] Failed to send employer notification:", err);
+            }
+        })();
 
         return NextResponse.json(
             { application: marketplaceApp, trackerCard },

@@ -5,6 +5,10 @@ import {
     InterviewFeedbackReadyEmail,
     type InterviewFeedbackReadyEmailProps,
 } from "@/emails/InterviewFeedbackReadyEmail";
+import {
+    NewApplicantEmail,
+    type NewApplicantEmailProps,
+} from "@/emails/NewApplicantEmail";
 
 let _resend: Resend | null = null;
 
@@ -56,5 +60,16 @@ export async function sendInterviewFeedbackEmail(
         to,
         subject: "Your interview feedback is ready!",
         react: createElement(InterviewFeedbackReadyEmail, data),
+    });
+}
+
+export async function sendNewApplicantEmail(
+    to: string,
+    data: NewApplicantEmailProps,
+): Promise<{ success: boolean; error?: string }> {
+    return sendEmail({
+        to,
+        subject: `New applicant for ${data.jobTitle}`,
+        react: createElement(NewApplicantEmail, data),
     });
 }

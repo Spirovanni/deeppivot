@@ -168,7 +168,7 @@ export default function TrailblazerPage() {
                     >
                         {isSignedIn ? (
                             <button
-                                onClick={() => router.push("/dashboard/interviews")}
+                                onClick={() => router.push("/dashboard/trailblazer")}
                                 className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
                             >
                                 <span className="absolute inset-0 bg-gradient-to-r from-violet-700 to-pink-700 opacity-0 transition-opacity group-hover:opacity-100" />

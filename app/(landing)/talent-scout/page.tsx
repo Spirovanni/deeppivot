@@ -175,7 +175,7 @@ export default function TalentScoutPage() {
                             >
                                 {isSignedIn ? (
                                     <button
-                                        onClick={() => router.push("/dashboard")}
+                                        onClick={() => router.push("/dashboard/talent-scout")}
                                         className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
                                     >
                                         <span className="absolute inset-0 bg-gradient-to-r from-amber-600 to-orange-600 opacity-0 transition-opacity group-hover:opacity-100" />
@@ -234,8 +234,8 @@ export default function TalentScoutPage() {
                                                     </div>
                                                 </div>
                                                 <div className={`rounded-full px-2.5 py-1 text-xs font-bold ${c.status === "Available"
-                                                        ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
-                                                        : "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+                                                    ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400"
+                                                    : "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
                                                     }`}>
                                                     {c.status === "Available" ? `Score: ${c.score}%` : c.status}
                                                 </div>
@@ -359,7 +359,7 @@ export default function TalentScoutPage() {
                     <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
                         {isSignedIn ? (
                             <button
-                                onClick={() => router.push("/dashboard")}
+                                onClick={() => router.push("/dashboard/talent-scout")}
                                 className="rounded-xl bg-white px-8 py-4 text-lg font-semibold text-orange-600 shadow-lg transition-all hover:scale-105 hover:shadow-xl"
                             >
                                 Go to Dashboard →

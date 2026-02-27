@@ -214,3 +214,29 @@ export function isEmployerOrAdmin(role: UserRole | null | undefined): boolean {
   if (!role) return false;
   return role === "employer" || role === "admin";
 }
+
+// ─── Dashboard routing ────────────────────────────────────────────────────────
+
+/**
+ * Maps a user role to their dedicated dashboard route.
+ * Used for post-login and post-onboarding redirects.
+ *
+ * @example
+ * const route = getUserDashboardRoute("employer"); // "/dashboard/talent-scout"
+ */
+export function getUserDashboardRoute(role: UserRole | null | undefined): string {
+  switch (role) {
+    case "employer":
+      return "/dashboard/talent-scout";
+    case "mentor":
+      return "/dashboard/mentor";
+    case "wdb_partner":
+      return "/dashboard/wdb";
+    case "enterprise_manager":
+      return "/dashboard/wdb";
+    case "admin":
+      return "/admin";
+    default:
+      return "/dashboard/trailblazer";
+  }
+}

@@ -24,7 +24,7 @@ export default function Page() {
       .authenticateWithRedirect({
         strategy,
         redirectUrl: "/sign-in/sso-callback",
-        redirectUrlComplete: "/dashboard",
+        redirectUrlComplete: "/onboarding",
       })
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : "Sign-up failed");
@@ -44,7 +44,7 @@ export default function Page() {
       const msg =
         err && typeof err === "object" && "errors" in err
           ? (err as { errors: Array<{ message?: string }> }).errors?.[0]
-              ?.message
+            ?.message
           : err instanceof Error
             ? err.message
             : "Sign-up failed";
@@ -63,7 +63,7 @@ export default function Page() {
       const attempt = await signUp.attemptEmailAddressVerification({ code });
       if (attempt.status === "complete") {
         await setActive({ session: attempt.createdSessionId });
-        router.push("/dashboard");
+        router.push("/onboarding");
       } else {
         setError("Verification incomplete. Please try again.");
       }
@@ -71,7 +71,7 @@ export default function Page() {
       const msg =
         err && typeof err === "object" && "errors" in err
           ? (err as { errors: Array<{ message?: string }> }).errors?.[0]
-              ?.message
+            ?.message
           : err instanceof Error
             ? err.message
             : "Verification failed";

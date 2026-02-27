@@ -569,3 +569,146 @@ components/ui/skeleton.tsx                 Installed via shadcn CLI
 ---
 
 *Last updated: 2026-02-26 — Phase 9 (UX Polish & Transactional Email) complete. deeppivot-113/114/133/135/136/138 shipped. Resend email pipeline (WelcomeEmail template + Inngest function), cookie consent banner, 4 skeleton loading screens, session timeout modal, feedback widget. pnpm build exit 0.*
+
+---
+
+## Phase 10 — Role-Based Dashboards (Complete ✓)
+
+**Goal:** Create distinct dashboards for Trailblazers (job seekers) and Talent Scouts (employers), update landing page CTAs to route users to the correct dashboard.
+
+| Issue | Description | Status |
+|-------|-------------|--------|
+| ~~deeppivot-168~~ | ~~UX: Landing Page Feature Refresh~~ | ✓ |
+| (inline) | Trailblazer dashboard (`/dashboard/trailblazer`) | ✓ |
+| (inline) | Talent Scout dashboard (`/dashboard/talent-scout`) | ✓ |
+| (inline) | `src/lib/actions/employer-dashboard.ts` server action | ✓ |
+
+**New routes added:**
+```
+/dashboard/trailblazer     Job-seeker dashboard (interviews, career plan, archetype, job tracker stats)
+/dashboard/talent-scout    Employer dashboard (active jobs, applicants, recent applicant table)
+```
+
+**Phase 10 Status: COMPLETE ✓**
+
+---
+
+## Phase 11 — Track-Based Routing & Role-Based UX (Planned)
+
+**Goal:** Every user lands in the right place automatically. New sign-ups choose their track (Trailblazer or Talent Scout) on /onboarding. Returning users are sent directly to their role's dashboard on login. Employer onboarding flow sets the employer role and redirects to /dashboard/talent-scout.
+
+| Issue | Description | Priority |
+|-------|-------------|----------|
+| deeppivot-169 | UX: Post-signup track chooser (Trailblazer vs Talent Scout) on /onboarding | P1 |
+| deeppivot-170 | UX: Smart post-login redirect based on stored user role | P1 |
+| deeppivot-171 | UX: Employer onboarding completion sets role + redirects to Talent Scout dashboard | P1 |
+
+**Files to create/modify:**
+```
+app/onboarding/page.tsx                 New: track chooser with two animated cards
+src/lib/actions/onboarding.ts           New: setUserTrack() server action
+src/lib/rbac.ts                         Add: getUserDashboardRoute(role) utility
+middleware.ts (or proxy.ts)             Modify: afterSignInUrl to use getUserDashboardRoute
+app/(auth)/sign-up/*/page.tsx           Modify: afterSignUpUrl -> /onboarding
+app/(employer)/employer/onboarding/     Modify: final step calls updateUserRole('employer')
+app/(landing)/trailblazer/page.tsx      Modify: 'Go to Dashboard' CTA becomes role-aware
+app/(landing)/talent-scout/page.tsx     Modify: 'Go to Dashboard' CTA becomes role-aware
+```
+
+---
+
+## Phase 12 — Mentor & WDB Dashboard Activation (Planned)
+
+**Goal:** Replace the placeholder cards on /dashboard/mentor and /dashboard/wdb with real data-driven components, using the already-built backend actions.
+
+| Issue | Description | Priority |
+|-------|-------------|----------|
+| deeppivot-172 | Frontend: Activate Mentor dashboard with real data from mentor-tools.ts | P2 |
+| deeppivot-173 | Frontend: Activate WDB partner dashboard with real analytics | P2 |
+
+**Files to create/modify:**
+```
+app/dashboard/mentor/page.tsx           Modify: replace 6 placeholders with tabs (Learners | Referrals | Resources)
+components/mentor/LearnersTab.tsx       New: connected learners list with session history
+components/mentor/ReferralsTab.tsx      New: referral form + history table
+components/mentor/ResourcesTab.tsx      New: resource link manager
+app/dashboard/wdb/page.tsx             Modify/Verify: confirm WdbChartsClient wired, add roster table + CSV export
+components/wdb/LearnerRosterTable.tsx   New: searchable learner table with CSV export
+```
+
+---
+
+## Phase 13 — Transactional Email Notifications (Planned)
+
+**Goal:** Extend the Resend email pipeline with 3 new transactional emails triggered by key platform events.
+
+| Issue | Description | Priority |
+|-------|-------------|----------|
+| deeppivot-174 | Email: Interview feedback ready notification | P2 |
+| deeppivot-175 | Email: New applicant alert for employers | P2 |
+| deeppivot-176 | Email: Mentor connection request and acceptance notifications | P3 |
+
+**Files to create/modify:**
+```
+emails/InterviewFeedbackReadyEmail.tsx  New: React Email template
+emails/NewApplicantEmail.tsx            New: React Email template
+emails/MentorConnectionEmail.tsx        New: React Email template (2 variants: request/accepted)
+src/lib/email.ts                        Add: 3 new sendXxx() helpers
+src/inngest/functions/*.ts              Modify: call sendInterviewFeedbackEmail() after feedback write
+app/api/jobs/[jobId]/apply/route.ts     Modify: call sendNewApplicantEmail() after application insert
+src/lib/actions/mentors.ts             Modify: call sendMentorConnectionEmail() on request/accept
+```
+
+---
+
+## Phase 14 — Blog Content (Planned)
+
+**Goal:** Publish 3 real SEO-optimized blog posts to drive organic traffic from career changers searching for advice.
+
+| Issue | Description | Target Publish | Priority |
+|-------|-------------|----------------|----------|
+| deeppivot-177 | Blog: How to Ace a Career Pivot Interview | 2026-02-28 | P3 |
+| deeppivot-178 | Blog: What Your Career Archetype Says About You | 2026-03-03 | P3 |
+| deeppivot-179 | Blog: 5 Signs You're Ready for a Career Change | 2026-03-07 | P3 |
+
+**Files to create:**
+```
+content/blog/how-to-ace-a-career-pivot-interview.mdx     1,200-1,500 words
+content/blog/what-your-career-archetype-says-about-you.mdx  1,200-1,500 words
+content/blog/5-signs-ready-for-career-change.mdx         1,000-1,200 words
+```
+
+**SEO targets:**
+- `career pivot interview tips` / `career change interview preparation`
+- `career archetype test` / `career personality type`
+- `signs you need a career change` / `am I ready for a career change`
+
+---
+
+## Phase 15 — Security & DevOps Polish (Planned)
+
+**Goal:** Close the remaining security gaps and harden the CI/CD pipeline.
+
+| Issue | Description | Priority |
+|-------|-------------|----------|
+| deeppivot-180 | Security: Extend Upstash rate limiting to all unprotected API routes | P2 |
+| deeppivot-181 | Security: PII anonymization in interview transcript storage | P2 |
+| deeppivot-182 | DevOps: CI/CD hardening — migration check, Playwright artifacts, npm caching | P3 |
+
+**Files to modify:**
+```
+app/api/contact/route.ts               Add: rateLimit('AUTH')
+app/api/feedback/route.ts              Add: rateLimit('DEFAULT')
+app/api/jobs/[jobId]/apply/route.ts    Add: rateLimit('INTERVIEW_START')
+app/api/companies/route.ts             Add: rateLimit('DEFAULT')
+app/api/admin/*/route.ts               Add: rateLimit('ADMIN')
+src/inngest/functions/*.ts             Add: anonymize() calls before transcript/feedback DB writes
+scripts/test-pii.ts                    New: PII anonymization unit test
+app/(landing)/privacy/page.tsx         Add: GDPR note on transcript anonymization
+.github/workflows/ci.yml               Add: migration check, Playwright artifact upload, npm cache
+CONTRIBUTING.md                        New: branch protection, CI requirements, migration policy
+```
+
+---
+
+*Last updated: 2026-02-27 — Phase 11-15 planned. 14 new issues (deeppivot-169 to deeppivot-182) added to .beads/issues.jsonl. Implementation begins with deeppivot-169 (post-signup track chooser).*

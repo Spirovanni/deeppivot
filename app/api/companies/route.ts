@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "@/src/db";
 import { companiesTable, usersTable } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 /** GET /api/companies — list all companies (public) */
 export async function GET() {
@@ -18,7 +19,10 @@ export async function GET() {
 }
 
 /** POST /api/companies — create a company (employer only) */
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+    const rl = await rateLimit(req, "DEFAULT");
+    if (!rl.success) return rl.response;
+
     try {
         const clerkUser = await currentUser();
         if (!clerkUser?.id)

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "@/src/db";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@/src/db/schema";
 import { and, eq } from "drizzle-orm";
 import { captureServerEvent } from "@/src/lib/posthog-server";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 /**
  * POST /api/jobs/[jobId]/apply
@@ -20,9 +21,12 @@ import { captureServerEvent } from "@/src/lib/posthog-server";
  *   - 409 if user already applied
  */
 export async function POST(
-    req: Request,
+    req: NextRequest,
     { params }: { params: Promise<{ jobId: string }> }
 ) {
+    const rl = await rateLimit(req, "INTERVIEW_START");
+    if (!rl.success) return rl.response;
+
     try {
         const { jobId } = await params;
         const clerkUser = await currentUser();

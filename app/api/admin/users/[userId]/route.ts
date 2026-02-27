@@ -3,11 +3,15 @@ import { requireAdmin } from "@/src/lib/rbac";
 import { db } from "@/src/db";
 import { usersTable } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 export async function PATCH(
     req: NextRequest,
     { params }: { params: Promise<{ userId: string }> }
 ) {
+    const rl = await rateLimit(req, "ADMIN");
+    if (!rl.success) return rl.response;
+
     try {
         await requireAdmin();
     } catch {

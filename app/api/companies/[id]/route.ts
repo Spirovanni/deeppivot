@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "@/src/db";
 import { companiesTable, usersTable } from "@/src/db/schema";
 import { and, eq } from "drizzle-orm";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 /** GET /api/companies/[id] — public company detail */
 export async function GET(
@@ -26,9 +27,12 @@ export async function GET(
 
 /** PATCH /api/companies/[id] — employer-only edit (ownership check) */
 export async function PATCH(
-    req: Request,
+    req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const rl = await rateLimit(req, "DEFAULT");
+    if (!rl.success) return rl.response;
+
     try {
         const { id } = await params;
         const clerkUser = await currentUser();

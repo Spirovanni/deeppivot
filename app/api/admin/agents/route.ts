@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/src/lib/rbac";
 import { db } from "@/src/db";
 import { agentConfigsTable } from "@/src/db/schema";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 export async function GET() {
     try {
@@ -15,6 +16,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+    const rl = await rateLimit(req, "ADMIN");
+    if (!rl.success) return rl.response;
+
     try {
         await requireAdmin();
     } catch {

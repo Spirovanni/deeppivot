@@ -3,6 +3,7 @@ import { requireAdmin } from "@/src/lib/rbac";
 import { db } from "@/src/db";
 import { agentConfigsTable } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 type Params = { params: Promise<{ agentId: string }> };
 
@@ -18,6 +19,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
 }
 
 export async function PATCH(req: NextRequest, { params }: Params) {
+    const rl = await rateLimit(req, "ADMIN");
+    if (!rl.success) return rl.response;
     try { await requireAdmin(); } catch { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); }
     const { agentId } = await params;
     const id = parseInt(agentId);
@@ -40,7 +43,9 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     return NextResponse.json(updated);
 }
 
-export async function DELETE(_req: NextRequest, { params }: Params) {
+export async function DELETE(req: NextRequest, { params }: Params) {
+    const rl = await rateLimit(req, "ADMIN");
+    if (!rl.success) return rl.response;
     try { await requireAdmin(); } catch { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); }
     const { agentId } = await params;
     const id = parseInt(agentId);

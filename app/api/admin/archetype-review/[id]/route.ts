@@ -7,6 +7,7 @@ import {
 import { eq } from "drizzle-orm";
 import { requireAdmin } from "@/src/lib/admin-auth";
 import { ARCHETYPES } from "@/src/lib/archetypes";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -20,6 +21,9 @@ export async function PATCH(
   request: NextRequest,
   { params }: RouteParams
 ) {
+  const rl = await rateLimit(request, "ADMIN");
+  if (!rl.success) return rl.response;
+
   try {
     await requireAdmin();
   } catch (err) {

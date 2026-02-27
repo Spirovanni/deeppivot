@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+    const rl = await rateLimit(req, "DEFAULT");
+    if (!rl.success) return rl.response;
+
     const body = await req.json();
     const { rating, message } = body;
 

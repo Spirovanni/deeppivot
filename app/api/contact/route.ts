@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/src/lib/email";
 import { createElement } from "react";
+import { rateLimit } from "@/src/lib/rate-limit";
 
 // Inline email template that avoids JSX (this is a .ts file not .tsx)
 function buildContactEmailHtml(name: string, email: string, subject: string, message: string): string {
@@ -18,6 +19,9 @@ function buildContactEmailHtml(name: string, email: string, subject: string, mes
 }
 
 export async function POST(req: NextRequest) {
+    const rl = await rateLimit(req, "AUTH");
+    if (!rl.success) return rl.response;
+
     const body = await req.json();
     const { name, email, subject, message } = body;
 

@@ -734,8 +734,32 @@ function ResourcesTab({ initialResources }: { initialResources: MentorResource[]
 export function MentorDashboardClient({ initialLearners, initialReferrals, initialResources }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>("learners");
 
+  const totalSessions = initialLearners.reduce((sum, l) => sum + l.sessionCount, 0);
+  const stats = [
+    { label: "Total Learners", value: initialLearners.length, icon: Users, color: "text-violet-500", bg: "bg-violet-50 dark:bg-violet-900/20" },
+    { label: "Total Sessions", value: totalSessions, icon: Video, color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/20" },
+    { label: "Referrals Made", value: initialReferrals.length, icon: Send, color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-900/20" },
+    { label: "Resources Shared", value: initialResources.length, icon: BookOpen, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-900/20" },
+  ];
+
   return (
     <div className="space-y-4">
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800"
+          >
+            <div className={`mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg ${s.bg}`}>
+              <s.icon className={`h-5 w-5 ${s.color}`} aria-hidden="true" />
+            </div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-white">{s.value}</div>
+            <div className="mt-0.5 text-sm font-medium text-slate-700 dark:text-slate-300">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
       {/* Tab bar */}
       <div className="flex gap-1 rounded-lg border bg-muted/30 p-1 w-fit" role="tablist">
         {TABS.map((tab) => {

@@ -34,6 +34,10 @@ import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner";
 import { RecentInterviewsWidget } from "@/components/dashboard/RecentInterviewsWidget";
 import { PredictiveInsightsWidget } from "@/components/dashboard/PredictiveInsightsWidget";
 import type { TraitScore } from "@/src/lib/archetypes";
+import { db } from "@/src/db";
+import { usersTable } from "@/src/db/schema";
+import { eq } from "drizzle-orm";
+import { getUserDashboardRoute, type UserRole } from "@/src/lib/rbac";
 
 const features = [
   {
@@ -88,6 +92,18 @@ const emptySummary: DashboardSummary = {
 export default async function DashboardPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
+
+  // Role-based redirect: send non-default roles to their dedicated dashboard
+  const [row] = await db
+    .select({ role: usersTable.role })
+    .from(usersTable)
+    .where(eq(usersTable.clerkId, user.id))
+    .limit(1);
+
+  const userRole = (row?.role as UserRole) ?? "user";
+  if (userRole !== "user") {
+    redirect(getUserDashboardRoute(userRole));
+  }
 
   let archetype: Awaited<ReturnType<typeof getArchetype>> | null = null;
   let summary: DashboardSummary = emptySummary;

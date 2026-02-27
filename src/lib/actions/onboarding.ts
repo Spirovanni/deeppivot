@@ -38,6 +38,26 @@ export async function setUserTrack(track: TrackChoice): Promise<void> {
 }
 
 /**
+ * Switches a trailblazer user to employer role and redirects to employer onboarding.
+ * Used by the "Switch to Employer Mode" CTA on the Trailblazer dashboard.
+ */
+export async function switchToEmployer(): Promise<void> {
+    const clerkUser = await currentUser();
+    if (!clerkUser?.id) {
+        redirect("/sign-in");
+    }
+
+    await db
+        .update(usersTable)
+        .set({ role: "employer" as UserRole, updatedAt: new Date() })
+        .where(eq(usersTable.clerkId, clerkUser.id));
+
+    revalidatePath("/dashboard");
+
+    redirect("/employer/onboarding");
+}
+
+/**
  * Returns the current user's role from the DB,
  * or null if unauthenticated / not found.
  */

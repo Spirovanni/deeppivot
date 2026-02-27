@@ -16,7 +16,7 @@ export default function Page({ }: PageProps) {
   // Handle Get Started button - redirect to interviews page
   const handleGetStarted = () => {
     if (isSignedIn) {
-      router.push('/dashboard/interviews');
+      router.push('/dashboard');
     } else {
       router.push('/sign-up');
     }

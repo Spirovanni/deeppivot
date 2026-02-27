@@ -14,6 +14,7 @@ import { getDashboardSummary, type DashboardSummary } from "@/src/lib/actions/da
 import { CareerArchetypeCard, CareerArchetypeEmptyCard } from "@/components/dashboard/CareerArchetypeCard";
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner";
 import type { TraitScore } from "@/src/lib/archetypes";
+import { SwitchToEmployerCard } from "@/components/dashboard/SwitchToEmployerCard";
 
 const features = [
     {
@@ -220,6 +221,11 @@ export default async function TrailblazerDashboardPage() {
                             </Card>
                         </Link>
                     ))}
+                </div>
+
+                {/* Switch to Employer Mode */}
+                <div className="mt-10">
+                    <SwitchToEmployerCard />
                 </div>
             </div>
         </div>

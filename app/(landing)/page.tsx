@@ -2,6 +2,7 @@
 
 import { HeroSection } from "./_components/hero-section";
 import { FeatureBentoGrid } from "./_components/feature-bento-grid";
+import { PathChooser } from "./_components/path-chooser";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { Sparkles } from "lucide-react";
@@ -24,6 +25,9 @@ export default function Page({ }: PageProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <HeroSection onGetStarted={handleGetStarted} />
+
+      {/* Path chooser — job seeker vs employer */}
+      <PathChooser />
 
       {/* FeatureBentoGrid with proper spacing */}
       <section

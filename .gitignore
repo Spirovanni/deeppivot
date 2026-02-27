@@ -29,7 +29,6 @@ logs/
 
 # Dependency lock files
 yarn.lock
-package-lock.json
 
 .DS_Store
 

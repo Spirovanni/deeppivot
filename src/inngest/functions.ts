@@ -15,6 +15,7 @@ import {
   emotionalAnalysesTable,
   interviewFeedbackTable,
   interviewSessionsTable,
+  usersTable,
 } from "@/src/db/schema";
 import { eq, and, ne, desc } from "drizzle-orm";
 import { getCall } from "@/src/lib/vapi";
@@ -23,6 +24,7 @@ import { transcribeInterviewRecording } from "@/src/lib/deepgram";
 import { generateCompletion } from "@/src/lib/llm";
 import { mapInterviewToSkills } from "@/src/lib/career-skills";
 import { anonymize } from "@/src/lib/pii";
+import { sendInterviewFeedbackEmail } from "@/src/lib/email";
 
 export const processInterviewRecording = inngest.createFunction(
   {
@@ -376,7 +378,54 @@ Output format:
       });
     });
 
-    // 8. Emit for career archetyping engine
+    // 8. Send feedback-ready email notification
+    await step.run("send-feedback-email", async () => {
+      const [session] = await db
+        .select({
+          userId: interviewSessionsTable.userId,
+          sessionType: interviewSessionsTable.sessionType,
+          overallScore: interviewSessionsTable.overallScore,
+          startedAt: interviewSessionsTable.startedAt,
+        })
+        .from(interviewSessionsTable)
+        .where(eq(interviewSessionsTable.id, sessionId))
+        .limit(1);
+
+      if (!session) return;
+
+      const [user] = await db
+        .select({ email: usersTable.email, name: usersTable.name })
+        .from(usersTable)
+        .where(eq(usersTable.id, session.userId))
+        .limit(1);
+
+      if (!user?.email) return;
+
+      // Extract up to 2 strengths from "## Strengths" section of feedback
+      const strengthsMatch = feedbackContent.match(/## Strengths\s*\n([\s\S]*?)(?=\n## |$)/);
+      const strengths = strengthsMatch
+        ? strengthsMatch[1]
+            .split("\n")
+            .map((l) => l.replace(/^[-*]\s*/, "").trim())
+            .filter((l) => l.length > 0)
+            .slice(0, 2)
+        : [];
+
+      await sendInterviewFeedbackEmail(user.email, {
+        userName: user.name?.split(" ")[0] ?? "there",
+        sessionType: session.sessionType,
+        sessionDate: session.startedAt.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        }),
+        overallScore: session.overallScore,
+        strengths,
+        sessionId,
+      });
+    });
+
+    // 9. Emit for career archetyping engine
     await step.sendEvent("trigger-archetyping", {
       name: "feedback.complete",
       data: { sessionId },

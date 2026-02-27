@@ -1,6 +1,10 @@
 import { Resend } from "resend";
 import { createElement, type ReactElement } from "react";
 import { render } from "@react-email/render";
+import {
+    InterviewFeedbackReadyEmail,
+    type InterviewFeedbackReadyEmailProps,
+} from "@/emails/InterviewFeedbackReadyEmail";
 
 let _resend: Resend | null = null;
 
@@ -42,4 +46,15 @@ export async function sendEmail({
         console.error("[email] Failed to send email to", to, "–", msg);
         return { success: false, error: msg };
     }
+}
+
+export async function sendInterviewFeedbackEmail(
+    to: string,
+    data: InterviewFeedbackReadyEmailProps,
+): Promise<{ success: boolean; error?: string }> {
+    return sendEmail({
+        to,
+        subject: "Your interview feedback is ready!",
+        react: createElement(InterviewFeedbackReadyEmail, data),
+    });
 }

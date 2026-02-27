@@ -22,6 +22,7 @@ import { uploadToR2 } from "@/src/lib/storage";
 import { transcribeInterviewRecording } from "@/src/lib/deepgram";
 import { generateCompletion } from "@/src/lib/llm";
 import { mapInterviewToSkills } from "@/src/lib/career-skills";
+import { anonymize } from "@/src/lib/pii";
 
 export const processInterviewRecording = inngest.createFunction(
   {
@@ -111,15 +112,26 @@ export const processInterviewTranscription = inngest.createFunction(
       return transcribeInterviewRecording(recordingUrl);
     });
 
-    // 2. Save transcript to Cloudflare R2
+    // 2. PII-anonymize transcript text before storage
+    const anonymizedTranscript = await step.run("anonymize-transcript", async () => {
+      return {
+        transcript: anonymize(transcriptResult.transcript),
+        utterances: transcriptResult.utterances?.map((u: { transcript: string }) => ({
+          ...u,
+          transcript: anonymize(u.transcript),
+        })),
+      };
+    });
+
+    // 3. Save transcript to Cloudflare R2
     const transcriptFileUrl = await step.run("upload-transcript", async () => {
       const content = JSON.stringify(
         {
-          transcript: transcriptResult.transcript,
+          transcript: anonymizedTranscript.transcript,
           confidence: transcriptResult.confidence,
           duration: transcriptResult.duration,
           words: transcriptResult.words,
-          utterances: transcriptResult.utterances,
+          utterances: anonymizedTranscript.utterances,
         },
         null,
         2
@@ -128,7 +140,7 @@ export const processInterviewTranscription = inngest.createFunction(
       return uploadToR2(key, content, "application/json");
     });
 
-    // 3. Save to transcript_urls table
+    // 4. Save to transcript_urls table
     await step.run("save-transcript-url", async () => {
       await db.insert(transcriptUrlsTable).values({
         sessionId,
@@ -136,7 +148,7 @@ export const processInterviewTranscription = inngest.createFunction(
       });
     });
 
-    // 4. Emit for feedback job
+    // 5. Emit for feedback job
     await step.sendEvent("transcription-complete", {
       name: "transcription.complete",
       data: { sessionId },
@@ -352,16 +364,19 @@ Output format:
       return mapInterviewToSkills(transcript, feedbackContent, emotionSummary);
     });
 
-    // 6. Save to interview_feedback table
+    // 6. PII-anonymize feedback content before storage
+    const anonymizedFeedback = anonymize(feedbackContent);
+
+    // 7. Save to interview_feedback table
     await step.run("save-feedback", async () => {
       await db.insert(interviewFeedbackTable).values({
         sessionId,
-        content: feedbackContent,
+        content: anonymizedFeedback,
         skillsMapping: skillsMapping.length > 0 ? skillsMapping : undefined,
       });
     });
 
-    // 7. Emit for career archetyping engine
+    // 8. Emit for career archetyping engine
     await step.sendEvent("trigger-archetyping", {
       name: "feedback.complete",
       data: { sessionId },

@@ -66,6 +66,9 @@ export default function PrivacyPage() {
                         <p>
                             We retain your account data for as long as your account is active. If you delete your account, we anonymize your data within 30 days. Interview recordings are not permanently stored — they are processed in real-time and transcripts are retained only to generate your feedback report. You may request deletion at any time.
                         </p>
+                        <p className="mt-2">
+                            Interview transcripts and AI-generated feedback are automatically PII-anonymized before storage. Personal identifiers such as names, email addresses, phone numbers, and other sensitive data are redacted and replaced with category tokens (e.g. [EMAIL], [PHONE]) so that stored content cannot be linked back to individuals.
+                        </p>
                     </section>
 
                     <section>

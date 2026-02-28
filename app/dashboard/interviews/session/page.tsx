@@ -6,17 +6,13 @@ import { ArrowLeft } from "lucide-react";
 import { db } from "@/src/db";
 import {
   usersTable,
-  interviewSessionsTable,
   jobDescriptionsTable,
-  userResumesTable,
 } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
-import { createConversationalAgent } from "@/src/lib/elevenlabs";
-import { buildContextAwarePrompt } from "@/src/lib/prompts/context-aware-interview";
 import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
 
 interface InterviewSessionPageProps {
-  searchParams: Promise<{ type?: string; targetJobId?: string; resumeId?: string }>;
+  searchParams: Promise<{ type?: string; jobDescriptionId?: string; signedUrl?: string; agentId?: string; sessionId?: string }>;
 }
 
 export default async function InterviewSessionPage({
@@ -33,88 +29,31 @@ export default async function InterviewSessionPage({
 
   if (!dbUser) redirect("/sign-in");
 
-  const { type, targetJobId, resumeId } = await searchParams;
+  const { type, jobDescriptionId, signedUrl, agentId, sessionId } = await searchParams;
   const sessionType = type ?? "general";
 
-  let agentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;
-  let preCreatedSessionId: number | undefined = undefined;
+  let finalAgentId = agentId || process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;
   let parsedJobDescription: JobDescriptionExtraction | undefined = undefined;
 
-  // Context-Aware Initialization
-  if (targetJobId && targetJobId !== "none") {
-    // 1. Fetch Job Description
+  // If a jobDescriptionId is passed (e.g. from the InterviewSettingsModal), fetch it for the UI panel
+  if (jobDescriptionId) {
     const [jobDesc] = await db
       .select()
       .from(jobDescriptionsTable)
       .where(
         and(
-          eq(jobDescriptionsTable.id, parseInt(targetJobId, 10)),
+          eq(jobDescriptionsTable.id, parseInt(jobDescriptionId, 10)),
           eq(jobDescriptionsTable.userId, dbUser.id)
         )
       )
       .limit(1);
 
-    if (jobDesc && jobDesc.status === "extracted") {
+    if (jobDesc && jobDesc.status === "extracted" && jobDesc.extractedData) {
       parsedJobDescription = jobDesc.extractedData as JobDescriptionExtraction;
-
-      // 2. Add Resume Context (optional)
-      let resumeData: { parsedData: unknown; rawText: string | null } | null = null;
-      if (resumeId && resumeId !== "none") {
-        const [resume] = await db
-          .select({
-            id: userResumesTable.id,
-            parsedData: userResumesTable.parsedData,
-            rawText: userResumesTable.rawText,
-          })
-          .from(userResumesTable)
-          .where(
-            and(
-              eq(userResumesTable.id, parseInt(resumeId, 10)),
-              eq(userResumesTable.userId, dbUser.id)
-            )
-          )
-          .limit(1);
-
-        if (resume) {
-          resumeData = { parsedData: resume.parsedData, rawText: resume.rawText };
-        }
-      }
-
-      // 3. Build context-aware prompt
-      const { systemPrompt, firstMessage } = buildContextAwarePrompt({
-        extractedData: parsedJobDescription,
-        resumeData,
-        sessionType,
-      });
-
-      // 4. Create ephemeral agent
-      const agent = await createConversationalAgent({
-        name: `Context Interview - ${parsedJobDescription.jobTitle ?? "Custom"} - ${Date.now()}`,
-        systemPrompt,
-        firstMessage,
-        voiceId: process.env.ELEVENLABS_VOICE_ID ?? "21m00Tcm4TlvDq8ikWAM",
-      });
-
-      agentId = agent.agent_id;
-
-      // 5. Create DB session
-      const [session] = await db
-        .insert(interviewSessionsTable)
-        .values({
-          userId: dbUser.id,
-          organizationId: dbUser.organizationId,
-          sessionType,
-          status: "active",
-          jobDescriptionId: jobDesc.id,
-          resumeId: resumeId && resumeId !== "none" ? parseInt(resumeId, 10) : null,
-        })
-        .returning();
-
-      preCreatedSessionId = session.id;
     }
   }
 
-  if (!agentId || agentId === "your-agent-id-here") {
+  if (!finalAgentId || finalAgentId === "your-agent-id-here") {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-6 p-8 text-center">
         <div className="flex size-16 items-center justify-center rounded-full bg-amber-500/10">
@@ -162,9 +101,10 @@ export default async function InterviewSessionPage({
       {/* Live interview room fills the rest */}
       <div className="relative min-h-0 flex-1">
         <ElevenLabsInterviewRoom
-          agentId={agentId}
+          agentId={finalAgentId}
           sessionType={sessionType}
-          preCreatedSessionId={preCreatedSessionId}
+          preCreatedSessionId={sessionId ? parseInt(sessionId, 10) : undefined}
+          preSignedUrl={signedUrl}
           jobDescription={parsedJobDescription}
         />
       </div>

@@ -729,6 +729,13 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: View/Edit parsed job description details.
 - [x] LLM: Prompt template for generic job parsing.
 - [x] LLM: Extract core requirements from JD (Skills, Experience).
+- [x] System: Matching user resume gap analysis vs JD.
+- [x] LLM: Generate context-aware ElevenLabs system prompt.
+- [x] System: Inject JD context into AI interviewer persona.
+- [x] Integration: Send dynamic system prompt to ElevenLabs WebSocket.
+- [ ] UI: "Practice for this Job" button on job tracker cards.
+- [ ] UI: Interview settings modal: select resume & target JD.
+- [ ] UI: Real-time JD reference panel during interview.
 
 ### 2. Resume Parsing & Cover Letter Generation
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)

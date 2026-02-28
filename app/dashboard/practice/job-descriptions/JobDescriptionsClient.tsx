@@ -10,6 +10,8 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
+import { AddJobDescriptionModal } from "@/components/jobs/AddJobDescriptionModal";
+
 // Type matches the Drizzle schema inferred select type functionally
 type JobDescription = {
     id: number;
@@ -30,6 +32,7 @@ interface Props {
 export function JobDescriptionsClient({ initialJobs }: Props) {
     const [jobs, setJobs] = useState<JobDescription[]>(initialJobs);
     const [isDeleting, setIsDeleting] = useState<number | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
 
     const handleDelete = async (id: number) => {
@@ -75,18 +78,29 @@ export function JobDescriptionsClient({ initialJobs }: Props) {
                 <p className="text-gray-500 max-w-md mb-6">
                     Upload or paste job descriptions to start tailoring your AI interview practice to specific roles.
                 </p>
-                <Button className="bg-brand-600 hover:bg-brand-700" onClick={() => toast.success("Upload modal coming in the next issue!")}>
+                <Button className="bg-brand-600 hover:bg-brand-700" onClick={() => setIsModalOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add Job Description
                 </Button>
+                <AddJobDescriptionModal
+                    open={isModalOpen}
+                    onOpenChange={setIsModalOpen}
+                    onSuccess={(newJob) => setJobs(prev => [newJob, ...prev])}
+                />
             </div>
         );
     }
 
     return (
         <div className="space-y-6">
+            <AddJobDescriptionModal
+                open={isModalOpen}
+                onOpenChange={setIsModalOpen}
+                onSuccess={(newJob) => setJobs(prev => [newJob, ...prev])}
+            />
+
             <div className="flex justify-end">
-                <Button className="bg-brand-600 hover:bg-brand-700" onClick={() => toast.success("Upload modal coming in the next issue!")}>
+                <Button className="bg-brand-600 hover:bg-brand-700" onClick={() => setIsModalOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add New Role
                 </Button>

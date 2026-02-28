@@ -694,7 +694,7 @@ content/blog/5-signs-ready-for-career-change.mdx         1,000-1,200 words
 |-------|-------------|----------|
 | deeppivot-180 | Security: Extend Upstash rate limiting to all unprotected API routes | P2 |
 | deeppivot-181 | Security: PII anonymization in interview transcript storage | P2 |
-| deeppivot-182 | DevOps: CI/CD hardening — migration check, Playwright artifacts, npm caching | P3 |
+| ~~deeppivot-182~~ | ~~DevOps: CI/CD hardening — migration check, Playwright artifacts, npm caching~~ | ✓ |
 
 **Files to modify:**
 ```

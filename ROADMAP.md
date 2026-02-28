@@ -720,7 +720,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ### 1. Context-Aware "Job Specific" Practice Interviews
 - [x] Tailoring AI interview practice to specific job descriptions and company requirements. (DB Schema: job_descriptions, user_resumes, interview_sessions)
-- [ ] System prompt and ElevenLabs persona injections based on extracted job requirements.
+- [x] System prompt and ElevenLabs persona injections based on extracted job requirements.
 
 ### 2. Resume Parsing & Cover Letter Generation
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)

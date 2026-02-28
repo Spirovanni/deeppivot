@@ -761,6 +761,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 ### 4. Gamification & Weekly Streaks
 - [x] DB: `user_gamification` table (points, currentStreak, highestStreak) — migration 0025
 - [x] Hook: Add points on job application submitted (10 pts via `addPointsForJobApplication` in POST /api/jobs/[jobId]/apply)
+- [x] Design: 10 badge icons SVG (deeppivot-279) — public/badges/*.svg + gamification-badges.ts
 - [ ] Hook: Add points on interview completion
 - [ ] Hook: Add points on career plan milestone completion
 - [ ] Cron: Reset streaks if no weekly activity
@@ -775,4 +776,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-266 (Notification & Admin broadcast E2E) closed. Stub GET /api/notifications, POST /api/admin/announcements, e2e/notifications-admin-broadcast.spec.ts. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-279 (10 gamification badge SVGs) closed. public/badges/*.svg, src/lib/gamification-badges.ts. Run `bd ready` for Phase 16.2–16.5 next work.*

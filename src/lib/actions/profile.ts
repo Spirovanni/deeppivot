@@ -37,6 +37,7 @@ export interface UserProfile {
   phone: string | null;
   pronouns: string | null;
   linkedinUrl: string | null;
+  openToOpportunities: boolean;
   role: string;
   isPremium: boolean;
   createdAt: Date;
@@ -57,6 +58,7 @@ export async function getUserProfile(): Promise<UserProfile> {
     phone: user.phone ?? null,
     pronouns: user.pronouns ?? null,
     linkedinUrl: user.linkedinUrl ?? null,
+    openToOpportunities: user.openToOpportunities ?? false,
     role: user.role,
     isPremium: user.isPremium,
     createdAt: user.createdAt,
@@ -72,6 +74,7 @@ export interface ProfileUpdateInput {
   phone?: string;
   pronouns?: string;
   linkedinUrl?: string;
+  openToOpportunities?: boolean;
 }
 
 export async function updateProfile(input: ProfileUpdateInput): Promise<void> {
@@ -89,8 +92,21 @@ export async function updateProfile(input: ProfileUpdateInput): Promise<void> {
       ...(input.phone !== undefined ? { phone: input.phone.trim() || null } : {}),
       ...(input.pronouns !== undefined ? { pronouns: input.pronouns.trim() || null } : {}),
       ...(input.linkedinUrl !== undefined ? { linkedinUrl: input.linkedinUrl.trim() || null } : {}),
+      ...(input.openToOpportunities !== undefined ? { openToOpportunities: input.openToOpportunities } : {}),
       updatedAt: new Date(),
     })
+    .where(eq(usersTable.id, user.id));
+
+  revalidatePath("/dashboard/settings/profile");
+}
+
+/** Update only the openToOpportunities flag (for immediate toggle feedback) */
+export async function updateOpenToOpportunities(value: boolean): Promise<void> {
+  const user = await getAuthenticatedDbUser();
+
+  await db
+    .update(usersTable)
+    .set({ openToOpportunities: value, updatedAt: new Date() })
     .where(eq(usersTable.id, user.id));
 
   revalidatePath("/dashboard/settings/profile");

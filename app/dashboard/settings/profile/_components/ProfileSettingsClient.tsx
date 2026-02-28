@@ -15,8 +15,10 @@ import {
   Phone,
   Linkedin,
   AlertTriangle,
+  Briefcase,
 } from "lucide-react";
-import { updateProfile, uploadAvatar } from "@/src/lib/actions/profile";
+import { Switch } from "@/components/ui/switch";
+import { updateProfile, updateOpenToOpportunities, uploadAvatar } from "@/src/lib/actions/profile";
 import type { UserProfile } from "@/src/lib/actions/profile";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -253,6 +255,55 @@ function ProfileForm({ profile }: { profile: UserProfile }) {
   );
 }
 
+// ─── Privacy / Opportunities ──────────────────────────────────────────────────
+
+function OpenToOpportunitiesCard({ profile }: { profile: UserProfile }) {
+  const [checked, setChecked] = useState(profile.openToOpportunities);
+  const [isPending, startTransition] = useTransition();
+
+  const handleToggle = (value: boolean) => {
+    setChecked(value);
+    startTransition(async () => {
+      try {
+        await updateOpenToOpportunities(value);
+      } catch {
+        setChecked(!value); // revert on error
+      }
+    });
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <Briefcase className="size-4 text-muted-foreground" aria-hidden="true" />
+          <CardTitle className="text-base">Privacy & opportunities</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-0.5">
+            <Label htmlFor="open-to-opportunities" className="text-sm font-medium">
+              Open to Opportunities
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Allow employers to discover your profile when browsing for candidates. When enabled, your
+              profile may appear in &quot;Top Candidate Matches&quot; and related discovery features.
+            </p>
+          </div>
+          <Switch
+            id="open-to-opportunities"
+            checked={checked}
+            onCheckedChange={handleToggle}
+            disabled={isPending}
+            aria-label="Open to opportunities"
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Danger zone ──────────────────────────────────────────────────────────────
 
 function DangerZone({ profile }: { profile: UserProfile }) {
@@ -354,6 +405,9 @@ export function ProfileSettingsClient({ profile, clerkImageUrl }: Props) {
           <ProfileForm profile={profile} />
         </CardContent>
       </Card>
+
+      {/* Privacy / Open to opportunities */}
+      <OpenToOpportunitiesCard profile={profile} />
 
       {/* Account danger zone */}
       <DangerZone profile={profile} />

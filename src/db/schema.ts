@@ -45,6 +45,9 @@ export const usersTable = pgTable("users", {
   /** LinkedIn profile URL */
   linkedinUrl: varchar({ length: 1024 }),
 
+  /** Phase 16.5: Allow employers to see profile in "Top Candidate Matches" / opportunity discovery */
+  openToOpportunities: boolean().notNull().default(false),
+
   // ── WDB integration ───────────────────────────────────────────────────────
   /** Salesforce Contact ID for this user's WDB record (null = not a WDB client) */
   wdbSalesforceContactId: varchar({ length: 255 }),

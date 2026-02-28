@@ -770,10 +770,11 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports
 - [x] Admin: Advanced Data Export (CSV) for users table — 28 columns, gamification + WDB fields, ?role= & ?includeDeleted= filters
 - [x] Feedback algorithm: Improve matching weights based on outcome — matching_feedback + matching_weights tables, recordMatchingFeedback on hired/rejected, aggregateMatchingFeedback (Inngest cron daily)
+- [x] Privacy UI: "Open to Opportunities" toggle (deeppivot-319) — users.openToOpportunities, profile settings card
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [ ] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - Admin data exports to CSV for offline analysis.
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-279 (10 gamification badge SVGs) closed. public/badges/*.svg, src/lib/gamification-badges.ts. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-319 (Open to Opportunities toggle) closed. users.openToOpportunities, profile settings Privacy card, components/ui/switch.tsx. Run `bd ready` for Phase 16.2–16.5 next work.*

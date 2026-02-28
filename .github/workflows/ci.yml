@@ -21,28 +21,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Lint
-        run: pnpm run lint
+        run: npm run lint
 
       - name: Type-check
-        run: pnpm exec tsc --noEmit
+        run: npx tsc --noEmit
 
       - name: Check Migrations
-        run: pnpm exec drizzle-kit check --dialect=postgresql
+        run: npx drizzle-kit check --dialect=postgresql
 
   # ─── Build ─────────────────────────────────────────────────
   build:
@@ -72,32 +67,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       - name: Cache dependencies and Next.js build
         uses: actions/cache@v4
         with:
           path: |
-            ~/.local/share/pnpm/store
+            ~/.npm
             ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
             ${{ runner.os }}-nextjs-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Build and Analyze Bundle
-        run: ANALYZE=true pnpm run build
+        run: ANALYZE=true npm run build > build-output.txt 2>&1
 
       - name: Report Bundle Size
         if: github.event_name == 'pull_request'
@@ -106,13 +97,39 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const path = require('path');
 
-            // Look for the analyze output file.
-            // When ANALYZE=true is run, next-bundle-analyzer generally creates a report
-            // usually found at .next/analyze/client.html depending on configuration.
-            // As a simple alternative, we can just print a message that the build succeeded with analysis.
-            const message = "✅ Build completed successfully with `ANALYZE=true`.\n\nCheck the build artifacts or CI logs for detailed Next.js bundle size information.";
+            let message = "✅ Build completed successfully with `ANALYZE=true`.\n\nCould not extract bundle size details.";
+
+            try {
+              if (fs.existsSync('build-output.txt')) {
+                const output = fs.readFileSync('build-output.txt', 'utf8');
+                const lines = output.split('\n');
+                let collecting = false;
+                let tableLines = [];
+                
+                for (const line of lines) {
+                  // Clean up ANSI escape codes
+                  const plainLine = line.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+                  
+                  if (plainLine.includes('Route (app)') || plainLine.includes('Route (pages)')) {
+                    collecting = true;
+                  }
+                  
+                  if (collecting) {
+                    if (plainLine.trim() === '' && tableLines.length > 5) {
+                      break;
+                    }
+                    tableLines.push(plainLine.trimEnd());
+                  }
+                }
+                
+                if (tableLines.length > 0) {
+                  message = "### Next.js Bundle Size Analysis\n\n```text\n" + tableLines.join('\n') + "\n```";
+                }
+              }
+            } catch (error) {
+              console.error("Could not read build output", error);
+            }
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -151,25 +168,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
-        run: pnpm exec playwright test --project=chromium
+        run: npx playwright test --project=chromium
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

@@ -19,6 +19,14 @@ export const GAMIFICATION_POINTS = {
 export type GamificationEvent = keyof typeof GAMIFICATION_POINTS;
 
 /**
+ * Returns UTC ISO string for date storage/comparison.
+ * Use this for streak logic and any timezone-sensitive comparisons.
+ */
+export function toUtcIsoString(date: Date): string {
+  return date.toISOString();
+}
+
+/**
  * Add points for a user action. Upserts user_gamification row if needed.
  * Non-blocking: errors are logged but do not throw.
  */

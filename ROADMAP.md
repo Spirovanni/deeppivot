@@ -765,6 +765,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] DB: `user_gamification` table (points, currentStreak, highestStreak) — migration 0025
 - [x] Hook: Add points on job application submitted (10 pts via `addPointsForJobApplication` in POST /api/jobs/[jobId]/apply)
 - [x] Design: 10 badge icons SVG (deeppivot-279) — public/badges/*.svg + gamification-badges.ts
+- [x] QA: Gamification engine edge cases and timezone testing (deeppivot-294) — vitest unit tests + e2e/gamification.spec.ts
 - [ ] Hook: Add points on interview completion
 - [ ] Hook: Add points on career plan milestone completion
 - [ ] Cron: Reset streaks if no weekly activity
@@ -780,4 +781,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-217 (Resume management dashboard) closed. /dashboard/practice/resumes, AddResumeModal, PATCH/DELETE /api/resumes/[id]. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-294 (Gamification QA) closed. vitest unit tests (edge cases, timezone), e2e/gamification.spec.ts. Run `bd ready` for Phase 16.2–16.5 next work.*

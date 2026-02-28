@@ -17,6 +17,8 @@
     "vercel:env": "node scripts/push-env-to-vercel.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "e2e": "playwright test",
     "e2e:ci": "playwright test --project=chromium",
     "e2e:ui": "playwright test --ui",
@@ -118,7 +120,8 @@
     "storybook": "^10.2.12",
     "tailwindcss": "^4.1.10",
     "tsx": "^4.20.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": ">=18.0.0",

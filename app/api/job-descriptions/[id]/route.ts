@@ -97,3 +97,63 @@ export async function PATCH(
         );
     }
 }
+
+export async function DELETE(
+    req: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    try {
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const [user] = await db
+            .select({ id: usersTable.id })
+            .from(usersTable)
+            .where(eq(usersTable.clerkId, clerkId))
+            .limit(1);
+
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 });
+        }
+
+        const { id: jobIdString } = await params;
+        const jobId = parseInt(jobIdString, 10);
+
+        if (isNaN(jobId)) {
+            return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+        }
+
+        // Verify ownership
+        const [existing] = await db
+            .select()
+            .from(jobDescriptionsTable)
+            .where(
+                and(
+                    eq(jobDescriptionsTable.id, jobId),
+                    eq(jobDescriptionsTable.userId, user.id)
+                )
+            )
+            .limit(1);
+
+        if (!existing) {
+            return NextResponse.json(
+                { error: "Job description not found or access denied" },
+                { status: 404 }
+            );
+        }
+
+        await db
+            .delete(jobDescriptionsTable)
+            .where(eq(jobDescriptionsTable.id, existing.id));
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error(`Error deleting job description:`, error);
+        return NextResponse.json(
+            { error: "Failed to delete job description" },
+            { status: 500 }
+        );
+    }
+}

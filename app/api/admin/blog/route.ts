@@ -6,7 +6,7 @@ import matter from "gray-matter";
 import { rateLimit } from "@/src/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
-    const rl = await rateLimit(req, "ADMIN_BLOG_POST");
+    const rl = await rateLimit(req, "ADMIN");
     if (!rl.success) return rl.response;
 
     try {

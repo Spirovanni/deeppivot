@@ -77,7 +77,9 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 /api/admin/archetype-review        Admin: list archetype review queue (GET)
 /api/admin/archetype-review/[id]   Admin: approve/override (PATCH)
 
-/admin                    Admin dashboard (admin role only)
+/admin                  ### 6. Admin Panel Hooks & Review Dashboard
+- Tools for admins/coaches to review AI transcripts and user performance.
+- Moderation tools for user-submitted content if necessary.
 /admin/archetype-review   Admin: human review queue for archetypes
 
 /dashboard                Authenticated learner dashboard shell
@@ -723,6 +725,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] System prompt and ElevenLabs persona injections based on extracted job requirements.
 - [x] API routes for managing job descriptions (`POST`, `GET`, `PATCH`, `DELETE`).
 - [x] Extracted raw text endpoint for PDF attachments.
+- [x] UI: Job Description Library page.
 
 ### 2. Resume Parsing & Cover Letter Generation
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)

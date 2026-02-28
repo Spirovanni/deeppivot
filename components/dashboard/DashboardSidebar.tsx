@@ -14,6 +14,7 @@ import {
   CreditCard,
   Settings,
   Menu,
+  FileText,
 } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/utils";
@@ -29,6 +30,7 @@ import { useState, useEffect } from "react";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/practice/job-descriptions", label: "Job Descriptions", icon: FileText },
   { href: "/dashboard/interviews", label: "Interviews", icon: Mic2 },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/dashboard/archetype", label: "Career Archetype", icon: UserCircle },

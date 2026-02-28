@@ -752,6 +752,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 ### 2. Resume Parsing & Cover Letter Generation
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)
 - [x] DB Schema: `parsed_resume_data` JSONB structure (deeppivot-212) — ResumeExtraction type, user_resumes.parsedData
+- [x] UI: Resume management dashboard (deeppivot-217) — /dashboard/practice/resumes, AddResumeModal, PATCH/DELETE APIs
 - [x] UI: Cover letter preview modal in job Kanban board (deeppivot-237) — CoverLetterPreviewModal, View Cover Letter in card menu
 - [ ] Generating and refining personalized cover letters based on target job descriptions and matching experience.
 
@@ -779,4 +780,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-237 (Cover letter preview modal) closed. CoverLetterPreviewModal in job Kanban, getCoverLetterForJobApplication. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-217 (Resume management dashboard) closed. /dashboard/practice/resumes, AddResumeModal, PATCH/DELETE /api/resumes/[id]. Run `bd ready` for Phase 16.2–16.5 next work.*

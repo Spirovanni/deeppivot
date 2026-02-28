@@ -38,7 +38,7 @@ export async function POST(req: Request) {
                 userId: user.id,
                 title: validatedData.title,
                 rawText: validatedData.content,
-                fileUrl: validatedData.fileUrl,
+                fileUrl: validatedData.fileUrl ?? null,
                 status: "pending",
             })
             .returning();
@@ -67,10 +67,13 @@ export async function POST(req: Request) {
                 .where(eq(userResumesTable.id, newResume.id));
         }
 
-        return NextResponse.json(
-            { success: true, id: newResume.id },
-            { status: 201 }
-        );
+        const [final] = await db
+            .select()
+            .from(userResumesTable)
+            .where(eq(userResumesTable.id, newResume.id))
+            .limit(1);
+
+        return NextResponse.json(final ?? newResume, { status: 201 });
     } catch (error: unknown) {
         if (error instanceof z.ZodError) {
             return NextResponse.json(

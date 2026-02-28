@@ -102,10 +102,13 @@ export async function POST(request: NextRequest) {
                 .where(eq(userResumesTable.id, newResume.id));
         }
 
-        return NextResponse.json(
-            { success: true, id: newResume.id, fileUrl },
-            { status: 201 }
-        );
+        const [final] = await db
+            .select()
+            .from(userResumesTable)
+            .where(eq(userResumesTable.id, newResume.id))
+            .limit(1);
+
+        return NextResponse.json(final ?? { ...newResume, fileUrl }, { status: 201 });
     } catch (error) {
         console.error("Error uploading resume:", error);
         return NextResponse.json(

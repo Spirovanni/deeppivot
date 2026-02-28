@@ -1,0 +1,139 @@
+
+> deeppivot@0.1.0 build
+> next build
+
+The Next Bundle Analyzer is not compatible with Turbopack builds, no report will be generated.
+
+Consider trying the new Turbopack analyzer via `next experimental-analyze`.
+
+See https://nextjs.org/docs/app/guides/package-bundling for more information
+
+To run this analysis pass the `--webpack` flag to `next build`
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+- Experiments (use with caution):
+  · clientTraceMetadata
+
+  Creating an optimized production build ...
+The Next Bundle Analyzer is not compatible with Turbopack builds, no report will be generated.
+
+Consider trying the new Turbopack analyzer via `next experimental-analyze`.
+
+See https://nextjs.org/docs/app/guides/package-bundling for more information
+
+To run this analysis pass the `--webpack` flag to `next build`
+✓ Compiled successfully in 23.7s
+  Running next.config.js provided runAfterProductionCompile ...
+✓ Completed runAfterProductionCompile in 3020ms
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/56) ...
+  Generating static pages using 7 workers (14/56) 
+  Generating static pages using 7 workers (28/56) 
+  Generating static pages using 7 workers (42/56) 
+✓ Generating static pages using 7 workers (56/56) in 2.1s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /admin
+├ ƒ /admin/agents
+├ ƒ /admin/agents/[agentId]/edit
+├ ƒ /admin/agents/new
+├ ƒ /admin/archetype-review
+├ ƒ /admin/blog
+├ ƒ /admin/blog/new
+├ ƒ /admin/employers
+├ ƒ /admin/jobs
+├ ƒ /admin/settings
+├ ƒ /admin/users
+├ ƒ /admin/users/[userId]
+├ ƒ /api/admin/agents
+├ ƒ /api/admin/agents/[agentId]
+├ ƒ /api/admin/archetype-review
+├ ƒ /api/admin/archetype-review/[id]
+├ ƒ /api/admin/blog
+├ ƒ /api/admin/export/sessions
+├ ƒ /api/admin/export/users
+├ ƒ /api/admin/users/[userId]
+├ ƒ /api/alt-ed
+├ ƒ /api/archetype/classify
+├ ƒ /api/billing/checkout
+├ ƒ /api/clerk-js
+├ ƒ /api/clerk-proxy/[...path]
+├ ƒ /api/clerk-webhook
+├ ƒ /api/companies
+├ ƒ /api/companies/[id]
+├ ƒ /api/contact
+├ ƒ /api/elevenlabs-agent-info
+├ ƒ /api/elevenlabs-signed-url
+├ ƒ /api/employer/applications/[appId]
+├ ƒ /api/employer/jobs/[jobId]/applications
+├ ƒ /api/feedback
+├ ƒ /api/inngest
+├ ƒ /api/jobs
+├ ƒ /api/jobs/[jobId]
+├ ƒ /api/jobs/[jobId]/apply
+├ ƒ /api/me/applications
+├ ƒ /api/plans
+├ ƒ /api/plans/[id]
+├ ƒ /api/plans/[id]/resources
+├ ƒ /api/plans/[id]/resources/[resourceId]
+├ ƒ /api/plans/[id]/resources/recommendations
+├ ƒ /api/plans/reorder
+├ ƒ /api/sync-users
+├ ƒ /api/users
+├ ƒ /api/users/current
+├ ƒ /api/webhooks/polar
+├ ƒ /api/webhooks/vapi
+├ ƒ /blog
+├ ƒ /blog/[slug]
+├ ƒ /contact
+├ ƒ /dashboard
+├ ƒ /dashboard/analytics
+├ ƒ /dashboard/archetype
+├ ƒ /dashboard/billing
+├ ƒ /dashboard/billing/success
+├ ƒ /dashboard/career-plan
+├ ƒ /dashboard/education
+├ ƒ /dashboard/enterprise
+├ ƒ /dashboard/interviews
+├ ƒ /dashboard/interviews/[sessionId]
+├ ƒ /dashboard/interviews/[sessionId]/feedback
+├ ƒ /dashboard/interviews/session
+├ ƒ /dashboard/job-tracker
+├ ƒ /dashboard/mentor
+├ ƒ /dashboard/mentors
+├ ƒ /dashboard/settings/profile
+├ ƒ /dashboard/talent-scout
+├ ƒ /dashboard/trailblazer
+├ ƒ /dashboard/wdb
+├ ƒ /employer/jobs
+├ ƒ /employer/jobs/[jobId]/applications
+├ ƒ /employer/jobs/[jobId]/edit
+├ ƒ /employer/jobs/new
+├ ƒ /employer/onboarding
+├ ƒ /explorer/alt-ed
+├ ƒ /faq
+├ ƒ /jobs
+├ ƒ /jobs/[jobId]
+├ ƒ /onboarding
+├ ƒ /pricing
+├ ƒ /privacy
+├ ○ /robots.txt
+├ ƒ /sign-in/[[...sign-in]]
+├ ƒ /sign-in/sso-callback
+├ ƒ /sign-up/[[...sign-up]]
+├ ○ /sitemap.xml
+├ ƒ /talent-scout
+├ ƒ /terms
+├ ƒ /trailblazer
+└ ƒ /unauthorized
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

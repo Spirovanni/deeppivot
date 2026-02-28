@@ -235,14 +235,15 @@ Run `bd ready` to see current ready work. Theming (deeppivot-125) complete.
 
 | Order | Issue | Title |
 |-------|-------|-------|
-| 1 | deeppivot-48 | DevOps: Configure Vercel Deployment |
-| 2 | deeppivot-49 | DevOps: Set up GitHub Actions CI/CD |
-| 3 | deeppivot-52 | Security: PII Anonymization Pipeline |
-| 4 | deeppivot-53 | Security: API Rate Limiting |
-| 5 | deeppivot-54 | Security: Configure HTTP Security Headers |
-| 6 | deeppivot-55 | Frontend: Ensure WCAG-AA Color Contrast |
-| 7 | deeppivot-56 | Frontend: Implement Keyboard Navigation |
-| 8 | ~~deeppivot-142~~ | ~~Performance: Pre-launch Load Test~~ |
+| 1 | ~~deeppivot-32~~ | ~~DevOps: Configure Vercel Deployment~~ ✓ |
+| 2 | ~~deeppivot-33~~ | ~~DevOps: Set up GitHub Actions CI/CD~~ ✓ |
+| 3 | ~~deeppivot-67~~ | ~~Security: PII Anonymization Pipeline~~ ✓ |
+| 4 | ~~deeppivot-109~~ | ~~Security: API Rate Limiting~~ ✓ |
+| 5 | ~~deeppivot-110~~ | ~~Security: Configure HTTP Security Headers~~ ✓ |
+| 6 | ~~deeppivot-50~~ | ~~Frontend: Ensure WCAG-AA Color Contrast~~ ✓ |
+| 7 | ~~deeppivot-51~~ | ~~Frontend: Implement Keyboard Navigation~~ ✓ |
+| 8 | ~~deeppivot-142~~ | ~~Performance: Pre-launch Load Test~~ ✓ |
+| 9 | ~~deeppivot-182~~ | ~~DevOps: CI/CD hardening — migration check, Playwright artifacts, npm caching~~ ✓ |
 
 ---
 
@@ -761,10 +762,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-208 (LLM: Generate behavioral questions based on JD culture) closed. Zod-validated prompt schema (behavioral-questions.ts) with 8 competency categories (teamwork, leadership, conflict-resolution, adaptability, communication, problem-solving, culture-fit, initiative). GPT-4 Turbo generator (behavioral-question-generator.ts) produces 7-10 STAR-method questions grounded in JD culture signals. POST /api/interviews/questions/behavioral route with auth, ownership, rate limiting. Mirrors technical-question-generator pattern.*
-*Last updated: 2026-02-28 — deeppivot-201 (UI: Interview settings modal) closed (already implemented). deeppivot-209 (UI: Job match score visualization on session complete) closed. JobMatchScoreCard.tsx: SVG radial gauge (0-100%), color-coded score labels (Strong/Good/Moderate/Needs Improvement), technical + soft skill badges, company culture context. getSessionJobMatchData() server action fetches linked JD extracted data. Integrated into /dashboard/interviews/[sessionId] page after AI Feedback link.*
-*Last updated: 2026-02-28 — deeppivot-202 (UI: Real-time JD reference panel during interview) closed. ElevenLabsInterviewRoom.tsx: desktop sidebar (w-[350px], hidden lg:flex) shows Role, Technical Skills, Soft Skills, Key Responsibilities, Company Culture, and Likely Interview Topics from parsed JD. Mobile: floating FAB triggers a Shadcn Sheet drawer with the same JdReferenceContent component. Panel renders only when jobDescription prop is provided; layout shifts to flex-row when active.*
-*Last updated: 2026-02-28 — deeppivot-200 (UI: "Practice for this Job" button on job tracker cards) closed. components/interviews/InterviewSettingsModal.tsx restored as self-fetching context-aware modal (fetches /api/job-descriptions, fuzzy-matches against initialJobQuery, calls /api/interviews/context-aware/start). JobApplicationCard.tsx: visible "Practice for this Job" full-width CTA button added to card face below salary/location footer; dropdown item retained. buildJobQuery() helper passes position + company as auto-selection hint to the modal.*
-*Last updated: 2026-02-28 — deeppivot-204 (UI: Post-interview feedback shows gap analysis vs JD) closed. components/interviews/GapAnalysisPanel.tsx: new server component showing Technical Skills Required, Soft Skills to Demonstrate, Key Responsibilities to Address, Topics to Keep Practising (likelyInterviewTopics), experience requirement reminder, score band (Strong/Good/Needs Improvement), and "Practice for this Job Again" CTA linking back to the JD. getSessionGapAnalysis() server action added to interview-sessions.ts. Integrated into /dashboard/interviews/[sessionId]/feedback page (only renders when session has a linked JD, fully parallel-fetched with existing data).*
-*Last updated: 2026-02-28 — deeppivot-206 (API: Store extracted JD embeddings for fast retrieval) closed. DB: embedding_vector jsonb column added to job_descriptions (migration 0023). buildJdEmbeddingText() helper serializes all 7 extracted JD fields (title, company, technical/soft skills, experience, responsibilities, culture, likelyTopics) into a rich text blob. Embedding auto-generated via embedText() (text-embedding-3-small, 1536-dim) after every successful LLM extraction in POST /api/job-descriptions and PATCH /api/job-descriptions/[id]. POST /api/job-descriptions/search: embeds query, loads user JDs with vectors, ranks by cosineSimilarity, returns top-k above threshold. scripts/backfill-jd-embeddings.ts: one-shot backfill for existing extracted JDs without vectors.*
-*Last updated: 2026-02-28 — deeppivot-210 (QA: End-to-end testing of Context-Aware interview) closed. e2e/context-aware-interviews.spec.ts added with 12 Playwright test cases covering: full API auth-gate verification (/api/job-descriptions GET/POST/PATCH/DELETE, /api/interviews/context-aware/start, /api/interviews/questions/generate + behavioral, /api/interviews/feedback/relevance, /api/job-descriptions/search), and dashboard redirect assertions for session, feedback, session detail, and JD library pages. Phase 16.1 (Context-Aware Job Specific Practice Interviews) fully complete — all 19 checklist items shipped.*
+*Last updated: 2026-02-28 — Phase 16.1 (Context-Aware Job Specific Practice Interviews) complete. deeppivot-182 (DevOps: CI/CD hardening) closed. All 19 checklist items shipped: JD embeddings (deeppivot-206), gap analysis panel, JD reference panel, "Practice for this Job" button, Job match score visualization, behavioral question generator, E2E tests. Run `bd ready` for Phase 16.2–16.5 next work.*

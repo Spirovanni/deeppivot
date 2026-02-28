@@ -8,6 +8,7 @@ import {
   interviewFeedbackTable,
   emotionalAnalysesTable,
   usersTable,
+  jobDescriptionsTable,
 } from "@/src/db/schema";
 import { eq, avg, and, asc, desc } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
@@ -180,4 +181,49 @@ export async function captureEmotionSnapshot(
     dominantEmotion,
     confidence,
   });
+}
+
+/**
+ * Fetches the job description context linked to an interview session.
+ * Returns extracted JD data (skills, culture, match info) or null if
+ * the session has no linked job description.
+ */
+export async function getSessionJobMatchData(sessionId: number) {
+  const user = await getDbUser();
+
+  const session = await db.query.interviewSessionsTable.findFirst({
+    where: and(
+      eq(interviewSessionsTable.id, sessionId),
+      eq(interviewSessionsTable.userId, user.id)
+    ),
+    with: {
+      jobDescription: true,
+    },
+  });
+
+  if (!session?.jobDescriptionId || !session.jobDescription) return null;
+
+  const jd = session.jobDescription;
+  if (jd.status !== "extracted" || !jd.extractedData) return null;
+
+  const extracted = jd.extractedData as {
+    jobTitle?: string;
+    companyName?: string | null;
+    technicalSkillsRequired?: string[];
+    softSkillsRequired?: string[];
+    companyCulture?: string | null;
+    primaryResponsibilities?: string[];
+    yearsOfExperience?: string | null;
+  };
+
+  return {
+    jobTitle: extracted.jobTitle ?? jd.positionTitle ?? "Unknown Role",
+    companyName: extracted.companyName ?? jd.companyName ?? null,
+    technicalSkills: extracted.technicalSkillsRequired ?? [],
+    softSkills: extracted.softSkillsRequired ?? [],
+    culture: extracted.companyCulture ?? null,
+    responsibilities: extracted.primaryResponsibilities ?? [],
+    yearsOfExperience: extracted.yearsOfExperience ?? null,
+    overallScore: session.overallScore,
+  };
 }

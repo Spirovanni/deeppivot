@@ -8,9 +8,11 @@ import {
   getSessionDetail,
   getSessionEmotions,
   getInterviewFeedback,
+  getSessionJobMatchData,
 } from "@/src/lib/actions/interview-sessions";
 import { EmotionTimeline } from "@/components/interviews/EmotionTimeline";
 import { CommunicationSummary } from "@/components/interviews/CommunicationSummary";
+import { JobMatchScoreCard } from "@/components/interviews/JobMatchScoreCard";
 
 const SESSION_TYPE_LABELS: Record<string, string> = {
   behavioral: "Behavioral",
@@ -49,10 +51,11 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
   const sessionId = parseInt(sessionIdStr, 10);
   if (isNaN(sessionId)) notFound();
 
-  const [session, snapshots, feedback] = await Promise.all([
+  const [session, snapshots, feedback, jobMatchData] = await Promise.all([
     getSessionDetail(sessionId),
     getSessionEmotions(sessionId),
     getInterviewFeedback(sessionId),
+    getSessionJobMatchData(sessionId),
   ]);
 
   if (!session) notFound();
@@ -140,6 +143,18 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
               </CardContent>
             </Card>
           </Link>
+        )}
+
+        {/* Job Match Score */}
+        {jobMatchData && (
+          <JobMatchScoreCard
+            jobTitle={jobMatchData.jobTitle}
+            companyName={jobMatchData.companyName}
+            technicalSkills={jobMatchData.technicalSkills}
+            softSkills={jobMatchData.softSkills}
+            culture={jobMatchData.culture}
+            overallScore={jobMatchData.overallScore}
+          />
         )}
 
         {/* Notes */}

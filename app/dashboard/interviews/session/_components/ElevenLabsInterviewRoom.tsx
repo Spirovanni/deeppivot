@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mic, MicOff, Phone, Sparkles, Users, Code2, Lightbulb, Mic2 } from "lucide-react";
+import { Mic, MicOff, Phone, Sparkles, Users, Code2, Lightbulb, Mic2, Briefcase } from "lucide-react";
 import {
   startInterviewSession,
   endInterviewSession,
 } from "@/src/lib/actions/interview-sessions";
 import { toast } from "@/src/lib/toast";
+import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
 
 /**
  * Aligned with your ElevenLabs agent settings:
@@ -73,6 +74,7 @@ interface ElevenLabsInterviewRoomProps {
   preCreatedSessionId?: number;
   /** When provided, skip fetching a signed URL — connect to this URL directly. */
   preSignedUrl?: string;
+  jobDescription?: JobDescriptionExtraction;
 }
 
 export function ElevenLabsInterviewRoom({
@@ -80,6 +82,7 @@ export function ElevenLabsInterviewRoom({
   sessionType,
   preCreatedSessionId,
   preSignedUrl,
+  jobDescription,
 }: ElevenLabsInterviewRoomProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -234,8 +237,8 @@ export function ElevenLabsInterviewRoom({
           // Detect Bluetooth microphones
           const label = track.label.toLowerCase();
           const isBluetooth = label.includes('airpods') ||
-                             label.includes('bluetooth') ||
-                             label.includes('wireless');
+            label.includes('bluetooth') ||
+            label.includes('wireless');
           setIsBluetoothMic(isBluetooth);
           setMicInfo(track.label);
 
@@ -439,12 +442,12 @@ export function ElevenLabsInterviewRoom({
 
           // Log ALL message types for debugging (except audio and ping to reduce noise)
           const messageType = message.type ||
-                             (message.ping_event ? 'ping_event' : null) ||
-                             (message.audio_event ? 'audio_event' : null) ||
-                             (message.user_transcription_event ? 'user_transcription_event' : null) ||
-                             (message.agent_response_event ? 'agent_response_event' : null) ||
-                             (message.conversation_initiation_metadata_event ? 'conversation_initiation_metadata_event' : null) ||
-                             'unknown';
+            (message.ping_event ? 'ping_event' : null) ||
+            (message.audio_event ? 'audio_event' : null) ||
+            (message.user_transcription_event ? 'user_transcription_event' : null) ||
+            (message.agent_response_event ? 'agent_response_event' : null) ||
+            (message.conversation_initiation_metadata_event ? 'conversation_initiation_metadata_event' : null) ||
+            'unknown';
 
           // Respond to server ping immediately so the connection stays open (required by ElevenLabs)
           const isPing = message.type === "ping" || message.ping_event != null;
@@ -785,200 +788,261 @@ export function ElevenLabsInterviewRoom({
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col items-center justify-center gap-8 p-8">
-        {!isConnected ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center gap-6 text-center"
-          >
-            <div className="flex size-24 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5">
-              <Icon className="size-12 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold">Ready to practice?</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Click start to begin your interview with Sarah
-              </p>
-            </div>
-            <button
-              onClick={handleStart}
-              disabled={isStarting}
-              aria-disabled={isStarting}
-              aria-busy={isStarting}
-              className="flex items-center gap-2 rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      <div className={`flex flex-1 overflow-hidden ${jobDescription ? "flex-row px-8 py-6 gap-8" : "flex-col items-center justify-center p-8 gap-8"}`}>
+        {/* Left Pane */}
+        <div className={`flex flex-col h-full overflow-y-auto ${jobDescription ? "flex-1 max-w-3xl border-r border-border/0 lg:border-border pr-0 lg:pr-8" : "w-full max-w-2xl items-center justify-center"}`}>
+          {!isConnected ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center gap-6 text-center"
             >
-              {isStarting ? (
-                <>
-                  <div className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
-                  Connecting...
-                </>
-              ) : (
-                <>
-                  <Mic className="size-5" aria-hidden="true" />
-                  Start Interview
-                </>
-              )}
-            </button>
-          </motion.div>
-        ) : (
-          <div className="flex w-full max-w-2xl flex-col gap-6 overflow-y-auto max-h-full pb-8">
-            {/* Transcript */}
-            <div className="flex-1 space-y-4 rounded-lg border border-border bg-card p-6">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex flex-col">
-                  <h4 className="font-semibold">Interview with Sarah</h4>
-                  <p className="text-xs text-muted-foreground">
-                    She&apos;ll ask about your target role, then ~5–7 questions with follow‑ups, give quick feedback after each answer, and end with a summary of your performance.
-                  </p>
-                </div>
-                <span className="text-xs text-muted-foreground shrink-0">
-                  {isAgentSpeaking
-                    ? "Sarah's turn"
-                    : audioLevel > 0.15
-                      ? "Listening…"
-                      : messages.length > 0
-                        ? "Your turn — speak when ready"
-                        : null}
-                </span>
+              <div className="flex size-24 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5">
+                <Icon className="size-12 text-primary" />
               </div>
-              <div className="space-y-3">
-                {messages.length === 0 ? (
-                  <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 p-4 text-sm text-blue-900 dark:text-blue-200">
-                    <p className="font-semibold">👋 Sarah is ready for your interview.</p>
-                    <p className="mt-1">
-                      Start by telling her what role you&apos;re preparing for. She&apos;ll then ask ~5–7 realistic questions (with follow‑ups), give brief feedback on each answer, and finish with key takeaways. As you speak, your words will appear here; after about {AGENT_TURN_TIMEOUT_SEC} seconds of silence, she may jump in with her next question. Sessions can run up to {AGENT_MAX_DURATION_SEC / 60} minutes.
+              <div>
+                <h3 className="text-xl font-semibold">Ready to practice?</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Click start to begin your interview with Sarah
+                </p>
+              </div>
+              <button
+                onClick={handleStart}
+                disabled={isStarting}
+                aria-disabled={isStarting}
+                aria-busy={isStarting}
+                className="flex items-center gap-2 rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {isStarting ? (
+                  <>
+                    <div className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Mic className="size-5" aria-hidden="true" />
+                    Start Interview
+                  </>
+                )}
+              </button>
+            </motion.div>
+          ) : (
+            <div className="flex w-full max-w-2xl flex-col gap-6 overflow-y-auto max-h-full pb-8">
+              {/* Transcript */}
+              <div className="flex-1 space-y-4 rounded-lg border border-border bg-card p-6">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-col">
+                    <h4 className="font-semibold">Interview with Sarah</h4>
+                    <p className="text-xs text-muted-foreground">
+                      She&apos;ll ask about your target role, then ~5–7 questions with follow‑ups, give quick feedback after each answer, and end with a summary of your performance.
                     </p>
                   </div>
-                ) : (
-                  messages.map((msg, i) => (
-                    <div
-                      key={i}
-                      className={`rounded-lg p-3 text-sm ${
-                        msg.role === "user"
-                          ? "bg-blue-50 border-l-4 border-blue-500 text-blue-900"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      <span className="font-semibold">
-                        {msg.role === "user" ? "You" : "Sarah"}:
-                      </span>{" "}
-                      {msg.text}
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {isAgentSpeaking
+                      ? "Sarah's turn"
+                      : audioLevel > 0.15
+                        ? "Listening…"
+                        : messages.length > 0
+                          ? "Your turn — speak when ready"
+                          : null}
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {messages.length === 0 ? (
+                    <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 p-4 text-sm text-blue-900 dark:text-blue-200">
+                      <p className="font-semibold">👋 Sarah is ready for your interview.</p>
+                      <p className="mt-1">
+                        Start by telling her what role you&apos;re preparing for. She&apos;ll then ask ~5–7 realistic questions (with follow‑ups), give brief feedback on each answer, and finish with key takeaways. As you speak, your words will appear here; after about {AGENT_TURN_TIMEOUT_SEC} seconds of silence, she may jump in with her next question. Sessions can run up to {AGENT_MAX_DURATION_SEC / 60} minutes.
+                      </p>
                     </div>
-                  ))
+                  ) : (
+                    messages.map((msg, i) => (
+                      <div
+                        key={i}
+                        className={`rounded-lg p-3 text-sm ${msg.role === "user"
+                            ? "bg-blue-50 border-l-4 border-blue-500 text-blue-900"
+                            : "bg-muted text-muted-foreground"
+                          }`}
+                      >
+                        <span className="font-semibold">
+                          {msg.role === "user" ? "You" : "Sarah"}:
+                        </span>{" "}
+                        {msg.text}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Bluetooth Warning */}
+              {isBluetoothMic && (
+                <div className="w-full rounded-lg border-2 border-red-500 bg-red-50 p-4">
+                  <p className="text-sm font-bold text-red-900">⚠️ BLUETOOTH MICROPHONE DETECTED</p>
+                  <p className="mt-1 text-xs text-red-800">
+                    <strong>Device:</strong> {micInfo}
+                  </p>
+                  <p className="mt-2 text-xs text-red-800">
+                    <strong>Problem:</strong> Bluetooth microphones use heavy compression when both mic and speakers are active,
+                    causing audio artifacts that prevent voice detection even with good amplitude levels.
+                  </p>
+                  <p className="mt-2 text-xs font-semibold text-red-900">
+                    ✓ SOLUTION: Switch to MacBook built-in microphone or wired headphones!
+                  </p>
+                  <p className="mt-1 text-xs text-red-800">
+                    Mac: System Settings → Sound → Input → Select "MacBook Pro Microphone"
+                  </p>
+                </div>
+              )}
+
+              {/* Audio Level Indicator */}
+              <div className="flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-4">
+                <div className="flex w-full items-center justify-between">
+                  <span className="text-sm font-semibold">Microphone Check</span>
+                  {isClipping ? (
+                    <span className="text-xs text-red-600 font-semibold">⚠️ Clipping!</span>
+                  ) : audioLevel > 0.3 ? (
+                    <span className="text-xs text-green-600 font-semibold">✓ Good Level</span>
+                  ) : audioLevel > 0.15 ? (
+                    <span className="text-xs text-yellow-600 font-semibold">⚠️ Low</span>
+                  ) : (
+                    <span className="text-xs text-red-600 font-semibold">⚠️ Too Low</span>
+                  )}
+                </div>
+                <div className="flex w-full items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Level:</span>
+                  <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted border border-border">
+                    <div
+                      className={`h-full transition-all duration-100 ${isClipping ? 'bg-red-600' :
+                          audioLevel > 0.3 ? 'bg-green-500' :
+                            audioLevel > 0.15 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                        }`}
+                      style={{ width: `${Math.min(audioLevel * 100, 100)}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-mono text-muted-foreground">{(audioLevel * 100).toFixed(0)}%</span>
+                </div>
+                {audioLevel < 0.15 && !isClipping && (
+                  <div className="w-full rounded bg-yellow-50 p-2 text-xs text-yellow-800">
+                    <p className="font-semibold">⚠️ Your microphone is too quiet!</p>
+                    <p className="mt-1">Please fix the following:</p>
+                    <ul className="mt-1 ml-4 list-disc space-y-0.5">
+                      <li><strong>Use headphones or earbuds</strong> to prevent echo</li>
+                      <li>Mac: System Settings → Sound → Input → Increase input volume slider</li>
+                      <li>Make sure the correct microphone is selected</li>
+                      <li>Speak normally and watch the level bar reach 30-60% (green)</li>
+                    </ul>
+                  </div>
                 )}
+                {isClipping && (
+                  <div className="w-full rounded bg-red-50 p-2 text-xs text-red-800">
+                    <p className="font-semibold">⚠️ Audio distortion detected!</p>
+                    <p className="mt-1">Your microphone input is too loud, causing distortion. ElevenLabs cannot transcribe distorted audio.</p>
+                    <p className="mt-1"><strong>Fix:</strong> Mac: System Settings → Sound → Input → Reduce input volume slider to 30-50%</p>
+                  </div>
+                )}
+                {!isClipping && audioLevel >= 0.3 && messages.length === 0 && (
+                  <div className="w-full rounded bg-green-50 dark:bg-green-950/30 p-2 text-xs text-green-800 dark:text-green-200">
+                    <p className="font-semibold">✓ Mic level good.</p>
+                    <p className="mt-1">Your live transcript will appear above. Sarah may respond after ~{AGENT_TURN_TIMEOUT_SEC}s of silence (turn-based).</p>
+                  </div>
+                )}
+                <div className="w-full flex justify-between items-center pt-1 border-t border-border">
+                  <span className="text-xs text-muted-foreground">Audio chunks sent:</span>
+                  <span className="text-xs font-mono text-muted-foreground">{audioChunksSent}</span>
+                </div>
+              </div>
+
+              {/* Controls */}
+              <div
+                className="flex items-center justify-center gap-4"
+                role="toolbar"
+                aria-label="Interview controls"
+              >
+                <button
+                  onClick={toggleMute}
+                  aria-label={isMuted ? "Unmute microphone" : "Mute microphone"}
+                  aria-pressed={isMuted}
+                  className={`flex size-14 items-center justify-center rounded-full border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${isMuted
+                      ? "border-red-500 bg-red-500/10 text-red-600 hover:bg-red-500/20"
+                      : "border-border bg-card hover:bg-accent"
+                    }`}
+                >
+                  {isMuted ? (
+                    <MicOff className="size-6" aria-hidden="true" />
+                  ) : (
+                    <Mic className="size-6" aria-hidden="true" />
+                  )}
+                </button>
+                <button
+                  onClick={handleEnd}
+                  aria-label="End interview session"
+                  className="flex size-14 items-center justify-center rounded-full bg-red-500 text-white transition-all hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <Phone className="size-6 rotate-135" aria-hidden="true" />
+                </button>
               </div>
             </div>
+          )}
+        </div>
 
-            {/* Bluetooth Warning */}
-            {isBluetoothMic && (
-              <div className="w-full rounded-lg border-2 border-red-500 bg-red-50 p-4">
-                <p className="text-sm font-bold text-red-900">⚠️ BLUETOOTH MICROPHONE DETECTED</p>
-                <p className="mt-1 text-xs text-red-800">
-                  <strong>Device:</strong> {micInfo}
-                </p>
-                <p className="mt-2 text-xs text-red-800">
-                  <strong>Problem:</strong> Bluetooth microphones use heavy compression when both mic and speakers are active,
-                  causing audio artifacts that prevent voice detection even with good amplitude levels.
-                </p>
-                <p className="mt-2 text-xs font-semibold text-red-900">
-                  ✓ SOLUTION: Switch to MacBook built-in microphone or wired headphones!
-                </p>
-                <p className="mt-1 text-xs text-red-800">
-                  Mac: System Settings → Sound → Input → Select "MacBook Pro Microphone"
-                </p>
+        {/* Right Pane (Reference) */}
+        {jobDescription && (
+          <div className="w-[350px] shrink-0 flex-col h-full overflow-hidden hidden lg:flex">
+            <div className="flex items-center gap-2 mb-4 shrink-0 px-2">
+              <div className="flex size-8 items-center justify-center rounded-md bg-primary/10">
+                <Briefcase className="size-4 text-primary" />
               </div>
-            )}
+              <h3 className="font-semibold text-sm text-foreground">Job Context</h3>
+            </div>
 
-            {/* Audio Level Indicator */}
-            <div className="flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-4">
-              <div className="flex w-full items-center justify-between">
-                <span className="text-sm font-semibold">Microphone Check</span>
-                {isClipping ? (
-                  <span className="text-xs text-red-600 font-semibold">⚠️ Clipping!</span>
-                ) : audioLevel > 0.3 ? (
-                  <span className="text-xs text-green-600 font-semibold">✓ Good Level</span>
-                ) : audioLevel > 0.15 ? (
-                  <span className="text-xs text-yellow-600 font-semibold">⚠️ Low</span>
-                ) : (
-                  <span className="text-xs text-red-600 font-semibold">⚠️ Too Low</span>
-                )}
+            <div className="flex-1 overflow-y-auto px-2 pb-6 space-y-6 text-sm">
+              <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+                <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-1.5">Role</h4>
+                <p className="font-semibold text-base">{jobDescription.jobTitle}</p>
+                {jobDescription.companyName && <p className="text-muted-foreground">{jobDescription.companyName}</p>}
               </div>
-              <div className="flex w-full items-center gap-2">
-                <span className="text-xs text-muted-foreground">Level:</span>
-                <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted border border-border">
-                  <div
-                    className={`h-full transition-all duration-100 ${
-                      isClipping ? 'bg-red-600' :
-                      audioLevel > 0.3 ? 'bg-green-500' :
-                      audioLevel > 0.15 ? 'bg-yellow-500' :
-                      'bg-red-500'
-                    }`}
-                    style={{ width: `${Math.min(audioLevel * 100, 100)}%` }}
-                  />
+
+              {jobDescription.technicalSkillsRequired && jobDescription.technicalSkillsRequired.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Technical Skills</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {jobDescription.technicalSkillsRequired.map((s, i) => (
+                      <span key={i} className="bg-primary/10 text-primary px-2.5 py-1 rounded-md text-xs font-medium border border-primary/20">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <span className="text-xs font-mono text-muted-foreground">{(audioLevel * 100).toFixed(0)}%</span>
-              </div>
-              {audioLevel < 0.15 && !isClipping && (
-                <div className="w-full rounded bg-yellow-50 p-2 text-xs text-yellow-800">
-                  <p className="font-semibold">⚠️ Your microphone is too quiet!</p>
-                  <p className="mt-1">Please fix the following:</p>
-                  <ul className="mt-1 ml-4 list-disc space-y-0.5">
-                    <li><strong>Use headphones or earbuds</strong> to prevent echo</li>
-                    <li>Mac: System Settings → Sound → Input → Increase input volume slider</li>
-                    <li>Make sure the correct microphone is selected</li>
-                    <li>Speak normally and watch the level bar reach 30-60% (green)</li>
+              )}
+
+              {jobDescription.softSkillsRequired && jobDescription.softSkillsRequired.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Soft Skills</h4>
+                  <ul className="grid gap-1.5 text-muted-foreground">
+                    {jobDescription.softSkillsRequired.map((s, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs">
+                        <span className="mt-1.5 size-1.5 rounded-full bg-primary/40 shrink-0" />
+                        <span className="leading-snug">{s}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}
-              {isClipping && (
-                <div className="w-full rounded bg-red-50 p-2 text-xs text-red-800">
-                  <p className="font-semibold">⚠️ Audio distortion detected!</p>
-                  <p className="mt-1">Your microphone input is too loud, causing distortion. ElevenLabs cannot transcribe distorted audio.</p>
-                  <p className="mt-1"><strong>Fix:</strong> Mac: System Settings → Sound → Input → Reduce input volume slider to 30-50%</p>
-                </div>
-              )}
-              {!isClipping && audioLevel >= 0.3 && messages.length === 0 && (
-                <div className="w-full rounded bg-green-50 dark:bg-green-950/30 p-2 text-xs text-green-800 dark:text-green-200">
-                  <p className="font-semibold">✓ Mic level good.</p>
-                  <p className="mt-1">Your live transcript will appear above. Sarah may respond after ~{AGENT_TURN_TIMEOUT_SEC}s of silence (turn-based).</p>
-                </div>
-              )}
-              <div className="w-full flex justify-between items-center pt-1 border-t border-border">
-                <span className="text-xs text-muted-foreground">Audio chunks sent:</span>
-                <span className="text-xs font-mono text-muted-foreground">{audioChunksSent}</span>
-              </div>
-            </div>
 
-            {/* Controls */}
-            <div
-              className="flex items-center justify-center gap-4"
-              role="toolbar"
-              aria-label="Interview controls"
-            >
-              <button
-                onClick={toggleMute}
-                aria-label={isMuted ? "Unmute microphone" : "Mute microphone"}
-                aria-pressed={isMuted}
-                className={`flex size-14 items-center justify-center rounded-full border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                  isMuted
-                    ? "border-red-500 bg-red-500/10 text-red-600 hover:bg-red-500/20"
-                    : "border-border bg-card hover:bg-accent"
-                }`}
-              >
-                {isMuted ? (
-                  <MicOff className="size-6" aria-hidden="true" />
-                ) : (
-                  <Mic className="size-6" aria-hidden="true" />
-                )}
-              </button>
-              <button
-                onClick={handleEnd}
-                aria-label="End interview session"
-                className="flex size-14 items-center justify-center rounded-full bg-red-500 text-white transition-all hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                <Phone className="size-6 rotate-135" aria-hidden="true" />
-              </button>
+              {jobDescription.primaryResponsibilities && jobDescription.primaryResponsibilities.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Key Responsibilities</h4>
+                  <ul className="grid gap-2 text-muted-foreground">
+                    {jobDescription.primaryResponsibilities.map((s, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs">
+                        <span className="mt-1.5 size-1.5 rounded-full bg-muted-foreground/40 shrink-0" />
+                        <span className="leading-relaxed">{s}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         )}

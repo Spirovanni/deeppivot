@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Pencil, Trash2, ArrowRight, ExternalLink } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, ArrowRight, ExternalLink, Mic2 } from "lucide-react";
 import { deleteJobApplication, moveJobApplication } from "@/src/lib/actions/job-applications";
 import type { JobApplication, JobColumn } from "./types";
 
@@ -72,6 +72,14 @@ export function JobApplicationCard({ job, columns, onEdit }: JobApplicationCardP
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
               )}
+              <DropdownMenuItem asChild>
+                <a
+                  href={`/dashboard/interviews?practice=true&company=${encodeURIComponent(job.company)}&position=${encodeURIComponent(job.position)}`}
+                >
+                  <Mic2 className="mr-2 h-4 w-4" />
+                  Practice for this Job
+                </a>
+              </DropdownMenuItem>
               {(job.jobUrl || job.sourceType === "marketplace") && (
                 <DropdownMenuItem asChild>
                   <a

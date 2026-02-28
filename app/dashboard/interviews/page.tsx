@@ -1,7 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/src/db";
-import { interviewSessionsTable, usersTable } from "@/src/db/schema";
+import { interviewSessionsTable, usersTable, jobDescriptionsTable, userResumesTable } from "@/src/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { Mic2 } from "lucide-react";
 import { StartInterviewCTA } from "./_components/StartInterviewCTA";
@@ -19,12 +19,31 @@ export default async function InterviewsPage() {
 
   if (!dbUser) redirect("/sign-in");
 
-  const sessions = await db
+  const sessionsPromise = db
     .select()
     .from(interviewSessionsTable)
     .where(eq(interviewSessionsTable.userId, dbUser.id))
     .orderBy(desc(interviewSessionsTable.createdAt))
     .limit(20);
+
+  const jobDescriptionsPromise = db
+    .select({ id: jobDescriptionsTable.id, positionTitle: jobDescriptionsTable.title, companyName: jobDescriptionsTable.company })
+    .from(jobDescriptionsTable)
+    .where(eq(jobDescriptionsTable.userId, dbUser.id))
+    .orderBy(desc(jobDescriptionsTable.createdAt));
+
+  const resumesPromise = db
+    .select({ id: userResumesTable.id, title: userResumesTable.title })
+    .from(userResumesTable)
+    .where(eq(userResumesTable.userId, dbUser.id))
+    .orderBy(desc(userResumesTable.createdAt));
+
+  const [sessions, jobDescriptions, resumes] = await Promise.all([
+    sessionsPromise,
+    jobDescriptionsPromise,
+    resumesPromise,
+  ]);
+
 
   return (
     <div className="p-6 md:p-8">
@@ -72,7 +91,7 @@ export default async function InterviewsPage() {
           </div>
         </div>
 
-        <StartInterviewCTA />
+        <StartInterviewCTA jobDescriptions={jobDescriptions} resumes={resumes} />
 
         {sessions.length > 0 && <SessionsList sessions={sessions} />}
 

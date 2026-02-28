@@ -1,8 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Mic2, Code2, Users, Lightbulb } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { InterviewSettingsModal } from "./InterviewSettingsModal";
 
 const SESSION_TYPES = [
   {
@@ -35,42 +37,78 @@ const SESSION_TYPES = [
   },
 ];
 
-export function StartInterviewCTA() {
-  const router = useRouter();
+export interface StartInterviewCTAProps {
+  jobDescriptions: { id: number; positionTitle: string | null; companyName: string | null }[];
+  resumes: { id: number; title: string | null }[];
+}
+
+export function StartInterviewCTA({ jobDescriptions, resumes }: StartInterviewCTAProps) {
+  const searchParams = useSearchParams();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [defaultSessionType, setDefaultSessionType] = useState("general");
+  const [defaultJobQuery, setDefaultJobQuery] = useState("");
+
+  useEffect(() => {
+    // If we came from a "Practice for this Job" button
+    if (searchParams.get("practice") === "true") {
+      const company = searchParams.get("company") || "";
+      const position = searchParams.get("position") || "";
+      setDefaultJobQuery(`${company} ${position}`.trim());
+      setDefaultSessionType("general");
+      setModalOpen(true);
+    }
+  }, [searchParams]);
+
+  const handleCardClick = (type: string) => {
+    setDefaultSessionType(type);
+    setDefaultJobQuery("");
+    setModalOpen(true);
+  };
 
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Choose Your Interview Type</h2>
-        <span className="text-xs text-muted-foreground">~10-15 minutes</span>
+    <>
+      <div>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Choose Your Interview Type</h2>
+          <span className="text-xs text-muted-foreground">~10-15 minutes</span>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {SESSION_TYPES.map(({ type, label, description, icon: Icon, gradient }) => (
+            <button
+              key={type}
+              onClick={() => handleCardClick(type)}
+              aria-label={`Start ${label} interview — ${description}`}
+              className="group rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <Card className="h-full cursor-pointer border-2 transition-all hover:border-primary/50 hover:shadow-lg active:scale-[0.98]">
+                <CardContent className="flex flex-col gap-3 p-5">
+                  <div className={`flex size-12 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} transition-transform group-hover:scale-110`} aria-hidden="true">
+                    <Icon className="size-6 text-primary" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">{label}</p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                      {description}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </button>
+          ))}
+        </div>
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          💬 Click any interview type to customize your context and start a voice conversation
+        </p>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {SESSION_TYPES.map(({ type, label, description, icon: Icon, gradient }) => (
-          <button
-            key={type}
-            onClick={() => router.push(`/dashboard/interviews/session?type=${type}`)}
-            aria-label={`Start ${label} interview — ${description}`}
-            className="group rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <Card className="h-full cursor-pointer border-2 transition-all hover:border-primary/50 hover:shadow-lg active:scale-[0.98]">
-              <CardContent className="flex flex-col gap-3 p-5">
-                <div className={`flex size-12 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} transition-transform group-hover:scale-110`} aria-hidden="true">
-                  <Icon className="size-6 text-primary" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground">{label}</p>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                    {description}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </button>
-        ))}
-      </div>
-      <p className="mt-4 text-center text-xs text-muted-foreground">
-        💬 Click any interview type to start a voice conversation with Sarah
-      </p>
-    </div>
+
+      <InterviewSettingsModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        jobDescriptions={jobDescriptions}
+        resumes={resumes}
+        defaultSessionType={defaultSessionType}
+        defaultJobQuery={defaultJobQuery}
+      />
+    </>
   );
 }

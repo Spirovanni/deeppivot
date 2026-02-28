@@ -722,6 +722,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Tailoring AI interview practice to specific job descriptions and company requirements. (DB Schema: job_descriptions, user_resumes, interview_sessions)
 - [x] System prompt and ElevenLabs persona injections based on extracted job requirements.
 - [x] API routes for managing job descriptions (`POST`, `GET`, `PATCH`, `DELETE`).
+- [x] Extracted raw text endpoint for PDF attachments.
 
 ### 2. Resume Parsing & Cover Letter Generation
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)

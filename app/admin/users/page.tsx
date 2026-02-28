@@ -57,12 +57,19 @@ export default async function AdminUsersPage({ searchParams }: SearchProps) {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                     <Users className="size-5 text-blue-400" />
                     <h1 className="text-xl font-bold">Users</h1>
                     <span className="text-sm text-muted-foreground">({total.toLocaleString()} total)</span>
                 </div>
+                <a
+                    href="/api/admin/export/users"
+                    download
+                    className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                    Export All Users (CSV)
+                </a>
             </div>
 
             {/* Search */}

@@ -74,12 +74,36 @@ const NAV_CARDS = [
     bg: "bg-orange-500/10",
   },
   {
+    href: "/api/admin/export/sessions",
+    icon: Activity,
+    label: "Export Sessions CSV",
+    description: "Download interview session analytics.",
+    color: "text-pink-400",
+    bg: "bg-pink-500/10",
+  },
+  {
     href: "/admin/employers",
     icon: Building2,
     label: "Employer Management",
     description: "View and manage employer accounts.",
     color: "text-green-400",
     bg: "bg-green-500/10",
+  },
+  {
+    href: "/admin/blog",
+    icon: ClipboardCheck,
+    label: "Blog Manager",
+    description: "Write and manage career blog posts.",
+    color: "text-amber-400",
+    bg: "bg-amber-500/10",
+  },
+  {
+    href: "/admin/settings",
+    icon: CreditCard, // reusing icon import as placeholder
+    label: "System Settings",
+    description: "View environment variables securely.",
+    color: "text-zinc-400",
+    bg: "bg-zinc-500/10",
   },
 ];
 

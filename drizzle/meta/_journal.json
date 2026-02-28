@@ -127,6 +127,13 @@
       "when": 1772128344734,
       "tag": "0017_gifted_puppet_master",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1772248951714,
+      "tag": "0018_fast_quicksilver",
+      "breakpoints": true
     }
   ]
 }

@@ -593,15 +593,15 @@ components/ui/skeleton.tsx                 Installed via shadcn CLI
 
 ---
 
-## Phase 11 — Track-Based Routing & Role-Based UX (Planned)
+## Phase 11 — Track-Based Routing & Role-Based UX (Complete ✓)
 
 **Goal:** Every user lands in the right place automatically. New sign-ups choose their track (Trailblazer or Talent Scout) on /onboarding. Returning users are sent directly to their role's dashboard on login. Employer onboarding flow sets the employer role and redirects to /dashboard/talent-scout.
 
 | Issue | Description | Priority |
 |-------|-------------|----------|
-| deeppivot-169 | UX: Post-signup track chooser (Trailblazer vs Talent Scout) on /onboarding | P1 |
-| deeppivot-170 | UX: Smart post-login redirect based on stored user role | P1 |
-| deeppivot-171 | UX: Employer onboarding completion sets role + redirects to Talent Scout dashboard | P1 |
+| ~~deeppivot-169~~ | ~~UX: Post-signup track chooser (Trailblazer vs Talent Scout) on /onboarding~~ | ✓ |
+| ~~deeppivot-170~~ | ~~UX: Smart post-login redirect based on stored user role~~ | ✓ |
+| ~~deeppivot-171~~ | ~~UX: Employer onboarding completion sets role + redirects to Talent Scout dashboard~~ | ✓ |
 
 **Files to create/modify:**
 ```
@@ -617,14 +617,14 @@ app/(landing)/talent-scout/page.tsx     Modify: 'Go to Dashboard' CTA becomes ro
 
 ---
 
-## Phase 12 — Mentor & WDB Dashboard Activation (Planned)
+## Phase 12 — Mentor & WDB Dashboard Activation (Complete ✓)
 
 **Goal:** Replace the placeholder cards on /dashboard/mentor and /dashboard/wdb with real data-driven components, using the already-built backend actions.
 
 | Issue | Description | Priority |
 |-------|-------------|----------|
-| deeppivot-172 | Frontend: Activate Mentor dashboard with real data from mentor-tools.ts | P2 |
-| deeppivot-173 | Frontend: Activate WDB partner dashboard with real analytics | P2 |
+| ~~deeppivot-172~~ | ~~Frontend: Activate Mentor dashboard with real data from mentor-tools.ts~~ | ✓ |
+| ~~deeppivot-173~~ | ~~Frontend: Activate WDB partner dashboard with real analytics~~ | ✓ |
 
 **Files to create/modify:**
 ```
@@ -686,14 +686,14 @@ content/blog/5-signs-ready-for-career-change.mdx         1,000-1,200 words
 
 ---
 
-## Phase 15 — Security & DevOps Polish (Planned)
+## Phase 15 — Security & DevOps Polish (Complete ✓)
 
 **Goal:** Close the remaining security gaps and harden the CI/CD pipeline.
 
 | Issue | Description | Priority |
 |-------|-------------|----------|
-| deeppivot-180 | Security: Extend Upstash rate limiting to all unprotected API routes | P2 |
-| deeppivot-181 | Security: PII anonymization in interview transcript storage | P2 |
+| ~~deeppivot-180~~ | ~~Security: Extend Upstash rate limiting to all unprotected API routes~~ | ✓ |
+| ~~deeppivot-181~~ | ~~Security: PII anonymization in interview transcript storage~~ | ✓ |
 | ~~deeppivot-182~~ | ~~DevOps: CI/CD hardening — migration check, Playwright artifacts, npm caching~~ | ✓ |
 
 **Files to modify:**
@@ -710,6 +710,32 @@ app/(landing)/privacy/page.tsx         Add: GDPR note on transcript anonymizatio
 CONTRIBUTING.md                        New: branch protection, CI requirements, migration policy
 ```
 
+*Last updated: 2026-02-27 — Phase 11-15 complete. All 14 issues (deeppivot-169 to deeppivot-182) implemented. Track-based routing, mentor/WDB dashboard activation, and DevOps/Security hardening are live.*
+
 ---
 
-*Last updated: 2026-02-27 — Phase 11-15 planned. 14 new issues (deeppivot-169 to deeppivot-182) added to .beads/issues.jsonl. Implementation begins with deeppivot-169 (post-signup track chooser).*
+## Phase 16 — Advanced User Value & Scalability (In Progress)
+
+**Goal:** Deliver 5 major capability upgrades to enhance deep personalization, engagement, and actionable job placement for learners. 140 new issues (deeppivot-183 to deeppivot-322) have been generated to cover these features.
+
+### 1. Context-Aware "Job Specific" Practice Interviews
+- [x] Tailoring AI interview practice to specific job descriptions and company requirements. (DB Schema: job_descriptions)
+- [ ] System prompt and ElevenLabs persona injections based on extracted job requirements.
+
+### 2. Resume Parsing & Cover Letter Generation
+- Automating the extraction of user information from uploaded resumes.
+- Generating and refining personalized cover letters based on target job descriptions and matching experience.
+
+### 3. In-App Notification Center & Admin Announcements
+- Real-time notification system (WebSockets/SSE) for key platform events (e.g., feedback ready, mentor connection).
+- Admin broadcast tools for sending system announcements and redirecting users.
+
+### 4. Gamification & Weekly Streaks
+- Practice time tracking, points, badges, and weekly streaks to boost learner engagement and retention.
+- Real-time interactive UI elements (e.g., confetti) and optional leaderboards.
+
+### 5. Employer / Candidate Matching Engine & Advanced Data Exports
+- Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
+- Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
+- Admin data exports to CSV for offline analysis.
+

@@ -5,6 +5,7 @@ import { mentorsTable, mentorConnectionsTable, usersTable } from "@/src/db/schem
 import { eq, and } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { sendMentorConnectionEmail } from "@/src/lib/email";
 
 // ─── Seed data (12 mentor profiles) ─────────────────────────────────────────
 
@@ -162,6 +163,82 @@ export async function requestConnection(
       status: "pending",
       message: message ?? null,
     });
+
+    // Fetch mentor and learner details for the email
+    const [mentorUser] = await db
+      .select({
+        mentorName: mentorsTable.name,
+        mentorEmail: usersTable.email
+      })
+      .from(mentorsTable)
+      .leftJoin(usersTable, eq(mentorsTable.userId, usersTable.id))
+      .where(eq(mentorsTable.id, mentorId))
+      .limit(1);
+
+    const [learnerUser] = await db
+      .select({ learnerName: usersTable.name })
+      .from(usersTable)
+      .where(eq(usersTable.id, userId))
+      .limit(1);
+
+    if (mentorUser?.mentorEmail && learnerUser) {
+      // Send the request email to the mentor asynchronously
+      sendMentorConnectionEmail(mentorUser.mentorEmail, {
+        type: "request",
+        learnerName: learnerUser.learnerName,
+        mentorName: mentorUser.mentorName,
+        message: message,
+      }).catch((err) => {
+        console.error("Failed to send mentor connection request email:", err);
+      });
+    }
+  }
+
+  revalidatePath("/dashboard/mentors");
+}
+
+export async function updateConnectionStatus(
+  connectionId: number,
+  status: "pending" | "accepted" | "declined"
+): Promise<void> {
+  // We don't strictly require a specific role here as both mentors and admins might use it,
+  // but we should verify the user is logged in.
+  await getDbUserId();
+
+  const [connection] = await db
+    .update(mentorConnectionsTable)
+    .set({ status })
+    .where(eq(mentorConnectionsTable.id, connectionId))
+    .returning();
+
+  if (!connection) {
+    throw new Error("Connection not found");
+  }
+
+  if (status === "accepted") {
+    // Fetch details for the email
+    const [learnerUser] = await db
+      .select({ learnerName: usersTable.name, learnerEmail: usersTable.email })
+      .from(usersTable)
+      .where(eq(usersTable.id, connection.userId))
+      .limit(1);
+
+    const [mentorUser] = await db
+      .select({ mentorName: mentorsTable.name })
+      .from(mentorsTable)
+      .where(eq(mentorsTable.id, connection.mentorId))
+      .limit(1);
+
+    if (learnerUser?.learnerEmail && mentorUser) {
+      // Send the accepted email to the learner asynchronously
+      sendMentorConnectionEmail(learnerUser.learnerEmail, {
+        type: "accepted",
+        learnerName: learnerUser.learnerName,
+        mentorName: mentorUser.mentorName,
+      }).catch((err) => {
+        console.error("Failed to send mentor connection accepted email:", err);
+      });
+    }
   }
 
   revalidatePath("/dashboard/mentors");

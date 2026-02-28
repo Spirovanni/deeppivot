@@ -638,15 +638,15 @@ components/wdb/LearnerRosterTable.tsx   New: searchable learner table with CSV e
 
 ---
 
-## Phase 13 — Transactional Email Notifications (Planned)
+## Phase 13 — Transactional Email Notifications (Complete ✓)
 
 **Goal:** Extend the Resend email pipeline with 3 new transactional emails triggered by key platform events.
 
-| Issue | Description | Priority |
-|-------|-------------|----------|
-| deeppivot-174 | Email: Interview feedback ready notification | P2 |
-| deeppivot-175 | Email: New applicant alert for employers | P2 |
-| deeppivot-176 | Email: Mentor connection request and acceptance notifications | P3 |
+| ID | Title | Status |
+|----|-------|--------|
+| ~~deeppivot-174~~ | ~~Email: Interview feedback ready notification~~ | ✓ |
+| ~~deeppivot-175~~ | ~~Email: New applicant alert for employers~~ | ✓ |
+| ~~deeppivot-176~~ | ~~Email: Mentor connection request and acceptance notifications~~ | ✓ |
 
 **Files to create/modify:**
 ```
@@ -654,22 +654,23 @@ emails/InterviewFeedbackReadyEmail.tsx  New: React Email template
 emails/NewApplicantEmail.tsx            New: React Email template
 emails/MentorConnectionEmail.tsx        New: React Email template (2 variants: request/accepted)
 src/lib/email.ts                        Add: 3 new sendXxx() helpers
-src/inngest/functions/*.ts              Modify: call sendInterviewFeedbackEmail() after feedback write
 app/api/jobs/[jobId]/apply/route.ts     Modify: call sendNewApplicantEmail() after application insert
 src/lib/actions/mentors.ts             Modify: call sendMentorConnectionEmail() on request/accept
 ```
 
+**Phase 13 Status: COMPLETE ✓**
+
 ---
 
-## Phase 14 — Blog Content (Planned)
+**Phase 14 Status: COMPLETE ✓**
 
 **Goal:** Publish 3 real SEO-optimized blog posts to drive organic traffic from career changers searching for advice.
 
-| Issue | Description | Target Publish | Priority |
-|-------|-------------|----------------|----------|
-| deeppivot-177 | Blog: How to Ace a Career Pivot Interview | 2026-02-28 | P3 |
-| deeppivot-178 | Blog: What Your Career Archetype Says About You | 2026-03-03 | P3 |
-| deeppivot-179 | Blog: 5 Signs You're Ready for a Career Change | 2026-03-07 | P3 |
+| ID | Title | Status |
+|----|-------|--------|
+| ~~deeppivot-177~~ | ~~Blog: How to Ace a Career Pivot Interview~~ | ✓ |
+| ~~deeppivot-178~~ | ~~Blog: What Your Career Archetype Says About You~~ | ✓ |
+| ~~deeppivot-179~~ | ~~Blog: 5 Signs You're Ready for a Career Change~~ | ✓ |
 
 **Files to create:**
 ```

@@ -9,6 +9,10 @@ import {
     NewApplicantEmail,
     type NewApplicantEmailProps,
 } from "@/emails/NewApplicantEmail";
+import {
+    MentorConnectionEmail,
+    type MentorConnectionEmailProps,
+} from "@/emails/MentorConnectionEmail";
 
 let _resend: Resend | null = null;
 
@@ -71,5 +75,21 @@ export async function sendNewApplicantEmail(
         to,
         subject: `New applicant for ${data.jobTitle}`,
         react: createElement(NewApplicantEmail, data),
+    });
+}
+
+export async function sendMentorConnectionEmail(
+    to: string,
+    data: MentorConnectionEmailProps,
+): Promise<{ success: boolean; error?: string }> {
+    const isRequest = data.type === "request";
+    const subject = isRequest
+        ? `New mentorship request from ${data.learnerName}`
+        : `${data.mentorName} accepted your mentorship request!`;
+
+    return sendEmail({
+        to,
+        subject,
+        react: createElement(MentorConnectionEmail, data),
     });
 }

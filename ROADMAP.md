@@ -50,6 +50,9 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 - **mentor_connections** — User → mentor connection requests with status tracking (LP8)
 - **education_programs** — 28 seeded programmes (bootcamps, certs, degrees, workshops) with ROI scores (LP9)
 - **funding_opportunities** — 9 seeded funding sources (grants, scholarships, loans, ISAs) with eligibility and deadlines (LP9)
+- **user_gamification** — Per-user points, currentStreak, highestStreak for Phase 16.4 gamification
+- **matching_feedback** — Application outcomes (hired/rejected) with signals for weight learning (Phase 16.5)
+- **matching_weights** — Configurable weights updated by feedback aggregation (Phase 16.5)
 
 ### Existing Routes
 
@@ -76,6 +79,8 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 /api/sync-users           Bulk user sync
 /api/admin/archetype-review        Admin: list archetype review queue (GET)
 /api/admin/archetype-review/[id]   Admin: approve/override (PATCH)
+/api/notifications                 Phase 16.3: notifications (GET, auth required)
+/api/admin/announcements           Phase 16.3: admin broadcast (POST, admin only)
 
 /admin                  ### 6. Admin Panel Hooks & Review Dashboard
 - Tools for admins/coaches to review AI transcripts and user performance.
@@ -751,16 +756,23 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 ### 3. In-App Notification Center & Admin Announcements
 - Real-time notification system (WebSockets/SSE) for key platform events (e.g., feedback ready, mentor connection).
 - Admin broadcast tools for sending system announcements and redirecting users.
+- [x] QA: Real-time delivery and Admin broadcast E2E (deeppivot-266) — stub APIs + e2e/notifications-admin-broadcast.spec.ts
 
 ### 4. Gamification & Weekly Streaks
-- Practice time tracking, points, badges, and weekly streaks to boost learner engagement and retention.
-- Real-time interactive UI elements (e.g., confetti) and optional leaderboards.
+- [x] DB: `user_gamification` table (points, currentStreak, highestStreak) — migration 0025
+- [x] Hook: Add points on job application submitted (10 pts via `addPointsForJobApplication` in POST /api/jobs/[jobId]/apply)
+- [ ] Hook: Add points on interview completion
+- [ ] Hook: Add points on career plan milestone completion
+- [ ] Cron: Reset streaks if no weekly activity
+- [ ] UI: Gamification Hub, streak flame, points animation, confetti, badges
 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports
-- Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
-- Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
+- [x] Admin: Advanced Data Export (CSV) for users table — 28 columns, gamification + WDB fields, ?role= & ?includeDeleted= filters
+- [x] Feedback algorithm: Improve matching weights based on outcome — matching_feedback + matching_weights tables, recordMatchingFeedback on hired/rejected, aggregateMatchingFeedback (Inngest cron daily)
+- [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
+- [ ] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - Admin data exports to CSV for offline analysis.
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-308 (Employer invite candidate notification) closed. employer_job_invitations table (migration 0024), EmployerInvitedYouToApplyEmail template, POST /api/employer/jobs/[jobId]/invite. Candidate receives "Employer invited you to apply" email with job link. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-266 (Notification & Admin broadcast E2E) closed. Stub GET /api/notifications, POST /api/admin/announcements, e2e/notifications-admin-broadcast.spec.ts. Run `bd ready` for Phase 16.2–16.5 next work.*

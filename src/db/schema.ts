@@ -63,10 +63,32 @@ export const usersTable = pgTable("users", {
 });
 
 // ============================================
+// USER GAMIFICATION (Phase 16.4)
+// ============================================
+
+export const userGamificationTable = pgTable("user_gamification", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().unique().references(() => usersTable.id, { onDelete: "cascade" }),
+  points: integer().notNull().default(0),
+  currentStreak: integer().notNull().default(0),
+  highestStreak: integer().notNull().default(0),
+  lastActivityAt: timestamp(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const userGamificationRelations = relations(userGamificationTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [userGamificationTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
+// ============================================
 // USER RELATIONS
 // ============================================
 
 export const usersRelations = relations(usersTable, ({ many, one }) => ({
+  gamification: one(userGamificationTable),
   jobBoards: many(jobBoardsTable),
   interviewSessions: many(interviewSessionsTable),
   careerArchetype: one(careerArchetypesTable),
@@ -864,3 +886,34 @@ export const employerJobInvitationsRelations = relations(
     }),
   })
 );
+
+/**
+ * Feedback on application outcomes for improving matching weights (Phase 16.5).
+ * When employer sets status to hired/rejected, we record signals to learn which
+ * factors correlate with success.
+ */
+export const matchingFeedbackTable = pgTable(
+  "matching_feedback",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    marketplaceApplicationId: integer()
+      .notNull()
+      .references(() => jobMarketplaceApplicationsTable.id, { onDelete: "cascade" }),
+    outcome: varchar({ length: 20 }).notNull(), // hired | rejected
+    hasResume: boolean().notNull(),
+    hasCoverLetter: boolean().notNull(),
+    resumeSkillsCount: integer().notNull().default(0),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (t) => [unique("uq_matching_feedback_app").on(t.marketplaceApplicationId)]
+);
+
+/**
+ * Configurable weights for matching algorithm. Updated by feedback aggregation.
+ */
+export const matchingWeightsTable = pgTable("matching_weights", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  key: varchar({ length: 80 }).notNull().unique(),
+  weight: real().notNull().default(1),
+  updatedAt: timestamp().notNull().defaultNow(),
+});

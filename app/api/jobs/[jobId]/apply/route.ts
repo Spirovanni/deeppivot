@@ -15,6 +15,7 @@ import { and, avg, eq } from "drizzle-orm";
 import { captureServerEvent } from "@/src/lib/posthog-server";
 import { rateLimit } from "@/src/lib/rate-limit";
 import { sendNewApplicantEmail } from "@/src/lib/email";
+import { addPointsForJobApplication } from "@/src/lib/gamification";
 
 /**
  * POST /api/jobs/[jobId]/apply
@@ -125,6 +126,9 @@ export async function POST(
             event: "job_application_submitted",
             properties: { job_id: jobId, job_title: job.title, has_resume: !!resumeUrl, has_cover_letter: !!coverLetter },
         }).catch(() => { });
+
+        // Gamification: award points for job application submitted
+        addPointsForJobApplication(dbUser.id).catch(() => { });
 
         // Notify employer by email (non-blocking)
         (async () => {

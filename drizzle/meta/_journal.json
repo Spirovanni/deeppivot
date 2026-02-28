@@ -176,6 +176,20 @@
       "when": 1772303010265,
       "tag": "0024_dazzling_leech",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1772304313083,
+      "tag": "0025_closed_molecule_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1772304688501,
+      "tag": "0026_mature_gabe_jones",
+      "breakpoints": true
     }
   ]
 }

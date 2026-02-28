@@ -9,6 +9,7 @@ import {
     usersTable,
 } from "@/src/db/schema";
 import { and, eq } from "drizzle-orm";
+import { recordMatchingFeedback } from "@/src/lib/matching-feedback";
 
 /**
  * PATCH /api/employer/applications/[appId]
@@ -77,6 +78,11 @@ export async function PATCH(
             .update(jobApplicationsTable)
             .set({ status: statusMap[status], updatedAt: new Date() })
             .where(eq(jobApplicationsTable.marketplaceApplicationId, parseInt(appId)));
+
+        // Matching feedback: record outcome for improving weights
+        if (status === "hired" || status === "rejected") {
+            recordMatchingFeedback(parseInt(appId), status).catch(() => {});
+        }
 
         return NextResponse.json(updated);
     } catch {

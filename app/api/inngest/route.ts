@@ -9,6 +9,7 @@ import {
 } from "@/src/inngest/functions";
 import { salesforceDailySync } from "@/src/inngest/salesforce-sync";
 import { sendWelcomeEmail } from "@/src/inngest/functions/send-welcome-email";
+import { matchingFeedbackAggregate } from "@/src/inngest/matching-feedback-aggregate";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -20,6 +21,7 @@ export const { GET, POST, PUT } = serve({
     processCareerArchetyping,
     salesforceDailySync,
     sendWelcomeEmail,
+    matchingFeedbackAggregate,
   ],
 });
 

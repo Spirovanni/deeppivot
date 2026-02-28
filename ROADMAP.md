@@ -736,8 +736,8 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] LLM: Generate behavioral questions based on JD culture.
 - [x] UI: Interview settings modal: select resume & target JD.
 - [x] UI: Job match score visualization on session complete.
-- [ ] UI: "Practice for this Job" button on job tracker cards.
-- [ ] UI: Real-time JD reference panel during interview.
+- [x] UI: "Practice for this Job" button on job tracker cards.
+- [x] UI: Real-time JD reference panel during interview.
 
 ### 2. Resume Parsing & Cover Letter Generation
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)
@@ -760,3 +760,5 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 *Last updated: 2026-02-28 — deeppivot-208 (LLM: Generate behavioral questions based on JD culture) closed. Zod-validated prompt schema (behavioral-questions.ts) with 8 competency categories (teamwork, leadership, conflict-resolution, adaptability, communication, problem-solving, culture-fit, initiative). GPT-4 Turbo generator (behavioral-question-generator.ts) produces 7-10 STAR-method questions grounded in JD culture signals. POST /api/interviews/questions/behavioral route with auth, ownership, rate limiting. Mirrors technical-question-generator pattern.*
 *Last updated: 2026-02-28 — deeppivot-201 (UI: Interview settings modal) closed (already implemented). deeppivot-209 (UI: Job match score visualization on session complete) closed. JobMatchScoreCard.tsx: SVG radial gauge (0-100%), color-coded score labels (Strong/Good/Moderate/Needs Improvement), technical + soft skill badges, company culture context. getSessionJobMatchData() server action fetches linked JD extracted data. Integrated into /dashboard/interviews/[sessionId] page after AI Feedback link.*
+*Last updated: 2026-02-28 — deeppivot-202 (UI: Real-time JD reference panel during interview) closed. ElevenLabsInterviewRoom.tsx: desktop sidebar (w-[350px], hidden lg:flex) shows Role, Technical Skills, Soft Skills, Key Responsibilities, Company Culture, and Likely Interview Topics from parsed JD. Mobile: floating FAB triggers a Shadcn Sheet drawer with the same JdReferenceContent component. Panel renders only when jobDescription prop is provided; layout shifts to flex-row when active.*
+*Last updated: 2026-02-28 — deeppivot-200 (UI: "Practice for this Job" button on job tracker cards) closed. components/interviews/InterviewSettingsModal.tsx restored as self-fetching context-aware modal (fetches /api/job-descriptions, fuzzy-matches against initialJobQuery, calls /api/interviews/context-aware/start). JobApplicationCard.tsx: visible "Practice for this Job" full-width CTA button added to card face below salary/location footer; dropdown item retained. buildJobQuery() helper passes position + company as auto-selection hint to the modal.*

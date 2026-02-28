@@ -3,7 +3,14 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mic, MicOff, Phone, Sparkles, Users, Code2, Lightbulb, Mic2, Briefcase } from "lucide-react";
+import { Mic, MicOff, Phone, Sparkles, Users, Code2, Lightbulb, Mic2, Briefcase, FileText } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   startInterviewSession,
   endInterviewSession,
@@ -986,7 +993,7 @@ export function ElevenLabsInterviewRoom({
           )}
         </div>
 
-        {/* Right Pane (Reference) */}
+        {/* Right Pane (Reference) — Desktop */}
         {jobDescription && (
           <div className="w-[350px] shrink-0 flex-col h-full overflow-hidden hidden lg:flex">
             <div className="flex items-center gap-2 mb-4 shrink-0 px-2">
@@ -995,58 +1002,112 @@ export function ElevenLabsInterviewRoom({
               </div>
               <h3 className="font-semibold text-sm text-foreground">Job Context</h3>
             </div>
+            <JdReferenceContent jobDescription={jobDescription} />
+          </div>
+        )}
 
-            <div className="flex-1 overflow-y-auto px-2 pb-6 space-y-6 text-sm">
-              <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
-                <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-1.5">Role</h4>
-                <p className="font-semibold text-base">{jobDescription.jobTitle}</p>
-                {jobDescription.companyName && <p className="text-muted-foreground">{jobDescription.companyName}</p>}
-              </div>
-
-              {jobDescription.technicalSkillsRequired && jobDescription.technicalSkillsRequired.length > 0 && (
-                <div>
-                  <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Technical Skills</h4>
-                  <div className="flex flex-wrap gap-1.5">
-                    {jobDescription.technicalSkillsRequired.map((s, i) => (
-                      <span key={i} className="bg-primary/10 text-primary px-2.5 py-1 rounded-md text-xs font-medium border border-primary/20">
-                        {s}
-                      </span>
-                    ))}
-                  </div>
+        {/* Mobile JD Reference — Sheet drawer for smaller screens */}
+        {jobDescription && isConnected && (
+          <div className="fixed bottom-24 right-4 z-40 lg:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <button
+                  aria-label="View job description context"
+                  className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <FileText className="size-5" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[340px] sm:w-[380px] overflow-y-auto">
+                <SheetHeader>
+                  <SheetTitle className="flex items-center gap-2">
+                    <Briefcase className="size-4 text-primary" />
+                    Job Context
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="mt-4">
+                  <JdReferenceContent jobDescription={jobDescription} />
                 </div>
-              )}
-
-              {jobDescription.softSkillsRequired && jobDescription.softSkillsRequired.length > 0 && (
-                <div>
-                  <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Soft Skills</h4>
-                  <ul className="grid gap-1.5 text-muted-foreground">
-                    {jobDescription.softSkillsRequired.map((s, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs">
-                        <span className="mt-1.5 size-1.5 rounded-full bg-primary/40 shrink-0" />
-                        <span className="leading-snug">{s}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {jobDescription.primaryResponsibilities && jobDescription.primaryResponsibilities.length > 0 && (
-                <div>
-                  <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Key Responsibilities</h4>
-                  <ul className="grid gap-2 text-muted-foreground">
-                    {jobDescription.primaryResponsibilities.map((s, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs">
-                        <span className="mt-1.5 size-1.5 rounded-full bg-muted-foreground/40 shrink-0" />
-                        <span className="leading-relaxed">{s}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+              </SheetContent>
+            </Sheet>
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/** Shared JD reference content used in both desktop sidebar and mobile sheet. */
+function JdReferenceContent({ jobDescription }: { jobDescription: JobDescriptionExtraction }) {
+  return (
+    <div className="flex-1 overflow-y-auto px-2 pb-6 space-y-6 text-sm">
+      <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+        <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-1.5">Role</h4>
+        <p className="font-semibold text-base">{jobDescription.jobTitle}</p>
+        {jobDescription.companyName && <p className="text-muted-foreground">{jobDescription.companyName}</p>}
+      </div>
+
+      {jobDescription.technicalSkillsRequired && jobDescription.technicalSkillsRequired.length > 0 && (
+        <div>
+          <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Technical Skills</h4>
+          <div className="flex flex-wrap gap-1.5">
+            {jobDescription.technicalSkillsRequired.map((s, i) => (
+              <span key={i} className="bg-primary/10 text-primary px-2.5 py-1 rounded-md text-xs font-medium border border-primary/20">
+                {s}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {jobDescription.softSkillsRequired && jobDescription.softSkillsRequired.length > 0 && (
+        <div>
+          <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Soft Skills</h4>
+          <ul className="grid gap-1.5 text-muted-foreground">
+            {jobDescription.softSkillsRequired.map((s, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs">
+                <span className="mt-1.5 size-1.5 rounded-full bg-primary/40 shrink-0" />
+                <span className="leading-snug">{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {jobDescription.primaryResponsibilities && jobDescription.primaryResponsibilities.length > 0 && (
+        <div>
+          <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Key Responsibilities</h4>
+          <ul className="grid gap-2 text-muted-foreground">
+            {jobDescription.primaryResponsibilities.map((s, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs">
+                <span className="mt-1.5 size-1.5 rounded-full bg-muted-foreground/40 shrink-0" />
+                <span className="leading-relaxed">{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {jobDescription.companyCulture && (
+        <div>
+          <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Company Culture</h4>
+          <p className="text-xs text-muted-foreground leading-relaxed px-1">{jobDescription.companyCulture}</p>
+        </div>
+      )}
+
+      {jobDescription.likelyInterviewTopics && jobDescription.likelyInterviewTopics.length > 0 && (
+        <div>
+          <h4 className="font-medium text-muted-foreground text-[10px] uppercase tracking-wider mb-2 px-1">Likely Interview Topics</h4>
+          <ul className="grid gap-1.5 text-muted-foreground">
+            {jobDescription.likelyInterviewTopics.map((t, i) => (
+              <li key={i} className="flex items-start gap-2 text-xs">
+                <span className="mt-1.5 size-1.5 rounded-full bg-amber-500/40 shrink-0" />
+                <span className="leading-snug">{t}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

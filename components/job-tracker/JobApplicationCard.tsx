@@ -19,6 +19,11 @@ import { deleteJobApplication, moveJobApplication } from "@/src/lib/actions/job-
 import { InterviewSettingsModal } from "@/components/interviews/InterviewSettingsModal";
 import type { JobApplication, JobColumn } from "./types";
 
+/** Build a fuzzy-match query from the job card's position + company */
+function buildJobQuery(job: JobApplication): string {
+  return [job.position, job.company].filter(Boolean).join(" ").trim();
+}
+
 interface JobApplicationCardProps {
   job: JobApplication;
   columns: JobColumn[];
@@ -127,12 +132,25 @@ export function JobApplicationCard({ job, columns, onEdit }: JobApplicationCardP
               {job.salary && <span>{job.salary}</span>}
             </div>
           )}
+
+          {/* Practice CTA — visible quick-action on the card face */}
+          <div className="mt-3 border-t border-border/60 pt-2.5">
+            <button
+              onClick={() => setIsInterviewModalOpen(true)}
+              className="flex w-full items-center justify-center gap-1.5 rounded-md bg-primary/8 px-2 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+              aria-label={`Practice interview for ${job.position} at ${job.company}`}
+            >
+              <Mic2 className="size-3.5" aria-hidden="true" />
+              Practice for this Job
+            </button>
+          </div>
         </CardContent>
       </Card>
 
       <InterviewSettingsModal
         isOpen={isInterviewModalOpen}
         onClose={() => setIsInterviewModalOpen(false)}
+        initialJobQuery={buildJobQuery(job)}
       />
     </>
   );

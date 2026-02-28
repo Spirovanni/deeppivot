@@ -793,6 +793,7 @@ export const jobsRelations = relations(jobsTable, ({ one, many }) => ({
   }),
   applications: many(jobMarketplaceApplicationsTable),
   trackerCards: many(jobApplicationsTable),
+  invitations: many(employerJobInvitationsTable),
 }));
 
 /**
@@ -827,5 +828,39 @@ export const jobMarketplaceApplicationsRelations = relations(
       references: [usersTable.id],
     }),
     trackerCards: many(jobApplicationsTable),
+  })
+);
+
+/**
+ * Employer invites a candidate to apply for a job (pre-application outreach).
+ * Used for "Top Candidate Matches" flow — employer invites matched candidates.
+ */
+export const employerJobInvitationsTable = pgTable(
+  "employer_job_invitations",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    jobId: integer().notNull().references(() => jobsTable.id, { onDelete: "cascade" }),
+    candidateUserId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    invitedByUserId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (t) => [unique("uq_employer_invite_job_candidate").on(t.jobId, t.candidateUserId)]
+);
+
+export const employerJobInvitationsRelations = relations(
+  employerJobInvitationsTable,
+  ({ one }) => ({
+    job: one(jobsTable, {
+      fields: [employerJobInvitationsTable.jobId],
+      references: [jobsTable.id],
+    }),
+    candidate: one(usersTable, {
+      fields: [employerJobInvitationsTable.candidateUserId],
+      references: [usersTable.id],
+    }),
+    invitedBy: one(usersTable, {
+      fields: [employerJobInvitationsTable.invitedByUserId],
+      references: [usersTable.id],
+    }),
   })
 );

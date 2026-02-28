@@ -218,8 +218,8 @@ export async function getSessionGapAnalysis(sessionId: number) {
   };
 
   return {
-    jobTitle: extracted.jobTitle ?? jd.positionTitle ?? "Unknown Role",
-    companyName: extracted.companyName ?? jd.companyName ?? null,
+    jobTitle: extracted.jobTitle ?? jd.title ?? "Unknown Role",
+    companyName: extracted.companyName ?? jd.company ?? null,
     technicalSkills: extracted.technicalSkillsRequired ?? [],
     softSkills: extracted.softSkillsRequired ?? [],
     yearsOfExperience: extracted.yearsOfExperience ?? null,
@@ -266,8 +266,8 @@ export async function getSessionJobMatchData(sessionId: number) {
   };
 
   return {
-    jobTitle: extracted.jobTitle ?? jd.positionTitle ?? "Unknown Role",
-    companyName: extracted.companyName ?? jd.companyName ?? null,
+    jobTitle: extracted.jobTitle ?? jd.title ?? "Unknown Role",
+    companyName: extracted.companyName ?? jd.company ?? null,
     technicalSkills: extracted.technicalSkillsRequired ?? [],
     softSkills: extracted.softSkillsRequired ?? [],
     culture: extracted.companyCulture ?? null,

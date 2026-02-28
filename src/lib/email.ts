@@ -13,6 +13,10 @@ import {
     MentorConnectionEmail,
     type MentorConnectionEmailProps,
 } from "@/emails/MentorConnectionEmail";
+import {
+    EmployerInvitedYouToApplyEmail,
+    type EmployerInvitedYouToApplyEmailProps,
+} from "@/emails/EmployerInvitedYouToApplyEmail";
 
 let _resend: Resend | null = null;
 
@@ -75,6 +79,17 @@ export async function sendNewApplicantEmail(
         to,
         subject: `New applicant for ${data.jobTitle}`,
         react: createElement(NewApplicantEmail, data),
+    });
+}
+
+export async function sendEmployerInviteEmail(
+    to: string,
+    data: EmployerInvitedYouToApplyEmailProps,
+): Promise<{ success: boolean; error?: string }> {
+    return sendEmail({
+        to,
+        subject: `${data.employerName} at ${data.companyName} invited you to apply for ${data.jobTitle}`,
+        react: createElement(EmployerInvitedYouToApplyEmail, data),
     });
 }
 

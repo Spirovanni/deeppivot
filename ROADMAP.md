@@ -395,6 +395,7 @@ Full plan and issue details: `PLAN.md` | `.beads/issues.jsonl`
 /api/jobs/[jobId]             GET / PATCH / DELETE
 /api/jobs/[jobId]/apply       POST (atomically creates application + tracker card)
 /api/employer/jobs/[jobId]/applications  GET (employer views applicants)
+/api/employer/jobs/[jobId]/invite        POST (employer invites candidate → sends "Employer invited you to apply" email)
 /api/employer/applications/[appId]       PATCH (status update propagates to tracker)
 /api/me/applications          GET (learner's own applications)
 ```
@@ -762,4 +763,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — Phase 16.1 (Context-Aware Job Specific Practice Interviews) complete. deeppivot-182 (DevOps: CI/CD hardening) closed. All 19 checklist items shipped: JD embeddings (deeppivot-206), gap analysis panel, JD reference panel, "Practice for this Job" button, Job match score visualization, behavioral question generator, E2E tests. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-308 (Employer invite candidate notification) closed. employer_job_invitations table (migration 0024), EmployerInvitedYouToApplyEmail template, POST /api/employer/jobs/[jobId]/invite. Candidate receives "Employer invited you to apply" email with job link. Run `bd ready` for Phase 16.2–16.5 next work.*

@@ -169,6 +169,13 @@
       "when": 1772301206718,
       "tag": "0023_pretty_dark_beast",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1772303010265,
+      "tag": "0024_dazzling_leech",
+      "breakpoints": true
     }
   ]
 }

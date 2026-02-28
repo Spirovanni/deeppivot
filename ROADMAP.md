@@ -733,6 +733,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] LLM: Generate context-aware ElevenLabs system prompt.
 - [x] System: Inject JD context into AI interviewer persona.
 - [x] Integration: Send dynamic system prompt to ElevenLabs WebSocket.
+- [x] LLM: Generate behavioral questions based on JD culture.
 - [ ] UI: "Practice for this Job" button on job tracker cards.
 - [ ] UI: Interview settings modal: select resume & target JD.
 - [ ] UI: Real-time JD reference panel during interview.
@@ -754,3 +755,6 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - Admin data exports to CSV for offline analysis.
 
+---
+
+*Last updated: 2026-02-28 — deeppivot-208 (LLM: Generate behavioral questions based on JD culture) closed. Zod-validated prompt schema (behavioral-questions.ts) with 8 competency categories (teamwork, leadership, conflict-resolution, adaptability, communication, problem-solving, culture-fit, initiative). GPT-4 Turbo generator (behavioral-question-generator.ts) produces 7-10 STAR-method questions grounded in JD culture signals. POST /api/interviews/questions/behavioral route with auth, ownership, rate limiting. Mirrors technical-question-generator pattern.*

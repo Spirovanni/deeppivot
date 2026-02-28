@@ -9,6 +9,8 @@ const NAV_LINKS = [
   { href: "/admin/archetype-review", label: "Archetype Review" },
   { href: "/admin/jobs", label: "Jobs" },
   { href: "/admin/employers", label: "Employers" },
+  { href: "/admin/blog", label: "Blog Manager" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default async function AdminLayout({
@@ -46,13 +48,21 @@ export default async function AdminLayout({
               ))}
             </nav>
           </div>
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="size-4" />
-            Dashboard
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/"
+              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="size-4" />
+              Home
+            </Link>
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            >
+              Dashboard
+            </Link>
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-6xl p-6">{children}</main>

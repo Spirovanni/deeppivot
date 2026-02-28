@@ -719,7 +719,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 **Goal:** Deliver 5 major capability upgrades to enhance deep personalization, engagement, and actionable job placement for learners. 140 new issues (deeppivot-183 to deeppivot-322) have been generated to cover these features.
 
 ### 1. Context-Aware "Job Specific" Practice Interviews
-- [x] Tailoring AI interview practice to specific job descriptions and company requirements. (DB Schema: job_descriptions)
+- [x] Tailoring AI interview practice to specific job descriptions and company requirements. (DB Schema: job_descriptions, user_resumes, interview_sessions)
 - [ ] System prompt and ElevenLabs persona injections based on extracted job requirements.
 
 ### 2. Resume Parsing & Cover Letter Generation

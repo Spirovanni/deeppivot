@@ -141,6 +141,13 @@
       "when": 1772249174980,
       "tag": "0019_lively_metal_master",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1772249570025,
+      "tag": "0020_bouncy_starfox",
+      "breakpoints": true
     }
   ]
 }

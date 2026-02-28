@@ -178,11 +178,12 @@ export const jobDescriptionsTable = pgTable("job_descriptions", {
   updatedAt: timestamp().notNull().defaultNow(),
 });
 
-export const jobDescriptionsRelations = relations(jobDescriptionsTable, ({ one }) => ({
+export const jobDescriptionsRelations = relations(jobDescriptionsTable, ({ one, many }) => ({
   user: one(usersTable, {
     fields: [jobDescriptionsTable.userId],
     references: [usersTable.id],
   }),
+  interviewSessions: many(interviewSessionsTable),
 }));
 
 // ============================================
@@ -201,11 +202,12 @@ export const userResumesTable = pgTable("user_resumes", {
   updatedAt: timestamp().notNull().defaultNow(),
 });
 
-export const userResumesRelations = relations(userResumesTable, ({ one }) => ({
+export const userResumesRelations = relations(userResumesTable, ({ one, many }) => ({
   user: one(usersTable, {
     fields: [userResumesTable.userId],
     references: [usersTable.id],
   }),
+  interviewSessions: many(interviewSessionsTable),
 }));
 
 // ============================================
@@ -215,6 +217,10 @@ export const userResumesRelations = relations(userResumesTable, ({ one }) => ({
 export const interviewSessionsTable = pgTable("interview_sessions", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  /** Links to specific job description context (optional) */
+  jobDescriptionId: integer().references(() => jobDescriptionsTable.id, { onDelete: "set null" }),
+  /** Links to specific user resume context (optional) */
+  resumeId: integer().references(() => userResumesTable.id, { onDelete: "set null" }),
   sessionType: varchar({ length: 50 }).notNull().default("general"),
   status: varchar({ length: 20 }).notNull().default("active"),
   startedAt: timestamp().notNull().defaultNow(),
@@ -231,6 +237,8 @@ export const interviewSessionsTable = pgTable("interview_sessions", {
     index("interview_sessions_user_idx").on(table.userId),
     index("interview_sessions_status_idx").on(table.status),
     index("interview_sessions_org_idx").on(table.organizationId),
+    index("interview_sessions_job_desc_idx").on(table.jobDescriptionId),
+    index("interview_sessions_resume_idx").on(table.resumeId),
   ];
 });
 
@@ -238,6 +246,14 @@ export const interviewSessionsRelations = relations(interviewSessionsTable, ({ o
   user: one(usersTable, {
     fields: [interviewSessionsTable.userId],
     references: [usersTable.id],
+  }),
+  jobDescription: one(jobDescriptionsTable, {
+    fields: [interviewSessionsTable.jobDescriptionId],
+    references: [jobDescriptionsTable.id],
+  }),
+  resume: one(userResumesTable, {
+    fields: [interviewSessionsTable.resumeId],
+    references: [userResumesTable.id],
   }),
   questions: many(interviewQuestionsTable),
   emotionSnapshots: many(emotionSnapshotsTable),

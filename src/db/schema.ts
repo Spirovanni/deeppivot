@@ -229,7 +229,20 @@ export const userResumesTable = pgTable("user_resumes", {
   fileUrl: varchar({ length: 1024 }),
   rawText: text(),
   /** Parsed resume structure (parsed_resume_data). See ResumeExtraction in src/lib/llm/prompts/resumes.ts */
-  parsedData: jsonb().$type<ResumeExtraction>().default({}),
+  parsedData: jsonb()
+    .$type<ResumeExtraction>()
+    .default({
+      fullName: "",
+      email: null,
+      phone: null,
+      location: null,
+      summary: null,
+      skills: [],
+      workExperience: [],
+      education: [],
+      certifications: [],
+      yearsOfExperience: null,
+    }),
   status: varchar({ length: 50 }).notNull().default("pending"),
   isDefault: boolean().notNull().default(false),
   createdAt: timestamp().notNull().defaultNow(),

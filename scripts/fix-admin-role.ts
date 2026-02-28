@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 
 async function run() {
     const email = "blackshieldsx@gmail.com";
-    console.log(`Upgrading ${email} to system_admin...`);
+    console.log(`Setting ${email} to admin temporarily...`);
 
     const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
     if (!user) {
@@ -12,9 +12,9 @@ async function run() {
         process.exit(1);
     }
 
-    await db.update(usersTable).set({ role: "system_admin" }).where(eq(usersTable.id, user.id));
+    await db.update(usersTable).set({ role: "admin" }).where(eq(usersTable.id, user.id));
 
-    console.log(`Successfully upgraded ${email} to system_admin.`);
+    console.log(`Successfully set ${email} to admin.`);
     process.exit(0);
 }
 

@@ -14,9 +14,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Pencil, Trash2, ArrowRight, ExternalLink, Mic2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, ArrowRight, ExternalLink, Mic2, FileText } from "lucide-react";
 import { deleteJobApplication, moveJobApplication } from "@/src/lib/actions/job-applications";
 import { InterviewSettingsModal } from "@/components/interviews/InterviewSettingsModal";
+import { CoverLetterPreviewModal } from "./CoverLetterPreviewModal";
 import type { JobApplication, JobColumn } from "./types";
 
 /** Build a fuzzy-match query from the job card's position + company */
@@ -32,6 +33,7 @@ interface JobApplicationCardProps {
 
 export function JobApplicationCard({ job, columns, onEdit }: JobApplicationCardProps) {
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+  const [isCoverLetterModalOpen, setIsCoverLetterModalOpen] = useState(false);
   const otherColumns = columns.filter((col) => col.id !== job.columnId);
 
   return (
@@ -81,6 +83,10 @@ export function JobApplicationCard({ job, columns, onEdit }: JobApplicationCardP
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
                 )}
+                <DropdownMenuItem onClick={() => setIsCoverLetterModalOpen(true)}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  View Cover Letter
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsInterviewModalOpen(true)}>
                   <Mic2 className="mr-2 h-4 w-4" />
                   Practice for this Job
@@ -151,6 +157,12 @@ export function JobApplicationCard({ job, columns, onEdit }: JobApplicationCardP
         isOpen={isInterviewModalOpen}
         onClose={() => setIsInterviewModalOpen(false)}
         initialJobQuery={buildJobQuery(job)}
+      />
+
+      <CoverLetterPreviewModal
+        open={isCoverLetterModalOpen}
+        onOpenChange={setIsCoverLetterModalOpen}
+        job={job}
       />
     </>
   );

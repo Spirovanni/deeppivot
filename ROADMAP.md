@@ -721,12 +721,14 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 **Goal:** Deliver 5 major capability upgrades to enhance deep personalization, engagement, and actionable job placement for learners. 140 new issues (deeppivot-183 to deeppivot-322) have been generated to cover these features.
 
 ### 1. Context-Aware "Job Specific" Practice Interviews
-- [x] Tailoring AI interview practice to specific job descriptions and company requirements. (DB Schema: job_descriptions, user_resumes, interview_sessions)
-- [x] System prompt and ElevenLabs persona injections based on extracted job requirements.
+- [x] Database Schema: `job_descriptions` table (UUID/int id, string title, text company, text content). (Phase 16 starts here)
+- [x] Allow users to paste raw Job Description text.
 - [x] API routes for managing job descriptions (`POST`, `GET`, `PATCH`, `DELETE`).
 - [x] Extracted raw text endpoint for PDF attachments.
 - [x] UI: Job Description Library page.
 - [x] UI: View/Edit parsed job description details.
+- [x] LLM: Prompt template for generic job parsing.
+- [x] LLM: Extract core requirements from JD (Skills, Experience).
 
 ### 2. Resume Parsing & Cover Letter Generation
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)

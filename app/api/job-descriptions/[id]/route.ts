@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { jobDescriptionsTable, usersTable } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
+import { extractJobDescriptionData } from "@/lib/llm/job-description-parser";
 
 const updateJobDescriptionSchema = z.object({
     title: z.string().min(1, "Job title is required").max(255).optional(),
@@ -73,10 +74,29 @@ export async function PATCH(
             return NextResponse.json({ success: true, id: existing.id });
         }
 
+        let statusToSet = validatedData.status || existing.status;
+        let extractedDataToSet = validatedData.extractedData || existing.extractedData;
+
+        // If 'content' was updated, we should re-extract
+        if (validatedData.content && validatedData.content !== existing.content) {
+            try {
+                // If it fails, we fall back to failed state but we still want to save the content
+                const newExtractedData = await extractJobDescriptionData(validatedData.content);
+                statusToSet = "extracted";
+                extractedDataToSet = newExtractedData;
+            } catch (error) {
+                console.error(`Failed to re-extract JD data for job ${existing.id}:`, error);
+                statusToSet = "failed";
+                extractedDataToSet = existing.extractedData; // Keep old data gracefully
+            }
+        }
+
         const [updatedJobDesc] = await db
             .update(jobDescriptionsTable)
             .set({
                 ...validatedData,
+                status: statusToSet,
+                extractedData: extractedDataToSet,
                 updatedAt: new Date(),
             })
             .where(eq(jobDescriptionsTable.id, existing.id))
@@ -86,7 +106,7 @@ export async function PATCH(
     } catch (error: any) { // Changed error type to any for better type safety
         if (error instanceof z.ZodError) {
             return NextResponse.json(
-                { error: "Validation failed", details: error.errors },
+                { error: "Validation failed", details: (error as any).errors },
                 { status: 400 }
             );
         }

@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { jobDescriptionsTable, usersTable } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { z } from "zod";
+import { extractJobDescriptionData } from "@/lib/llm/job-description-parser";
 
 const createJobDescriptionSchema = z.object({
     title: z.string().min(1, "Job title is required").max(255),
@@ -50,6 +51,30 @@ export async function POST(req: Request) {
                 status: "pending", // Initially pending extraction
             })
             .returning();
+
+        // Attempt Extraction
+        try {
+            const extractedData = await extractJobDescriptionData(validatedData.content);
+
+            await db
+                .update(jobDescriptionsTable)
+                .set({
+                    status: "extracted",
+                    extractedData: extractedData,
+                    updatedAt: new Date(),
+                })
+                .where(eq(jobDescriptionsTable.id, newJobDesc.id));
+        } catch (extractionError) {
+            console.error(`Failed to extract job description data for job ${newJobDesc.id}:`, extractionError);
+
+            await db
+                .update(jobDescriptionsTable)
+                .set({
+                    status: "failed",
+                    updatedAt: new Date(),
+                })
+                .where(eq(jobDescriptionsTable.id, newJobDesc.id));
+        }
 
         return NextResponse.json(
             { success: true, id: newJobDesc.id },

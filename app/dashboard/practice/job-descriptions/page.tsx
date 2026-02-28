@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { jobDescriptionsTable, usersTable } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { JobDescriptionsClient } from "./JobDescriptionsClient";
+import { type JobDescription } from "@/components/jobs/types";
 
 export const metadata = {
     title: "Job Descriptions | DeepPivot",
@@ -29,11 +30,11 @@ export default async function JobDescriptionsPage() {
     }
 
     // 2. Fetch all job descriptions for this user natively, ordered newest first
-    const jobs = await db
+    const jobs = (await db
         .select()
         .from(jobDescriptionsTable)
         .where(eq(jobDescriptionsTable.userId, user.id))
-        .orderBy(desc(jobDescriptionsTable.createdAt));
+        .orderBy(desc(jobDescriptionsTable.createdAt))) as JobDescription[];
 
     return (
         <div className="flex-1 flex w-full flex-col">

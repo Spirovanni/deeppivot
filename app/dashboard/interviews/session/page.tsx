@@ -12,12 +12,12 @@ import { eq, and } from "drizzle-orm";
 import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
 
 interface InterviewSessionPageProps {
-  searchParams: Promise<{ type?: string; jobDescriptionId?: string; signedUrl?: string; agentId?: string; sessionId?: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function InterviewSessionPage({
-  searchParams,
-}: InterviewSessionPageProps) {
+export default async function InterviewSessionPage(props: InterviewSessionPageProps) {
+  const searchParams = await props.searchParams;
+
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
@@ -29,7 +29,12 @@ export default async function InterviewSessionPage({
 
   if (!dbUser) redirect("/sign-in");
 
-  const { type, jobDescriptionId, signedUrl, agentId, sessionId } = await searchParams;
+  const type = searchParams.type as string | undefined;
+  const jobDescriptionId = searchParams.jobDescriptionId as string | undefined;
+  const signedUrl = searchParams.signedUrl as string | undefined;
+  const agentId = searchParams.agentId as string | undefined;
+  const sessionId = searchParams.sessionId as string | undefined;
+
   const sessionType = type ?? "general";
 
   let finalAgentId = agentId || process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;

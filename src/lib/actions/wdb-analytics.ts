@@ -71,6 +71,20 @@ export interface WdbCohortStats {
   learnersWithMilestones: number;
 }
 
+export interface WdbLearnerRosterItem {
+  id: number;
+  clerkId: string;
+  name: string;
+  email: string;
+  wdbCasePlanId: string | null;
+  wdbEnrolledAt: string | null;
+  totalSessions: number;
+  completedSessions: number;
+  archetypeName: string | null;
+  milestonesTotal: number;
+  milestonesCompleted: number;
+}
+
 export interface ArchetypeBreakdown {
   archetypeName: string;
   count: number;
@@ -250,4 +264,92 @@ export async function getWdbMilestoneBreakdown(): Promise<MilestoneStatusBreakdo
     .orderBy(desc(count()));
 
   return rows.map((r) => ({ status: r.status, count: Number(r.count) }));
+}
+
+// ─── Learner Roster ───────────────────────────────────────────────────────────
+
+export async function getWdbLearnerRoster(): Promise<WdbLearnerRosterItem[]> {
+  await requireRole("wdb_partner");
+
+  const mentorIds = await getWdbMentorIds();
+  const learnerIds = await getCohortLearnerIds(mentorIds);
+  if (learnerIds.length === 0) return [];
+
+  const idArray5 = sql`ARRAY[${sql.join(learnerIds.map(id => sql`${id}`), sql`, `)}]::int[]`;
+
+  // Base users
+  const users = await db
+    .select({
+      id: usersTable.id,
+      clerkId: usersTable.clerkId,
+      name: usersTable.name,
+      email: usersTable.email,
+      wdbCasePlanId: usersTable.wdbCasePlanId,
+      wdbEnrolledAt: sql<string>`${usersTable.wdbEnrolledAt}::text`,
+    })
+    .from(usersTable)
+    .where(sql`${usersTable.id} = ANY(${idArray5})`)
+    .orderBy(usersTable.name);
+
+  // Sessions by user
+  const sessionsResult = await db
+    .select({
+      userId: interviewSessionsTable.userId,
+      total: count(),
+      completed: sql<number>`count(*) filter (where ${interviewSessionsTable.status} = 'completed' and ${interviewSessionsTable.deletedAt} is null)::int`,
+    })
+    .from(interviewSessionsTable)
+    .where(
+      and(
+        sql`${interviewSessionsTable.userId} = ANY(${idArray5})`,
+        isNull(interviewSessionsTable.deletedAt)
+      )
+    )
+    .groupBy(interviewSessionsTable.userId);
+  const sessionMap = new Map(sessionsResult.map(r => [r.userId, r]));
+
+  // Archetypes by user
+  const archetypesResult = await db
+    .select({
+      userId: careerArchetypesTable.userId,
+      archetypeName: careerArchetypesTable.archetypeName,
+    })
+    .from(careerArchetypesTable)
+    .where(sql`${careerArchetypesTable.userId} = ANY(${idArray5})`);
+  const archetypeMap = new Map(archetypesResult.map(r => [r.userId, r.archetypeName]));
+
+  // Milestones by user
+  const milestonesResult = await db
+    .select({
+      userId: careerMilestonesTable.userId,
+      total: count(),
+      completed: sql<number>`count(*) filter (where ${careerMilestonesTable.status} = 'completed' and ${careerMilestonesTable.deletedAt} is null)::int`,
+    })
+    .from(careerMilestonesTable)
+    .where(
+      and(
+        sql`${careerMilestonesTable.userId} = ANY(${idArray5})`,
+        isNull(careerMilestonesTable.deletedAt)
+      )
+    )
+    .groupBy(careerMilestonesTable.userId);
+  const milestoneMap = new Map(milestonesResult.map(r => [r.userId, r]));
+
+  return users.map((u) => {
+    const s = sessionMap.get(u.id);
+    const m = milestoneMap.get(u.id);
+    return {
+      id: u.id,
+      clerkId: u.clerkId,
+      name: u.name,
+      email: u.email,
+      wdbCasePlanId: u.wdbCasePlanId,
+      wdbEnrolledAt: u.wdbEnrolledAt ? new Date(u.wdbEnrolledAt).toISOString() : null,
+      totalSessions: Number(s?.total || 0),
+      completedSessions: Number(s?.completed || 0),
+      archetypeName: archetypeMap.get(u.id) || null,
+      milestonesTotal: Number(m?.total || 0),
+      milestonesCompleted: Number(m?.completed || 0),
+    };
+  });
 }

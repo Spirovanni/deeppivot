@@ -4,8 +4,11 @@ import {
   getWdbArchetypeBreakdown,
   getWdbSessionTrend,
   getWdbMilestoneBreakdown,
+  getWdbLearnerRoster,
 } from "@/src/lib/actions/wdb-analytics";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Users,
@@ -16,8 +19,12 @@ import {
   Target,
   Star,
   Activity,
+  PlusCircle,
+  RefreshCw,
+  Network,
 } from "lucide-react";
 import { WdbChartsClient } from "./_components/WdbChartsClient";
+import { WdbRosterClient } from "./_components/WdbRosterClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -30,11 +37,12 @@ export default async function WdbDashboardPage() {
   await requireRole("wdb_partner");
   const role = await getCurrentUserRole();
 
-  const [stats, archetypes, sessionTrend, milestones] = await Promise.all([
+  const [stats, archetypes, sessionTrend, milestones, roster] = await Promise.all([
     getWdbCohortStats().catch(() => null),
     getWdbArchetypeBreakdown().catch(() => []),
     getWdbSessionTrend(30).catch(() => []),
     getWdbMilestoneBreakdown().catch(() => []),
+    getWdbLearnerRoster().catch(() => []),
   ]);
 
   return (
@@ -47,9 +55,53 @@ export default async function WdbDashboardPage() {
             Cohort performance overview for your Workforce Development Board region.
           </p>
         </div>
-        <Badge variant="secondary" className="text-xs font-medium">
-          {role === "admin" ? "Admin (WDB view)" : "WDB Partner"}
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Badge variant="secondary" className="text-xs font-medium">
+            {role === "admin" ? "Admin (WDB view)" : "WDB Partner"}
+          </Badge>
+          <div className="hidden sm:flex items-center gap-2">
+            <Button size="sm" variant="outline" asChild>
+              <Link href="#">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Create Referral
+              </Link>
+            </Button>
+            <Button size="sm" variant="outline" asChild>
+              <Link href="#">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Sync Salesforce
+              </Link>
+            </Button>
+            <Button size="sm" variant="default" asChild>
+              <Link href="#">
+                <Network className="mr-2 h-4 w-4" />
+                Partner Network
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile action buttons */}
+      <div className="flex sm:hidden items-center gap-2 overflow-x-auto pb-2">
+        <Button size="sm" variant="outline" className="shrink-0" asChild>
+          <Link href="#">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Create Referral
+          </Link>
+        </Button>
+        <Button size="sm" variant="outline" className="shrink-0" asChild>
+          <Link href="#">
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Sync Salesforce
+          </Link>
+        </Button>
+        <Button size="sm" variant="default" className="shrink-0" asChild>
+          <Link href="#">
+            <Network className="mr-2 h-4 w-4" />
+            Partner Network
+          </Link>
+        </Button>
       </div>
 
       {/* Cohort summary stats */}
@@ -138,6 +190,11 @@ export default async function WdbDashboardPage() {
             in your WDB region.
           </p>
         </div>
+      )}
+
+      {/* Roster Table */}
+      {stats && (
+        <WdbRosterClient roster={roster} />
       )}
     </div>
   );

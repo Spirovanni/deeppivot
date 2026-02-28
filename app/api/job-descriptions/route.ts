@@ -5,6 +5,41 @@ import { jobDescriptionsTable, usersTable } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { z } from "zod";
 import { extractJobDescriptionData } from "@/lib/llm/job-description-parser";
+import { embedText, serializeEmbedding } from "@/src/lib/embeddings";
+import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
+
+/** Build a dense, semantically-rich text blob for embedding a JD. */
+function buildJdEmbeddingText(
+  title: string,
+  company: string | undefined,
+  extracted: JobDescriptionExtraction
+): string {
+  const parts: string[] = [
+    `Job Title: ${extracted.jobTitle ?? title}`,
+    extracted.companyName || company
+      ? `Company: ${extracted.companyName ?? company}`
+      : "",
+    extracted.technicalSkillsRequired?.length
+      ? `Technical Skills: ${extracted.technicalSkillsRequired.join(", ")}`
+      : "",
+    extracted.softSkillsRequired?.length
+      ? `Soft Skills: ${extracted.softSkillsRequired.join(", ")}`
+      : "",
+    extracted.yearsOfExperience
+      ? `Experience: ${extracted.yearsOfExperience}`
+      : "",
+    extracted.primaryResponsibilities?.length
+      ? `Responsibilities: ${extracted.primaryResponsibilities.join(". ")}`
+      : "",
+    extracted.companyCulture
+      ? `Culture: ${extracted.companyCulture}`
+      : "",
+    extracted.likelyInterviewTopics?.length
+      ? `Interview Topics: ${extracted.likelyInterviewTopics.join(", ")}`
+      : "",
+  ];
+  return parts.filter(Boolean).join("\n");
+}
 
 const createJobDescriptionSchema = z.object({
     title: z.string().min(1, "Job title is required").max(255),
@@ -52,15 +87,30 @@ export async function POST(req: Request) {
             })
             .returning();
 
-        // Attempt Extraction
+        // Attempt Extraction + Embedding
         try {
             const extractedData = await extractJobDescriptionData(validatedData.content);
+
+            // Generate embedding vector from rich JD text (fire async, catch silently)
+            let embeddingVector: string | null = null;
+            try {
+                const embeddingText = buildJdEmbeddingText(
+                    validatedData.title,
+                    validatedData.company,
+                    extractedData
+                );
+                const { embedding } = await embedText(embeddingText);
+                embeddingVector = serializeEmbedding(embedding);
+            } catch (embErr) {
+                console.warn(`[JD] Embedding generation failed for JD ${newJobDesc.id}:`, embErr);
+            }
 
             await db
                 .update(jobDescriptionsTable)
                 .set({
                     status: "extracted",
                     extractedData: extractedData,
+                    embeddingVector: embeddingVector ? JSON.parse(embeddingVector) : null,
                     updatedAt: new Date(),
                 })
                 .where(eq(jobDescriptionsTable.id, newJobDesc.id));

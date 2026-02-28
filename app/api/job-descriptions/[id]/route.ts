@@ -5,6 +5,40 @@ import { jobDescriptionsTable, usersTable } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { extractJobDescriptionData } from "@/lib/llm/job-description-parser";
+import { embedText, serializeEmbedding } from "@/src/lib/embeddings";
+import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
+
+function buildJdEmbeddingText(
+    title: string,
+    company: string | undefined | null,
+    extracted: JobDescriptionExtraction
+): string {
+    const parts: string[] = [
+        `Job Title: ${extracted.jobTitle ?? title}`,
+        extracted.companyName || company
+            ? `Company: ${extracted.companyName ?? company}`
+            : "",
+        extracted.technicalSkillsRequired?.length
+            ? `Technical Skills: ${extracted.technicalSkillsRequired.join(", ")}`
+            : "",
+        extracted.softSkillsRequired?.length
+            ? `Soft Skills: ${extracted.softSkillsRequired.join(", ")}`
+            : "",
+        extracted.yearsOfExperience
+            ? `Experience: ${extracted.yearsOfExperience}`
+            : "",
+        extracted.primaryResponsibilities?.length
+            ? `Responsibilities: ${extracted.primaryResponsibilities.join(". ")}`
+            : "",
+        extracted.companyCulture
+            ? `Culture: ${extracted.companyCulture}`
+            : "",
+        extracted.likelyInterviewTopics?.length
+            ? `Interview Topics: ${extracted.likelyInterviewTopics.join(", ")}`
+            : "",
+    ];
+    return parts.filter(Boolean).join("\n");
+}
 
 const updateJobDescriptionSchema = z.object({
     title: z.string().min(1, "Job title is required").max(255).optional(),
@@ -77,28 +111,44 @@ export async function PATCH(
         let statusToSet = validatedData.status || existing.status;
         let extractedDataToSet = validatedData.extractedData || existing.extractedData;
 
-        // If 'content' was updated, we should re-extract
+        // If 'content' was updated, we should re-extract and re-embed
+        let newEmbeddingVector: number[] | null | undefined = undefined; // undefined = don't touch existing
         if (validatedData.content && validatedData.content !== existing.content) {
             try {
-                // If it fails, we fall back to failed state but we still want to save the content
                 const newExtractedData = await extractJobDescriptionData(validatedData.content);
                 statusToSet = "extracted";
                 extractedDataToSet = newExtractedData;
+
+                // Re-generate embedding for the updated content
+                try {
+                    const title = validatedData.title ?? existing.title;
+                    const company = validatedData.company ?? existing.company;
+                    const embeddingText = buildJdEmbeddingText(title, company, newExtractedData);
+                    const { embedding } = await embedText(embeddingText);
+                    newEmbeddingVector = embedding;
+                } catch (embErr) {
+                    console.warn(`[JD] Re-embedding failed for JD ${existing.id}:`, embErr);
+                }
             } catch (error) {
                 console.error(`Failed to re-extract JD data for job ${existing.id}:`, error);
                 statusToSet = "failed";
-                extractedDataToSet = existing.extractedData; // Keep old data gracefully
+                extractedDataToSet = existing.extractedData;
             }
+        }
+
+        const updatePayload: Record<string, unknown> = {
+            ...validatedData,
+            status: statusToSet,
+            extractedData: extractedDataToSet,
+            updatedAt: new Date(),
+        };
+        if (newEmbeddingVector !== undefined) {
+            updatePayload.embeddingVector = newEmbeddingVector;
         }
 
         const [updatedJobDesc] = await db
             .update(jobDescriptionsTable)
-            .set({
-                ...validatedData,
-                status: statusToSet,
-                extractedData: extractedDataToSet,
-                updatedAt: new Date(),
-            })
+            .set(updatePayload)
             .where(eq(jobDescriptionsTable.id, existing.id))
             .returning();
 

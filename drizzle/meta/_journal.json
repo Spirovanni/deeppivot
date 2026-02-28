@@ -162,6 +162,13 @@
       "when": 1772260907151,
       "tag": "0022_panoramic_jocasta",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1772301206718,
+      "tag": "0023_pretty_dark_beast",
+      "breakpoints": true
     }
   ]
 }

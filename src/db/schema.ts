@@ -171,6 +171,12 @@ export const jobDescriptionsTable = pgTable("job_descriptions", {
   company: varchar({ length: 255 }),
   content: text(),
   extractedData: jsonb().default({}),
+  /**
+   * Pre-computed OpenAI text-embedding-3-small vector (1536 dims) stored as
+   * a JSONB float array for fast cosine-similarity retrieval without pgvector.
+   * Populated automatically after successful LLM extraction.
+   */
+  embeddingVector: jsonb("embedding_vector"),
   url: varchar({ length: 1024 }),
   fileUrl: varchar({ length: 1024 }),
   status: varchar({ length: 50 }).notNull().default("pending"),

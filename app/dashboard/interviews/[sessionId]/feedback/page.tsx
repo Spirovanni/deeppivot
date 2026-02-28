@@ -7,9 +7,11 @@ import {
   getSessionDetail,
   getInterviewFeedback,
   getEmotionalAnalysis,
+  getSessionGapAnalysis,
 } from "@/src/lib/actions/interview-sessions";
 import { AnimatedFeedbackContent } from "@/components/interviews/AnimatedFeedbackContent";
 import { EmotionAwareTimeline } from "@/components/interviews/EmotionAwareTimeline";
+import { GapAnalysisPanel } from "@/components/interviews/GapAnalysisPanel";
 
 const SESSION_TYPE_LABELS: Record<string, string> = {
   behavioral: "Behavioral",
@@ -30,10 +32,11 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
   const sessionId = parseInt(sessionIdStr, 10);
   if (isNaN(sessionId)) notFound();
 
-  const [session, feedback, emotionalAnalysis] = await Promise.all([
+  const [session, feedback, emotionalAnalysis, gapAnalysis] = await Promise.all([
     getSessionDetail(sessionId),
     getInterviewFeedback(sessionId),
     getEmotionalAnalysis(sessionId),
+    getSessionGapAnalysis(sessionId),
   ]);
 
   if (!session) notFound();
@@ -113,6 +116,22 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
             </Card>
           )
         ) : null}
+
+        {/* JD Gap Analysis — only shown for context-aware sessions */}
+        {gapAnalysis && (
+          <GapAnalysisPanel
+            jobTitle={gapAnalysis.jobTitle}
+            companyName={gapAnalysis.companyName}
+            technicalSkills={gapAnalysis.technicalSkills}
+            softSkills={gapAnalysis.softSkills}
+            yearsOfExperience={gapAnalysis.yearsOfExperience}
+            responsibilities={gapAnalysis.responsibilities}
+            likelyTopics={gapAnalysis.likelyTopics}
+            sessionType={gapAnalysis.sessionType}
+            overallScore={gapAnalysis.overallScore}
+            jobDescriptionId={gapAnalysis.jobDescriptionId}
+          />
+        )}
 
         {feedback ? (
           <Card>

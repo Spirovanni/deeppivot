@@ -184,6 +184,55 @@ export async function captureEmotionSnapshot(
 }
 
 /**
+ * Fetches the full extracted JD context for the feedback gap analysis panel.
+ * Returns all JD fields needed to render skill coverage, responsibility gaps,
+ * and experience requirements, or null if no JD is linked.
+ */
+export async function getSessionGapAnalysis(sessionId: number) {
+  const user = await getDbUser();
+
+  const session = await db.query.interviewSessionsTable.findFirst({
+    where: and(
+      eq(interviewSessionsTable.id, sessionId),
+      eq(interviewSessionsTable.userId, user.id)
+    ),
+    with: {
+      jobDescription: true,
+    },
+  });
+
+  if (!session?.jobDescriptionId || !session.jobDescription) return null;
+
+  const jd = session.jobDescription;
+  if (jd.status !== "extracted" || !jd.extractedData) return null;
+
+  const extracted = jd.extractedData as {
+    jobTitle?: string;
+    companyName?: string | null;
+    technicalSkillsRequired?: string[];
+    softSkillsRequired?: string[];
+    yearsOfExperience?: string | null;
+    primaryResponsibilities?: string[];
+    companyCulture?: string | null;
+    likelyInterviewTopics?: string[];
+  };
+
+  return {
+    jobTitle: extracted.jobTitle ?? jd.positionTitle ?? "Unknown Role",
+    companyName: extracted.companyName ?? jd.companyName ?? null,
+    technicalSkills: extracted.technicalSkillsRequired ?? [],
+    softSkills: extracted.softSkillsRequired ?? [],
+    yearsOfExperience: extracted.yearsOfExperience ?? null,
+    responsibilities: extracted.primaryResponsibilities ?? [],
+    culture: extracted.companyCulture ?? null,
+    likelyTopics: extracted.likelyInterviewTopics ?? [],
+    sessionType: session.sessionType,
+    overallScore: session.overallScore,
+    jobDescriptionId: jd.id,
+  };
+}
+
+/**
  * Fetches the job description context linked to an interview session.
  * Returns extracted JD data (skills, culture, match info) or null if
  * the session has no linked job description.

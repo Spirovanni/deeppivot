@@ -30,21 +30,23 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export const RATE_LIMIT_PROFILES = {
   /** AI interview start — expensive, tightly limited */
-  INTERVIEW_START:    { requests: 5,   window: "1 m" },
+  INTERVIEW_START: { requests: 5, window: "1 m" },
+  /** AI gap analysis — expensive */
+  GAP_ANALYSIS: { requests: 5, window: "1 m" },
   /** ElevenLabs signed URL generation */
-  ELEVENLABS_URL:     { requests: 10,  window: "1 m" },
+  ELEVENLABS_URL: { requests: 10, window: "1 m" },
   /** Billing checkout — prevent double-submits */
-  BILLING_CHECKOUT:   { requests: 3,   window: "1 m" },
+  BILLING_CHECKOUT: { requests: 3, window: "1 m" },
   /** Alt-Ed Explorer API — public-facing search */
-  ALT_ED_SEARCH:      { requests: 60,  window: "1 m" },
+  ALT_ED_SEARCH: { requests: 60, window: "1 m" },
   /** General API endpoints */
-  DEFAULT:            { requests: 30,  window: "1 m" },
+  DEFAULT: { requests: 30, window: "1 m" },
   /** Auth-adjacent routes */
-  AUTH:               { requests: 10,  window: "1 m" },
+  AUTH: { requests: 10, window: "1 m" },
   /** Webhook ingestion — allow generous burst */
-  WEBHOOK:            { requests: 100, window: "1 m" },
+  WEBHOOK: { requests: 100, window: "1 m" },
   /** Admin routes */
-  ADMIN:              { requests: 20,  window: "1 m" },
+  ADMIN: { requests: 20, window: "1 m" },
 } as const;
 
 export type RateLimitProfile = keyof typeof RATE_LIMIT_PROFILES;

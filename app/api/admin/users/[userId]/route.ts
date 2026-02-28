@@ -12,8 +12,9 @@ export async function PATCH(
     const rl = await rateLimit(req, "ADMIN");
     if (!rl.success) return rl.response;
 
+    let reqUser;
     try {
-        await requireAdmin();
+        reqUser = await requireAdmin();
     } catch {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -22,12 +23,25 @@ export async function PATCH(
     const uid = parseInt(userId);
     if (isNaN(uid)) return NextResponse.json({ error: "Invalid userId" }, { status: 400 });
 
+    const [targetUser] = await db.select({ role: usersTable.role }).from(usersTable).where(eq(usersTable.id, uid));
+    if (!targetUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
     const body = await req.json();
     const allowed = ["role", "isSuspended", "isDeleted", "isActive"] as const;
     const updates: Partial<Record<(typeof allowed)[number], unknown>> = {};
 
     for (const key of allowed) {
         if (key in body) updates[key] = body[key];
+    }
+
+    // Role change security check
+    if (updates.role) {
+        const isEditingAdmin = targetUser.role === "admin" || targetUser.role === "system_admin";
+        const isGrantingAdmin = updates.role === "admin" || updates.role === "system_admin";
+
+        if ((isEditingAdmin || isGrantingAdmin) && reqUser.role !== "system_admin") {
+            return NextResponse.json({ error: "Only System Administrators can manage admin roles" }, { status: 403 });
+        }
     }
 
     // Soft delete: set deletedAt timestamp

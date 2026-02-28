@@ -34,7 +34,8 @@ export type UserRole =
   | "wdb_partner"
   | "enterprise_manager"
   | "employer"
-  | "admin";
+  | "admin"
+  | "system_admin";
 
 // ─── Enterprise Manager permissions ──────────────────────────────────────────
 
@@ -60,7 +61,7 @@ export function hasEnterprisePermission(
   permission: EnterprisePermission
 ): boolean {
   if (!role) return false;
-  if (role === "admin") return true;
+  if (role === "admin" || role === "system_admin") return true;
   if (role === "enterprise_manager") {
     return (ENTERPRISE_MANAGER_PERMISSIONS as readonly string[]).includes(permission);
   }
@@ -93,7 +94,8 @@ export function hasRole(
   required: UserRole
 ): boolean {
   if (!userRole) return false;
-  if (userRole === "admin") return true;
+  if (userRole === "system_admin") return true;
+  if (userRole === "admin" && required !== "system_admin") return true;
   return userRole === required;
 }
 
@@ -136,7 +138,7 @@ export async function requireEnterpriseManager(): Promise<EnterpriseManagerUser>
     .where(eq(usersTable.clerkId, clerkUser.id))
     .limit(1);
 
-  if (!row || (row.role !== "enterprise_manager" && row.role !== "admin")) {
+  if (!row || (row.role !== "enterprise_manager" && row.role !== "admin" && row.role !== "system_admin")) {
     redirect("/unauthorized");
   }
 
@@ -177,7 +179,7 @@ export async function requireAdmin(): Promise<AuthorizedUser> {
     .where(eq(usersTable.clerkId, clerkUser.id))
     .limit(1);
 
-  if (!row || row.role !== "admin") {
+  if (!row || (row.role !== "admin" && row.role !== "system_admin")) {
     redirect("/unauthorized");
   }
 
@@ -200,7 +202,7 @@ export async function requireEmployer(): Promise<AuthorizedUser> {
     .where(eq(usersTable.clerkId, clerkUser.id))
     .limit(1);
 
-  if (!row || (row.role !== "employer" && row.role !== "admin")) {
+  if (!row || (row.role !== "employer" && row.role !== "admin" && row.role !== "system_admin")) {
     redirect("/unauthorized");
   }
 
@@ -212,7 +214,30 @@ export async function requireEmployer(): Promise<AuthorizedUser> {
  */
 export function isEmployerOrAdmin(role: UserRole | null | undefined): boolean {
   if (!role) return false;
-  return role === "employer" || role === "admin";
+  return role === "employer" || role === "admin" || role === "system_admin";
+}
+
+// ─── System Admin helpers ────────────────────────────────────────────────────────
+
+/**
+ * Require system_admin role, returning the current user record.
+ * Redirects to /unauthorized if the user is not a system administrator.
+ */
+export async function requireSystemAdmin(): Promise<AuthorizedUser> {
+  const clerkUser = await currentUser();
+  if (!clerkUser?.id) redirect("/sign-in");
+
+  const [row] = await db
+    .select({ id: usersTable.id, role: usersTable.role })
+    .from(usersTable)
+    .where(eq(usersTable.clerkId, clerkUser.id))
+    .limit(1);
+
+  if (!row || row.role !== "system_admin") {
+    redirect("/unauthorized");
+  }
+
+  return { clerkId: clerkUser.id, dbId: row.id, id: row.id, role: row.role as UserRole };
 }
 
 // ─── Dashboard routing ────────────────────────────────────────────────────────
@@ -235,6 +260,7 @@ export function getUserDashboardRoute(role: UserRole | null | undefined): string
     case "enterprise_manager":
       return "/dashboard/wdb";
     case "admin":
+    case "system_admin":
       return "/admin";
     default:
       return "/dashboard/trailblazer";

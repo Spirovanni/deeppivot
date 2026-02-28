@@ -23,7 +23,7 @@ interface SearchProps {
 const PAGE_SIZE = 50;
 
 export default async function AdminUsersPage({ searchParams }: SearchProps) {
-    await requireAdmin();
+    const currentUser = await requireAdmin();
     const { q, page } = await searchParams;
     const pageNum = Math.max(1, parseInt(page ?? "1"));
     const offset = (pageNum - 1) * PAGE_SIZE;
@@ -110,7 +110,7 @@ export default async function AdminUsersPage({ searchParams }: SearchProps) {
                                     <div className="text-xs text-muted-foreground">{u.email}</div>
                                 </td>
                                 <td className="px-4 py-3">
-                                    <QuickRoleSelect userId={u.id} currentRole={u.role} />
+                                    <QuickRoleSelect userId={u.id} currentRole={u.role} currentUserRole={currentUser.role} />
                                 </td>
                                 <td className="px-4 py-3">
                                     {u.isDeleted ? (

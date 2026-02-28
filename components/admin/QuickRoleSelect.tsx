@@ -10,6 +10,7 @@ const ROLES = [
     { value: "wdb_partner", label: "WDB Partner" },
     { value: "enterprise_manager", label: "Enterprise Mgr" },
     { value: "admin", label: "Admin" },
+    { value: "system_admin", label: "System Admin" },
 ] as const;
 
 type RoleValue = (typeof ROLES)[number]["value"];
@@ -21,14 +22,16 @@ const ROLE_COLORS: Record<string, string> = {
     enterprise_manager: "bg-orange-500/20 text-orange-400 border-orange-500/30",
     mentor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
     wdb_partner: "bg-teal-500/20 text-teal-400 border-teal-500/30",
+    system_admin: "bg-red-600/30 text-red-300 border-red-600/50 font-bold",
 };
 
 interface Props {
     userId: number;
     currentRole: string;
+    currentUserRole: string;
 }
 
-export function QuickRoleSelect({ userId, currentRole }: Props) {
+export function QuickRoleSelect({ userId, currentRole, currentUserRole }: Props) {
     const router = useRouter();
     const [role, setRole] = useState<RoleValue>(currentRole as RoleValue);
     const [saving, setSaving] = useState(false);
@@ -58,12 +61,16 @@ export function QuickRoleSelect({ userId, currentRole }: Props) {
             </span>
             <select
                 value={role}
-                disabled={saving}
+                disabled={saving || (currentUserRole !== "system_admin" && (currentRole === "admin" || currentRole === "system_admin"))}
                 onChange={(e) => handleChange(e.target.value as RoleValue)}
                 className="h-6 rounded border border-white/10 bg-muted/60 px-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-50 cursor-pointer"
                 aria-label="Change role"
             >
-                {ROLES.map(({ value, label }) => (
+                {ROLES.filter(({ value }) => {
+                    // Non-system_admins cannot see admin/system_admin options
+                    if (currentUserRole !== "system_admin" && (value === "admin" || value === "system_admin")) return false;
+                    return true;
+                }).map(({ value, label }) => (
                     <option key={value} value={value}>
                         {label}
                     </option>

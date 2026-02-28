@@ -1,5 +1,6 @@
 import { boolean, integer, jsonb, pgTable, real, text, timestamp, unique, varchar, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import type { ResumeExtraction } from "@/src/lib/llm/prompts/resumes";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -227,7 +228,8 @@ export const userResumesTable = pgTable("user_resumes", {
   title: varchar({ length: 255 }).notNull(),
   fileUrl: varchar({ length: 1024 }),
   rawText: text(),
-  parsedData: jsonb().default({}),
+  /** Parsed resume structure (parsed_resume_data). See ResumeExtraction in src/lib/llm/prompts/resumes.ts */
+  parsedData: jsonb().$type<ResumeExtraction>().default({}),
   status: varchar({ length: 50 }).notNull().default("pending"),
   isDefault: boolean().notNull().default(false),
   createdAt: timestamp().notNull().defaultNow(),

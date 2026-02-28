@@ -62,6 +62,9 @@ export const resumeExtractionSchema = z.object({
 
 export type ResumeExtraction = z.infer<typeof resumeExtractionSchema>;
 
+/** Alias: canonical structure for user_resumes.parsedData (parsed_resume_data JSONB) */
+export type ParsedResumeData = ResumeExtraction;
+
 /**
  * System prompt guiding the LLM to act as an expert resume analyst
  * extracting structured data for interview coaching purposes.

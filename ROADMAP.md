@@ -751,6 +751,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ### 2. Resume Parsing & Cover Letter Generation
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)
+- [x] DB Schema: `parsed_resume_data` JSONB structure (deeppivot-212) — ResumeExtraction type, user_resumes.parsedData
 - [ ] Generating and refining personalized cover letters based on target job descriptions and matching experience.
 
 ### 3. In-App Notification Center & Admin Announcements
@@ -777,4 +778,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-319 (Open to Opportunities toggle) closed. users.openToOpportunities, profile settings Privacy card, components/ui/switch.tsx. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-212 (parsed_resume_data JSONB structure) closed. user_resumes.parsedData typed with ResumeExtraction. Run `bd ready` for Phase 16.2–16.5 next work.*

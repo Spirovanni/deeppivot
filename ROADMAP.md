@@ -734,8 +734,9 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] System: Inject JD context into AI interviewer persona.
 - [x] Integration: Send dynamic system prompt to ElevenLabs WebSocket.
 - [x] LLM: Generate behavioral questions based on JD culture.
+- [x] UI: Interview settings modal: select resume & target JD.
+- [x] UI: Job match score visualization on session complete.
 - [ ] UI: "Practice for this Job" button on job tracker cards.
-- [ ] UI: Interview settings modal: select resume & target JD.
 - [ ] UI: Real-time JD reference panel during interview.
 
 ### 2. Resume Parsing & Cover Letter Generation
@@ -758,3 +759,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 ---
 
 *Last updated: 2026-02-28 — deeppivot-208 (LLM: Generate behavioral questions based on JD culture) closed. Zod-validated prompt schema (behavioral-questions.ts) with 8 competency categories (teamwork, leadership, conflict-resolution, adaptability, communication, problem-solving, culture-fit, initiative). GPT-4 Turbo generator (behavioral-question-generator.ts) produces 7-10 STAR-method questions grounded in JD culture signals. POST /api/interviews/questions/behavioral route with auth, ownership, rate limiting. Mirrors technical-question-generator pattern.*
+*Last updated: 2026-02-28 — deeppivot-201 (UI: Interview settings modal) closed (already implemented). deeppivot-209 (UI: Job match score visualization on session complete) closed. JobMatchScoreCard.tsx: SVG radial gauge (0-100%), color-coded score labels (Strong/Good/Moderate/Needs Improvement), technical + soft skill badges, company culture context. getSessionJobMatchData() server action fetches linked JD extracted data. Integrated into /dashboard/interviews/[sessionId] page after AI Feedback link.*

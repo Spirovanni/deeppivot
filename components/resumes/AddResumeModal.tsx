@@ -99,7 +99,7 @@ export function AddResumeModal({ open, onOpenChange, onSuccess }: AddResumeModal
             toast.success("Resume uploaded successfully");
             onSuccess({
                 id: data.id,
-                title: data.title ?? title.trim() || selectedFile.name.replace(/\.pdf$/i, ""),
+                title: data.title ?? (title.trim() || selectedFile.name.replace(/\.pdf$/i, "")),
                 fileUrl: data.fileUrl ?? null,
                 status: data.status ?? "pending",
                 isDefault: data.isDefault ?? false,

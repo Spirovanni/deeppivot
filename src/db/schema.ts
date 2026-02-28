@@ -212,6 +212,38 @@ export const userResumesRelations = relations(userResumesTable, ({ one, many }) 
 }));
 
 // ============================================
+// COVER LETTERS
+// ============================================
+
+export const coverLettersTable = pgTable("cover_letters", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  jobDescriptionId: integer().notNull().references(() => jobDescriptionsTable.id, { onDelete: "cascade" }),
+  resumeId: integer().references(() => userResumesTable.id, { onDelete: "set null" }),
+  content: text().notNull(),
+  tone: varchar({ length: 50 }).notNull().default("professional"),
+  status: varchar({ length: 50 }).notNull().default("generated"),
+  fileUrl: varchar({ length: 1024 }),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const coverLettersRelations = relations(coverLettersTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [coverLettersTable.userId],
+    references: [usersTable.id],
+  }),
+  jobDescription: one(jobDescriptionsTable, {
+    fields: [coverLettersTable.jobDescriptionId],
+    references: [jobDescriptionsTable.id],
+  }),
+  resume: one(userResumesTable, {
+    fields: [coverLettersTable.resumeId],
+    references: [userResumesTable.id],
+  }),
+}));
+
+// ============================================
 // INTERVIEW SESSION MODELS (LP2)
 // ============================================
 

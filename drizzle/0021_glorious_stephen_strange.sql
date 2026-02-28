@@ -1,0 +1,1 @@
+ALTER TABLE "user_resumes" ADD COLUMN "status" varchar(50) DEFAULT 'pending' NOT NULL;

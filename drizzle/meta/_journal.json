@@ -148,6 +148,13 @@
       "when": 1772249570025,
       "tag": "0020_bouncy_starfox",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1772257603967,
+      "tag": "0021_glorious_stephen_strange",
+      "breakpoints": true
     }
   ]
 }

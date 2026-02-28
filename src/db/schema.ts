@@ -197,6 +197,7 @@ export const userResumesTable = pgTable("user_resumes", {
   fileUrl: varchar({ length: 1024 }),
   rawText: text(),
   parsedData: jsonb().default({}),
+  status: varchar({ length: 50 }).notNull().default("pending"),
   isDefault: boolean().notNull().default(false),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),

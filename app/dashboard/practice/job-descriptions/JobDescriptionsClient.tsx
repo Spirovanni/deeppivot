@@ -11,19 +11,8 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 import { AddJobDescriptionModal } from "@/components/jobs/AddJobDescriptionModal";
-
-// Type matches the Drizzle schema inferred select type functionally
-type JobDescription = {
-    id: number;
-    title: string;
-    company: string | null;
-    content: string;
-    url: string | null;
-    status: "pending" | "extracted" | "failed" | null;
-    extractedData: any;
-    createdAt: Date;
-    updatedAt: Date;
-};
+import { EditJobDescriptionModal } from "@/components/jobs/EditJobDescriptionModal";
+import { JobDescription } from "@/components/jobs/types";
 
 interface Props {
     initialJobs: JobDescription[];
@@ -33,6 +22,8 @@ export function JobDescriptionsClient({ initialJobs }: Props) {
     const [jobs, setJobs] = useState<JobDescription[]>(initialJobs);
     const [isDeleting, setIsDeleting] = useState<number | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingJob, setEditingJob] = useState<JobDescription | null>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const router = useRouter();
 
     const handleDelete = async (id: number) => {
@@ -99,6 +90,15 @@ export function JobDescriptionsClient({ initialJobs }: Props) {
                 onSuccess={(newJob) => setJobs(prev => [newJob, ...prev])}
             />
 
+            <EditJobDescriptionModal
+                job={editingJob}
+                open={isEditModalOpen}
+                onOpenChange={setIsEditModalOpen}
+                onSuccess={(updatedJob) => {
+                    setJobs(prev => prev.map(j => j.id === updatedJob.id ? updatedJob : j));
+                }}
+            />
+
             <div className="flex justify-end">
                 <Button className="bg-brand-600 hover:bg-brand-700" onClick={() => setIsModalOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" />
@@ -113,7 +113,7 @@ export function JobDescriptionsClient({ initialJobs }: Props) {
                             <div className="flex justify-between items-start mb-2">
                                 <StatusIcon status={job.status} />
                                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-brand-600" onClick={() => toast("Edit UI coming soon!")}>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-brand-600" onClick={() => { setEditingJob(job); setIsEditModalOpen(true); }}>
                                         <Edit className="w-4 h-4" />
                                     </Button>
                                     <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-red-600" onClick={() => handleDelete(job.id)} disabled={isDeleting === job.id}>

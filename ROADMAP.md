@@ -726,6 +726,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] API routes for managing job descriptions (`POST`, `GET`, `PATCH`, `DELETE`).
 - [x] Extracted raw text endpoint for PDF attachments.
 - [x] UI: Job Description Library page.
+- [x] UI: View/Edit parsed job description details.
 
 ### 2. Resume Parsing & Cover Letter Generation
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)

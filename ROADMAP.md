@@ -723,8 +723,8 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [ ] System prompt and ElevenLabs persona injections based on extracted job requirements.
 
 ### 2. Resume Parsing & Cover Letter Generation
-- Automating the extraction of user information from uploaded resumes.
-- Generating and refining personalized cover letters based on target job descriptions and matching experience.
+- [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)
+- [ ] Generating and refining personalized cover letters based on target job descriptions and matching experience.
 
 ### 3. In-App Notification Center & Admin Announcements
 - Real-time notification system (WebSockets/SSE) for key platform events (e.g., feedback ready, mentor connection).

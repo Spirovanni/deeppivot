@@ -134,6 +134,13 @@
       "when": 1772248951714,
       "tag": "0018_fast_quicksilver",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1772249174980,
+      "tag": "0019_lively_metal_master",
+      "breakpoints": true
     }
   ]
 }

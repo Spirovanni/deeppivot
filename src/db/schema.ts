@@ -77,6 +77,7 @@ export const usersRelations = relations(usersTable, ({ many, one }) => ({
   companies: many(companiesTable),
   jobMarketplaceApplications: many(jobMarketplaceApplicationsTable),
   jobDescriptions: many(jobDescriptionsTable),
+  resumes: many(userResumesTable),
 }));
 
 // ============================================
@@ -180,6 +181,29 @@ export const jobDescriptionsTable = pgTable("job_descriptions", {
 export const jobDescriptionsRelations = relations(jobDescriptionsTable, ({ one }) => ({
   user: one(usersTable, {
     fields: [jobDescriptionsTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
+// ============================================
+// USER RESUMES
+// ============================================
+
+export const userResumesTable = pgTable("user_resumes", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  title: varchar({ length: 255 }).notNull(),
+  fileUrl: varchar({ length: 1024 }),
+  rawText: text(),
+  parsedData: jsonb().default({}),
+  isDefault: boolean().notNull().default(false),
+  createdAt: timestamp().notNull().defaultNow(),
+  updatedAt: timestamp().notNull().defaultNow(),
+});
+
+export const userResumesRelations = relations(userResumesTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [userResumesTable.userId],
     references: [usersTable.id],
   }),
 }));

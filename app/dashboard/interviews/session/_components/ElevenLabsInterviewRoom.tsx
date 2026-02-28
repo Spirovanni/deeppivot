@@ -69,11 +69,17 @@ const SESSION_TYPE_META: Record<
 interface ElevenLabsInterviewRoomProps {
   agentId: string;
   sessionType: string;
+  /** When provided, skip creating a new session — use this pre-created session ID instead. */
+  preCreatedSessionId?: number;
+  /** When provided, skip fetching a signed URL — connect to this URL directly. */
+  preSignedUrl?: string;
 }
 
 export function ElevenLabsInterviewRoom({
   agentId,
   sessionType,
+  preCreatedSessionId,
+  preSignedUrl,
 }: ElevenLabsInterviewRoomProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -122,23 +128,32 @@ export function ElevenLabsInterviewRoom({
       streamRef.current = stream;
       console.log('🎤 Microphone acquired with echo cancellation enabled');
 
-      // Create interview session in database
-      const sessionId = await startInterviewSession(sessionType);
-      sessionIdRef.current = sessionId;
-
-      // Get signed URL from backend
-      const response = await fetch("/api/elevenlabs-signed-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agentId, interviewType: sessionType }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to get signed URL");
+      // Create interview session in database (skip if pre-created by context-aware endpoint)
+      if (preCreatedSessionId) {
+        sessionIdRef.current = preCreatedSessionId;
+      } else {
+        const sessionId = await startInterviewSession(sessionType);
+        sessionIdRef.current = sessionId;
       }
 
-      const { signedUrl } = await response.json();
+      // Get signed URL (skip if pre-provided by context-aware endpoint)
+      let signedUrl: string;
+      if (preSignedUrl) {
+        signedUrl = preSignedUrl;
+      } else {
+        const response = await fetch("/api/elevenlabs-signed-url", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ agentId, interviewType: sessionType }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to get signed URL");
+        }
+
+        ({ signedUrl } = await response.json());
+      }
 
       // Validate signed URL
       if (!signedUrl || typeof signedUrl !== 'string') {
@@ -633,7 +648,7 @@ export function ElevenLabsInterviewRoom({
     } finally {
       setIsStarting(false);
     }
-  }, [agentId, sessionType, isConnected, isStarting]);
+  }, [agentId, sessionType, isConnected, isStarting, preCreatedSessionId, preSignedUrl]);
 
   const handleEnd = useCallback(async () => {
     // Stop media stream

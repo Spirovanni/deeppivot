@@ -104,6 +104,38 @@ export const usersRelations = relations(usersTable, ({ many, one }) => ({
   jobMarketplaceApplications: many(jobMarketplaceApplicationsTable),
   jobDescriptions: many(jobDescriptionsTable),
   resumes: many(userResumesTable),
+  notifications: many(notificationsTable),
+}));
+
+// ============================================
+// NOTIFICATIONS (Phase 16.3)
+// ============================================
+
+export const notificationsTable = pgTable("notifications", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  title: varchar({ length: 255 }).notNull(),
+  body: text().notNull(),
+  /** Whether the user has read this notification */
+  isRead: boolean().notNull().default(false),
+  /** Notification category: system | interview | mentor | career | announcement */
+  type: varchar({ length: 50 }).notNull().default("system"),
+  /** Optional deep-link path within the app (e.g. "/dashboard/interviews/42/feedback") */
+  link: varchar({ length: 1024 }),
+  createdAt: timestamp().notNull().defaultNow(),
+}, (table) => {
+  return [
+    index("notifications_user_idx").on(table.userId),
+    index("notifications_user_read_idx").on(table.userId, table.isRead),
+    index("notifications_type_idx").on(table.type),
+  ];
+});
+
+export const notificationsRelations = relations(notificationsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [notificationsTable.userId],
+    references: [usersTable.id],
+  }),
 }));
 
 // ============================================

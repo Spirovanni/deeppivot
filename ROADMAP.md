@@ -759,6 +759,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 ### 3. In-App Notification Center & Admin Announcements
 - Real-time notification system (WebSockets/SSE) for key platform events (e.g., feedback ready, mentor connection).
 - Admin broadcast tools for sending system announcements and redirecting users.
+- [x] DB Schema: `notifications` table (deeppivot-239) — id, userId, title, body, isRead, type, link + indexes on userId, isRead, type. Migration 0028.
 - [x] QA: Real-time delivery and Admin broadcast E2E (deeppivot-266) — stub APIs + e2e/notifications-admin-broadcast.spec.ts
 
 ### 4. Gamification & Weekly Streaks

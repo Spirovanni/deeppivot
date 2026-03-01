@@ -12,6 +12,7 @@ export default function NewAnnouncementPage() {
 
     const [title, setTitle] = useState("");
     const [body, setBody] = useState("");
+    const [sendToHome, setSendToHome] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,7 +24,7 @@ export default function NewAnnouncementPage() {
             const res = await fetch("/api/admin/announcements", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title: title.trim(), body: body.trim() || title.trim() }),
+                body: JSON.stringify({ title: title.trim(), body: body.trim() || title.trim(), sendToHome }),
             });
 
             const data = await res.json();
@@ -80,6 +81,19 @@ export default function NewAnnouncementPage() {
                         className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                         placeholder="e.g. System maintenance scheduled"
                     />
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <input
+                        id="sendToHome"
+                        type="checkbox"
+                        checked={sendToHome}
+                        onChange={(e) => setSendToHome(e.target.checked)}
+                        className="rounded border bg-background"
+                    />
+                    <label htmlFor="sendToHome" className="text-sm font-medium">
+                        Send to Home — Force redirect users to this announcement when they visit the dashboard (until dismissed)
+                    </label>
                 </div>
 
                 <div>

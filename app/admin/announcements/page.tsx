@@ -19,6 +19,7 @@ export default async function AdminAnnouncementsPage() {
             id: adminAnnouncementsTable.id,
             title: adminAnnouncementsTable.title,
             body: adminAnnouncementsTable.body,
+            sendToHome: adminAnnouncementsTable.sendToHome,
             createdAt: adminAnnouncementsTable.createdAt,
             creatorName: usersTable.name,
         })
@@ -72,7 +73,14 @@ export default async function AdminAnnouncementsPage() {
                         <tbody>
                             {announcements.map((a) => (
                                 <tr key={a.id} className="border-b last:border-b-0 hover:bg-muted/20 transition-colors">
-                                    <td className="px-4 py-3 font-medium">{a.title}</td>
+                                    <td className="px-4 py-3 font-medium">
+                                        {a.title}
+                                        {a.sendToHome && (
+                                            <span className="ml-2 rounded bg-amber-500/20 px-1.5 py-0.5 text-xs text-amber-600 dark:text-amber-400">
+                                                Send to Home
+                                            </span>
+                                        )}
+                                    </td>
                                     <td className="px-4 py-3 text-muted-foreground max-w-xs truncate" title={a.body}>
                                         {a.body.slice(0, 80)}
                                         {a.body.length > 80 ? "…" : ""}

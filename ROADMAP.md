@@ -768,6 +768,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Event trigger: Mentor connection accepted → in-app notification (deeppivot-250) — createNotification, updateConnectionStatus
 - [x] Event trigger: Interview feedback ready → in-app notification (deeppivot-251) — createNotification in processInterviewFeedback Inngest step
 - [x] Admin: /admin/announcements listing page (deeppivot-253) — listing + new form, POST broadcasts to users
+- [x] Admin API: Send to Home (deeppivot-257) — sendToHome on announcement, force redirect to /dashboard/announcements/[id] until dismissed
 - [x] QA: Real-time delivery and Admin broadcast E2E (deeppivot-266) — stub APIs + e2e/notifications-admin-broadcast.spec.ts
 
 ### 4. Gamification & Weekly Streaks
@@ -791,4 +792,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-251 (Interview feedback notification) closed. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-257 (Send to Home) closed. Run `bd ready` for Phase 16.2–16.5 next work.*

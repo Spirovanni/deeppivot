@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     try {
         const body = await req.json().catch(() => ({}));
-        const { title, body: content } = body;
+        const { title, body: content, sendToHome } = body;
         if (!title || typeof title !== "string" || !title.trim()) {
             return NextResponse.json(
                 { error: "Title is required" },
@@ -28,12 +28,14 @@ export async function POST(req: NextRequest) {
         }
 
         const bodyText = (typeof content === "string" ? content : "").trim() || title.trim();
+        const sendToHomeBool = Boolean(sendToHome);
 
         const [announcement] = await db
             .insert(adminAnnouncementsTable)
             .values({
                 title: title.trim(),
                 body: bodyText,
+                sendToHome: sendToHomeBool,
                 createdBy: adminUser.id,
             })
             .returning();
@@ -51,6 +53,7 @@ export async function POST(req: NextRequest) {
             .from(usersTable)
             .where(eq(usersTable.isDeleted, false));
 
+        const announcementLink = sendToHomeBool ? `/dashboard/announcements/${announcement.id}` : null;
         if (users.length > 0) {
             await db.insert(notificationsTable).values(
                 users.map((u) => ({
@@ -58,15 +61,16 @@ export async function POST(req: NextRequest) {
                     title: title.trim(),
                     body: bodyText,
                     type: "announcement",
-                    link: null,
+                    link: announcementLink,
                 }))
             );
         }
 
+        const sendToHomeNote = sendToHomeBool ? " (Send to Home: users will be redirected to announcement on dashboard)" : "";
         return NextResponse.json({
             success: true,
             id: announcement.id,
-            message: `Broadcast sent to ${users.length} user(s).`,
+            message: `Broadcast sent to ${users.length} user(s).${sendToHomeNote}`,
         });
     } catch (err) {
         console.error("[admin/announcements] POST failed:", err);

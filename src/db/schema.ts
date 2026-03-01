@@ -146,6 +146,8 @@ export const adminAnnouncementsTable = pgTable("admin_announcements", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   title: varchar({ length: 255 }).notNull(),
   body: text().notNull(),
+  /** When true, users are force-redirected to this announcement on dashboard entry until dismissed (deeppivot-257) */
+  sendToHome: boolean().notNull().default(false),
   createdBy: integer().references(() => usersTable.id, { onDelete: "set null" }),
   createdAt: timestamp().notNull().defaultNow(),
 }, (table) => {
@@ -157,6 +159,25 @@ export const adminAnnouncementsRelations = relations(adminAnnouncementsTable, ({
     fields: [adminAnnouncementsTable.createdBy],
     references: [usersTable.id],
   }),
+}));
+
+/** Tracks which users have dismissed "Send to Home" announcements (deeppivot-257) */
+export const userAnnouncementDismissalsTable = pgTable(
+  "user_announcement_dismissals",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    announcementId: integer().notNull().references(() => adminAnnouncementsTable.id, { onDelete: "cascade" }),
+    dismissedAt: timestamp().notNull().defaultNow(),
+  },
+  (table) => [
+    unique("user_announcement_dismissals_user_announcement").on(table.userId, table.announcementId),
+  ]
+);
+
+export const userAnnouncementDismissalsRelations = relations(userAnnouncementDismissalsTable, ({ one }) => ({
+  user: one(usersTable, { fields: [userAnnouncementDismissalsTable.userId], references: [usersTable.id] }),
+  announcement: one(adminAnnouncementsTable, { fields: [userAnnouncementDismissalsTable.announcementId], references: [adminAnnouncementsTable.id] }),
 }));
 
 // ============================================

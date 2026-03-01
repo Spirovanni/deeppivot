@@ -5,9 +5,11 @@ export const dynamic = "force-dynamic";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { ensureUserInDb } from "@/src/lib/actions/ensure-user";
+import { getPendingSendToHomeAnnouncement } from "@/src/lib/actions/announcements";
 import { DashboardConnectionError } from "@/components/dashboard/DashboardConnectionError";
 import { SessionTimeoutWarning } from "@/components/SessionTimeoutWarning";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
+import { SendToHomeRedirect } from "./_components/SendToHomeRedirect";
 
 export default async function DashboardLayout({
   children,
@@ -22,8 +24,11 @@ export default async function DashboardLayout({
     return <DashboardConnectionError />;
   }
 
+  const pendingAnnouncement = await getPendingSendToHomeAnnouncement(dbUserId);
+
   return (
     <div className="flex min-h-screen flex-col bg-background md:flex-row">
+      <SendToHomeRedirect pendingAnnouncementId={pendingAnnouncement?.id ?? null} />
       <DashboardSidebar />
       <main className="flex flex-1 flex-col overflow-auto">
         <DashboardTopBar />

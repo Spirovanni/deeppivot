@@ -153,7 +153,7 @@ export function CoverLetterEditor({
                             {iteratingIndex === null ? (
                                 <Button
                                     variant="ghost"
-                                    size="xs"
+                                    size="sm"
                                     className="h-7 px-2 text-[11px] flex items-center gap-1"
                                     onClick={() => setIteratingIndex(i)}
                                 >
@@ -172,7 +172,7 @@ export function CoverLetterEditor({
                                     <div className="flex justify-end gap-2">
                                         <Button
                                             variant="ghost"
-                                            size="xs"
+                                            size="sm"
                                             className="h-7 px-2 text-[11px]"
                                             onClick={() => setIteratingIndex(null)}
                                         >
@@ -180,7 +180,7 @@ export function CoverLetterEditor({
                                         </Button>
                                         <Button
                                             variant="default"
-                                            size="xs"
+                                            size="sm"
                                             className="h-7 px-2 text-[11px]"
                                             onClick={() => handleIterate(i)}
                                         >
@@ -194,7 +194,7 @@ export function CoverLetterEditor({
 
                     {isTarget && isIterating && (
                         <div className="absolute -right-4 top-0 translate-x-full pl-4">
-                            <Button disabled variant="ghost" size="xs" className="h-7 px-2">
+                            <Button disabled variant="ghost" size="sm" className="h-7 px-2">
                                 <Loader2 className="size-3 animate-spin mr-1" />
                                 <span className="text-[11px]">Iterating...</span>
                             </Button>

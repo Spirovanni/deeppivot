@@ -18,6 +18,8 @@ export async function createJobApplication(data: {
   notes?: string;
   columnId: number;
   userId: number;
+  /** Link to job description (deeppivot-235) */
+  jobDescriptionId?: number;
 }) {
   // Calculate order: +100 after the last item in the column
   const lastJob = await db
@@ -43,6 +45,7 @@ export async function createJobApplication(data: {
       columnId: data.columnId,
       userId: data.userId,
       order: newOrder,
+      jobDescriptionId: data.jobDescriptionId ?? null,
     })
     .returning();
 

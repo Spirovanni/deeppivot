@@ -236,6 +236,10 @@ export const jobApplicationsTable = pgTable("job_applications", {
   marketplaceJobId: integer().references(() => jobsTable.id, { onDelete: "set null" }),
   /** FK to the marketplace application row (null for external entries) */
   marketplaceApplicationId: integer().references(() => jobMarketplaceApplicationsTable.id, { onDelete: "set null" }),
+  /** Direct link to AI-generated cover letter (deeppivot-235) */
+  coverLetterId: integer().references(() => coverLettersTable.id, { onDelete: "set null" }),
+  /** Link to job description (enables cover letter + context-aware interview) */
+  jobDescriptionId: integer().references(() => jobDescriptionsTable.id, { onDelete: "set null" }),
   createdAt: timestamp().notNull().defaultNow(),
   updatedAt: timestamp().notNull().defaultNow(),
 }, (table) => {
@@ -257,6 +261,14 @@ export const jobApplicationsRelations = relations(jobApplicationsTable, ({ one }
   marketplaceApplication: one(jobMarketplaceApplicationsTable, {
     fields: [jobApplicationsTable.marketplaceApplicationId],
     references: [jobMarketplaceApplicationsTable.id],
+  }),
+  coverLetter: one(coverLettersTable, {
+    fields: [jobApplicationsTable.coverLetterId],
+    references: [coverLettersTable.id],
+  }),
+  jobDescription: one(jobDescriptionsTable, {
+    fields: [jobApplicationsTable.jobDescriptionId],
+    references: [jobDescriptionsTable.id],
   }),
 }));
 

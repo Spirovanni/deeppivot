@@ -1,0 +1,4 @@
+ALTER TABLE "job_applications" ADD COLUMN "coverLetterId" integer;--> statement-breakpoint
+ALTER TABLE "job_applications" ADD COLUMN "jobDescriptionId" integer;--> statement-breakpoint
+ALTER TABLE "job_applications" ADD CONSTRAINT "job_applications_coverLetterId_cover_letters_id_fk" FOREIGN KEY ("coverLetterId") REFERENCES "public"."cover_letters"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "job_applications" ADD CONSTRAINT "job_applications_jobDescriptionId_job_descriptions_id_fk" FOREIGN KEY ("jobDescriptionId") REFERENCES "public"."job_descriptions"("id") ON DELETE set null ON UPDATE no action;

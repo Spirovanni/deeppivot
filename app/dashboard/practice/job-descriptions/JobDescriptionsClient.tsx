@@ -4,14 +4,16 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Plus, Trash2, Edit, Calendar, ExternalLink, CheckCircle2, AlertCircle, Clock } from "lucide-react";
+import { FileText, Plus, Trash2, Edit, Calendar, ExternalLink, CheckCircle2, AlertCircle, Clock, Briefcase } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 import { AddJobDescriptionModal } from "@/components/jobs/AddJobDescriptionModal";
 import { EditJobDescriptionModal } from "@/components/jobs/EditJobDescriptionModal";
+import { AddToJobTrackerModal } from "@/components/jobs/AddToJobTrackerModal";
 import { JobDescription } from "@/components/jobs/types";
 
 interface Props {
@@ -99,6 +101,17 @@ export function JobDescriptionsClient({ initialJobs }: Props) {
                 }}
             />
 
+            <AddToJobTrackerModal
+                job={addToTrackerJob}
+                open={!!addToTrackerJob}
+                onOpenChange={(open) => !open && setAddToTrackerJob(null)}
+                onSuccess={() => {
+                    setAddToTrackerJob(null);
+                    toast.success("Added to Job Tracker");
+                    router.push("/dashboard/job-tracker");
+                }}
+            />
+
             <div className="flex justify-end">
                 <Button className="bg-brand-600 hover:bg-brand-700" onClick={() => setIsModalOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" />
@@ -113,6 +126,11 @@ export function JobDescriptionsClient({ initialJobs }: Props) {
                             <div className="flex justify-between items-start mb-2">
                                 <StatusIcon status={job.status} />
                                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {job.status === "extracted" && (
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-brand-600" onClick={() => setAddToTrackerJob(job)} title="Add to Job Tracker">
+                                            <Briefcase className="w-4 h-4" />
+                                        </Button>
+                                    )}
                                     <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-brand-600" onClick={() => { setEditingJob(job); setIsEditModalOpen(true); }}>
                                         <Edit className="w-4 h-4" />
                                     </Button>

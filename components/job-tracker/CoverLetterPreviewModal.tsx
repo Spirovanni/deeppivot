@@ -9,8 +9,13 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, Loader2 } from "lucide-react";
-import { getCoverLetterForJobApplication } from "@/src/lib/actions/cover-letter-preview";
+import { Button } from "@/components/ui/button";
+import { FileText, Loader2, Link2 } from "lucide-react";
+import {
+    getCoverLetterForJobApplication,
+    getLinkableCoverLettersForApplication,
+    linkCoverLetterToJobApplication,
+} from "@/src/lib/actions/cover-letter-preview";
 import type { JobApplication } from "./types";
 
 interface CoverLetterPreviewModalProps {
@@ -27,19 +32,33 @@ export function CoverLetterPreviewModal({
     const [content, setContent] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [linkableLetters, setLinkableLetters] = useState<{ id: number; positionTitle: string; companyName: string | null }[]>([]);
+    const [linkingId, setLinkingId] = useState<number | null>(null);
+
+    const refresh = () => {
+        if (!job) return;
+        getCoverLetterForJobApplication(job.id).then(({ content: c }) => setContent(c));
+    };
 
     useEffect(() => {
         if (!open || !job) {
             setContent(null);
             setError(null);
+            setLinkableLetters([]);
             return;
         }
         let cancelled = false;
         setLoading(true);
         setError(null);
-        getCoverLetterForJobApplication(job.id)
-            .then(({ content: c }) => {
-                if (!cancelled) setContent(c);
+        Promise.all([
+            getCoverLetterForJobApplication(job.id),
+            getLinkableCoverLettersForApplication(job.id),
+        ])
+            .then(([{ content: c }, letters]) => {
+                if (!cancelled) {
+                    setContent(c);
+                    setLinkableLetters(letters);
+                }
             })
             .catch(() => {
                 if (!cancelled) setError("Failed to load cover letter");
@@ -51,6 +70,22 @@ export function CoverLetterPreviewModal({
             cancelled = true;
         };
     }, [open, job?.id]);
+
+    const handleLink = async (coverLetterId: number) => {
+        if (!job) return;
+        setLinkingId(coverLetterId);
+        try {
+            const result = await linkCoverLetterToJobApplication(job.id, coverLetterId);
+            if (result.success) {
+                refresh();
+                setLinkableLetters((prev) => prev.filter((l) => l.id !== coverLetterId));
+            } else if (result.error) {
+                setError(result.error);
+            }
+        } finally {
+            setLinkingId(null);
+        }
+    };
 
     const jobLabel = job ? `${job.position} at ${job.company}` : "";
 
@@ -91,11 +126,47 @@ export function CoverLetterPreviewModal({
                     )}
 
                     {!loading && !error && !content && (
-                        <p className="text-sm text-muted-foreground py-6">
-                            No cover letter found for this application. Add one when applying
-                            through the marketplace, or generate one from the Job Description
-                            Library for a matching role.
-                        </p>
+                        <div className="space-y-4 py-4">
+                            <p className="text-sm text-muted-foreground">
+                                No cover letter linked to this application. Link one below, add one when applying
+                                through the marketplace, or generate one from the Job Description Library.
+                            </p>
+                            {linkableLetters.length > 0 && (
+                                <div>
+                                    <p className="text-xs font-medium text-muted-foreground mb-2">Link a cover letter:</p>
+                                    <ul className="space-y-1.5">
+                                        {linkableLetters.map((cl) => (
+                                            <li
+                                                key={cl.id}
+                                                className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
+                                            >
+                                                <span>
+                                                    {cl.positionTitle}
+                                                    {cl.companyName && (
+                                                        <span className="text-muted-foreground"> @ {cl.companyName}</span>
+                                                    )}
+                                                </span>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    disabled={linkingId !== null}
+                                                    onClick={() => handleLink(cl.id)}
+                                                >
+                                                    {linkingId === cl.id ? (
+                                                        <Loader2 className="size-4 animate-spin" />
+                                                    ) : (
+                                                        <>
+                                                            <Link2 className="size-4 mr-1" />
+                                                            Link
+                                                        </>
+                                                    )}
+                                                </Button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
             </DialogContent>

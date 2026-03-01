@@ -7,6 +7,7 @@ import {
     jobDescriptionsTable,
     userResumesTable,
     coverLettersTable,
+    jobApplicationsTable,
 } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
 import { rateLimit } from "@/src/lib/rate-limit";
@@ -19,6 +20,8 @@ const generateSchema = z.object({
     jobDescriptionId: z.number().int().positive(),
     resumeId: z.number().int().positive().optional(),
     tone: z.enum(["professional", "conversational", "enthusiastic"]).default("professional"),
+    /** Link to Job Tracker application after creation (deeppivot-235) */
+    jobApplicationId: z.number().int().positive().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -50,7 +53,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { jobDescriptionId, resumeId, tone } = parsed.data;
+        const { jobDescriptionId, resumeId, tone, jobApplicationId } = parsed.data;
 
         // Fetch and verify job description
         const [jobDesc] = await db
@@ -127,6 +130,23 @@ export async function POST(request: NextRequest) {
                 status: "generated",
             })
             .returning();
+
+        // Link to Job Tracker application if provided (deeppivot-235)
+        if (jobApplicationId && coverLetter) {
+            await db
+                .update(jobApplicationsTable)
+                .set({
+                    coverLetterId: coverLetter.id,
+                    jobDescriptionId,
+                    updatedAt: new Date(),
+                })
+                .where(
+                    and(
+                        eq(jobApplicationsTable.id, jobApplicationId),
+                        eq(jobApplicationsTable.userId, user.id)
+                    )
+                );
+        }
 
         return NextResponse.json({
             id: coverLetter.id,

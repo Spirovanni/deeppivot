@@ -1,6 +1,5 @@
 import { Navbar } from "./_components/navbar";
 import { ScrollToTop } from "./_components/scroll-to-top";
-import { Footer } from "@/components/Footer";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://deeppivot.com";
 
@@ -56,7 +55,6 @@ const LandingPageLayout = ({ children }: { children: React.ReactNode }) => {
       />
       <Navbar />
       <main className="flex-1">{children}</main>
-      <Footer />
       <ScrollToTop />
     </div>
   );

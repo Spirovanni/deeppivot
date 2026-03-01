@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useNotificationStream } from "@/hooks/useNotificationStream";
 import Link from "next/link";
 import {
     DropdownMenu,
@@ -59,6 +60,8 @@ export function NotificationDropdown() {
     useEffect(() => {
         if (open) fetchNotifications();
     }, [open, fetchNotifications]);
+
+    useNotificationStream(fetchNotifications);
 
     const markAsRead = async (id: number, link: string | null) => {
         try {

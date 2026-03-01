@@ -83,6 +83,7 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 /api/admin/archetype-review/[id]   Admin: approve/override (PATCH)
 /api/notifications                 Phase 16.3: notifications (GET, auth required)
 /api/notifications/read-all        Phase 16.3: mark all as read (PATCH, auth required) (deeppivot-243)
+/api/notifications/stream         Phase 16.3: SSE real-time stream (GET, auth required) (deeppivot-244)
 /api/admin/announcements           Phase 16.3: admin broadcast (POST, admin only)
 
 /admin                  ### 6. Admin Panel Hooks & Review Dashboard
@@ -772,6 +773,8 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] DB Schema: `admin_announcements` table (deeppivot-240) — id, title, body, createdBy, createdAt. Migration 0029.
 - [x] API: GET /api/notifications (Paginated) (deeppivot-241) — ?page=&limit=, auth, order by createdAt desc
 - [x] API: PATCH /api/notifications/[id]/read (deeppivot-242) — mark notification as read, auth + ownership
+- [x] API: PATCH /api/notifications/read-all (deeppivot-243) — mark all as read for current user
+- [x] System: Real-time notification layer via SSE (deeppivot-244) — GET /api/notifications/stream, useNotificationStream hook
 - [x] UI: Notification dropdown popover (deeppivot-247) — NotificationDropdown in DashboardTopBar
 - [x] Event trigger: Mentor connection accepted → in-app notification (deeppivot-250) — createNotification, updateConnectionStatus
 - [x] Event trigger: Interview feedback ready → in-app notification (deeppivot-251) — createNotification in processInterviewFeedback Inngest step
@@ -803,4 +806,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-243 (API: PATCH /api/notifications/read-all) closed. Marks all unread notifications for authenticated user as read; returns { success, markedCount }. Phase 16.3 Notification Center progressing.*
+*Last updated: 2026-02-28 — deeppivot-244 (Real-time notification layer via SSE) closed. GET /api/notifications/stream polls DB every 5s, pushes notifications-changed events; useNotificationStream + NotificationDropdown auto-refetch. Phase 16.3 Notification Center progressing.*

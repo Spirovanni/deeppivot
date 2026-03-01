@@ -766,6 +766,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] DB Schema: `admin_announcements` table (deeppivot-240) — id, title, body, createdBy, createdAt. Migration 0029.
 - [x] API: GET /api/notifications (Paginated) (deeppivot-241) — ?page=&limit=, auth, order by createdAt desc
 - [x] API: PATCH /api/notifications/[id]/read (deeppivot-242) — mark notification as read, auth + ownership
+- [x] UI: Notification dropdown popover (deeppivot-247) — NotificationDropdown in DashboardTopBar
 - [x] Event trigger: Mentor connection accepted → in-app notification (deeppivot-250) — createNotification, updateConnectionStatus
 - [x] Event trigger: Interview feedback ready → in-app notification (deeppivot-251) — createNotification in processInterviewFeedback Inngest step
 - [x] Admin: /admin/announcements listing page (deeppivot-253) — listing + new form, POST broadcasts to users
@@ -794,4 +795,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-01 — deeppivot-235 (Link cover letters to Job Tracker) closed. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-03-01 — deeppivot-247 (Notification dropdown popover) closed. Run `bd ready` for Phase 16.2–16.5 next work.*

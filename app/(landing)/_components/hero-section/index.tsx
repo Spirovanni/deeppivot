@@ -129,16 +129,16 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             className="grid grid-cols-3 gap-6 pt-8"
           >
             <div>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">500+</div>
-              <div className="text-sm text-slate-700 dark:text-slate-300">Education Programs</div>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">13+</div>
+              <div className="text-sm text-slate-700 dark:text-slate-300">AI-Powered Tools</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-slate-900 dark:text-white">6</div>
               <div className="text-sm text-slate-700 dark:text-slate-300">Career Archetypes</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">100+</div>
-              <div className="text-sm text-slate-700 dark:text-slate-300">Employers Hiring</div>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">500+</div>
+              <div className="text-sm text-slate-700 dark:text-slate-300">Education Programs</div>
             </div>
           </motion.div>
         </div>

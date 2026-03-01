@@ -10,7 +10,10 @@ import {
   IconSchool,
   IconRocket,
   IconHeart,
-  IconVideo,
+  IconFileDescription,
+  IconFileText,
+  IconLetterCase,
+  IconChartRadar,
 } from "@tabler/icons-react";
 
 export function FeatureBentoGrid() {
@@ -128,6 +131,82 @@ const RocketLaunch = () => (
   </div>
 );
 
+const ContextAwareVisual = () => (
+  <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-cyan-100 dark:from-cyan-900/20 dark:to-cyan-800/20 to-cyan-50 items-center justify-center p-4">
+    <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-1">
+        <div className="h-2 w-10 rounded bg-cyan-400"></div>
+        <div className="h-2 w-14 rounded bg-cyan-300"></div>
+        <div className="h-2 w-8 rounded bg-cyan-500"></div>
+      </div>
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500 text-white">
+        <IconTarget className="h-5 w-5" />
+      </div>
+      <div className="flex flex-col gap-1">
+        <div className="h-2 w-8 rounded bg-cyan-400 animate-pulse"></div>
+        <div className="h-2 w-12 rounded bg-cyan-300 animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+        <div className="h-2 w-6 rounded bg-cyan-500 animate-pulse" style={{ animationDelay: "0.4s" }}></div>
+      </div>
+    </div>
+  </div>
+);
+
+const ResumeVisual = () => (
+  <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 to-amber-50 items-center justify-center p-4">
+    <div className="relative w-16 h-20 rounded-md border-2 border-amber-300 bg-white dark:bg-slate-800 dark:border-amber-600 p-1.5">
+      <div className="h-1.5 w-8 rounded bg-amber-400 mb-1"></div>
+      <div className="h-1 w-10 rounded bg-amber-200 mb-0.5"></div>
+      <div className="h-1 w-7 rounded bg-amber-200 mb-0.5"></div>
+      <div className="h-1 w-9 rounded bg-amber-200 mb-1.5"></div>
+      <div className="h-1.5 w-6 rounded bg-amber-400 mb-0.5"></div>
+      <div className="h-1 w-10 rounded bg-amber-200 mb-0.5"></div>
+      <div className="h-1 w-8 rounded bg-amber-200"></div>
+      <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 flex items-center justify-center animate-pulse">
+        <IconBrain className="h-2.5 w-2.5 text-white" />
+      </div>
+    </div>
+  </div>
+);
+
+const CoverLetterVisual = () => (
+  <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-rose-100 dark:from-rose-900/20 dark:to-rose-800/20 to-rose-50 items-center justify-center p-4">
+    <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-0.5">
+        <div className="h-1.5 w-12 rounded bg-rose-300"></div>
+        <div className="h-1 w-10 rounded bg-rose-200"></div>
+        <div className="h-1 w-14 rounded bg-rose-200"></div>
+        <div className="h-1 w-8 rounded bg-rose-200"></div>
+      </div>
+      <div className="text-rose-400 text-lg font-bold">→</div>
+      <div className="flex flex-col gap-0.5">
+        <div className="h-1.5 w-12 rounded bg-rose-500 animate-pulse"></div>
+        <div className="h-1 w-10 rounded bg-rose-400 animate-pulse" style={{ animationDelay: "0.1s" }}></div>
+        <div className="h-1 w-14 rounded bg-rose-400 animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+        <div className="h-1 w-8 rounded bg-rose-400 animate-pulse" style={{ animationDelay: "0.3s" }}></div>
+      </div>
+    </div>
+  </div>
+);
+
+const MatchScoreVisual = () => (
+  <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 to-emerald-50 items-center justify-center p-4">
+    <div className="relative w-16 h-16">
+      <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+        <circle cx="18" cy="18" r="15" fill="none" strokeWidth="3" className="stroke-emerald-200 dark:stroke-emerald-800" />
+        <circle
+          cx="18" cy="18" r="15" fill="none" strokeWidth="3"
+          strokeDasharray="70 30"
+          strokeLinecap="round"
+          className="stroke-emerald-500 animate-pulse"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">87%</span>
+      </div>
+    </div>
+  </div>
+);
+
 const items = [
   {
     title: "AI Voice Interviews",
@@ -140,6 +219,12 @@ const items = [
     description: "Receive constructive feedback on interview performance. Track progress across sessions and identify areas for improvement.",
     header: <EmotionChart />,
     icon: <IconHeart className="h-4 w-4 text-neutral-500" />,
+  },
+  {
+    title: "Context-Aware Interview Prep",
+    description: "Upload a job description and get interview questions tailored specifically to that role, company, and required skills — including behavioral and technical questions.",
+    header: <ContextAwareVisual />,
+    icon: <IconFileDescription className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Career Archetype Assessment",
@@ -155,10 +240,22 @@ const items = [
     icon: <IconChartLine className="h-4 w-4 text-neutral-500" />,
   },
   {
+    title: "Resume Intelligence",
+    description: "Upload your resume for AI parsing. Your skills, experience, and strengths are extracted to personalize interview coaching and match against job descriptions.",
+    header: <ResumeVisual />,
+    icon: <IconFileText className="h-4 w-4 text-neutral-500" />,
+  },
+  {
     title: "Performance Analytics Dashboard",
     description: "Track your progress with detailed analytics on interview performance, skills development, emotional growth, and session history over time.",
     header: <AnalyticsGraph />,
     icon: <IconBrain className="h-4 w-4 text-neutral-500" />,
+  },
+  {
+    title: "AI Cover Letters",
+    description: "Generate targeted cover letters matched to specific job descriptions, highlighting your relevant experience and aligning your skills with role requirements.",
+    header: <CoverLetterVisual />,
+    icon: <IconLetterCase className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Mentor & Coach Network",
@@ -171,6 +268,12 @@ const items = [
     description: "Discover 500+ bootcamps, certifications, and funding opportunities with ROI analysis, eligibility matching, and application tracking.",
     header: <EducationStack />,
     icon: <IconSchool className="h-4 w-4 text-neutral-500" />,
+  },
+  {
+    title: "Job Match Scoring",
+    description: "See exactly how your profile matches against job requirements with visual skill coverage analysis, gap identification, and improvement recommendations.",
+    header: <MatchScoreVisual />,
+    icon: <IconChartRadar className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Job Marketplace & Tracker",

@@ -11,6 +11,7 @@ import {
 } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
 import { rateLimit } from "@/src/lib/rate-limit";
+import { uploadToR2 } from "@/src/lib/storage";
 import { mergeCoverLetterContext } from "@/src/lib/cover-letter/merge-context";
 import { streamCoverLetter } from "@/src/lib/llm/cover-letter-generator";
 import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
@@ -166,25 +167,32 @@ export async function POST(request: NextRequest) {
         const llmStream = streamCoverLetter(context, tone);
         let accumulated = "";
 
+
         const passthrough = new TransformStream<Uint8Array, Uint8Array>({
             transform(chunk, controller) {
                 accumulated += new TextDecoder().decode(chunk);
                 controller.enqueue(chunk);
             },
             async flush() {
-                // Save the full generated text to DB
+                // Save the full generated text to DB and R2
                 try {
+                    // 1. Upload to R2
+                    const r2Key = `cover-letters/${user.id}/${coverLetter.id}.md`;
+                    const fileUrl = await uploadToR2(r2Key, accumulated, "text/markdown");
+
+                    // 2. Update DB with content and fileUrl
                     await db
                         .update(coverLettersTable)
                         .set({
                             content: accumulated,
+                            fileUrl,
                             status: "generated",
                             updatedAt: new Date(),
                         })
                         .where(eq(coverLettersTable.id, coverLetter.id));
                 } catch (err) {
                     console.error(
-                        "Failed to persist streamed cover letter:",
+                        "Failed to persist streamed cover letter to DB/R2:",
                         err
                     );
                 }

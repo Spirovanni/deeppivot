@@ -5,6 +5,7 @@ import { db } from "@/src/db";
 import { usersTable, coverLettersTable } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
 import { rateLimit } from "@/src/lib/rate-limit";
+import { uploadToR2 } from "@/src/lib/storage";
 
 const patchSchema = z.object({
     content: z.string().min(1).optional(),
@@ -78,6 +79,7 @@ export async function PATCH(
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
+
         const [updated] = await db
             .update(coverLettersTable)
             .set({
@@ -91,6 +93,22 @@ export async function PATCH(
 
         if (!updated) {
             return NextResponse.json({ error: "Update failed" }, { status: 500 });
+        }
+
+        // Sync with R2 if content changed
+        if (updates.content !== undefined) {
+            try {
+                const r2Key = `cover-letters/${user.id}/${updated.id}.md`;
+                const fileUrl = await uploadToR2(r2Key, updated.content, "text/markdown");
+
+                // Update fileUrl in DB (silent sync)
+                await db
+                    .update(coverLettersTable)
+                    .set({ fileUrl })
+                    .where(eq(coverLettersTable.id, updated.id));
+            } catch (r2Err) {
+                console.error("Failed to sync cover letter to R2 during update:", r2Err);
+            }
         }
 
         return NextResponse.json({

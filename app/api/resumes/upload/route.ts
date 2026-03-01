@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import pdfParse from "pdf-parse";
 import { uploadToR2 } from "@/src/lib/storage";
 import { extractResumeData } from "@/src/lib/llm/resume-parser";
+import { syncProfileFromResume } from "@/src/lib/user/profile-sync";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -87,6 +88,11 @@ export async function POST(request: NextRequest) {
                     updatedAt: new Date(),
                 })
                 .where(eq(userResumesTable.id, newResume.id));
+
+            // Sync profile fields from extracted data (deeppivot-216)
+            if (parsedData) {
+                await syncProfileFromResume(user.id, parsedData);
+            }
         } catch (extractionError) {
             console.error(
                 `Failed to extract resume data for resume ${newResume.id}:`,

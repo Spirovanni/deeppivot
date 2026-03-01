@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { db } from "@/src/db";
+import { uploadToR2 } from "@/src/lib/storage";
 import {
     usersTable,
     jobDescriptionsTable,
@@ -118,6 +119,7 @@ export async function POST(request: NextRequest) {
         // Generate cover letter via LLM
         const result = await generateCoverLetter(context, tone);
 
+
         // Save to database
         const [coverLetter] = await db
             .insert(coverLettersTable)
@@ -130,6 +132,19 @@ export async function POST(request: NextRequest) {
                 status: "generated",
             })
             .returning();
+
+        // Upload to R2 and link fileUrl
+        try {
+            const r2Key = `cover-letters/${user.id}/${coverLetter.id}.md`;
+            const fileUrl = await uploadToR2(r2Key, result.body, "text/markdown");
+
+            await db
+                .update(coverLettersTable)
+                .set({ fileUrl })
+                .where(eq(coverLettersTable.id, coverLetter.id));
+        } catch (r2Err) {
+            console.error("Failed to upload cover letter to R2 during generation:", r2Err);
+        }
 
         // Link to Job Tracker application if provided (deeppivot-235)
         if (jobApplicationId && coverLetter) {

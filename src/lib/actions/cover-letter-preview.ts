@@ -180,7 +180,7 @@ export async function linkCoverLetterToJobApplication(
                 eq(jobApplicationsTable.userId, user.id)
             )
         )
-        .returning({ id: jobApplicationsTable.id });
+        .returning();
 
     return updated ? { success: true } : { success: false, error: "Job application not found" };
 }

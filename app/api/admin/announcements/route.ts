@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
                 body: bodyText,
                 createdBy: adminUser.id,
             })
-            .returning({ id: adminAnnouncementsTable.id });
+            .returning();
 
         if (!announcement) {
             return NextResponse.json(

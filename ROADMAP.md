@@ -753,6 +753,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)
 - [x] DB Schema: `parsed_resume_data` JSONB structure (deeppivot-212) — ResumeExtraction type, user_resumes.parsedData
 - [x] UI: Resume management dashboard (deeppivot-217) — /dashboard/practice/resumes, AddResumeModal, PATCH/DELETE APIs
+- [x] UI: Parsed resume data verification form (deeppivot-219) — ParsedResumeVerificationModal, Verify data in card menu
 - [x] UI: Cover letter preview modal in job Kanban board (deeppivot-237) — CoverLetterPreviewModal, View Cover Letter in card menu
 - [ ] Generating and refining personalized cover letters based on target job descriptions and matching experience.
 
@@ -782,4 +783,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-294 (Gamification QA) closed. vitest unit tests (edge cases, timezone), e2e/gamification.spec.ts. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-219 (Parsed resume verification form) closed. ParsedResumeVerificationModal, Verify data in resume dashboard. Run `bd ready` for Phase 16.2–16.5 next work.*

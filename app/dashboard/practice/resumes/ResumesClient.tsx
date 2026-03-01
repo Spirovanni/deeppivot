@@ -35,6 +35,8 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 import { AddResumeModal, type ResumeItem } from "@/components/resumes/AddResumeModal";
+import { ParsedResumeVerificationModal } from "@/components/resumes/ParsedResumeVerificationModal";
+import type { ResumeExtraction } from "@/src/lib/llm/prompts/resumes";
 
 interface ResumesClientProps {
     initialResumes: ResumeItem[];
@@ -46,7 +48,22 @@ export function ResumesClient({ initialResumes }: ResumesClientProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editResume, setEditResume] = useState<ResumeItem | null>(null);
     const [editTitle, setEditTitle] = useState("");
+    const [verifyResumeId, setVerifyResumeId] = useState<number | null>(null);
+    const [verifyResumeData, setVerifyResumeData] = useState<ResumeExtraction | null>(null);
     const router = useRouter();
+
+    const handleOpenVerify = async (resume: ResumeItem) => {
+        if (resume.status !== "extracted") return;
+        try {
+            const res = await fetch(`/api/resumes/${resume.id}`);
+            if (!res.ok) throw new Error("Failed to fetch");
+            const json = await res.json();
+            setVerifyResumeData(json.parsedData ?? null);
+            setVerifyResumeId(resume.id);
+        } catch {
+            toast.error("Could not load resume data");
+        }
+    };
 
     const handleDelete = async (id: number) => {
         if (!confirm("Delete this resume? This cannot be undone.")) return;
@@ -157,6 +174,19 @@ export function ResumesClient({ initialResumes }: ResumesClientProps) {
                 open={isModalOpen}
                 onOpenChange={setIsModalOpen}
                 onSuccess={(r) => setResumes((prev) => [r, ...prev])}
+            />
+
+            <ParsedResumeVerificationModal
+                open={verifyResumeId !== null}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setVerifyResumeId(null);
+                        setVerifyResumeData(null);
+                    }
+                }}
+                resumeId={verifyResumeId ?? 0}
+                initialData={verifyResumeData}
+                onSaved={() => router.refresh()}
             />
 
             <Dialog open={!!editResume} onOpenChange={(open) => !open && setEditResume(null)}>

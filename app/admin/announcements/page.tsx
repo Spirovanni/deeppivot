@@ -1,7 +1,7 @@
 import { requireAdmin } from "@/src/lib/rbac";
 import { db } from "@/src/db";
 import { adminAnnouncementsTable, usersTable } from "@/src/db/schema";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
 import { Megaphone } from "lucide-react";
 
@@ -23,7 +23,7 @@ export default async function AdminAnnouncementsPage() {
             creatorName: usersTable.name,
         })
         .from(adminAnnouncementsTable)
-        .leftJoin(usersTable, adminAnnouncementsTable.createdBy.eq(usersTable.id))
+        .leftJoin(usersTable, eq(adminAnnouncementsTable.createdBy, usersTable.id))
         .orderBy(desc(adminAnnouncementsTable.createdAt))
         .limit(PAGE_SIZE);
 

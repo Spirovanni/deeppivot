@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { href: "/admin/users", label: "Users" },
   { href: "/admin/agents", label: "Agent Configs" },
   { href: "/admin/archetype-review", label: "Archetype Review" },
+  { href: "/admin/announcements", label: "Announcements" },
   { href: "/admin/jobs", label: "Jobs" },
   { href: "/admin/employers", label: "Employers" },
   { href: "/admin/blog", label: "Blog Manager" },

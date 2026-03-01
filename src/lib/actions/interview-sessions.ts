@@ -13,6 +13,7 @@ import {
 import { eq, avg, and, asc, desc } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { addPointsForInterviewCompletion } from "@/src/lib/gamification";
 
 async function getDbUser(): Promise<{ id: number; organizationId: string | null }> {
   const { userId, orgId } = await auth();
@@ -66,6 +67,25 @@ export async function endInterviewSession(
       updatedAt: new Date(),
     })
     .where(eq(interviewSessionsTable.id, sessionId));
+
+  // Gamification: award points for interview completion
+  const [session] = await db
+    .select({
+      userId: interviewSessionsTable.userId,
+      sessionType: interviewSessionsTable.sessionType,
+    })
+    .from(interviewSessionsTable)
+    .where(eq(interviewSessionsTable.id, sessionId))
+    .limit(1);
+
+  if (session) {
+    addPointsForInterviewCompletion(
+      session.userId,
+      sessionId,
+      session.sessionType,
+      overallScore
+    ).catch(() => {});
+  }
 
   revalidatePath("/dashboard/interviews");
   return { overallScore };

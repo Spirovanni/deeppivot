@@ -118,6 +118,23 @@ export async function addPointsForJobApplication(
 }
 
 /**
+ * Hook: Add points when user completes an interview session.
+ * Call from endInterviewSession() after status set to "completed".
+ */
+export async function addPointsForInterviewCompletion(
+  userId: number,
+  sessionId: number,
+  sessionType?: string,
+  overallScore?: number | null
+): Promise<{ pointsAdded: number; newTotal: number } | null> {
+  return addPoints(userId, "INTERVIEW_COMPLETED", undefined, {
+    sessionId,
+    sessionType,
+    overallScore,
+  });
+}
+
+/**
  * Hook: Add points when user completes a career plan milestone.
  * Call from PATCH /api/plans/[id] and updateMilestone() server action
  * when status transitions to "completed".

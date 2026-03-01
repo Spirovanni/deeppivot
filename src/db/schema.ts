@@ -139,6 +139,27 @@ export const notificationsRelations = relations(notificationsTable, ({ one }) =>
 }));
 
 // ============================================
+// ADMIN ANNOUNCEMENTS (Phase 16.3)
+// ============================================
+
+export const adminAnnouncementsTable = pgTable("admin_announcements", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  title: varchar({ length: 255 }).notNull(),
+  body: text().notNull(),
+  createdBy: integer().references(() => usersTable.id, { onDelete: "set null" }),
+  createdAt: timestamp().notNull().defaultNow(),
+}, (table) => {
+  return [index("admin_announcements_created_idx").on(table.createdAt)];
+});
+
+export const adminAnnouncementsRelations = relations(adminAnnouncementsTable, ({ one }) => ({
+  creator: one(usersTable, {
+    fields: [adminAnnouncementsTable.createdBy],
+    references: [usersTable.id],
+  }),
+}));
+
+// ============================================
 // JOB TRACKER MODELS (Epicflow Extension)
 // ============================================
 

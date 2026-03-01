@@ -788,4 +788,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-250 (Mentor connection notification) closed. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-241 (GET notifications paginated) closed. Run `bd ready` for Phase 16.2–16.5 next work.*

@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { FileText, Loader2, Link2 } from "lucide-react";
+import { FileText, Loader2, Link2, Sparkles } from "lucide-react";
 import {
     getCoverLetterForJobApplication,
     getLinkableCoverLettersForApplication,
     linkCoverLetterToJobApplication,
 } from "@/src/lib/actions/cover-letter-preview";
+import { GenerateCoverLetterModal } from "@/components/cover-letter/GenerateCoverLetterModal";
 import type { JobApplication } from "./types";
 
 interface CoverLetterPreviewModalProps {
@@ -34,6 +35,7 @@ export function CoverLetterPreviewModal({
     const [error, setError] = useState<string | null>(null);
     const [linkableLetters, setLinkableLetters] = useState<{ id: number; positionTitle: string; companyName: string | null }[]>([]);
     const [linkingId, setLinkingId] = useState<number | null>(null);
+    const [generateOpen, setGenerateOpen] = useState(false);
 
     const refresh = () => {
         if (!job) return;
@@ -128,12 +130,31 @@ export function CoverLetterPreviewModal({
                     {!loading && !error && !content && (
                         <div className="space-y-4 py-4">
                             <p className="text-sm text-muted-foreground">
-                                No cover letter linked to this application. Link one below, add one when applying
-                                through the marketplace, or generate one from the Job Description Library.
+                                No cover letter linked to this application. Generate one with AI, link an existing one below,
+                                or add one when applying through the marketplace.
                             </p>
+
+                            <Button
+                                className="w-full bg-brand-600 hover:bg-brand-700"
+                                onClick={() => setGenerateOpen(true)}
+                            >
+                                <Sparkles className="size-4 mr-2" />
+                                Generate with AI
+                            </Button>
+
+                            <GenerateCoverLetterModal
+                                open={generateOpen}
+                                onOpenChange={setGenerateOpen}
+                                jobApplicationId={job?.id}
+                                onComplete={(_coverLetterId, generatedContent) => {
+                                    setContent(generatedContent);
+                                    setGenerateOpen(false);
+                                }}
+                            />
+
                             {linkableLetters.length > 0 && (
                                 <div>
-                                    <p className="text-xs font-medium text-muted-foreground mb-2">Link a cover letter:</p>
+                                    <p className="text-xs font-medium text-muted-foreground mb-2">Or link an existing cover letter:</p>
                                     <ul className="space-y-1.5">
                                         {linkableLetters.map((cl) => (
                                             <li

@@ -775,6 +775,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] API: PATCH /api/notifications/[id]/read (deeppivot-242) — mark notification as read, auth + ownership
 - [x] API: PATCH /api/notifications/read-all (deeppivot-243) — mark all as read for current user
 - [x] System: Real-time notification layer via SSE (deeppivot-244) — GET /api/notifications/stream, useNotificationStream hook
+- [x] UI: Notification Bell icon in DashboardTopBar (deeppivot-245) — Bell + unread badge in NotificationDropdown
 - [x] UI: Notification dropdown popover (deeppivot-247) — NotificationDropdown in DashboardTopBar
 - [x] Event trigger: Mentor connection accepted → in-app notification (deeppivot-250) — createNotification, updateConnectionStatus
 - [x] Event trigger: Interview feedback ready → in-app notification (deeppivot-251) — createNotification in processInterviewFeedback Inngest step
@@ -806,4 +807,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-244 (Real-time notification layer via SSE) closed. GET /api/notifications/stream polls DB every 5s, pushes notifications-changed events; useNotificationStream + NotificationDropdown auto-refetch. Phase 16.3 Notification Center progressing.*
+*Last updated: 2026-02-28 — deeppivot-245 (Notification Bell icon in DashboardTopBar) closed as already implemented. NotificationDropdown includes Bell icon + unread badge. Phase 16.3 Notification Center progressing.*

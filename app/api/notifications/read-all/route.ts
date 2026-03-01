@@ -34,7 +34,7 @@ export async function PATCH() {
                 eq(notificationsTable.isRead, false)
             )
         )
-        .returning({ id: notificationsTable.id });
+        .returning();
 
     return NextResponse.json({
         success: true,

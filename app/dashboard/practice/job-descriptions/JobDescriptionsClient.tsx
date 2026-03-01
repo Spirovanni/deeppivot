@@ -24,6 +24,7 @@ export function JobDescriptionsClient({ initialJobs }: Props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingJob, setEditingJob] = useState<JobDescription | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [addToTrackerJob, setAddToTrackerJob] = useState<JobDescription | null>(null);
     const router = useRouter();
 
     const handleDelete = async (id: number) => {

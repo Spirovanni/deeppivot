@@ -25,7 +25,7 @@ const generateSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-    const rl = await rateLimit(request, "INTERVIEW_START");
+    const rl = await rateLimit(request, "COVER_LETTER_GENERATE");
     if (!rl.success) return rl.response;
 
     try {

@@ -33,6 +33,8 @@ export const RATE_LIMIT_PROFILES = {
   INTERVIEW_START: { requests: 5, window: "1 m" },
   /** AI gap analysis — expensive */
   GAP_ANALYSIS: { requests: 5, window: "1 m" },
+  /** Cover letter generation (LLM call) — per-user, moderate limit */
+  COVER_LETTER_GENERATE: { requests: 10, window: "1 m" },
   /** ElevenLabs signed URL generation */
   ELEVENLABS_URL: { requests: 10, window: "1 m" },
   /** Billing checkout — prevent double-submits */

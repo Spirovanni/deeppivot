@@ -35,7 +35,7 @@ const generateSchema = z.object({
  * Response headers include X-Cover-Letter-Id when the DB row is created.
  */
 export async function POST(request: NextRequest) {
-    const rl = await rateLimit(request, "INTERVIEW_START");
+    const rl = await rateLimit(request, "COVER_LETTER_GENERATE");
     if (!rl.success) return rl.response;
 
     try {

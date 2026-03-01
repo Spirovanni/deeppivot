@@ -36,6 +36,7 @@ import {
   BarChart3,
   Menu,
   Briefcase,
+  CreditCard,
   Users,
   Shield,
   GraduationCap,
@@ -83,6 +84,26 @@ function getDashboardLabel(role: UserRole | null): string {
   }
 }
 
+/** All dashboards — shown to system_admin (super user) */
+const ALL_DASHBOARD_ITEMS = [
+  { href: "/admin", label: "Admin Panel", icon: Shield },
+  { href: "/dashboard", label: "User Dashboard", icon: BarChart3 },
+  { href: "/dashboard/trailblazer", label: "Trailblazer Dashboard", icon: BarChart3 },
+  { href: "/dashboard/interviews", label: "AI Interviews", icon: Mic2 },
+  { href: "/dashboard/archetype", label: "Career Archetype", icon: UserCircle },
+  { href: "/dashboard/career-plan", label: "Career Plan", icon: MapPin },
+  { href: "/dashboard/job-tracker", label: "Job Tracker", icon: Briefcase },
+  { href: "/dashboard/education", label: "Education Explorer", icon: GraduationCap },
+  { href: "/dashboard/talent-scout", label: "Talent Scout (Employer)", icon: Target },
+  { href: "/employer/jobs", label: "Post & Manage Jobs", icon: Briefcase },
+  { href: "/employer/onboarding", label: "Employer Onboarding", icon: FileText },
+  { href: "/dashboard/mentor", label: "Mentor Hub", icon: Users },
+  { href: "/dashboard/mentors", label: "My Mentees", icon: UserCircle },
+  { href: "/dashboard/wdb", label: "WDB Portal", icon: Users },
+  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
+];
+
 /** Role-specific product dropdown items */
 function getProductItems(role: UserRole | null) {
   switch (role) {
@@ -98,12 +119,13 @@ function getProductItems(role: UserRole | null) {
         { href: "/dashboard/mentors", label: "My Mentees", icon: UserCircle },
       ];
     case "admin":
-    case "system_admin":
       return [
         { href: "/admin", label: "Admin Panel", icon: Shield },
         { href: "/dashboard", label: "User Dashboard", icon: BarChart3 },
         { href: "/dashboard/interviews", label: "AI Interviews", icon: Mic2 },
       ];
+    case "system_admin":
+      return ALL_DASHBOARD_ITEMS;
     default:
       return [
         { href: "/dashboard", label: "Dashboard", icon: BarChart3 },

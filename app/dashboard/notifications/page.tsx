@@ -5,8 +5,9 @@ import { usersTable, notificationsTable } from "@/src/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { Bell } from "lucide-react";
 import { NotificationList } from "./_components/NotificationList";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
     title: "Notifications | DeepPivot",
     description: "View all your in-app notifications.",
 };
@@ -44,14 +45,21 @@ export default async function NotificationsPage() {
         createdAt: n.createdAt instanceof Date ? n.createdAt.toISOString() : n.createdAt,
     }));
 
+    const unreadCount = items.filter((n) => !n.isRead).length;
+
     return (
         <div className="mx-auto max-w-2xl space-y-6 px-4 py-8">
+            {/* Page header */}
             <div className="flex items-center gap-3">
-                <Bell className="size-6 text-muted-foreground" />
+                <div className="flex size-10 items-center justify-center rounded-full bg-muted">
+                    <Bell className="size-5 text-muted-foreground" aria-hidden />
+                </div>
                 <div>
                     <h1 className="text-xl font-semibold">Notifications</h1>
                     <p className="text-sm text-muted-foreground">
-                        {items.filter((n) => !n.isRead).length} unread
+                        {unreadCount > 0
+                            ? `${unreadCount} unread notification${unreadCount !== 1 ? "s" : ""}`
+                            : "All caught up"}
                     </p>
                 </div>
             </div>

@@ -776,7 +776,10 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] API: PATCH /api/notifications/read-all (deeppivot-243) — mark all as read for current user
 - [x] System: Real-time notification layer via SSE (deeppivot-244) — GET /api/notifications/stream, useNotificationStream hook
 - [x] UI: Notification Bell icon in DashboardTopBar (deeppivot-245) — Bell + unread badge in NotificationDropdown
+- [x] UI: Notification unread count badge (deeppivot-246) — Dedicated GET /api/notifications/unread-count endpoint for accurate badge count on mount; badge now has ring-2 ring-background polish; pill badge inside dropdown header showing live unread count
 - [x] UI: Notification dropdown popover (deeppivot-247) — NotificationDropdown in DashboardTopBar
+- [x] UI: Notification Empty state and loading skeletons (deeppivot-248) — 4-row Skeleton loading state in dropdown; BellOff icon empty state with 'You're all caught up' heading; Next.js loading.tsx with 6-card skeleton layout for /dashboard/notifications page
+- [x] UI: "View All Notifications" full page (deeppivot-249) — Enhanced /dashboard/notifications: type icons (Mic2/Users/Megaphone/FileText) with colored icon containers for unread items, type pill badge, relative timestamps, "Mark all as read" button (CheckCheck), unread indicator dot, border-primary/20 highlight; "View all notifications" footer link in dropdown; loading.tsx skeleton screen
 - [x] Event trigger: Mentor connection accepted → in-app notification (deeppivot-250) — createNotification, updateConnectionStatus
 - [x] Event trigger: Interview feedback ready → in-app notification (deeppivot-251) — createNotification in processInterviewFeedback Inngest step
 - [x] Admin: /admin/announcements listing page (deeppivot-253) — listing + new form, POST broadcasts to users
@@ -807,4 +810,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-245 (Notification Bell icon in DashboardTopBar) closed as already implemented. NotificationDropdown includes Bell icon + unread badge. Phase 16.3 Notification Center progressing.*
+*Last updated: 2026-03-01 — deeppivot-246/248/249 (Notification unread count badge, empty state/loading skeletons, View All page) closed. Added GET /api/notifications/unread-count endpoint, Skeleton loading UI in NotificationDropdown, enhanced NotificationList with type icons + Mark all read + relative timestamps, and loading.tsx skeleton screen for /dashboard/notifications. Phase 16.3 Notification Center UI now complete.*

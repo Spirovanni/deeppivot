@@ -1,25 +1,22 @@
 import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { OpenAI } from "openai";
 import { COVER_LETTER_REGENERATE_SYSTEM_PROMPT } from "@/src/lib/llm/prompts/regeneration";
-import { checkRateLimit, RateLimitProfile } from "@/src/lib/rate-limit";
+import { rateLimitByUser } from "@/src/lib/rate-limit";
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const { userId } = await auth();
         if (!userId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Rate limiting
-        const { success } = await checkRateLimit(userId, RateLimitProfile.COVER_LETTER_GENERATE);
-        if (!success) {
-            return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-        }
+        const rl = await rateLimitByUser(req, userId, "COVER_LETTER_GENERATE");
+        if (!rl.success) return rl.response;
 
         const { fullContent, paragraphIndex, instructions, tone } = await req.json();
 

@@ -760,7 +760,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: Real-time streaming response for cover letter generation (deeppivot-224) — streamCoverLetter() via OpenAI streaming API, POST /api/cover-letters/generate/stream route with ReadableStream + DB persist on completion, GenerateCoverLetterModal with JD/resume/tone selectors + live cursor animation, "Generate with AI" button in CoverLetterPreviewModal
 - [x] System: Rate limit cover letter generation (deeppivot-230) — COVER_LETTER_GENERATE profile (10 req/min) in rate-limit.ts, wired into both generate and stream routes
 - [x] UI: Tone selection dropdown in CL generator (deeppivot-233) — implemented as part of deeppivot-224 GenerateCoverLetterModal (professional/conversational/enthusiastic)
-- [ ] Generating and refining personalized cover letters based on target job descriptions and matching experience.
+- [x] Generating and refining personalized cover letters based on target job descriptions and matching experience. (deeppivot-223, deeppivot-225) — /dashboard/cover-letters dashboard page, CoverLetterGenerator with streaming, CoverLetterEditor with Markdown preview & persistent storage.
 
 ### 3. In-App Notification Center & Admin Announcements
 - Real-time notification system (WebSockets/SSE) for key platform events (e.g., feedback ready, mentor connection).
@@ -782,6 +782,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Design: 10 badge icons SVG (deeppivot-279) — public/badges/*.svg + gamification-badges.ts
 - [x] QA: Gamification engine edge cases and timezone testing (deeppivot-294) — vitest unit tests + e2e/gamification.spec.ts
 - [x] Admin: Manual override/grant points tool (deeppivot-293) — POST /api/admin/users/[userId]/gamification, UserDetailForm
+- [x] DB Schema: `user_badges` link table (deeppivot-280) — userBadgesTable (id, userId FK cascade, badgeId varchar(64), unlockedAt, unique(userId,badgeId), index on userId) + relations + migration 0032
 - [ ] Hook: Add points on interview completion
 - [ ] Hook: Add points on career plan milestone completion
 - [ ] Cron: Reset streaks if no weekly activity
@@ -798,4 +799,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-01 — deeppivot-230 (Rate limit cover letter generation) and deeppivot-233 (Tone selection dropdown) closed. COVER_LETTER_GENERATE profile added to rate-limit.ts. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-03-01 — deeppivot-280 (DB Schema: user_badges link table) closed. userBadgesTable added to schema.ts with userId FK (cascade), badgeId varchar(64), unique constraint, index. Migration 0032_special_johnny_blaze.sql generated. Phase 16.4 gamification progressing.*

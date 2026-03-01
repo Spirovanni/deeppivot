@@ -87,12 +87,33 @@ export const userGamificationRelations = relations(userGamificationTable, ({ one
   }),
 }));
 
+// USER BADGES (Phase 16.4)
+// ============================================
+
+export const userBadgesTable = pgTable("user_badges", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  badgeId: varchar({ length: 64 }).notNull(),
+  unlockedAt: timestamp().notNull().defaultNow(),
+}, (table) => [
+  unique().on(table.userId, table.badgeId),
+  index("idx_user_badges_user_id").on(table.userId),
+]);
+
+export const userBadgesRelations = relations(userBadgesTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [userBadgesTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
 // ============================================
 // USER RELATIONS
 // ============================================
 
 export const usersRelations = relations(usersTable, ({ many, one }) => ({
   gamification: one(userGamificationTable),
+  badges: many(userBadgesTable),
   jobBoards: many(jobBoardsTable),
   interviewSessions: many(interviewSessionsTable),
   careerArchetype: one(careerArchetypesTable),

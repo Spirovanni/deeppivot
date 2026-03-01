@@ -9,8 +9,6 @@ import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
-
 import { AddJobDescriptionModal } from "@/components/jobs/AddJobDescriptionModal";
 import { EditJobDescriptionModal } from "@/components/jobs/EditJobDescriptionModal";
 import { AddToJobTrackerModal } from "@/components/jobs/AddToJobTrackerModal";

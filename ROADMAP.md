@@ -756,6 +756,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: Resume upload drag-and-drop zone (deeppivot-218) — AddResumeModal Upload tab
 - [x] UI: Parsed resume data verification form (deeppivot-219) — ParsedResumeVerificationModal, Verify data in card menu
 - [x] UI: Cover letter preview modal in job Kanban board (deeppivot-237) — CoverLetterPreviewModal, View Cover Letter in card menu
+- [x] Integration: Link cover letters to Job Tracker (deeppivot-235) — coverLetterId + jobDescriptionId on job_applications, Link UI, Add from JD library
 - [ ] Generating and refining personalized cover letters based on target job descriptions and matching experience.
 
 ### 3. In-App Notification Center & Admin Announcements
@@ -793,4 +794,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-01 — deeppivot-313 (Signed CSV export link) closed. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-03-01 — deeppivot-235 (Link cover letters to Job Tracker) closed. Run `bd ready` for Phase 16.2–16.5 next work.*

@@ -2,7 +2,7 @@
 
 import { db } from "@/src/db";
 import { jobBoardsTable, jobColumnsTable } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 
 const DEFAULT_COLUMNS = [
   { name: "Wishlist", order: 0 },
@@ -47,5 +47,18 @@ export async function initializeJobBoard(userId: number) {
     }))
   );
 
+  return board;
+}
+
+/** Get user's board with columns for Add to Job Tracker (deeppivot-235) */
+export async function getBoardWithColumns(userId: number) {
+  const board = await db.query.jobBoardsTable.findFirst({
+    where: eq(jobBoardsTable.userId, userId),
+    with: {
+      columns: {
+        orderBy: [asc(jobColumnsTable.order)],
+      },
+    },
+  });
   return board;
 }

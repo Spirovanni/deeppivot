@@ -6,6 +6,7 @@ import { eq, and } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { sendMentorConnectionEmail } from "@/src/lib/email";
+import { createNotification } from "@/src/lib/notifications";
 
 // ─── Seed data (12 mentor profiles) ─────────────────────────────────────────
 
@@ -216,7 +217,7 @@ export async function updateConnectionStatus(
   }
 
   if (status === "accepted") {
-    // Fetch details for the email
+    // Fetch details for the email and in-app notification
     const [learnerUser] = await db
       .select({ learnerName: usersTable.name, learnerEmail: usersTable.email })
       .from(usersTable)
@@ -239,6 +240,15 @@ export async function updateConnectionStatus(
         console.error("Failed to send mentor connection accepted email:", err);
       });
     }
+
+    // In-app notification for the learner (deeppivot-250)
+    void createNotification({
+      userId: connection.userId,
+      title: "Mentor connection accepted",
+      body: `${mentorUser?.mentorName ?? "Your mentor"} has accepted your connection request.`,
+      type: "mentor",
+      link: "/dashboard/mentors",
+    });
   }
 
   revalidatePath("/dashboard/mentors");

@@ -762,7 +762,9 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - Real-time notification system (WebSockets/SSE) for key platform events (e.g., feedback ready, mentor connection).
 - Admin broadcast tools for sending system announcements and redirecting users.
 - [x] DB Schema: `notifications` table (deeppivot-239) — id, userId, title, body, isRead, type, link + indexes on userId, isRead, type. Migration 0028.
+- [x] API: GET /api/notifications (Paginated) (deeppivot-241) — ?page=&limit=, auth, order by createdAt desc
 - [x] API: PATCH /api/notifications/[id]/read (deeppivot-242) — mark notification as read, auth + ownership
+- [x] Event trigger: Mentor connection accepted → in-app notification (deeppivot-250) — createNotification, updateConnectionStatus
 - [x] QA: Real-time delivery and Admin broadcast E2E (deeppivot-266) — stub APIs + e2e/notifications-admin-broadcast.spec.ts
 
 ### 4. Gamification & Weekly Streaks
@@ -786,4 +788,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-242 (PATCH notifications read) closed. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-250 (Mentor connection notification) closed. Run `bd ready` for Phase 16.2–16.5 next work.*

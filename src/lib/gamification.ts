@@ -67,7 +67,7 @@ export async function addPoints(
         highestStreak: 0,
         lastActivityAt: new Date(),
       })
-      .returning({ points: userGamificationTable.points });
+      .returning();
 
     return inserted
       ? { pointsAdded: points, newTotal: inserted.points }

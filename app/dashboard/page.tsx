@@ -93,7 +93,8 @@ export default async function DashboardPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  // Role-based redirect: send non-default roles to their dedicated dashboard
+  // Role-based redirect: send non-default roles to their dedicated dashboard.
+  // Skip redirect for admin/system_admin so they can access the user dashboard when they choose it.
   const [row] = await db
     .select({ role: usersTable.role })
     .from(usersTable)
@@ -101,7 +102,8 @@ export default async function DashboardPage() {
     .limit(1);
 
   const userRole = (row?.role as UserRole) ?? "user";
-  if (userRole !== "user") {
+  const isSuperUser = userRole === "admin" || userRole === "system_admin";
+  if (!isSuperUser && userRole !== "user") {
     redirect(getUserDashboardRoute(userRole));
   }
 

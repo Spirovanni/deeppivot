@@ -51,6 +51,8 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 - **education_programs** — 28 seeded programmes (bootcamps, certs, degrees, workshops) with ROI scores (LP9)
 - **funding_opportunities** — 9 seeded funding sources (grants, scholarships, loans, ISAs) with eligibility and deadlines (LP9)
 - **user_gamification** — Per-user points, currentStreak, highestStreak for Phase 16.4 gamification
+- **user_badges** — Per-user unlocked badges with unique(userId, badgeId) constraint (Phase 16.4)
+- **gamification_events** — Audit log of all gamification point awards with eventType, points, metadata JSONB (Phase 16.4)
 - **matching_feedback** — Application outcomes (hired/rejected) with signals for weight learning (Phase 16.5)
 - **matching_weights** — Configurable weights updated by feedback aggregation (Phase 16.5)
 
@@ -783,6 +785,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] QA: Gamification engine edge cases and timezone testing (deeppivot-294) — vitest unit tests + e2e/gamification.spec.ts
 - [x] Admin: Manual override/grant points tool (deeppivot-293) — POST /api/admin/users/[userId]/gamification, UserDetailForm
 - [x] DB Schema: `user_badges` link table (deeppivot-280) — userBadgesTable (id, userId FK cascade, badgeId varchar(64), unlockedAt, unique(userId,badgeId), index on userId) + relations + migration 0032
+- [x] DB Schema: `gamification_events` audit log (deeppivot-268) — gamificationEventsTable (id, userId FK cascade, eventType varchar(64), points, metadata JSONB, createdAt) + 3 indexes (userId, eventType, createdAt) + logGamificationEvent() + addPoints() now logs to audit table. Migration 0033
 - [ ] Hook: Add points on interview completion
 - [ ] Hook: Add points on career plan milestone completion
 - [ ] Cron: Reset streaks if no weekly activity
@@ -799,4 +802,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-01 — deeppivot-280 (DB Schema: user_badges link table) closed. userBadgesTable added to schema.ts with userId FK (cascade), badgeId varchar(64), unique constraint, index. Migration 0032_special_johnny_blaze.sql generated. Phase 16.4 gamification progressing.*
+*Last updated: 2026-03-01 — deeppivot-268 (DB Schema: gamification_events audit log) closed. gamificationEventsTable added to schema.ts with eventType, points, metadata JSONB, 3 indexes. addPoints() now logs to audit table. Migration 0033_nervous_emma_frost.sql generated. Phase 16.4 gamification progressing.*

@@ -107,6 +107,29 @@ export const userBadgesRelations = relations(userBadgesTable, ({ one }) => ({
   }),
 }));
 
+// GAMIFICATION EVENTS AUDIT LOG (Phase 16.4)
+// ============================================
+
+export const gamificationEventsTable = pgTable("gamification_events", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  eventType: varchar({ length: 64 }).notNull(),
+  points: integer().notNull().default(0),
+  metadata: jsonb(),
+  createdAt: timestamp().notNull().defaultNow(),
+}, (table) => [
+  index("idx_gamification_events_user_id").on(table.userId),
+  index("idx_gamification_events_type").on(table.eventType),
+  index("idx_gamification_events_created_at").on(table.createdAt),
+]);
+
+export const gamificationEventsRelations = relations(gamificationEventsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [gamificationEventsTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
 // ============================================
 // USER RELATIONS
 // ============================================
@@ -114,6 +137,7 @@ export const userBadgesRelations = relations(userBadgesTable, ({ one }) => ({
 export const usersRelations = relations(usersTable, ({ many, one }) => ({
   gamification: one(userGamificationTable),
   badges: many(userBadgesTable),
+  gamificationEvents: many(gamificationEventsTable),
   jobBoards: many(jobBoardsTable),
   interviewSessions: many(interviewSessionsTable),
   careerArchetype: one(careerArchetypesTable),

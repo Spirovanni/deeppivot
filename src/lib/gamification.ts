@@ -6,7 +6,7 @@
  */
 
 import { db } from "@/src/db";
-import { userGamificationTable } from "@/src/db/schema";
+import { userGamificationTable, gamificationEventsTable } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
 
 /** Points awarded per action (configurable) */
@@ -27,13 +27,37 @@ export function toUtcIsoString(date: Date): string {
 }
 
 /**
+ * Log a gamification event to the audit log.
+ * Non-blocking: errors are logged but do not throw.
+ */
+export async function logGamificationEvent(
+  userId: number,
+  eventType: string,
+  points: number,
+  metadata?: Record<string, unknown>
+): Promise<void> {
+  try {
+    await db.insert(gamificationEventsTable).values({
+      userId,
+      eventType,
+      points,
+      metadata: metadata ?? null,
+    });
+  } catch (err) {
+    console.error("[gamification] logGamificationEvent failed:", err);
+  }
+}
+
+/**
  * Add points for a user action. Upserts user_gamification row if needed.
+ * Also logs the event to the gamification_events audit table.
  * Non-blocking: errors are logged but do not throw.
  */
 export async function addPoints(
   userId: number,
   event: GamificationEvent,
-  pointsOverride?: number
+  pointsOverride?: number,
+  metadata?: Record<string, unknown>
 ): Promise<{ pointsAdded: number; newTotal: number } | null> {
   const points = pointsOverride ?? GAMIFICATION_POINTS[event];
   if (points <= 0) return null;
@@ -45,8 +69,10 @@ export async function addPoints(
       .where(eq(userGamificationTable.userId, userId))
       .limit(1);
 
+    let newTotal: number;
+
     if (row) {
-      const newTotal = row.points + points;
+      newTotal = row.points + points;
       await db
         .update(userGamificationTable)
         .set({
@@ -55,23 +81,26 @@ export async function addPoints(
           updatedAt: new Date(),
         })
         .where(eq(userGamificationTable.userId, userId));
-      return { pointsAdded: points, newTotal };
+    } else {
+      const [inserted] = await db
+        .insert(userGamificationTable)
+        .values({
+          userId,
+          points,
+          currentStreak: 0,
+          highestStreak: 0,
+          lastActivityAt: new Date(),
+        })
+        .returning();
+
+      if (!inserted) return null;
+      newTotal = inserted.points;
     }
 
-    const [inserted] = await db
-      .insert(userGamificationTable)
-      .values({
-        userId,
-        points,
-        currentStreak: 0,
-        highestStreak: 0,
-        lastActivityAt: new Date(),
-      })
-      .returning();
+    // Log to audit table (fire-and-forget)
+    logGamificationEvent(userId, event, points, metadata);
 
-    return inserted
-      ? { pointsAdded: points, newTotal: inserted.points }
-      : null;
+    return { pointsAdded: points, newTotal };
   } catch (err) {
     console.error("[gamification] addPoints failed:", err);
     return null;

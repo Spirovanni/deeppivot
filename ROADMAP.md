@@ -757,6 +757,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: Parsed resume data verification form (deeppivot-219) — ParsedResumeVerificationModal, Verify data in card menu
 - [x] UI: Cover letter preview modal in job Kanban board (deeppivot-237) — CoverLetterPreviewModal, View Cover Letter in card menu
 - [x] Integration: Link cover letters to Job Tracker (deeppivot-235) — coverLetterId + jobDescriptionId on job_applications, Link UI, Add from JD library
+- [x] UI: Real-time streaming response for cover letter generation (deeppivot-224) — streamCoverLetter() via OpenAI streaming API, POST /api/cover-letters/generate/stream route with ReadableStream + DB persist on completion, GenerateCoverLetterModal with JD/resume/tone selectors + live cursor animation, "Generate with AI" button in CoverLetterPreviewModal
 - [ ] Generating and refining personalized cover letters based on target job descriptions and matching experience.
 
 ### 3. In-App Notification Center & Admin Announcements
@@ -795,4 +796,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-01 — deeppivot-247 (Notification dropdown popover) closed. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-03-01 — deeppivot-224 (Real-time streaming cover letter generation) closed. POST /api/cover-letters/generate/stream, GenerateCoverLetterModal, "Generate with AI" in CoverLetterPreviewModal. Run `bd ready` for Phase 16.2–16.5 next work.*

@@ -116,3 +116,19 @@ export async function addPointsForJobApplication(
 ): Promise<{ pointsAdded: number; newTotal: number } | null> {
   return addPoints(userId, "JOB_APPLICATION_SUBMITTED");
 }
+
+/**
+ * Hook: Add points when user completes a career plan milestone.
+ * Call from PATCH /api/plans/[id] and updateMilestone() server action
+ * when status transitions to "completed".
+ */
+export async function addPointsForMilestoneCompletion(
+  userId: number,
+  milestoneId: number,
+  milestoneTitle?: string
+): Promise<{ pointsAdded: number; newTotal: number } | null> {
+  return addPoints(userId, "MILESTONE_COMPLETED", undefined, {
+    milestoneId,
+    milestoneTitle,
+  });
+}

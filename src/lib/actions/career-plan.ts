@@ -9,6 +9,7 @@ import {
 import { eq, and, asc } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { addPointsForMilestoneCompletion } from "@/src/lib/gamification";
 
 const REVALIDATE = "/dashboard/career-plan";
 
@@ -74,13 +75,27 @@ export async function updateMilestone(
   const user = await getDbUser();
   const userId = user.id;
 
+  // Fetch current status to detect completion transition
+  const [existing] = await db
+    .select({ status: careerMilestonesTable.status })
+    .from(careerMilestonesTable)
+    .where(
+      and(
+        eq(careerMilestonesTable.id, milestoneId),
+        eq(careerMilestonesTable.userId, userId)
+      )
+    )
+    .limit(1);
+
+  const newStatus = data.status ?? "planned";
+
   await db
     .update(careerMilestonesTable)
     .set({
       title: data.title,
       description: data.description ?? null,
       targetDate: data.targetDate ? new Date(data.targetDate) : null,
-      status: data.status ?? "planned",
+      status: newStatus,
       updatedAt: new Date(),
     })
     .where(
@@ -89,6 +104,11 @@ export async function updateMilestone(
         eq(careerMilestonesTable.userId, userId)
       )
     );
+
+  // Award gamification points when milestone transitions to "completed"
+  if (newStatus === "completed" && existing?.status !== "completed") {
+    addPointsForMilestoneCompletion(userId, milestoneId, data.title);
+  }
 
   revalidatePath(REVALIDATE);
 }

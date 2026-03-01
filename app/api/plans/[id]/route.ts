@@ -7,6 +7,7 @@ import {
   careerResourcesTable,
 } from "@/src/db/schema";
 import { eq, and, asc } from "drizzle-orm";
+import { addPointsForMilestoneCompletion } from "@/src/lib/gamification";
 
 async function getDbUserId(): Promise<number | null> {
   const { userId } = await auth();
@@ -111,6 +112,14 @@ export async function PATCH(
         )
       )
       .returning();
+
+    // Award gamification points when milestone transitions to "completed"
+    if (
+      body.status === "completed" &&
+      existing.status !== "completed"
+    ) {
+      addPointsForMilestoneCompletion(userId, id, milestone?.title);
+    }
 
     return NextResponse.json(milestone);
   } catch (error) {

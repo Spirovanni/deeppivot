@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/src/lib/rbac";
 import { db } from "@/src/db";
-import { usersTable, interviewSessionsTable, subscriptionsTable } from "@/src/db/schema";
+import { usersTable, interviewSessionsTable, subscriptionsTable, userGamificationTable } from "@/src/db/schema";
 import { eq, count } from "drizzle-orm";
 import Link from "next/link";
 import { ArrowLeft, User } from "lucide-react";
@@ -45,9 +45,10 @@ export default async function UserDetailPage({ params }: Props) {
 
     if (!user) notFound();
 
-    const [[{ totalSessions }], [sub]] = await Promise.all([
+    const [[{ totalSessions }], [sub], [gam]] = await Promise.all([
         db.select({ totalSessions: count() }).from(interviewSessionsTable).where(eq(interviewSessionsTable.userId, uid)),
         db.select({ planId: subscriptionsTable.planId, status: subscriptionsTable.status }).from(subscriptionsTable).where(eq(subscriptionsTable.userId, uid)).limit(1),
+        db.select({ points: userGamificationTable.points, currentStreak: userGamificationTable.currentStreak, highestStreak: userGamificationTable.highestStreak }).from(userGamificationTable).where(eq(userGamificationTable.userId, uid)).limit(1),
     ]);
 
     const profileFields = [
@@ -57,6 +58,7 @@ export default async function UserDetailPage({ params }: Props) {
         { label: "LinkedIn", value: user.linkedinUrl ?? "—" },
         { label: "Plan", value: sub ? `${sub.planId} (${sub.status})` : "free" },
         { label: "Sessions", value: String(totalSessions) },
+        { label: "Points", value: gam ? String(gam.points) : "0" },
         { label: "Joined", value: new Date(user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) },
     ];
 
@@ -118,6 +120,9 @@ export default async function UserDetailPage({ params }: Props) {
                     linkedinUrl: user.linkedinUrl,
                     createdAt: user.createdAt.toISOString(),
                     totalSessions,
+                    points: gam?.points ?? 0,
+                    currentStreak: gam?.currentStreak ?? 0,
+                    highestStreak: gam?.highestStreak ?? 0,
                 }}
             />
         </div>

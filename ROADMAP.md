@@ -753,6 +753,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Automating the extraction of user information from uploaded resumes. (DB Schema: user_resumes)
 - [x] DB Schema: `parsed_resume_data` JSONB structure (deeppivot-212) — ResumeExtraction type, user_resumes.parsedData
 - [x] UI: Resume management dashboard (deeppivot-217) — /dashboard/practice/resumes, AddResumeModal, PATCH/DELETE APIs
+- [x] UI: Resume upload drag-and-drop zone (deeppivot-218) — AddResumeModal Upload tab
 - [x] UI: Parsed resume data verification form (deeppivot-219) — ParsedResumeVerificationModal, Verify data in card menu
 - [x] UI: Cover letter preview modal in job Kanban board (deeppivot-237) — CoverLetterPreviewModal, View Cover Letter in card menu
 - [ ] Generating and refining personalized cover letters based on target job descriptions and matching experience.
@@ -761,6 +762,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - Real-time notification system (WebSockets/SSE) for key platform events (e.g., feedback ready, mentor connection).
 - Admin broadcast tools for sending system announcements and redirecting users.
 - [x] DB Schema: `notifications` table (deeppivot-239) — id, userId, title, body, isRead, type, link + indexes on userId, isRead, type. Migration 0028.
+- [x] API: PATCH /api/notifications/[id]/read (deeppivot-242) — mark notification as read, auth + ownership
 - [x] QA: Real-time delivery and Admin broadcast E2E (deeppivot-266) — stub APIs + e2e/notifications-admin-broadcast.spec.ts
 
 ### 4. Gamification & Weekly Streaks
@@ -768,6 +770,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Hook: Add points on job application submitted (10 pts via `addPointsForJobApplication` in POST /api/jobs/[jobId]/apply)
 - [x] Design: 10 badge icons SVG (deeppivot-279) — public/badges/*.svg + gamification-badges.ts
 - [x] QA: Gamification engine edge cases and timezone testing (deeppivot-294) — vitest unit tests + e2e/gamification.spec.ts
+- [x] Admin: Manual override/grant points tool (deeppivot-293) — POST /api/admin/users/[userId]/gamification, UserDetailForm
 - [ ] Hook: Add points on interview completion
 - [ ] Hook: Add points on career plan milestone completion
 - [ ] Cron: Reset streaks if no weekly activity
@@ -783,4 +786,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-219 (Parsed resume verification form) closed. ParsedResumeVerificationModal, Verify data in resume dashboard. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-02-28 — deeppivot-242 (PATCH notifications read) closed. Run `bd ready` for Phase 16.2–16.5 next work.*

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import {
     Dialog,
     DialogContent,
@@ -37,7 +37,24 @@ export function AddResumeModal({ open, onOpenChange, onSuccess }: AddResumeModal
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const acceptsPdf = (f: File) => f.type === "application/pdf";
+    const handleFile = useCallback(
+        (file: File | null) => {
+            if (!file) {
+                setSelectedFile(null);
+                return;
+            }
+            if (!acceptsPdf(file)) {
+                toast.error("Only PDF files are accepted");
+                return;
+            }
+            setSelectedFile(file);
+        },
+        []
+    );
 
     const handleReset = () => {
         setTitle("");
@@ -177,25 +194,64 @@ export function AddResumeModal({ open, onOpenChange, onSuccess }: AddResumeModal
                             </div>
                             <div>
                                 <Label>PDF file</Label>
-                                <div className="mt-2 flex items-center gap-2">
-                                    <Input
-                                        ref={fileInputRef}
-                                        type="file"
-                                        accept="application/pdf"
-                                        className="hidden"
-                                        onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
-                                    />
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => fileInputRef.current?.click()}
-                                    >
-                                        Choose PDF
-                                    </Button>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="application/pdf"
+                                    className="hidden"
+                                    onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
+                                />
+                                <div
+                                    role="button"
+                                    tabIndex={0}
+                                    onDragOver={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setIsDragging(true);
+                                    }}
+                                    onDragLeave={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setIsDragging(false);
+                                    }}
+                                    onDrop={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setIsDragging(false);
+                                        const f = e.dataTransfer.files?.[0];
+                                        handleFile(f ?? null);
+                                    }}
+                                    onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className={`mt-2 flex min-h-[120px] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 transition-colors ${
+                                        isDragging
+                                            ? "border-primary bg-primary/5"
+                                            : selectedFile
+                                              ? "border-green-500/30 bg-green-500/5"
+                                              : "border-muted-foreground/25 hover:border-muted-foreground/50 hover:bg-muted/30"
+                                    }`}
+                                >
+                                    <FileUp className={`size-8 shrink-0 ${isDragging || selectedFile ? "text-primary" : "text-muted-foreground"}`} />
+                                    <span className="text-center text-sm text-muted-foreground">
+                                        {selectedFile ? (
+                                            <span className="font-medium text-foreground">{selectedFile.name}</span>
+                                        ) : (
+                                            <>Drag and drop a PDF here, or click to browse</>
+                                        )}
+                                    </span>
                                     {selectedFile && (
-                                        <span className="text-sm text-muted-foreground truncate max-w-[180px]">
-                                            {selectedFile.name}
-                                        </span>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleFile(null);
+                                                fileInputRef.current && (fileInputRef.current.value = "");
+                                            }}
+                                        >
+                                            Remove
+                                        </Button>
                                     )}
                                 </div>
                             </div>

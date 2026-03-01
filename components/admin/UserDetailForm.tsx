@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const ROLES = [
     { value: "user", label: "User" },
@@ -29,6 +32,9 @@ interface User {
     linkedinUrl: string | null;
     createdAt: string;
     totalSessions: number;
+    points: number;
+    currentStreak: number;
+    highestStreak: number;
 }
 
 export function UserDetailForm({ user }: { user: User }) {
@@ -36,6 +42,7 @@ export function UserDetailForm({ user }: { user: User }) {
     const [role, setRole] = useState<RoleValue>(user.role as RoleValue);
     const [loading, setLoading] = useState<string | null>(null);
     const [msg, setMsg] = useState<string | null>(null);
+    const [pointsToGrant, setPointsToGrant] = useState("");
 
     async function patch(body: Record<string, unknown>, successMsg: string) {
         setLoading(successMsg);
@@ -128,6 +135,58 @@ export function UserDetailForm({ user }: { user: User }) {
                             Restore Account
                         </button>
                     )}
+                </div>
+            </div>
+
+            {/* Gamification: grant points */}
+            <div className="rounded-xl border bg-card p-5">
+                <h3 className="font-semibold mb-3">Gamification</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                    Points: <strong>{user.points}</strong>
+                    {user.currentStreak > 0 && ` · Streak: ${user.currentStreak}`}
+                    {user.highestStreak > 0 && ` · Best: ${user.highestStreak}`}
+                </p>
+                <div className="flex flex-wrap items-end gap-3">
+                    <div>
+                        <Label htmlFor="grant-points">Grant points</Label>
+                        <Input
+                            id="grant-points"
+                            type="number"
+                            min={1}
+                            max={10000}
+                            placeholder="e.g. 50"
+                            value={pointsToGrant}
+                            onChange={(e) => setPointsToGrant(e.target.value)}
+                            className="w-24"
+                        />
+                    </div>
+                    <Button
+                        onClick={async () => {
+                            const pts = parseInt(pointsToGrant, 10);
+                            if (!Number.isFinite(pts) || pts < 1) {
+                                setMsg("Enter a valid number (1–10,000)");
+                                return;
+                            }
+                            setLoading("Grant points");
+                            setMsg(null);
+                            const res = await fetch(`/api/admin/users/${user.id}/gamification`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ points: pts }),
+                            });
+                            setLoading(null);
+                            if (res.ok) {
+                                setMsg(`Granted ${pts} points`);
+                                setPointsToGrant("");
+                                router.refresh();
+                            } else {
+                                setMsg("Failed to grant points");
+                            }
+                        }}
+                        disabled={loading !== null}
+                    >
+                        {loading === "Grant points" ? "..." : "Grant"}
+                    </Button>
                 </div>
             </div>
         </div>

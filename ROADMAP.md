@@ -82,6 +82,7 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 /api/admin/archetype-review        Admin: list archetype review queue (GET)
 /api/admin/archetype-review/[id]   Admin: approve/override (PATCH)
 /api/notifications                 Phase 16.3: notifications (GET, auth required)
+/api/notifications/read-all        Phase 16.3: mark all as read (PATCH, auth required) (deeppivot-243)
 /api/admin/announcements           Phase 16.3: admin broadcast (POST, admin only)
 
 /admin                  ### 6. Admin Panel Hooks & Review Dashboard
@@ -802,4 +803,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-01 — deeppivot-272 (Hook: Add points on career plan milestone completion) closed. addPointsForMilestoneCompletion() awards 5 pts when milestone status transitions to "completed", wired into PATCH /api/plans/[id] and updateMilestone() server action. Phase 16.4 gamification progressing.*
+*Last updated: 2026-02-28 — deeppivot-243 (API: PATCH /api/notifications/read-all) closed. Marks all unread notifications for authenticated user as read; returns { success, markedCount }. Phase 16.3 Notification Center progressing.*

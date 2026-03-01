@@ -25,6 +25,7 @@ import { generateCompletion } from "@/src/lib/llm";
 import { mapInterviewToSkills } from "@/src/lib/career-skills";
 import { anonymize } from "@/src/lib/pii";
 import { sendInterviewFeedbackEmail } from "@/src/lib/email";
+import { createNotification } from "@/src/lib/notifications";
 
 export const processInterviewRecording = inngest.createFunction(
   {
@@ -422,6 +423,15 @@ Output format:
         overallScore: session.overallScore,
         strengths,
         sessionId,
+      });
+
+      // In-app notification (deeppivot-251)
+      await createNotification({
+        userId: session.userId,
+        title: "Interview feedback ready",
+        body: `Your ${session.sessionType ?? "interview"} feedback is now available.`,
+        type: "interview",
+        link: `/dashboard/interviews/${sessionId}/feedback`,
       });
     });
 

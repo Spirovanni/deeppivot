@@ -5,6 +5,7 @@ import { count, ilike, isNull, or, desc } from "drizzle-orm";
 import Link from "next/link";
 import { Users } from "lucide-react";
 import { QuickRoleSelect } from "@/components/admin/QuickRoleSelect";
+import { ExportUsersButtons } from "@/components/admin/ExportUsersButtons";
 
 // kept for status badges only
 const ROLE_COLORS: Record<string, string> = {
@@ -63,13 +64,7 @@ export default async function AdminUsersPage({ searchParams }: SearchProps) {
                     <h1 className="text-xl font-bold">Users</h1>
                     <span className="text-sm text-muted-foreground">({total.toLocaleString()} total)</span>
                 </div>
-                <a
-                    href="/api/admin/export/users"
-                    download
-                    className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-                >
-                    Export All Users (CSV)
-                </a>
+                <ExportUsersButtons />
             </div>
 
             {/* Search */}

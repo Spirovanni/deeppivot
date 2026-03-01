@@ -784,6 +784,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports
 - [x] Admin: Advanced Data Export (CSV) for users table — 28 columns, gamification + WDB fields, ?role= & ?includeDeleted= filters
+- [x] Admin API: Generate signed CSV download link (deeppivot-313) — POST /api/admin/export/users/link, GET /api/admin/export/download?token= (15min expiry)
 - [x] Feedback algorithm: Improve matching weights based on outcome — matching_feedback + matching_weights tables, recordMatchingFeedback on hired/rejected, aggregateMatchingFeedback (Inngest cron daily)
 - [x] Privacy UI: "Open to Opportunities" toggle (deeppivot-319) — users.openToOpportunities, profile settings card
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
@@ -792,4 +793,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-257 (Send to Home) closed. Run `bd ready` for Phase 16.2–16.5 next work.*
+*Last updated: 2026-03-01 — deeppivot-313 (Signed CSV export link) closed. Run `bd ready` for Phase 16.2–16.5 next work.*

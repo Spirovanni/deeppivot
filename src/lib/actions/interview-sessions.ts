@@ -10,10 +10,13 @@ import {
   usersTable,
   jobDescriptionsTable,
 } from "@/src/db/schema";
-import { eq, avg, and, asc, desc } from "drizzle-orm";
+import { eq, avg, and, asc, desc, ne } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { addPointsForInterviewCompletion } from "@/src/lib/gamification";
+import { generateCompletion } from "@/src/lib/llm";
+import { anonymize } from "@/src/lib/pii";
+import { mapInterviewToSkills } from "@/src/lib/career-skills";
 
 async function getDbUser(): Promise<{ id: number; organizationId: string | null }> {
   const { userId, orgId } = await auth();
@@ -47,7 +50,8 @@ export async function startInterviewSession(sessionType: string): Promise<number
 }
 
 export async function endInterviewSession(
-  sessionId: number
+  sessionId: number,
+  transcript?: Array<{ role: string; text: string }>
 ): Promise<{ overallScore: number | null; pointsAwarded: number | null }> {
   const [result] = await db
     .select({ avgConfidence: avg(emotionSnapshotsTable.confidence) })
@@ -89,8 +93,131 @@ export async function endInterviewSession(
     pointsAwarded = gamResult?.pointsAdded ?? null;
   }
 
+  // Generate feedback from ElevenLabs live transcript (fire-and-forget)
+  if (transcript && transcript.length > 0) {
+    generateFeedbackFromTranscript(sessionId, transcript).catch((err) =>
+      console.error(`Feedback generation failed for session ${sessionId}:`, err)
+    );
+  }
+
   revalidatePath("/dashboard/interviews");
   return { overallScore, pointsAwarded };
+}
+
+/**
+ * Generate AI feedback directly from ElevenLabs live transcript messages.
+ * Bypasses the Vapi → R2 → Deepgram pipeline since ElevenLabs provides
+ * real-time transcription via WebSocket.
+ */
+async function generateFeedbackFromTranscript(
+  sessionId: number,
+  messages: Array<{ role: string; text: string }>
+) {
+  // Build a readable transcript from the WebSocket messages
+  const transcriptText = messages
+    .map((m) => `${m.role === "user" ? "Candidate" : "Interviewer"}: ${m.text}`)
+    .join("\n");
+
+  if (transcriptText.trim().length < 20) return;
+
+  // Insert fallback emotional analysis (ElevenLabs doesn't provide emotion data)
+  await db.insert(emotionalAnalysesTable).values({
+    sessionId,
+    jobId: "elevenlabs-live-transcript",
+    data: {
+      snapshots: [],
+      overallDominantEmotion: "Unknown",
+      aggregateEmotions: [],
+      unavailable: true,
+    },
+  });
+
+  // Fetch past feedback for adaptive context
+  const [session] = await db
+    .select({ userId: interviewSessionsTable.userId })
+    .from(interviewSessionsTable)
+    .where(eq(interviewSessionsTable.id, sessionId))
+    .limit(1);
+
+  let pastFeedback: string[] = [];
+  if (session?.userId) {
+    const pastRows = await db
+      .select({ content: interviewFeedbackTable.content })
+      .from(interviewFeedbackTable)
+      .innerJoin(
+        interviewSessionsTable,
+        eq(interviewSessionsTable.id, interviewFeedbackTable.sessionId)
+      )
+      .where(
+        and(
+          eq(interviewSessionsTable.userId, session.userId),
+          ne(interviewFeedbackTable.sessionId, sessionId)
+        )
+      )
+      .orderBy(desc(interviewFeedbackTable.createdAt))
+      .limit(3);
+    pastFeedback = pastRows
+      .map((r) => {
+        const c = r.content ?? "";
+        return c.slice(0, 400) + (c.length > 400 ? "..." : "");
+      })
+      .filter((s) => s.length > 0);
+  }
+
+  const pastFeedbackContext =
+    pastFeedback.length > 0
+      ? `\n\n---\nPrevious feedback from this candidate's past interviews (use to highlight improvement or recurring issues):\n${pastFeedback.map((f, i) => `[Past ${i + 1}]\n${f}`).join("\n\n")}`
+      : "";
+
+  // Generate structured feedback via LLM
+  const { content: feedbackContent } = await generateCompletion({
+    messages: [
+      {
+        role: "system",
+        content: `You are an expert interview coach. Generate structured, actionable feedback for a job interview practice session.
+
+If previous feedback is provided, use it to:
+- Highlight areas where the candidate has improved since last time
+- Call out recurring issues that still need work
+- Tailor suggestions to build on prior recommendations
+
+Output format:
+## Strengths
+- Bullet points of what the candidate did well
+
+## Areas for Improvement
+- Bullet points of specific, actionable suggestions
+
+## Emotional Tone
+- Brief summary of how their delivery came across based on their word choice and conversation flow (note that voice emotion analysis was not available)
+
+## Overall Recommendation
+- 1-2 sentences with next steps.`,
+      },
+      {
+        role: "user",
+        content: `Interview transcript:\n\n${transcriptText}\n\n---\nEmotional analysis: Unavailable (voice emotion analysis was not performed for this session).${pastFeedbackContext}\n\nGenerate structured feedback.`,
+      },
+    ],
+    maxTokens: 1500,
+    temperature: 0.5,
+  });
+
+  // PII-anonymize and save
+  const anonymizedFeedback = anonymize(feedbackContent);
+
+  // Map to career skills
+  const skillsMapping = await mapInterviewToSkills(
+    transcriptText,
+    feedbackContent,
+    "Emotion analysis unavailable"
+  ).catch(() => []);
+
+  await db.insert(interviewFeedbackTable).values({
+    sessionId,
+    content: anonymizedFeedback,
+    skillsMapping: skillsMapping.length > 0 ? skillsMapping : undefined,
+  });
 }
 
 export async function getSessionDetail(sessionId: number) {

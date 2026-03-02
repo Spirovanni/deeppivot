@@ -105,6 +105,7 @@ export function ElevenLabsInterviewRoom({
   const [isBluetoothMic, setIsBluetoothMic] = useState(false);
   const [micInfo, setMicInfo] = useState<string>("");
   const [messages, setMessages] = useState<Array<{ role: string; text: string }>>([]);
+  const messagesRef = useRef<Array<{ role: string; text: string }>>([]);
   const sessionIdRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const playbackContextRef = useRef<AudioContext | null>(null);
@@ -548,17 +549,22 @@ export function ElevenLabsInterviewRoom({
             message.transcript ??
             message.message;
           if (agentText && typeof agentText === "string") {
-            setMessages((prev) => [
-              ...prev,
-              { role: "assistant", text: agentText },
-            ]);
+            setMessages((prev) => {
+              const next = [...prev, { role: "assistant", text: agentText }];
+              messagesRef.current = next;
+              return next;
+            });
           }
 
           // Handle user transcript from user_transcription_event (live transcript from agent ASR)
           const userText = message.user_transcription_event?.user_transcript;
           if (userText && typeof userText === "string") {
             console.log(`✅ USER TRANSCRIPT RECEIVED: "${userText}"`);
-            setMessages((prev) => [...prev, { role: "user", text: userText }]);
+            setMessages((prev) => {
+              const next = [...prev, { role: "user", text: userText }];
+              messagesRef.current = next;
+              return next;
+            });
           }
 
           // Handle agent ending the call (end_call tool or conversation_ended)
@@ -684,12 +690,15 @@ export function ElevenLabsInterviewRoom({
     }
     playbackContextRef.current = null;
 
-    // End database session
+    // End database session and submit transcript for feedback generation
     if (sessionIdRef.current) {
       try {
-        const result = await endInterviewSession(sessionIdRef.current);
+        const result = await endInterviewSession(
+          sessionIdRef.current,
+          messagesRef.current.length > 0 ? messagesRef.current : undefined
+        );
         setSessionEnded(true);
-        toast.success("Interview ended");
+        toast.success("Interview ended — feedback is being generated");
         if (result.pointsAwarded) {
           showPoints(result.pointsAwarded, "Interview completed");
         }

@@ -815,6 +815,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] API: GET `/api/gamification/status` (deeppivot-269) — returns authenticated user's points, streaks, unlocked badges (with label/icon metadata from gamification-badges.ts), and last 10 gamification events. Rate-limited via DEFAULT profile.
 - [x] UI: Points animation (floating +10) on successful actions (deeppivot-276) — Zustand gamification store (src/store/gamification.ts), PointsAnimation Framer Motion component (amber gradient bubble, Sparkles icon, 2.4s auto-dismiss), wired into ApplyModal (+10), ElevenLabsInterviewRoom (+15), MilestoneTimeline (+5). API responses include pointsAwarded field.
 - [x] Cron: Reset streaks if no weekly activity (deeppivot-270)
+- [x] UI: Confetti effect on reaching streak milestones (deeppivot-277) — canvas-confetti multi-burst celebration (center + left/right) at 4/8/12/26/52-week milestones; StreakConfetti component with localStorage dedup; integrated into StreakBadge.
 - [ ] UI: Gamification Hub, streak flame, confetti, badges
 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports
@@ -830,4 +831,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-02 — Phase 16 / Section 4 progress: Implemented asynchronous achievement badge system (deeppivot-281). 10 badge rules defined in src/lib/badge-rules.ts; triggered by gamification events via Inngest. pnpm build exit 0.*
+*Last updated: 2026-03-02 — Phase 16 / Section 4 progress: Confetti celebration effect for streak milestones (deeppivot-277). canvas-confetti with multi-burst at 4/8/12/26/52 weeks, integrated into StreakBadge via StreakConfetti component. pnpm build exit 0.*

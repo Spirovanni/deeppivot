@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Flame } from "lucide-react";
 import { motion } from "framer-motion";
+import { StreakConfetti } from "@/components/gamification/StreakConfetti";
 
 export function StreakBadge() {
     const [streak, setStreak] = useState<number | null>(null);
@@ -29,28 +30,31 @@ export function StreakBadge() {
     if (loading || streak === null || streak === 0) return null;
 
     return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-1.5 rounded-full bg-orange-500/10 px-2.5 py-1 ring-1 ring-orange-500/20"
-            title={`Weekly Streak: ${streak} weeks active`}
-        >
+        <>
+            <StreakConfetti streak={streak} />
             <motion.div
-                animate={{
-                    scale: [1, 1.2, 1],
-                    filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"],
-                }}
-                transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center gap-1.5 rounded-full bg-orange-500/10 px-2.5 py-1 ring-1 ring-orange-500/20"
+                title={`Weekly Streak: ${streak} weeks active`}
             >
-                <Flame className="size-4 fill-orange-500 text-orange-500" />
+                <motion.div
+                    animate={{
+                        scale: [1, 1.2, 1],
+                        filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"],
+                    }}
+                    transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                    }}
+                >
+                    <Flame className="size-4 fill-orange-500 text-orange-500" />
+                </motion.div>
+                <span className="text-sm font-bold text-orange-600 dark:text-orange-400">
+                    {streak}
+                </span>
             </motion.div>
-            <span className="text-sm font-bold text-orange-600 dark:text-orange-400">
-                {streak}
-            </span>
-        </motion.div>
+        </>
     );
 }

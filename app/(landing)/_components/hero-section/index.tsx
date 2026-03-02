@@ -46,9 +46,9 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
     <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-violet-50 via-white to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-violet-950">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-200/30 blur-3xl dark:bg-violet-500/10" />
-        <div className="absolute top-1/2 -left-40 h-80 w-80 rounded-full bg-pink-200/30 blur-3xl dark:bg-pink-500/10" />
-        <div className="absolute bottom-0 right-1/4 h-60 w-60 rounded-full bg-blue-200/20 blur-3xl dark:bg-blue-500/10" />
+        <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-violet-400/20 via-purple-500/10 to-transparent blur-3xl dark:from-violet-600/20 dark:via-fuchsia-600/10" />
+        <div className="absolute top-1/2 -left-40 h-[500px] w-[500px] rounded-full bg-gradient-to-tr from-pink-400/20 via-rose-500/10 to-transparent blur-3xl dark:from-pink-600/20 dark:via-rose-600/10" />
+        <div className="absolute -bottom-40 right-1/4 h-[400px] w-[400px] rounded-full bg-gradient-to-tl from-blue-400/10 via-cyan-500/5 to-transparent blur-3xl dark:from-blue-600/10 dark:via-cyan-600/5" />
       </div>
 
       {/* Grid pattern overlay */}
@@ -155,13 +155,13 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-violet-600 via-pink-600 to-violet-600 opacity-20 blur-2xl" />
 
             {/* Image container */}
-            <div className="relative rounded-2xl border border-slate-200/50 bg-white/80 p-3 shadow-2xl backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-900/80">
+            <div className="relative rounded-2xl border border-slate-200/50 bg-white/20 p-3 shadow-2xl backdrop-blur-md dark:border-white/10 dark:bg-white/5 ring-1 ring-white/20">
               <Image
-                src="/landing-mock.png"
-                alt="Deep Pivot interview coaching platform"
-                width={600}
-                height={900}
-                className="aspect-[2/3] w-full rounded-xl object-cover"
+                src="/premium-mock.png"
+                alt="Deep Pivot premium dashboard mockup"
+                width={800}
+                height={1000}
+                className="aspect-[4/5] w-full rounded-xl object-cover shadow-2xl"
                 priority
               />
             </div>

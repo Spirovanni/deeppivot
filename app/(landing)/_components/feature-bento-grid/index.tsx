@@ -15,6 +15,7 @@ import {
   IconLetterCase,
   IconChartRadar,
 } from "@tabler/icons-react";
+import { motion } from "motion/react";
 
 export function FeatureBentoGrid() {
   return (
@@ -24,10 +25,17 @@ export function FeatureBentoGrid() {
           key={i}
           title={item.title}
           description={item.description}
-          header={item.header}
+          header={
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="flex flex-1 w-full h-full min-h-[6rem]"
+            >
+              {item.header}
+            </motion.div>
+          }
           icon={item.icon}
           className={cn(
-            "group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
+            "group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 ring-1 ring-slate-100 dark:ring-slate-800/50 hover:ring-violet-500/20"
           )}
         />
       ))}
@@ -215,16 +223,34 @@ const items = [
     icon: <IconMicrophone className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Interview Feedback & Analysis",
-    description: "Receive constructive feedback on interview performance. Track progress across sessions and identify areas for improvement.",
-    header: <EmotionChart />,
-    icon: <IconHeart className="h-4 w-4 text-neutral-500" />,
-  },
-  {
     title: "Context-Aware Interview Prep",
     description: "Upload a job description and get interview questions tailored specifically to that role, company, and required skills — including behavioral and technical questions.",
     header: <ContextAwareVisual />,
     icon: <IconFileDescription className="h-4 w-4 text-neutral-500" />,
+  },
+  {
+    title: "Resume Intelligence",
+    description: "Upload your resume for AI parsing. Your skills, experience, and strengths are extracted to personalize interview coaching and match against job descriptions.",
+    header: <ResumeVisual />,
+    icon: <IconFileText className="h-4 w-4 text-neutral-500" />,
+  },
+  {
+    title: "AI Cover Letters",
+    description: "Generate targeted cover letters matched to specific job descriptions, highlighting your relevant experience and aligning your skills with role requirements.",
+    header: <CoverLetterVisual />,
+    icon: <IconLetterCase className="h-4 w-4 text-neutral-500" />,
+  },
+  {
+    title: "Job Match Scoring",
+    description: "See exactly how your profile matches against job requirements with visual skill coverage analysis, gap identification, and improvement recommendations.",
+    header: <MatchScoreVisual />,
+    icon: <IconChartRadar className="h-4 w-4 text-neutral-500" />,
+  },
+  {
+    title: "Performance Analytics Dashboard",
+    description: "Track your progress with detailed analytics on interview performance, skills development, emotional growth, and session history over time.",
+    header: <AnalyticsGraph />,
+    icon: <IconBrain className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Career Archetype Assessment",
@@ -240,22 +266,16 @@ const items = [
     icon: <IconChartLine className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Resume Intelligence",
-    description: "Upload your resume for AI parsing. Your skills, experience, and strengths are extracted to personalize interview coaching and match against job descriptions.",
-    header: <ResumeVisual />,
-    icon: <IconFileText className="h-4 w-4 text-neutral-500" />,
+    title: "Interview Feedback & Analysis",
+    description: "Receive constructive feedback on interview performance. Track progress across sessions and identify areas for improvement.",
+    header: <EmotionChart />,
+    icon: <IconHeart className="h-4 w-4 text-neutral-500" />,
   },
   {
-    title: "Performance Analytics Dashboard",
-    description: "Track your progress with detailed analytics on interview performance, skills development, emotional growth, and session history over time.",
-    header: <AnalyticsGraph />,
-    icon: <IconBrain className="h-4 w-4 text-neutral-500" />,
-  },
-  {
-    title: "AI Cover Letters",
-    description: "Generate targeted cover letters matched to specific job descriptions, highlighting your relevant experience and aligning your skills with role requirements.",
-    header: <CoverLetterVisual />,
-    icon: <IconLetterCase className="h-4 w-4 text-neutral-500" />,
+    title: "Job Marketplace & Tracker",
+    description: "Discover and apply to exclusive roles directly within DeepPivot, and track all your applications with a drag-and-drop Kanban board.",
+    header: <RocketLaunch />,
+    icon: <IconRocket className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Mentor & Coach Network",
@@ -268,18 +288,6 @@ const items = [
     description: "Discover 500+ bootcamps, certifications, and funding opportunities with ROI analysis, eligibility matching, and application tracking.",
     header: <EducationStack />,
     icon: <IconSchool className="h-4 w-4 text-neutral-500" />,
-  },
-  {
-    title: "Job Match Scoring",
-    description: "See exactly how your profile matches against job requirements with visual skill coverage analysis, gap identification, and improvement recommendations.",
-    header: <MatchScoreVisual />,
-    icon: <IconChartRadar className="h-4 w-4 text-neutral-500" />,
-  },
-  {
-    title: "Job Marketplace & Tracker",
-    description: "Discover and apply to exclusive roles directly within DeepPivot, and track all your applications with a drag-and-drop Kanban board.",
-    header: <RocketLaunch />,
-    icon: <IconRocket className="h-4 w-4 text-neutral-500" />,
   },
   {
     title: "Employer Insights",

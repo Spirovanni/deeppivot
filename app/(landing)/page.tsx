@@ -3,9 +3,10 @@
 import { HeroSection } from "./_components/hero-section";
 import { FeatureBentoGrid } from "./_components/feature-bento-grid";
 import { PathChooser } from "./_components/path-chooser";
+import { GamificationSection } from "./_components/gamification-section";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Bell } from "lucide-react";
 
 interface PageProps { }
 
@@ -55,6 +56,26 @@ export default function Page({ }: PageProps) {
           <FeatureBentoGrid />
         </div>
       </section>
+
+      {/* Gamification Section */}
+      <GamificationSection />
+
+      {/* Real-time Notification Mockup (Sticky/Floating) */}
+      <div className="fixed bottom-8 left-8 z-50 hidden lg:block">
+        <div className="group relative">
+          <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-violet-600 to-pink-600 opacity-25 blur transition duration-1000 group-hover:opacity-100 group-hover:duration-200" />
+          <div className="relative flex items-center gap-4 rounded-xl border border-white/20 bg-white/80 p-4 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-slate-900/80">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/40">
+              <Bell className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-slate-900 dark:text-white">New Interview Ready!</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">Your AI coach Sarah is waiting.</div>
+            </div>
+            <div className="ml-2 h-2 w-2 rounded-full bg-pink-500 animate-pulse" />
+          </div>
+        </div>
+      </div>
 
       {/* Employer Proposition Section */}
       <section className="relative w-full overflow-hidden bg-white py-24 dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800">

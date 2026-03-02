@@ -592,6 +592,7 @@ components/ui/skeleton.tsx                 Installed via shadcn CLI
 | Issue | Description | Status |
 |-------|-------------|--------|
 | ~~deeppivot-168~~ | ~~UX: Landing Page Feature Refresh~~ | ✓ |
+| ~~deeppivot-XXX~~ | ~~UX: Premium Landing Page Refresh & Gamification Showcase~~ | ✓ |
 | (inline) | Trailblazer dashboard (`/dashboard/trailblazer`) | ✓ |
 | (inline) | Talent Scout dashboard (`/dashboard/talent-scout`) | ✓ |
 | (inline) | `src/lib/actions/employer-dashboard.ts` server action | ✓ |

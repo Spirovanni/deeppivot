@@ -10,6 +10,7 @@ import {
 import { eq, desc } from "drizzle-orm";
 import { rateLimit } from "@/src/lib/rate-limit";
 import { GAMIFICATION_BADGES } from "@/src/lib/gamification-badges";
+import { getUserLevel } from "@/src/lib/gamification-levels";
 
 const RECENT_EVENTS_LIMIT = 10;
 
@@ -84,10 +85,19 @@ export async function GET(req: NextRequest) {
     updatedAt: null,
   };
 
+  const level = getUserLevel(stats.points);
+
   return NextResponse.json({
     points: stats.points,
     currentStreak: stats.currentStreak,
     highestStreak: stats.highestStreak,
+    level: {
+      level: level.level,
+      title: level.title,
+      progress: level.progress,
+      pointsToNext: level.pointsToNext,
+      nextLevelMin: level.nextLevelMin,
+    },
     lastActivityAt: stats.lastActivityAt
       ? new Date(stats.lastActivityAt).toISOString()
       : null,

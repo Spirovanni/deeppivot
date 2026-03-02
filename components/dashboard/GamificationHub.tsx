@@ -1,11 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Flame, Trophy, Star, Sparkles, ChevronRight, Award } from "lucide-react";
+import { Flame, Trophy, Star, Sparkles, ChevronRight, Award, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { GamificationStatus } from "@/src/lib/actions/gamification";
+import { getUserLevel, MAX_LEVEL } from "@/src/lib/gamification-levels";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/src/lib/utils";
@@ -19,6 +20,7 @@ export function GamificationHub({ status }: GamificationHubProps) {
 
     const hasBadges = status.badges.length > 0;
     const recentBadges = status.badges.slice(-3).reverse();
+    const userLevel = getUserLevel(status.points);
 
     return (
         <Card className="relative overflow-hidden border-primary/20 bg-gradient-to-br from-background via-background to-primary/5">
@@ -45,11 +47,53 @@ export function GamificationHub({ status }: GamificationHubProps) {
             </CardHeader>
 
             <CardContent>
+                {/* Level Progress Bar */}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-4 rounded-xl bg-primary/5 p-4 ring-1 ring-primary/10"
+                >
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                            <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                                {userLevel.level}
+                            </div>
+                            <div>
+                                <span className="text-sm font-semibold">{userLevel.title}</span>
+                                <span className="ml-1.5 text-xs text-muted-foreground">Lv.{userLevel.level}</span>
+                            </div>
+                        </div>
+                        {userLevel.nextLevelMin !== null ? (
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <TrendingUp className="size-3" />
+                                <span>{userLevel.pointsToNext} pts to Lv.{userLevel.level + 1}</span>
+                            </div>
+                        ) : (
+                            <Badge variant="outline" className="text-xs border-amber-500/30 text-amber-600 dark:text-amber-400">
+                                MAX
+                            </Badge>
+                        )}
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                        <motion.div
+                            className="h-full rounded-full bg-gradient-to-r from-primary to-primary/70"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.round(userLevel.progress * 100)}%` }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                        />
+                    </div>
+                    <div className="mt-1.5 flex items-center justify-between text-[10px] text-muted-foreground">
+                        <span>{status.points} pts</span>
+                        <span>{userLevel.nextLevelMin !== null ? `${userLevel.nextLevelMin} pts` : `Lv.${MAX_LEVEL}`}</span>
+                    </div>
+                </motion.div>
+
                 <div className="grid grid-cols-2 gap-4">
                     {/* Points Widget */}
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
                         className="flex flex-col items-center justify-center rounded-xl bg-primary/5 p-4 text-center ring-1 ring-primary/10"
                     >
                         <div className="mb-1 flex size-10 items-center justify-center rounded-full bg-primary/10">
@@ -63,7 +107,7 @@ export function GamificationHub({ status }: GamificationHubProps) {
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
+                        transition={{ delay: 0.2 }}
                         className="flex flex-col items-center justify-center rounded-xl bg-orange-500/5 p-4 text-center ring-1 ring-orange-500/10"
                     >
                         <div className="mb-1 flex size-10 items-center justify-center rounded-full bg-orange-500/10">

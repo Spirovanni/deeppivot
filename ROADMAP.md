@@ -818,6 +818,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: Confetti effect on reaching streak milestones (deeppivot-277) — canvas-confetti multi-burst celebration (center + left/right) at 4/8/12/26/52-week milestones; StreakConfetti component with localStorage dedup; integrated into StreakBadge.
 - [x] UI: Leveling system UI (deeppivot-278) — 10 levels (Newcomer→Apex, 0→3500 pts) with animated progress bar in GamificationHub; level info added to /api/gamification/status response; src/lib/gamification-levels.ts utility.
 - [x] Security: Prevent gamification endpoint abuse/spamming (deeppivot-292) — GAMIFICATION_ACTION rate limit profile (10 req/5min per user); deduplication keys in addPoints() prevent milestone toggle and session re-completion exploits; per-user rateLimitByUser on job apply and milestone PATCH; active-status guard on interview completion
+- [x] UI: "Hours Practiced" statistic on dashboard (deeppivot-289) — SQL SUM of interview session durations (endedAt - startedAt) in getDashboardSummary(); Clock icon stat in InterviewSummaryWidget with hours/minutes display
 - [ ] UI: Gamification Hub, streak flame, confetti, badges
 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports

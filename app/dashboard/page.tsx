@@ -88,7 +88,7 @@ const features = [
 
 const emptySummary: DashboardSummary = {
   careerPlan: { total: 0, completed: 0, inProgress: 0 },
-  interviews: { total: 0, completed: 0, recent: [] },
+  interviews: { total: 0, completed: 0, recent: [], hoursPracticed: 0 },
 };
 
 export default async function DashboardPage() {
@@ -157,6 +157,7 @@ export default async function DashboardPage() {
           <InterviewSummaryWidget
             total={summary.interviews.total}
             completed={summary.interviews.completed}
+            hoursPracticed={summary.interviews.hoursPracticed}
           />
           <GamificationHub status={gamificationStatus} />
         </div>

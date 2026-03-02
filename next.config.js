@@ -42,6 +42,7 @@ const nextConfig = {
     optimizePackageImports: ['@tabler/icons-react', 'lucide-react'],
   },
 
+
   // Disable source maps in production to reduce deployment size
   productionBrowserSourceMaps: false,
 

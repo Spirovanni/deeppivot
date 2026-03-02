@@ -104,6 +104,9 @@ importers:
       aws4fetch:
         specifier: ^1.0.20
         version: 1.0.20
+      axios:
+        specifier: ^1.13.6
+        version: 1.13.6
       baseline-browser-mapping:
         specifier: ^2.10.0
         version: 2.10.0

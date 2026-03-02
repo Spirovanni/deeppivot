@@ -57,6 +57,7 @@
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.36.2",
     "aws4fetch": "^1.0.20",
+    "axios": "^1.13.6",
     "baseline-browser-mapping": "^2.10.0",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.0",

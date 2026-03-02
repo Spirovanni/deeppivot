@@ -787,8 +787,8 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Event trigger: Job application status update → in-app notification (deeppivot-252) — createNotification in PATCH /api/employer/applications/[appId]
 - [x] Admin: /admin/announcements listing page (deeppivot-253) — listing + new form, POST broadcasts to users.
 - [x] Admin UI: Rich text editor for announcements (deeppivot-254) — Custom `RichTextEditor` component using `contentEditable`, toolbar for bold/italic/lists/headings, HTML rendering in `AnnouncementView`.
-- [x] Admin API: Send to Home (deeppivot-257) — sendToHome on announcement, force redirect to /dashboard/announcements/[id] until dismissed
-- [x] QA: Real-time delivery and Admin broadcast E2E (deeppivot-266) — stub APIs + e2e/notifications-admin-broadcast.spec.ts
+- [x] Admin API: Broadcast announcement to all users (fan-out worker) (deeppivot-256) — Inngest `broadcastAnnouncement` function with chunked background delivery.
+- [x] Admin API: Send to Home (deeppivot-257) — sendToHome on announcement, force redirect to /dashboard/announcements/[id] until dismissed.
 
 ### 4. Gamification & Weekly Streaks
 - [x] DB: `user_gamification` table (points, currentStreak, highestStreak) — migration 0025

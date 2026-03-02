@@ -47,30 +47,23 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Create in-app notification for each user (broadcast)
-        const users = await db
-            .select({ id: usersTable.id })
-            .from(usersTable)
-            .where(eq(usersTable.isDeleted, false));
-
-        const announcementLink = sendToHomeBool ? `/dashboard/announcements/${announcement.id}` : null;
-        if (users.length > 0) {
-            await db.insert(notificationsTable).values(
-                users.map((u) => ({
-                    userId: u.id,
-                    title: title.trim(),
-                    body: bodyText,
-                    type: "announcement",
-                    link: announcementLink,
-                }))
-            );
-        }
+        // Create in-app notification for each user (broadcast) via Inngest fan-out (deeppivot-256)
+        const { inngest } = await import("@/src/inngest/client");
+        await inngest.send({
+            name: "admin/announcement.created",
+            data: {
+                announcementId: announcement.id,
+                title: title.trim(),
+                body: bodyText,
+                sendToHome: sendToHomeBool,
+            },
+        });
 
         const sendToHomeNote = sendToHomeBool ? " (Send to Home: users will be redirected to announcement on dashboard)" : "";
         return NextResponse.json({
             success: true,
             id: announcement.id,
-            message: `Broadcast sent to ${users.length} user(s).${sendToHomeNote}`,
+            message: `Background broadcast started.${sendToHomeNote}`,
         });
     } catch (err) {
         console.error("[admin/announcements] POST failed:", err);

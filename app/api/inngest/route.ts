@@ -10,6 +10,7 @@ import {
 import { salesforceDailySync } from "@/src/inngest/salesforce-sync";
 import { sendWelcomeEmail } from "@/src/inngest/functions/send-welcome-email";
 import { matchingFeedbackAggregate } from "@/src/inngest/matching-feedback-aggregate";
+import { broadcastAnnouncement } from "@/src/inngest/announcements";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -22,6 +23,7 @@ export const { GET, POST, PUT } = serve({
     salesforceDailySync,
     sendWelcomeEmail,
     matchingFeedbackAggregate,
+    broadcastAnnouncement,
   ],
 });
 

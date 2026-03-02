@@ -10,6 +10,7 @@ yarn-error.log
 # Build files
 /.build/
 /.cache/
+/.npm-cache/
 /.vercel/
 
 # Environment variables
@@ -29,6 +30,7 @@ logs/
 
 # Dependency lock files
 yarn.lock
+package-lock.json
 
 .DS_Store
 

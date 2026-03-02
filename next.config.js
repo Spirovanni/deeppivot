@@ -39,6 +39,14 @@ const nextConfig = {
   // Compress responses in production
   compress: true,
 
+  // Optimize package imports to reduce bundle size
+  experimental: {
+    optimizePackageImports: ['@tabler/icons-react', 'lucide-react'],
+  },
+
+  // Disable source maps in production to reduce deployment size
+  productionBrowserSourceMaps: false,
+
   async headers() {
     const isDev = process.env.NODE_ENV !== "production";
 
@@ -171,6 +179,16 @@ module.exports = withBundleAnalyzer(withNextIntl(withSentryConfig(nextConfig, {
 
   // Upload source maps only in CI/production; silence in local dev
   silent: !process.env.CI,
+
+  // Skip source map upload if no auth token to reduce deployment size
+  disableServerWebpackPlugin: !process.env.SENTRY_AUTH_TOKEN,
+  disableClientWebpackPlugin: !process.env.SENTRY_AUTH_TOKEN,
+
+  // Hide source maps from generated client bundles to reduce size
+  hideSourceMaps: true,
+
+  // Disable telemetry to reduce network calls during build
+  telemetry: false,
 
   // Route Sentry tunnel through own domain to avoid ad-blockers
   tunnelRoute: "/monitoring",

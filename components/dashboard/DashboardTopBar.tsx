@@ -5,6 +5,7 @@ import { DashboardBreadcrumbs } from "@/components/navigation/DashboardBreadcrum
 import { UserButton } from "@clerk/nextjs";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationDropdown } from "@/components/dashboard/NotificationDropdown";
+import { StreakBadge } from "@/components/dashboard/StreakBadge";
 
 function UserButtonPlaceholder() {
   return <div className="size-8 shrink-0 rounded-full bg-muted" aria-hidden />;
@@ -22,6 +23,7 @@ export function DashboardTopBar() {
       <div className="flex items-center justify-between bg-muted/20 px-6 py-3">
         <DashboardBreadcrumbs />
         <div className="flex items-center gap-3">
+          <StreakBadge />
           <NotificationDropdown />
           <ThemeToggle />
           {mounted ? (

@@ -5,12 +5,16 @@ export const dynamic = "force-dynamic";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { ensureUserInDb } from "@/src/lib/actions/ensure-user";
-import { getPendingSendToHomeAnnouncement } from "@/src/lib/actions/announcements";
+import {
+  getPendingSendToHomeAnnouncement,
+  getLatestAnnouncement
+} from "@/src/lib/actions/announcements";
 import { DashboardConnectionError } from "@/components/dashboard/DashboardConnectionError";
 import { SessionTimeoutWarning } from "@/components/SessionTimeoutWarning";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { SendToHomeRedirect } from "./_components/SendToHomeRedirect";
 import { PointsAnimation } from "@/components/gamification/PointsAnimation";
+import { AnnouncementBanner } from "@/components/dashboard/AnnouncementBanner";
 
 export default async function DashboardLayout({
   children,
@@ -26,6 +30,10 @@ export default async function DashboardLayout({
   }
 
   const pendingAnnouncement = await getPendingSendToHomeAnnouncement(dbUserId);
+  const latestAnnouncement = await getLatestAnnouncement(dbUserId);
+
+  // Only show banner if it's not a forced redirect announcement (deeppivot-258)
+  const showBanner = latestAnnouncement && !latestAnnouncement.sendToHome;
 
   return (
     <div className="flex min-h-screen flex-col bg-background md:flex-row">
@@ -33,6 +41,12 @@ export default async function DashboardLayout({
       <DashboardSidebar />
       <main className="flex flex-1 flex-col overflow-auto">
         <DashboardTopBar />
+        {showBanner && (
+          <AnnouncementBanner
+            announcement={latestAnnouncement!}
+            userId={dbUserId}
+          />
+        )}
         <div className="flex-1">{children}</div>
       </main>
       <SessionTimeoutWarning />

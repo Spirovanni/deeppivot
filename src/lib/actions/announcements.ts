@@ -5,7 +5,7 @@ import {
   adminAnnouncementsTable,
   userAnnouncementDismissalsTable,
 } from "@/src/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, and } from "drizzle-orm";
 
 /** Latest send-to-home announcement not yet dismissed by the user (deeppivot-257) */
 export async function getPendingSendToHomeAnnouncement(
@@ -49,4 +49,36 @@ export async function dismissAnnouncement(
   } catch {
     return { success: false };
   }
+}
+/** Get the most recent announcement that the user hasn't dismissed yet (deeppivot-258) */
+export async function getLatestAnnouncement(
+  userId: number
+): Promise<{ id: number; title: string; body: string; sendToHome: boolean } | null> {
+  const [latest] = await db
+    .select({
+      id: adminAnnouncementsTable.id,
+      title: adminAnnouncementsTable.title,
+      body: adminAnnouncementsTable.body,
+      sendToHome: adminAnnouncementsTable.sendToHome,
+    })
+    .from(adminAnnouncementsTable)
+    .orderBy(desc(adminAnnouncementsTable.createdAt))
+    .limit(1);
+
+  if (!latest) return null;
+
+  const [dismissal] = await db
+    .select()
+    .from(userAnnouncementDismissalsTable)
+    .where(
+      and(
+        eq(userAnnouncementDismissalsTable.userId, userId),
+        eq(userAnnouncementDismissalsTable.announcementId, latest.id)
+      )
+    )
+    .limit(1);
+
+  if (dismissal) return null;
+
+  return latest;
 }

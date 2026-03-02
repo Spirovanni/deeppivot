@@ -801,7 +801,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: Weekly streak flame icon and count (deeppivot-275)
 - [x] Gamification: Hub panel on dashboard (deeppivot-274)
 - [x] Badge System: Evaluate badge unlocking rules async (deeppivot-281)
-- [ ] UI: Achievement Badge display in Gamification Hub (deeppivot-282)
+- [x] UI: Achievement Badge display in Gamification Hub (deeppivot-282) — /dashboard/achievements page with stats row (points, level, streak, badges), level progress bar, AchievementsBadgeGrid (unlocked/locked with category colors, framer-motion animations); Achievements nav link in DashboardSidebar; GamificationHub "All Badges" links to /dashboard/achievements
 - [ ] UI: "Badge Unlocked" celebration modal (deeppivot-283)
 - [x] DB: `user_gamification` table (points, currentStreak, highestStreak) — migration 0025
 - [x] Hook: Add points on job application submitted (10 pts via `addPointsForJobApplication` in POST /api/jobs/[jobId]/apply)
@@ -832,4 +832,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-02 — Phase 16 / Section 4 progress: Leveling system UI (deeppivot-278). 10 levels with animated progress bar in GamificationHub + level data in API. pnpm build exit 0.*
+*Last updated: 2026-03-02 — Phase 16 / Section 4 progress: Achievement badge display (deeppivot-282). /dashboard/achievements page with stats row, level progress bar, badge grid (unlocked/locked with category colors); Achievements nav in sidebar. pnpm build exit 0.*

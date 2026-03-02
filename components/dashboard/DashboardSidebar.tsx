@@ -16,6 +16,7 @@ import {
   Menu,
   FileText,
   FileStack,
+  Trophy,
 } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/utils";
@@ -41,6 +42,7 @@ const navItems = [
   { href: "/dashboard/mentors", label: "Mentors", icon: Users },
   { href: "/dashboard/education", label: "Education Explorer", icon: GraduationCap },
   { href: "/dashboard/job-tracker", label: "Job Tracker", icon: Briefcase },
+  { href: "/dashboard/achievements", label: "Achievements", icon: Trophy },
   { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { href: "/dashboard/settings/profile", label: "Settings", icon: Settings },
 ];

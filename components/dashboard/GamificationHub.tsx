@@ -37,7 +37,7 @@ export function GamificationHub({ status }: GamificationHubProps) {
                         <CardDescription>Level up your career journey</CardDescription>
                     </div>
                     <Link
-                        href="/dashboard/profile"
+                        href="/dashboard/achievements"
                         className="flex items-center gap-1 text-sm font-medium text-primary hover:underline"
                     >
                         All Badges

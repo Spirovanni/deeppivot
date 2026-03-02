@@ -13,7 +13,7 @@ import {
 } from "@/src/db/schema";
 import { and, avg, eq } from "drizzle-orm";
 import { captureServerEvent } from "@/src/lib/posthog-server";
-import { rateLimit } from "@/src/lib/rate-limit";
+import { rateLimit, rateLimitByUser } from "@/src/lib/rate-limit";
 import { sendNewApplicantEmail } from "@/src/lib/email";
 import { addPointsForJobApplication } from "@/src/lib/gamification";
 
@@ -29,6 +29,7 @@ export async function POST(
     req: NextRequest,
     { params }: { params: Promise<{ jobId: string }> }
 ) {
+    // IP-based rate limit (general protection)
     const rl = await rateLimit(req, "INTERVIEW_START");
     if (!rl.success) return rl.response;
 
@@ -37,6 +38,10 @@ export async function POST(
         const clerkUser = await currentUser();
         if (!clerkUser?.id)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+        // Per-user rate limit to prevent gamification point farming
+        const userRl = await rateLimitByUser(req, clerkUser.id, "GAMIFICATION_ACTION");
+        if (!userRl.success) return userRl.response;
 
         const [dbUser] = await db
             .select({ id: usersTable.id })

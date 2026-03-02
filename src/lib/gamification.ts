@@ -53,6 +53,12 @@ export async function logGamificationEvent(
 /**
  * Add points for a user action. Upserts user_gamification row if needed.
  * Also logs the event to the gamification_events audit table.
+ *
+ * Deduplication: if a `deduplicationKey` is provided (e.g. "milestone:42"),
+ * the system checks the gamification_events audit log and skips if a matching
+ * event was already recorded. This prevents exploits like toggling milestone
+ * status to farm points.
+ *
  * Non-blocking: errors are logged but do not throw.
  */
 export async function addPoints(
@@ -65,6 +71,31 @@ export async function addPoints(
   if (points <= 0) return null;
 
   try {
+    // ── Deduplication check ───────────────────────────────────────────────
+    // If metadata contains a deduplicationKey, ensure this exact event
+    // hasn't already been awarded to prevent re-awarding exploits
+    // (e.g. toggling milestone complete → planned → complete).
+    const deduplicationKey = metadata?.deduplicationKey as string | undefined;
+    if (deduplicationKey) {
+      const priorEvents = await db
+        .select({ metadata: gamificationEventsTable.metadata })
+        .from(gamificationEventsTable)
+        .where(
+          and(
+            eq(gamificationEventsTable.userId, userId),
+            eq(gamificationEventsTable.eventType, event)
+          )
+        );
+
+      const alreadyAwarded = priorEvents.some((e) => {
+        const m = e.metadata as Record<string, unknown> | null;
+        return m?.deduplicationKey === deduplicationKey;
+      });
+
+      if (alreadyAwarded) {
+        return null; // Already awarded for this entity
+      }
+    }
     const [row] = await db
       .select()
       .from(userGamificationTable)
@@ -195,6 +226,7 @@ export async function addPointsForJobApplication(
 /**
  * Hook: Add points when user completes an interview session.
  * Call from endInterviewSession() after status set to "completed".
+ * Deduplicated by sessionId — completing the same session twice won't double-award.
  */
 export async function addPointsForInterviewCompletion(
   userId: number,
@@ -203,6 +235,7 @@ export async function addPointsForInterviewCompletion(
   overallScore?: number | null
 ): Promise<{ pointsAdded: number; newTotal: number } | null> {
   return addPoints(userId, "INTERVIEW_COMPLETED", undefined, {
+    deduplicationKey: `session:${sessionId}`,
     sessionId,
     sessionType,
     overallScore,
@@ -213,6 +246,7 @@ export async function addPointsForInterviewCompletion(
  * Hook: Add points when user completes a career plan milestone.
  * Call from PATCH /api/plans/[id] and updateMilestone() server action
  * when status transitions to "completed".
+ * Deduplicated by milestoneId — toggling status won't re-award points.
  */
 export async function addPointsForMilestoneCompletion(
   userId: number,
@@ -220,6 +254,7 @@ export async function addPointsForMilestoneCompletion(
   milestoneTitle?: string
 ): Promise<{ pointsAdded: number; newTotal: number } | null> {
   return addPoints(userId, "MILESTONE_COMPLETED", undefined, {
+    deduplicationKey: `milestone:${milestoneId}`,
     milestoneId,
     milestoneTitle,
   });

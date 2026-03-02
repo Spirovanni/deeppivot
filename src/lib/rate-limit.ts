@@ -49,6 +49,8 @@ export const RATE_LIMIT_PROFILES = {
   WEBHOOK: { requests: 100, window: "1 m" },
   /** Admin routes */
   ADMIN: { requests: 20, window: "1 m" },
+  /** Gamification point-earning actions — tight per-user limit */
+  GAMIFICATION_ACTION: { requests: 10, window: "5 m" },
 } as const;
 
 export type RateLimitProfile = keyof typeof RATE_LIMIT_PROFILES;

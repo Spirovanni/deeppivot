@@ -62,6 +62,17 @@ export async function endInterviewSession(
     ? Math.round(parseFloat(String(result.avgConfidence)) * 100)
     : null;
 
+  // Fetch session before update to verify it's active (prevents re-completion abuse)
+  const [sessionBefore] = await db
+    .select({
+      userId: interviewSessionsTable.userId,
+      sessionType: interviewSessionsTable.sessionType,
+      status: interviewSessionsTable.status,
+    })
+    .from(interviewSessionsTable)
+    .where(eq(interviewSessionsTable.id, sessionId))
+    .limit(1);
+
   await db
     .update(interviewSessionsTable)
     .set({
@@ -72,22 +83,13 @@ export async function endInterviewSession(
     })
     .where(eq(interviewSessionsTable.id, sessionId));
 
-  // Gamification: award points for interview completion
+  // Gamification: award points only if session was active (not already completed)
   let pointsAwarded: number | null = null;
-  const [session] = await db
-    .select({
-      userId: interviewSessionsTable.userId,
-      sessionType: interviewSessionsTable.sessionType,
-    })
-    .from(interviewSessionsTable)
-    .where(eq(interviewSessionsTable.id, sessionId))
-    .limit(1);
-
-  if (session) {
+  if (sessionBefore && sessionBefore.status === "active") {
     const gamResult = await addPointsForInterviewCompletion(
-      session.userId,
+      sessionBefore.userId,
       sessionId,
-      session.sessionType,
+      sessionBefore.sessionType,
       overallScore
     ).catch(() => null);
     pointsAwarded = gamResult?.pointsAdded ?? null;

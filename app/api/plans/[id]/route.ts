@@ -8,6 +8,7 @@ import {
 } from "@/src/db/schema";
 import { eq, and, asc } from "drizzle-orm";
 import { addPointsForMilestoneCompletion } from "@/src/lib/gamification";
+import { rateLimitByUser } from "@/src/lib/rate-limit";
 
 async function getDbUserId(): Promise<number | null> {
   const { userId } = await auth();
@@ -79,6 +80,10 @@ export async function PATCH(
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  // Per-user rate limit to prevent gamification point farming via milestone toggling
+  const rl = await rateLimitByUser(request, userId, "GAMIFICATION_ACTION");
+  if (!rl.success) return rl.response;
 
   const { id: idStr } = await params;
   const id = parseInt(idStr, 10);

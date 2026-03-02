@@ -1,0 +1,5 @@
+Dockerfile
+fly.toml
+vercel-deploy.log
+.next/
+node_modules/

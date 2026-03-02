@@ -38,6 +38,8 @@ import { db } from "@/src/db";
 import { usersTable } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
 import { getUserDashboardRoute, type UserRole } from "@/src/lib/rbac";
+import { getGamificationStatus } from "@/src/lib/actions/gamification";
+import { GamificationHub } from "@/components/dashboard/GamificationHub";
 
 const features = [
   {
@@ -110,12 +112,14 @@ export default async function DashboardPage() {
   let archetype: Awaited<ReturnType<typeof getArchetype>> | null = null;
   let summary: DashboardSummary = emptySummary;
   let predictiveInsights: Awaited<ReturnType<typeof getPredictiveInsights>> | null = null;
+  let gamificationStatus: Awaited<ReturnType<typeof getGamificationStatus>> = null;
 
   try {
-    [archetype, summary, predictiveInsights] = await Promise.all([
+    [archetype, summary, predictiveInsights, gamificationStatus] = await Promise.all([
       getArchetype(),
       getDashboardSummary(),
       getPredictiveInsights(),
+      getGamificationStatus(),
     ]);
   } catch {
     // Fallback: user may not be in DB yet (webhook delay) or transient DB/API error
@@ -143,8 +147,8 @@ export default async function DashboardPage() {
           hasCareerPlan={summary.careerPlan.total > 0}
         />
 
-        {/* Progress overview: Career Plan + Interviews */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        {/* Progress overview: Career Plan + Interviews + Gamification */}
+        <div className="mb-8 grid gap-4 lg:grid-cols-3">
           <CareerPlanProgressWidget
             total={summary.careerPlan.total}
             completed={summary.careerPlan.completed}
@@ -154,6 +158,7 @@ export default async function DashboardPage() {
             total={summary.interviews.total}
             completed={summary.interviews.completed}
           />
+          <GamificationHub status={gamificationStatus} />
         </div>
 
         {/* Returning user: Recent interviews list */}

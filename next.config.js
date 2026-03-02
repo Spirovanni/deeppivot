@@ -23,10 +23,8 @@ const nextConfig = {
 
   // Packages that must never be bundled into the client.
   // - pg / aws4fetch: native bindings that cannot run in a browser
-  // - playht: server-only TTS SDK that transitively depends on `axios`
-  //   (axios uses the Node.js `process` polyfill which breaks Turbopack HMR)
-  // - axios: listed explicitly so Turbopack never tries to factory it client-side
-  serverExternalPackages: ["pg", "aws4fetch", "playht", "axios"],
+  // - playht: server-only TTS SDK (its transitive axios dep stays external via playht)
+  serverExternalPackages: ["pg", "aws4fetch", "playht"],
 
   // Inline env vars that are safe to expose to the browser bundle
   env: {

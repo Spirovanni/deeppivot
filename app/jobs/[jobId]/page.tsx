@@ -50,7 +50,8 @@ function formatSalary(min: number | null, max: number | null) {
 }
 
 export default function JobDetailPage() {
-    const { jobId } = useParams<{ jobId: string }>();
+    const params = useParams<{ jobId: string }>();
+    const jobId = params?.jobId;
     const router = useRouter();
     const [job, setJob] = useState<Job | null>(null);
     const [loading, setLoading] = useState(true);

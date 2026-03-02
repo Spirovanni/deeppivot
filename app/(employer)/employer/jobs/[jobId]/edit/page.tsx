@@ -20,15 +20,17 @@ interface JobDetail {
 
 export default function EditJobPage() {
     const params = useParams<{ jobId: string }>();
+    const jobId = params?.jobId;
     const [job, setJob] = useState<JobDetail | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`/api/jobs/${params.jobId}`)
+        if (!jobId) return;
+        fetch(`/api/jobs/${jobId}`)
             .then((r) => r.json())
             .then(setJob)
             .finally(() => setLoading(false));
-    }, [params.jobId]);
+    }, [jobId]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#0f0f1a] to-[#1a1a2e] p-6">

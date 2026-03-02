@@ -24,7 +24,8 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function EmployerApplicationsPage() {
-    const { jobId } = useParams<{ jobId: string }>();
+    const params = useParams<{ jobId: string }>();
+    const jobId = params?.jobId;
     const [applicants, setApplicants] = useState<Applicant[]>([]);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState<Applicant | null>(null);

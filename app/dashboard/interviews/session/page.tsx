@@ -10,6 +10,7 @@ import {
 } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
 import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
+import { resolveAgentConfig } from "@/src/lib/actions/agent-configs";
 
 interface InterviewSessionPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -37,7 +38,24 @@ export default async function InterviewSessionPage(props: InterviewSessionPagePr
 
   const sessionType = type ?? "general";
 
-  let finalAgentId = agentId || process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;
+  // Resolve the agent ID: query param → DB agent config → env var fallback
+  let finalAgentId = agentId;
+
+  if (!finalAgentId) {
+    try {
+      const config = await resolveAgentConfig(sessionType);
+      if (config?.elevenLabsAgentId) {
+        finalAgentId = config.elevenLabsAgentId;
+      }
+    } catch {
+      // resolveAgentConfig may throw if auth context is unavailable — fall through
+    }
+  }
+
+  if (!finalAgentId) {
+    finalAgentId = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID;
+  }
+
   let parsedJobDescription: JobDescriptionExtraction | undefined = undefined;
 
   // If a jobDescriptionId is passed (e.g. from the InterviewSettingsModal), fetch it for the UI panel

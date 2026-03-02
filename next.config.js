@@ -100,6 +100,7 @@ const nextConfig = {
         "https://clerk.deeppivots.com",
         "https://*.clerk.accounts.dev",
         "https://api.clerk.dev",
+        "https://clerk-telemetry.com",
         "https://upstash.com",
         "https://*.upstash.io",
       ].join(" "),

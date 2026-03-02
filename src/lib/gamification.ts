@@ -9,6 +9,7 @@ import { db } from "@/src/db";
 import { userGamificationTable, gamificationEventsTable } from "@/src/db/schema";
 import { eq, lt, and, gt } from "drizzle-orm";
 import { startOfWeek, isSameWeek, subWeeks } from "date-fns";
+import { inngest } from "@/src/inngest/client";
 
 /** Points awarded per action (configurable) */
 export const GAMIFICATION_POINTS = {
@@ -131,6 +132,17 @@ export async function addPoints(
 
     // Log to audit table (fire-and-forget)
     logGamificationEvent(userId, event, points, metadata);
+
+    // Trigger badge evaluation (async)
+    await inngest.send({
+      name: "gamification/points.added",
+      data: {
+        userId,
+        event,
+        points,
+        metadata,
+      },
+    });
 
     return { pointsAdded: points, newTotal };
   } catch (err) {

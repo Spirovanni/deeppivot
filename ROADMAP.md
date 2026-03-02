@@ -777,6 +777,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] API: PATCH /api/notifications/[id]/read (deeppivot-242) — mark notification as read, auth + ownership
 - [x] API: PATCH /api/notifications/read-all (deeppivot-243) — mark all as read for current user
 - [x] System: Real-time notification layer via SSE (deeppivot-244) — GET /api/notifications/stream, useNotificationStream hook
+- [x] UI: Toast notifications sync with Notification Center (deeppivot-265) — NotificationToastSync component in DashboardLayout, listens to SSE stream and displays react-hot-toast.
 - [x] UI: Notification Bell icon in DashboardTopBar (deeppivot-245) — Bell + unread badge in NotificationDropdown
 - [x] UI: Notification unread count badge (deeppivot-246) — Dedicated GET /api/notifications/unread-count endpoint for accurate badge count on mount; badge now has ring-2 ring-background polish; pill badge inside dropdown header showing live unread count
 - [x] UI: Notification dropdown popover (deeppivot-247) — NotificationDropdown in DashboardTopBar
@@ -796,7 +797,12 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Admin API: Broadcast announcement to all users (fan-out worker) (deeppivot-256) — Inngest `broadcastAnnouncement` function with chunked background delivery.
 - [x] Admin API: Send to Home (deeppivot-257) — sendToHome on announcement, force redirect to /dashboard/announcements/[id] until dismissed.
 
-### 4. Gamification & Weekly Streaks
+- [x] Gamification: points and weekly streaks logic (deeppivot-267-270)
+- [x] UI: Weekly streak flame icon and count (deeppivot-275)
+- [x] Gamification: Hub panel on dashboard (deeppivot-274)
+- [x] Badge System: Evaluate badge unlocking rules async (deeppivot-281)
+- [ ] UI: Achievement Badge display in Gamification Hub (deeppivot-282)
+- [ ] UI: "Badge Unlocked" celebration modal (deeppivot-283)
 - [x] DB: `user_gamification` table (points, currentStreak, highestStreak) — migration 0025
 - [x] Hook: Add points on job application submitted (10 pts via `addPointsForJobApplication` in POST /api/jobs/[jobId]/apply)
 - [x] Design: 10 badge icons SVG (deeppivot-279) — public/badges/*.svg + gamification-badges.ts
@@ -824,4 +830,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-01 — Phase 16 / Section 4 progress: Implemented floating points animation (deeppivot-276). Zustand gamification store + Framer Motion PointsAnimation component wired into job apply (+10), interview end (+15), and milestone complete (+5) flows. API responses now include pointsAwarded. pnpm build exit 0.*
+*Last updated: 2026-03-02 — Phase 16 / Section 4 progress: Implemented asynchronous achievement badge system (deeppivot-281). 10 badge rules defined in src/lib/badge-rules.ts; triggered by gamification events via Inngest. pnpm build exit 0.*

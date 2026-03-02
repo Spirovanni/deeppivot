@@ -12,6 +12,7 @@ import { sendWelcomeEmail } from "@/src/inngest/functions/send-welcome-email";
 import { matchingFeedbackAggregate } from "@/src/inngest/matching-feedback-aggregate";
 import { broadcastAnnouncement } from "@/src/inngest/announcements";
 import { gamificationStreakReset } from "@/src/inngest/gamification-streak-reset";
+import { evaluateBadges } from "@/src/inngest/evaluate-badges";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -26,6 +27,7 @@ export const { GET, POST, PUT } = serve({
     matchingFeedbackAggregate,
     broadcastAnnouncement,
     gamificationStreakReset,
+    evaluateBadges,
   ],
 });
 

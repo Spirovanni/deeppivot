@@ -15,6 +15,7 @@ import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { SendToHomeRedirect } from "./_components/SendToHomeRedirect";
 import { PointsAnimation } from "@/components/gamification/PointsAnimation";
 import { AnnouncementBanner } from "@/components/dashboard/AnnouncementBanner";
+import NotificationToastSync from "@/components/dashboard/NotificationToastSync";
 
 export default async function DashboardLayout({
   children,
@@ -41,6 +42,7 @@ export default async function DashboardLayout({
       <DashboardSidebar />
       <main className="flex flex-1 flex-col overflow-auto">
         <DashboardTopBar />
+        <NotificationToastSync />
         {showBanner && (
           <AnnouncementBanner
             announcement={latestAnnouncement!}

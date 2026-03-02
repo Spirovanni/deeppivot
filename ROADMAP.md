@@ -817,6 +817,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Cron: Reset streaks if no weekly activity (deeppivot-270)
 - [x] UI: Confetti effect on reaching streak milestones (deeppivot-277) — canvas-confetti multi-burst celebration (center + left/right) at 4/8/12/26/52-week milestones; StreakConfetti component with localStorage dedup; integrated into StreakBadge.
 - [x] UI: Leveling system UI (deeppivot-278) — 10 levels (Newcomer→Apex, 0→3500 pts) with animated progress bar in GamificationHub; level info added to /api/gamification/status response; src/lib/gamification-levels.ts utility.
+- [x] Security: Prevent gamification endpoint abuse/spamming (deeppivot-292) — GAMIFICATION_ACTION rate limit profile (10 req/5min per user); deduplication keys in addPoints() prevent milestone toggle and session re-completion exploits; per-user rateLimitByUser on job apply and milestone PATCH; active-status guard on interview completion
 - [ ] UI: Gamification Hub, streak flame, confetti, badges
 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports
@@ -832,4 +833,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-02 — Phase 16 / Section 4 progress: Achievement badge display (deeppivot-282). /dashboard/achievements page with stats row, level progress bar, badge grid (unlocked/locked with category colors); Achievements nav in sidebar. pnpm build exit 0.*
+*Last updated: 2026-03-02 — Phase 16 / Section 4 progress: Gamification security hardening (deeppivot-292). GAMIFICATION_ACTION rate limit, deduplication keys in addPoints(), per-user rate limits on job apply and milestone PATCH, active-status guard on interview completion. pnpm build exit 0.*

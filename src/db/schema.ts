@@ -1066,3 +1066,24 @@ export const matchingWeightsTable = pgTable("matching_weights", {
   weight: real().notNull().default(1),
   updatedAt: timestamp().notNull().defaultNow(),
 });
+
+// ============================================
+// SYSTEM SETTINGS (Phase 16.3)
+// ============================================
+
+export const systemSettingsTable = pgTable("system_settings", {
+  key: varchar({ length: 255 }).primaryKey(),
+  value: text().notNull(),
+  /** Control UI parsing: boolean | number | string | json */
+  type: varchar({ length: 50 }).notNull().default("string"),
+  description: text(),
+  updatedAt: timestamp().notNull().defaultNow(),
+  updatedBy: integer().references(() => usersTable.id, { onDelete: "set null" }),
+});
+
+export const systemSettingsRelations = relations(systemSettingsTable, ({ one }) => ({
+  updater: one(usersTable, {
+    fields: [systemSettingsTable.updatedBy],
+    references: [usersTable.id],
+  }),
+}));

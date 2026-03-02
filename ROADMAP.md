@@ -806,10 +806,12 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Admin API: Generate signed CSV download link (deeppivot-313) — POST /api/admin/export/users/link, GET /api/admin/export/download?token= (15min expiry)
 - [x] Feedback algorithm: Improve matching weights based on outcome — matching_feedback + matching_weights tables, recordMatchingFeedback on hired/rejected, aggregateMatchingFeedback (Inngest cron daily)
 - [x] Privacy UI: "Open to Opportunities" toggle (deeppivot-319) — users.openToOpportunities, profile settings card
+- [x] Privacy: Ensure matched candidates opt-in to employer discovery (deeppivot-318) — getTopCandidateMatches strictly filters by openToOpportunities=true
+- [x] System: Exclude opted-out users from Employer matching pool (deeppivot-320) — matching engine checks privacy flags
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
-- [ ] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
-- Admin data exports to CSV for offline analysis.
+- [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
+- [ ] Admin data exports to CSV for offline analysis.
 
 ---
 
-*Last updated: 2026-03-01 — deeppivot-271 (Hook: Add points on interview completion) closed. addPointsForInterviewCompletion() awards 15 pts via INTERVIEW_COMPLETED event in endInterviewSession(), with sessionId/sessionType/overallScore metadata logged to gamification_events audit table. Non-blocking fire-and-forget pattern consistent with existing hooks.*
+*Last updated: 2026-03-02 — Phase 16 / Section 5 progress: Implemented candidate privacy enforcement and discovery. getTopCandidateMatches server action now respects openToOpportunities opt-in, and Top Matches section is live on the Talent Scout Dashboard. Closed deeppivot-318 and deeppivot-320.*

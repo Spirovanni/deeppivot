@@ -10,6 +10,8 @@ import {
     Card, CardContent, CardDescription, CardHeader, CardTitle,
 } from "@/components/ui/card";
 import { getEmployerDashboardStats } from "@/src/lib/actions/employer-dashboard";
+import { getTopCandidateMatches } from "@/src/lib/actions/matching";
+
 
 const features = [
     {
@@ -78,11 +80,15 @@ export default async function TalentScoutDashboardPage() {
         recentApplicants: [],
     };
 
+    let topMatches: Awaited<ReturnType<typeof getTopCandidateMatches>> = [];
+
     try {
         stats = await getEmployerDashboardStats();
+        topMatches = await getTopCandidateMatches();
     } catch {
         // No company yet or DB error — show empty state
     }
+
 
     const statCards = [
         {
@@ -233,6 +239,68 @@ export default async function TalentScoutDashboardPage() {
                         </div>
                     </div>
                 )}
+
+                {/* Top Matches */}
+                {topMatches.length > 0 && (
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Top Candidate Matches</h2>
+                            <Link href="/employer/discover" className="text-sm font-medium text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300">
+                                View recommendations →
+                            </Link>
+                        </div>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            {topMatches.map((m) => (
+                                <Card key={m.id} className="overflow-hidden border-slate-200 dark:border-slate-700 hover:shadow-sm transition-shadow">
+                                    <CardContent className="p-5">
+                                        <div className="flex items-start gap-4">
+                                            <div className="h-12 w-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-lg font-bold text-slate-500 overflow-hidden shrink-0">
+                                                {m.avatarUrl ? (
+                                                    <img src={m.avatarUrl} alt={m.name} className="h-full w-full object-cover" />
+                                                ) : (
+                                                    m.name[0]
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <h3 className="font-semibold text-slate-900 dark:text-white truncate">{m.name}</h3>
+                                                    {m.avgInterviewScore != null && (
+                                                        <span className="shrink-0 text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded">
+                                                            ★ {m.avgInterviewScore}%
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {m.archetypeName && (
+                                                    <div className="mt-1">
+                                                        <span className="rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">
+                                                            {m.archetypeName}
+                                                        </span>
+                                                    </div>
+                                                )}
+
+                                                {m.skills.length > 0 && (
+                                                    <div className="mt-3 flex flex-wrap gap-1">
+                                                        {m.skills.map((s) => (
+                                                            <span key={s} className="px-1.5 py-0.5 rounded bg-slate-50 dark:bg-slate-900/50 text-[10px] text-slate-500 border border-slate-100 dark:border-slate-700">
+                                                                {s}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+                                                <button className="mt-4 w-full text-xs font-semibold py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
+                                                    Invite to Apply
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
 
                 {/* Feature nav */}
                 <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-white">Your Tools</h2>

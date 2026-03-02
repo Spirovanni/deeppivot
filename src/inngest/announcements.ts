@@ -35,7 +35,7 @@ export const broadcastAnnouncement = inngest.createFunction(
 
         // 2. Chunk and insert notifications (fan-out)
         const CHUNK_SIZE = 100;
-        const link = sendToHome ? `/dashboard/announcements/${announcementId}` : null;
+        const link = `/dashboard/announcements/${announcementId}`;
 
         const results = [];
         for (let i = 0; i < users.length; i += CHUNK_SIZE) {

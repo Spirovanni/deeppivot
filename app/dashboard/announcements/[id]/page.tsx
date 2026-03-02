@@ -22,6 +22,7 @@ export default async function AnnouncementPage({ params }: Props) {
       title: adminAnnouncementsTable.title,
       body: adminAnnouncementsTable.body,
       sendToHome: adminAnnouncementsTable.sendToHome,
+      createdAt: adminAnnouncementsTable.createdAt,
     })
     .from(adminAnnouncementsTable)
     .where(eq(adminAnnouncementsTable.id, announcementId))
@@ -36,6 +37,7 @@ export default async function AnnouncementPage({ params }: Props) {
         title={announcement.title}
         body={announcement.body}
         sendToHome={announcement.sendToHome}
+        createdAt={announcement.createdAt}
         userId={userId}
       />
       <Link

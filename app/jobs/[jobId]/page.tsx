@@ -61,6 +61,7 @@ export default function JobDetailPage() {
     const [boardId, setBoardId] = useState<number | null>(null);
 
     useEffect(() => {
+        if (!jobId) return;
         fetch(`/api/jobs/${jobId}`)
             .then((r) => r.json())
             .then(setJob)

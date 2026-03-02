@@ -40,6 +40,7 @@ import {
 } from "@/src/lib/hooks/use-career-plans";
 import { EditMilestoneDialog } from "./EditMilestoneDialog";
 import { CreateMilestoneDialog } from "./CreateMilestoneDialog";
+import { useShowPointsAnimation } from "@/src/store/gamification";
 
 // ─── Status config ─────────────────────────────────────────────────────────────
 
@@ -84,6 +85,7 @@ function SortableMilestoneCard({
   const [editOpen, setEditOpen] = useState(false);
   const deletePlan = useDeletePlan();
   const updatePlan = useUpdatePlan();
+  const showPoints = useShowPointsAnimation();
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: milestone.id });
@@ -106,7 +108,16 @@ function SortableMilestoneCard({
   const handleToggleComplete = () => {
     const nextStatus =
       milestone.status === "completed" ? "planned" : "completed";
-    updatePlan.mutate({ id: milestone.id, data: { status: nextStatus } });
+    updatePlan.mutate(
+      { id: milestone.id, data: { status: nextStatus } },
+      {
+        onSuccess: (data) => {
+          if (data?.pointsAwarded) {
+            showPoints(data.pointsAwarded, "Milestone completed");
+          }
+        },
+      }
+    );
   };
 
   const targetDate = milestone.targetDate

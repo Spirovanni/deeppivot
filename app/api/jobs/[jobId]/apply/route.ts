@@ -128,7 +128,7 @@ export async function POST(
         }).catch(() => { });
 
         // Gamification: award points for job application submitted
-        addPointsForJobApplication(dbUser.id).catch(() => { });
+        const gamResult = await addPointsForJobApplication(dbUser.id).catch(() => null);
 
         // Notify employer by email (non-blocking)
         (async () => {
@@ -183,7 +183,11 @@ export async function POST(
         })();
 
         return NextResponse.json(
-            { application: marketplaceApp, trackerCard },
+            {
+                application: marketplaceApp,
+                trackerCard,
+                ...(gamResult ? { pointsAwarded: gamResult.pointsAdded } : {}),
+            },
             { status: 201 }
         );
     } catch {

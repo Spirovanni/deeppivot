@@ -16,6 +16,7 @@ import {
   endInterviewSession,
 } from "@/src/lib/actions/interview-sessions";
 import { toast } from "@/src/lib/toast";
+import { useShowPointsAnimation } from "@/src/store/gamification";
 import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
 
 /**
@@ -91,6 +92,7 @@ export function ElevenLabsInterviewRoom({
   preSignedUrl,
   jobDescription,
 }: ElevenLabsInterviewRoomProps) {
+  const showPoints = useShowPointsAnimation();
   const [isMounted, setIsMounted] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -690,14 +692,17 @@ export function ElevenLabsInterviewRoom({
     // End database session
     if (sessionIdRef.current) {
       try {
-        await endInterviewSession(sessionIdRef.current);
+        const result = await endInterviewSession(sessionIdRef.current);
         setSessionEnded(true);
         toast.success("Interview ended");
+        if (result.pointsAwarded) {
+          showPoints(result.pointsAwarded, "Interview completed");
+        }
       } catch (error) {
         console.error("Failed to end session:", error);
       }
     }
-  }, []);
+  }, [showPoints]);
 
   const toggleMute = useCallback(() => {
     if (!streamRef.current) return;

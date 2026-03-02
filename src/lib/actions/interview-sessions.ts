@@ -48,7 +48,7 @@ export async function startInterviewSession(sessionType: string): Promise<number
 
 export async function endInterviewSession(
   sessionId: number
-): Promise<{ overallScore: number | null }> {
+): Promise<{ overallScore: number | null; pointsAwarded: number | null }> {
   const [result] = await db
     .select({ avgConfidence: avg(emotionSnapshotsTable.confidence) })
     .from(emotionSnapshotsTable)
@@ -69,6 +69,7 @@ export async function endInterviewSession(
     .where(eq(interviewSessionsTable.id, sessionId));
 
   // Gamification: award points for interview completion
+  let pointsAwarded: number | null = null;
   const [session] = await db
     .select({
       userId: interviewSessionsTable.userId,
@@ -79,16 +80,17 @@ export async function endInterviewSession(
     .limit(1);
 
   if (session) {
-    addPointsForInterviewCompletion(
+    const gamResult = await addPointsForInterviewCompletion(
       session.userId,
       sessionId,
       session.sessionType,
       overallScore
-    ).catch(() => {});
+    ).catch(() => null);
+    pointsAwarded = gamResult?.pointsAdded ?? null;
   }
 
   revalidatePath("/dashboard/interviews");
-  return { overallScore };
+  return { overallScore, pointsAwarded };
 }
 
 export async function getSessionDetail(sessionId: number) {

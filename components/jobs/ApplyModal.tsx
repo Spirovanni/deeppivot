@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useShowPointsAnimation } from "@/src/store/gamification";
 
 interface ApplyModalProps {
     jobId: number;
@@ -12,6 +13,7 @@ interface ApplyModalProps {
 }
 
 export function ApplyModal({ jobId, jobTitle, companyName, boardId, onClose, onSuccess }: ApplyModalProps) {
+    const showPoints = useShowPointsAnimation();
     const [resumeUrl, setResumeUrl] = useState("");
     const [coverLetter, setCoverLetter] = useState("");
     const [loading, setLoading] = useState(false);
@@ -31,6 +33,9 @@ export function ApplyModal({ jobId, jobTitle, companyName, boardId, onClose, onS
             if (res.status === 409) throw new Error("You've already applied for this job.");
             if (res.status === 410) throw new Error("This job is no longer accepting applications.");
             if (!res.ok) throw new Error(data.error ?? "Failed to submit application");
+            if (data.pointsAwarded) {
+                showPoints(data.pointsAwarded, "Application submitted");
+            }
             onSuccess();
         } catch (err) {
             setError(err instanceof Error ? err.message : "Something went wrong");

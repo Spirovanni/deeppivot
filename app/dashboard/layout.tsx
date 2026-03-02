@@ -10,6 +10,7 @@ import { DashboardConnectionError } from "@/components/dashboard/DashboardConnec
 import { SessionTimeoutWarning } from "@/components/SessionTimeoutWarning";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { SendToHomeRedirect } from "./_components/SendToHomeRedirect";
+import { PointsAnimation } from "@/components/gamification/PointsAnimation";
 
 export default async function DashboardLayout({
   children,
@@ -36,6 +37,7 @@ export default async function DashboardLayout({
       </main>
       <SessionTimeoutWarning />
       <FeedbackWidget />
+      <PointsAnimation />
     </div>
   );
 }

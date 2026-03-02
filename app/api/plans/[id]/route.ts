@@ -114,14 +114,16 @@ export async function PATCH(
       .returning();
 
     // Award gamification points when milestone transitions to "completed"
+    let pointsAwarded: number | null = null;
     if (
       body.status === "completed" &&
       existing.status !== "completed"
     ) {
-      addPointsForMilestoneCompletion(userId, id, milestone?.title);
+      const gamResult = await addPointsForMilestoneCompletion(userId, id, milestone?.title).catch(() => null);
+      pointsAwarded = gamResult?.pointsAdded ?? null;
     }
 
-    return NextResponse.json(milestone);
+    return NextResponse.json({ ...milestone, pointsAwarded });
   } catch (error) {
     console.error("[api/plans] PATCH error:", error);
     return NextResponse.json(

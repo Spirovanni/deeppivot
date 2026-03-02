@@ -18,17 +18,17 @@ const EXPERIENCE_LEVELS = [
 
 export function JobSearchFilters({ initialKeyword }: { initialKeyword?: string }) {
     const router = useRouter();
-    const pathname = usePathname();
+    const pathname = usePathname() ?? "/jobs";
     const searchParams = useSearchParams();
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const [q, setQ] = useState(searchParams.get("q") ?? initialKeyword ?? "");
-    const [location, setLocation] = useState(searchParams.get("location") ?? "");
-    const [jobType, setJobType] = useState(searchParams.get("jobType") ?? "");
-    const [experienceLevel, setExperienceLevel] = useState(searchParams.get("experienceLevel") ?? "");
-    const [remoteOnly, setRemoteOnly] = useState(searchParams.get("remoteFlag") === "true");
-    const [salaryMin, setSalaryMin] = useState(searchParams.get("salaryMin") ?? "");
-    const [salaryMax, setSalaryMax] = useState(searchParams.get("salaryMax") ?? "");
+    const [q, setQ] = useState(searchParams?.get("q") ?? initialKeyword ?? "");
+    const [location, setLocation] = useState(searchParams?.get("location") ?? "");
+    const [jobType, setJobType] = useState(searchParams?.get("jobType") ?? "");
+    const [experienceLevel, setExperienceLevel] = useState(searchParams?.get("experienceLevel") ?? "");
+    const [remoteOnly, setRemoteOnly] = useState(searchParams?.get("remoteFlag") === "true");
+    const [salaryMin, setSalaryMin] = useState(searchParams?.get("salaryMin") ?? "");
+    const [salaryMax, setSalaryMax] = useState(searchParams?.get("salaryMax") ?? "");
 
     function buildParams() {
         const params = new URLSearchParams();

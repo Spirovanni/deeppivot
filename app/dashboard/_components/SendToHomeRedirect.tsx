@@ -14,7 +14,7 @@ export function SendToHomeRedirect({ pendingAnnouncementId }: Props) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!pendingAnnouncementId) return;
+    if (!pendingAnnouncementId || !pathname) return;
     const announcementPath = `/dashboard/announcements/${pendingAnnouncementId}`;
     if (pathname === announcementPath) return;
     if (pathname.startsWith("/dashboard")) {

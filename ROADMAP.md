@@ -85,6 +85,7 @@ DeepPivot helps users practice interviews with AI, track job applications, disco
 /api/notifications/read-all        Phase 16.3: mark all as read (PATCH, auth required) (deeppivot-243)
 /api/notifications/stream         Phase 16.3: SSE real-time stream (GET, auth required) (deeppivot-244)
 /api/admin/announcements           Phase 16.3: admin broadcast (POST, admin only)
+/api/gamification/status           Phase 16.4: gamification status (GET, auth required) (deeppivot-269)
 
 /admin                  ### 6. Admin Panel Hooks & Review Dashboard
 - Tools for admins/coaches to review AI transcripts and user performance.
@@ -798,6 +799,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] DB Schema: `gamification_events` audit log (deeppivot-268) — gamificationEventsTable (id, userId FK cascade, eventType varchar(64), points, metadata JSONB, createdAt) + 3 indexes (userId, eventType, createdAt) + logGamificationEvent() + addPoints() now logs to audit table. Migration 0033
 - [x] Hook: Add points on interview completion (deeppivot-271) — addPointsForInterviewCompletion() (15 pts) wired into endInterviewSession() after status→"completed", with sessionId/sessionType/overallScore metadata in audit log
 - [x] Hook: Add points on career plan milestone completion (deeppivot-272) — addPointsForMilestoneCompletion() (5 pts) wired into PATCH /api/plans/[id] and updateMilestone() server action on status→"completed" transition, with milestoneId/title metadata in audit log
+- [x] API: GET `/api/gamification/status` (deeppivot-269) — returns authenticated user's points, streaks, unlocked badges (with label/icon metadata from gamification-badges.ts), and last 10 gamification events. Rate-limited via DEFAULT profile.
 - [ ] Cron: Reset streaks if no weekly activity
 - [ ] UI: Gamification Hub, streak flame, points animation, confetti, badges
 
@@ -814,4 +816,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-02 — Phase 16 / Section 5 progress: Implemented candidate privacy enforcement and discovery. getTopCandidateMatches server action now respects openToOpportunities opt-in, and Top Matches section is live on the Talent Scout Dashboard. Closed deeppivot-318 and deeppivot-320.*
+*Last updated: 2026-03-01 — Phase 16 / Section 4 progress: Implemented GET /api/gamification/status endpoint (deeppivot-269) returning user points, streaks, badges, and recent events. Also fixed pre-existing Next.js 16 nullable hook type errors across 7 files (useParams, usePathname, useSearchParams) and excluded stale node_modules_old_2 from tsconfig. pnpm build exit 0.*

@@ -36,7 +36,7 @@ interface JobFormProps {
 
 export function JobForm({ jobId, initialValues }: JobFormProps) {
     const searchParams = useSearchParams();
-    const prefilledCompanyId = searchParams.get("companyId");
+    const prefilledCompanyId = searchParams?.get("companyId") ?? null;
 
     const [companies, setCompanies] = useState<{ id: number; name: string }[]>([]);
     const [companyId, setCompanyId] = useState(initialValues?.companyId?.toString() ?? prefilledCompanyId ?? "");

@@ -50,7 +50,7 @@ export function StartInterviewCTA({ jobDescriptions, resumes }: StartInterviewCT
 
   useEffect(() => {
     // If we came from a "Practice for this Job" button
-    if (searchParams.get("practice") === "true") {
+    if (searchParams?.get("practice") === "true") {
       const company = searchParams.get("company") || "";
       const position = searchParams.get("position") || "";
       setDefaultJobQuery(`${company} ${position}`.trim());

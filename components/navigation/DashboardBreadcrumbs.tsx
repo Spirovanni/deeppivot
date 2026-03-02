@@ -34,7 +34,7 @@ function getLabel(segment: string, index: number, segments: string[]): string {
 }
 
 export function DashboardBreadcrumbs() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "/dashboard";
   const segments = pathname.split("/").filter(Boolean).slice(1); // Skip "dashboard"
 
   const isRoot = pathname === "/dashboard" || pathname === "/dashboard/";

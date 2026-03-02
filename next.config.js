@@ -47,6 +47,9 @@ const nextConfig = {
   // Disable source maps in production to reduce deployment size
   productionBrowserSourceMaps: false,
 
+  // Use standalone output for more reliable Vercel deployments
+  output: 'standalone',
+
   async headers() {
     const isDev = process.env.NODE_ENV !== "production";
 

@@ -786,6 +786,8 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Event trigger: Interview feedback ready → in-app notification (deeppivot-251) — createNotification in processInterviewFeedback Inngest step
 - [x] Event trigger: Job application status update → in-app notification (deeppivot-252) — createNotification in PATCH /api/employer/applications/[appId]
 - [x] Admin: /admin/announcements listing page (deeppivot-253) — listing + new form, POST broadcasts to users.
+- [x] Integration: Send announcement digest via Resend (deeppivot-260) — Premium `AnnouncementEmail` React-Email template; batch sending support in `src/lib/email.ts`; integrated into Inngest broadcast worker for efficiency.
+- [ ] Admin Settings: System settings UI manager (`/admin/settings`) (deeppivot-261)
 - [x] Admin UI: Rich text editor for announcements (deeppivot-254) — Custom `RichTextEditor` component using `contentEditable`, toolbar for bold/italic/lists/headings, HTML rendering in `AnnouncementView`.
 - [x] UI: Dedicated `/announcements/[id]` reading page (deeppivot-259) — Premium article-style view with automatic dismissal on mount; metadata display (date, author); back-to-dashboard navigation; universal back-linking from notifications.
 - [x] UI: System Announcement banner (dismissible) (deeppivot-258) — Dismissible glassmorphism banner in dashboard layout; `AnnouncementBanner` component + `getLatestAnnouncement` server action.

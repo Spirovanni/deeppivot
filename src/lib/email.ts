@@ -17,6 +17,9 @@ import {
     EmployerInvitedYouToApplyEmail,
     type EmployerInvitedYouToApplyEmailProps,
 } from "@/emails/EmployerInvitedYouToApplyEmail";
+import {
+    AnnouncementEmail,
+} from "@/emails/AnnouncementEmail";
 
 let _resend: Resend | null = null;
 
@@ -107,4 +110,52 @@ export async function sendMentorConnectionEmail(
         subject,
         react: createElement(MentorConnectionEmail, data),
     });
+}
+
+export async function sendAnnouncementEmail(
+    to: string,
+    data: { userName: string; title: string; body: string; link: string },
+): Promise<{ success: boolean; error?: string }> {
+    return sendEmail({
+        to,
+        subject: `Announcement: ${data.title}`,
+        react: createElement(AnnouncementEmail, data),
+    });
+}
+
+/**
+ * Sends a batch of emails using Resend's batch API.
+ * Maximum 100 emails per batch.
+ */
+export async function sendBatchEmails(
+    emails: Array<{
+        to: string;
+        subject: string;
+        react: ReactElement;
+    }>
+): Promise<{ success: boolean; results?: any; error?: string }> {
+    const resend = getResend();
+    if (!resend) {
+        console.warn("[email] RESEND_API_KEY not set — skipping batch send");
+        return { success: false, error: "Email service not configured" };
+    }
+
+    try {
+        const batchData = await Promise.all(
+            emails.map(async (e) => ({
+                from: FROM_ADDRESS,
+                to: e.to,
+                subject: e.subject,
+                html: await render(e.react),
+            }))
+        );
+
+        const { data, error } = await resend.batch.send(batchData);
+        if (error) throw new Error(error.message);
+        return { success: true, results: data };
+    } catch (err) {
+        const msg = err instanceof Error ? err.message : "Unknown error";
+        console.error("[email] Batch send failed –", msg);
+        return { success: false, error: msg };
+    }
 }

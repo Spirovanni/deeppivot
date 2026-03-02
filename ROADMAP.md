@@ -794,7 +794,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Admin: Manual override/grant points tool (deeppivot-293) — POST /api/admin/users/[userId]/gamification, UserDetailForm
 - [x] DB Schema: `user_badges` link table (deeppivot-280) — userBadgesTable (id, userId FK cascade, badgeId varchar(64), unlockedAt, unique(userId,badgeId), index on userId) + relations + migration 0032
 - [x] DB Schema: `gamification_events` audit log (deeppivot-268) — gamificationEventsTable (id, userId FK cascade, eventType varchar(64), points, metadata JSONB, createdAt) + 3 indexes (userId, eventType, createdAt) + logGamificationEvent() + addPoints() now logs to audit table. Migration 0033
-- [ ] Hook: Add points on interview completion
+- [x] Hook: Add points on interview completion (deeppivot-271) — addPointsForInterviewCompletion() (15 pts) wired into endInterviewSession() after status→"completed", with sessionId/sessionType/overallScore metadata in audit log
 - [x] Hook: Add points on career plan milestone completion (deeppivot-272) — addPointsForMilestoneCompletion() (5 pts) wired into PATCH /api/plans/[id] and updateMilestone() server action on status→"completed" transition, with milestoneId/title metadata in audit log
 - [ ] Cron: Reset streaks if no weekly activity
 - [ ] UI: Gamification Hub, streak flame, points animation, confetti, badges
@@ -810,4 +810,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-01 — deeppivot-246/248/249 (Notification unread count badge, empty state/loading skeletons, View All page) closed. Added GET /api/notifications/unread-count endpoint, Skeleton loading UI in NotificationDropdown, enhanced NotificationList with type icons + Mark all read + relative timestamps, and loading.tsx skeleton screen for /dashboard/notifications. Phase 16.3 Notification Center UI now complete.*
+*Last updated: 2026-03-01 — deeppivot-271 (Hook: Add points on interview completion) closed. addPointsForInterviewCompletion() awards 15 pts via INTERVIEW_COMPLETED event in endInterviewSession(), with sessionId/sessionType/overallScore metadata logged to gamification_events audit table. Non-blocking fire-and-forget pattern consistent with existing hooks.*

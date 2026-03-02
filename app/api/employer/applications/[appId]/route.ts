@@ -10,6 +10,7 @@ import {
 } from "@/src/db/schema";
 import { and, eq } from "drizzle-orm";
 import { recordMatchingFeedback } from "@/src/lib/matching-feedback";
+import { createNotification } from "@/src/lib/notifications";
 
 /**
  * PATCH /api/employer/applications/[appId]
@@ -43,7 +44,12 @@ export async function PATCH(
 
         // Verify the application belongs to a job owned by this employer
         const [app] = await db
-            .select({ id: jobMarketplaceApplicationsTable.id })
+            .select({
+                id: jobMarketplaceApplicationsTable.id,
+                userId: jobMarketplaceApplicationsTable.userId,
+                jobTitle: jobsTable.title,
+                companyName: companiesTable.name
+            })
             .from(jobMarketplaceApplicationsTable)
             .innerJoin(jobsTable, eq(jobMarketplaceApplicationsTable.jobId, jobsTable.id))
             .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
@@ -81,8 +87,24 @@ export async function PATCH(
 
         // Matching feedback: record outcome for improving weights
         if (status === "hired" || status === "rejected") {
-            recordMatchingFeedback(parseInt(appId), status).catch(() => {});
+            recordMatchingFeedback(parseInt(appId), status).catch(() => { });
         }
+
+        // Trigger in-app notification for the learner
+        const readableStatus: Record<string, string> = {
+            new: "is now being processed",
+            reviewing: "is under review",
+            rejected: "was not selected at this time",
+            hired: "has reached the offer stage!",
+        };
+
+        createNotification({
+            userId: app.userId,
+            title: "Application Status Update",
+            body: `Your application for ${app.jobTitle} at ${app.companyName} ${readableStatus[status]}.`,
+            type: "career",
+            link: "/dashboard/job-tracker",
+        }).catch((err) => console.error("[notifications] Failed to trigger job status notification:", err));
 
         return NextResponse.json(updated);
     } catch {

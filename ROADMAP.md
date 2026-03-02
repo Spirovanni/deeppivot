@@ -782,6 +782,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: "View All Notifications" full page (deeppivot-249) — Enhanced /dashboard/notifications: type icons (Mic2/Users/Megaphone/FileText) with colored icon containers for unread items, type pill badge, relative timestamps, "Mark all as read" button (CheckCheck), unread indicator dot, border-primary/20 highlight; "View all notifications" footer link in dropdown; loading.tsx skeleton screen
 - [x] Event trigger: Mentor connection accepted → in-app notification (deeppivot-250) — createNotification, updateConnectionStatus
 - [x] Event trigger: Interview feedback ready → in-app notification (deeppivot-251) — createNotification in processInterviewFeedback Inngest step
+- [x] Event trigger: Job application status update → in-app notification (deeppivot-252) — createNotification in PATCH /api/employer/applications/[appId]
 - [x] Admin: /admin/announcements listing page (deeppivot-253) — listing + new form, POST broadcasts to users
 - [x] Admin API: Send to Home (deeppivot-257) — sendToHome on announcement, force redirect to /dashboard/announcements/[id] until dismissed
 - [x] QA: Real-time delivery and Admin broadcast E2E (deeppivot-266) — stub APIs + e2e/notifications-admin-broadcast.spec.ts

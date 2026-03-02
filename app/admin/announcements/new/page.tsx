@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 
 export default function NewAnnouncementPage() {
     const router = useRouter();
@@ -16,7 +17,7 @@ export default function NewAnnouncementPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title.trim()) return;
+        if (!title.trim() || !body.trim()) return;
         setError("");
         setIsSaving(true);
 
@@ -100,14 +101,12 @@ export default function NewAnnouncementPage() {
                     <label htmlFor="body" className="block text-sm font-medium mb-1">
                         Message *
                     </label>
-                    <textarea
-                        id="body"
-                        required
+                    <RichTextEditor
                         value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        rows={5}
-                        className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring resize-none"
+                        onChange={setBody}
                         placeholder="Enter the announcement message..."
+                        minHeight="300px"
+                        disabled={isSaving}
                     />
                 </div>
 

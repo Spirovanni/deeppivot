@@ -32,7 +32,49 @@ export function AnnouncementView({ announcementId, title, body, sendToHome, user
         </p>
       )}
       <h1 className="text-xl font-semibold">{title}</h1>
-      <div className="mt-4 whitespace-pre-wrap text-sm text-muted-foreground">{body}</div>
+      <div
+        className="mt-4 text-sm text-muted-foreground rich-text-display"
+        dangerouslySetInnerHTML={{ __html: body }}
+      />
+
+      <style jsx global>{`
+        .rich-text-display h1 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin-top: 1rem;
+          margin-bottom: 0.5rem;
+          line-height: 1.25;
+          color: var(--foreground);
+        }
+        .rich-text-display h2 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          margin-top: 0.75rem;
+          margin-bottom: 0.5rem;
+          line-height: 1.25;
+          color: var(--foreground);
+        }
+        .rich-text-display p {
+          margin-bottom: 0.5rem;
+        }
+        .rich-text-display ul {
+          list-style-type: disc;
+          padding-left: 1.5rem;
+          margin-bottom: 0.5rem;
+        }
+        .rich-text-display ol {
+          list-style-type: decimal;
+          padding-left: 1.5rem;
+          margin-bottom: 0.5rem;
+        }
+        .rich-text-display b, .rich-text-display strong {
+          font-weight: 700;
+          color: var(--foreground);
+        }
+        .rich-text-display i, .rich-text-display em {
+          font-style: italic;
+        }
+      `}</style>
       <div className="mt-6 flex gap-2">
         <button
           onClick={handleContinue}

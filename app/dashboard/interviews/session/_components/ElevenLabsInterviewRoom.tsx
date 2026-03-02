@@ -393,13 +393,8 @@ export function ElevenLabsInterviewRoom({
             console.log(`🔊 Chunk duration: ${(pcmData.length / targetSampleRate).toFixed(2)}s (target: 0.10s / 100ms for optimal VAD)`);
           }
 
-          // ElevenLabs ConvAI expects { type: "user_audio_chunk", audio: <base64> }
-          const message = {
-            type: "user_audio_chunk",
-            audio: base64,
-          };
-
-          websocket.send(JSON.stringify(message));
+          // ElevenLabs ConvAI WebSocket protocol: { user_audio_chunk: <base64> }
+          websocket.send(JSON.stringify({ user_audio_chunk: base64 }));
 
           // Track how many chunks we've sent
           setAudioChunksSent(prev => prev + 1);

@@ -808,7 +808,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Hook: Add points on career plan milestone completion (deeppivot-272) — addPointsForMilestoneCompletion() (5 pts) wired into PATCH /api/plans/[id] and updateMilestone() server action on status→"completed" transition, with milestoneId/title metadata in audit log
 - [x] API: GET `/api/gamification/status` (deeppivot-269) — returns authenticated user's points, streaks, unlocked badges (with label/icon metadata from gamification-badges.ts), and last 10 gamification events. Rate-limited via DEFAULT profile.
 - [x] UI: Points animation (floating +10) on successful actions (deeppivot-276) — Zustand gamification store (src/store/gamification.ts), PointsAnimation Framer Motion component (amber gradient bubble, Sparkles icon, 2.4s auto-dismiss), wired into ApplyModal (+10), ElevenLabsInterviewRoom (+15), MilestoneTimeline (+5). API responses include pointsAwarded field.
-- [ ] Cron: Reset streaks if no weekly activity
+- [x] Cron: Reset streaks if no weekly activity (deeppivot-270)
 - [ ] UI: Gamification Hub, streak flame, confetti, badges
 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports

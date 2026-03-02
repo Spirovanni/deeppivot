@@ -7,7 +7,8 @@
 
 import { db } from "@/src/db";
 import { userGamificationTable, gamificationEventsTable } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, lt, and, gt } from "drizzle-orm";
+import { startOfWeek, isSameWeek, subWeeks } from "date-fns";
 
 /** Points awarded per action (configurable) */
 export const GAMIFICATION_POINTS = {
@@ -64,32 +65,63 @@ export async function addPoints(
 
   try {
     const [row] = await db
-      .select({ points: userGamificationTable.points })
+      .select()
       .from(userGamificationTable)
       .where(eq(userGamificationTable.userId, userId))
       .limit(1);
 
+    const now = new Date();
     let newTotal: number;
+    let newStreak: number = 1;
+    let newHighestStreak: number = 0;
 
     if (row) {
       newTotal = row.points + points;
+      newStreak = row.currentStreak;
+      newHighestStreak = row.highestStreak;
+
+      const lastActivity = row.lastActivityAt;
+
+      if (!lastActivity) {
+        newStreak = 1;
+      } else {
+        const lastActivityWeek = startOfWeek(lastActivity);
+        const currentWeek = startOfWeek(now);
+
+        if (isSameWeek(lastActivity, now)) {
+          // Already active this week, streak stays same
+          newStreak = row.currentStreak || 1;
+        } else if (isSameWeek(lastActivity, subWeeks(now, 1))) {
+          // Active last week, increment streak
+          newStreak = (row.currentStreak || 0) + 1;
+        } else {
+          // Missed at least one full week, reset to 1
+          newStreak = 1;
+        }
+      }
+
+      newHighestStreak = Math.max(newHighestStreak, newStreak);
+
       await db
         .update(userGamificationTable)
         .set({
           points: newTotal,
-          lastActivityAt: new Date(),
-          updatedAt: new Date(),
+          currentStreak: newStreak,
+          highestStreak: newHighestStreak,
+          lastActivityAt: now,
+          updatedAt: now,
         })
         .where(eq(userGamificationTable.userId, userId));
     } else {
+      newHighestStreak = 1;
       const [inserted] = await db
         .insert(userGamificationTable)
         .values({
           userId,
           points,
-          currentStreak: 0,
-          highestStreak: 0,
-          lastActivityAt: new Date(),
+          currentStreak: 1,
+          highestStreak: 1,
+          lastActivityAt: now,
         })
         .returning();
 
@@ -104,6 +136,37 @@ export async function addPoints(
   } catch (err) {
     console.error("[gamification] addPoints failed:", err);
     return null;
+  }
+}
+
+/**
+ * Resets streaks for users who have been inactive for more than a full calendar week.
+ * A streak is considered alive if lastActivityAt is in the current week or the previous week.
+ * If lastActivityAt < start of last week, the streak is expired.
+ */
+export async function resetExpiredStreaks(): Promise<{ resetCount: number }> {
+  try {
+    const now = new Date();
+    const startOfPreviousWeek = startOfWeek(subWeeks(now, 1));
+
+    // Find users with positive streaks but last activity before the start of the previous week
+    const result = await db
+      .update(userGamificationTable)
+      .set({
+        currentStreak: 0,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          gt(userGamificationTable.currentStreak, 0),
+          lt(userGamificationTable.lastActivityAt, startOfPreviousWeek)
+        )
+      );
+
+    return { resetCount: result.rowCount ?? 0 };
+  } catch (err) {
+    console.error("[gamification] resetExpiredStreaks failed:", err);
+    return { resetCount: 0 };
   }
 }
 

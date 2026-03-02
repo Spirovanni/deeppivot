@@ -11,6 +11,7 @@ import { salesforceDailySync } from "@/src/inngest/salesforce-sync";
 import { sendWelcomeEmail } from "@/src/inngest/functions/send-welcome-email";
 import { matchingFeedbackAggregate } from "@/src/inngest/matching-feedback-aggregate";
 import { broadcastAnnouncement } from "@/src/inngest/announcements";
+import { gamificationStreakReset } from "@/src/inngest/gamification-streak-reset";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -24,6 +25,7 @@ export const { GET, POST, PUT } = serve({
     sendWelcomeEmail,
     matchingFeedbackAggregate,
     broadcastAnnouncement,
+    gamificationStreakReset,
   ],
 });
 

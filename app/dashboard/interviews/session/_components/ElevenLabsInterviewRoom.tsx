@@ -160,8 +160,8 @@ export function ElevenLabsInterviewRoom({
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to get signed URL");
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `Server returned ${response.status}`);
         }
 
         ({ signedUrl } = await response.json());

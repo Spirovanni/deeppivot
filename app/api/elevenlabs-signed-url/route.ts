@@ -7,6 +7,15 @@ export async function POST(request: NextRequest) {
   const rl = await rateLimit(request, "ELEVENLABS_URL");
   if (!rl.success) return rl.response;
 
+  // Pre-flight: check that the ElevenLabs API key is configured
+  if (!process.env.ELEVENLABS_API_KEY) {
+    console.error("ELEVENLABS_API_KEY is not set in environment variables");
+    return NextResponse.json(
+      { error: "ElevenLabs API key is not configured. Add ELEVENLABS_API_KEY to your environment variables." },
+      { status: 500 }
+    );
+  }
+
   try {
     const body = await request.json();
     const { agentId, interviewType } = body as {
@@ -24,7 +33,7 @@ export async function POST(request: NextRequest) {
         const config = await resolveAgentConfig(interviewType);
         if (config?.elevenLabsAgentId) {
           console.log(
-            `🎯 Using agent config "${config.name}" (id=${config.id}) for interviewType="${interviewType}"`
+            `Using agent config "${config.name}" (id=${config.id}) for interviewType="${interviewType}"`
           );
           effectiveAgentId = config.elevenLabsAgentId;
         }
@@ -36,31 +45,41 @@ export async function POST(request: NextRequest) {
 
     if (!effectiveAgentId) {
       return NextResponse.json(
-        { error: "agentId is required" },
+        { error: "No agent ID available. Configure an agent in the admin panel or set NEXT_PUBLIC_ELEVENLABS_AGENT_ID." },
         { status: 400 }
       );
     }
 
-    console.log("🔑 Fetching ElevenLabs signed URL for agent:", effectiveAgentId);
+    console.log("Fetching ElevenLabs signed URL for agent:", effectiveAgentId);
     const signedUrl = await getConversationalAISignedUrl(effectiveAgentId);
 
     if (!signedUrl) {
-      console.error("❌ Failed to get signed URL - URL is null/undefined");
+      console.error("Failed to get signed URL - URL is null/undefined");
       return NextResponse.json(
         { error: "Unable to get signed URL" },
         { status: 500 }
       );
     }
 
-    console.log("✅ Successfully generated ElevenLabs signed URL");
+    console.log("Successfully generated ElevenLabs signed URL");
     return NextResponse.json({ signedUrl, agentId: effectiveAgentId });
   } catch (error) {
-    console.error("❌ Error fetching ElevenLabs signed URL:", error);
+    console.error("Error fetching ElevenLabs signed URL:", error);
+
+    // Surface the actual ElevenLabs error for easier debugging
+    const message = error instanceof Error ? error.message : "Unknown error";
+    const isAuthError = message.includes("401") || message.includes("Unauthorized") || message.includes("authentication");
+    const isNotFound = message.includes("404") || message.includes("not found") || message.includes("Not Found");
+
+    let userMessage = `Failed to fetch signed URL: ${message}`;
+    if (isAuthError) {
+      userMessage = "ElevenLabs API key is invalid or expired. Check your ELEVENLABS_API_KEY environment variable.";
+    } else if (isNotFound) {
+      userMessage = "ElevenLabs agent not found. Verify the Agent ID exists on your ElevenLabs dashboard.";
+    }
+
     return NextResponse.json(
-      {
-        error: "Failed to fetch signed URL",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: userMessage },
       { status: 500 }
     );
   }

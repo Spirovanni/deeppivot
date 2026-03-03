@@ -826,6 +826,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: "Hours Practiced" statistic on dashboard (deeppivot-289) — SQL SUM of interview session durations (endedAt - startedAt) in getDashboardSummary(); Clock icon stat in InterviewSummaryWidget with hours/minutes display
 - [x] System: Practice time tracking aggregation (minutes spent in interview) (deeppivot-288) — Added shared `getPracticeTimeAggregation(userId)` utility to aggregate completed interview durations into `totalMinutes` and `thisWeekMinutes`; wired into `/api/gamification/status` and `getGamificationStatus()` server action.
 - [x] User Setting: Toggle to disable gamification features (deeppivot-291) — Added profile setting backed by `system_settings` (`gamification:user:<id>:enabled`), enforced in points award pipeline (`addPoints` short-circuit), exposed via gamification status API/action, and reflected in Profile Settings + Achievements/Gamification hub behavior.
+- [x] Admin: Reporting on gamification engagement metrics (deeppivot-290) — Added admin analytics module (`getAdminGamificationMetrics`) and `/admin/gamification` dashboard with enabled/disabled adoption, 7-day activity/points, streak participation, top event types, and top users by points.
 - [ ] UI: Gamification Hub, streak flame, confetti, badges
 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports
@@ -846,3 +847,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-03 — deeppivot-288 closed. Added centralized practice-time aggregation from completed interview durations (total + last 7 days), surfaced via gamification status API/server action.*
 *Last updated: 2026-03-03 — deeppivot-301 closed. Added `GET /api/employer/jobs/[jobId]/matches` with employer ownership checks, candidate privacy filtering, applied/invited exclusion, and deterministic weighted matching scores.*
 *Last updated: 2026-03-03 — deeppivot-291 closed. Added user-level gamification toggle in profile settings, persisted via `system_settings`, enforced in points awarding, and surfaced in status payloads/UI.*
+*Last updated: 2026-03-03 — deeppivot-290 closed. Added admin gamification reporting with `/admin/gamification`, including adoption, 7-day engagement, points throughput, streak participation, event distribution, and top-user leaderboard metrics.*

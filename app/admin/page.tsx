@@ -17,6 +17,7 @@ import {
   Building2,
   Activity,
   CreditCard,
+  Trophy,
 } from "lucide-react";
 
 async function getAdminStats() {
@@ -88,6 +89,14 @@ const NAV_CARDS = [
     description: "View and manage employer accounts.",
     color: "text-green-400",
     bg: "bg-green-500/10",
+  },
+  {
+    href: "/admin/gamification",
+    icon: Trophy,
+    label: "Gamification Metrics",
+    description: "View engagement, points activity, and streak health.",
+    color: "text-amber-400",
+    bg: "bg-amber-500/10",
   },
   {
     href: "/admin/blog",

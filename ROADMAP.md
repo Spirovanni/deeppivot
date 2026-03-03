@@ -806,6 +806,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Badge System: Evaluate badge unlocking rules async (deeppivot-281)
 - [x] UI: Achievement Badge display in Gamification Hub (deeppivot-282) — /dashboard/achievements page with stats row (points, level, streak, badges), level progress bar, AchievementsBadgeGrid (unlocked/locked with category colors, framer-motion animations); Achievements nav link in DashboardSidebar; GamificationHub "All Badges" links to /dashboard/achievements
 - [x] UI: Share achievement to LinkedIn (deeppivot-285) — ShareToLinkedInButton on /dashboard/achievements, opens LinkedIn share dialog with achievements URL
+- [x] Feedback: Show points earned in interview feedback summary (deeppivot-286) — getPointsEarnedForInterviewSession(), +N pts badge on feedback page
 - [ ] UI: "Badge Unlocked" celebration modal (deeppivot-283)
 - [x] DB: `user_gamification` table (points, currentStreak, highestStreak) — migration 0025
 - [x] Hook: Add points on job application submitted (10 pts via `addPointsForJobApplication` in POST /api/jobs/[jobId]/apply)
@@ -838,4 +839,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-02-28 — deeppivot-285 (Share achievement to LinkedIn) closed. ShareToLinkedInButton on achievements page opens LinkedIn share dialog. Phase 16.4 Gamification progressing.*
+*Last updated: 2026-02-28 — deeppivot-286 (Points earned in interview feedback) closed. getPointsEarnedForInterviewSession() + badge on feedback page. Phase 16.4 Gamification progressing.*

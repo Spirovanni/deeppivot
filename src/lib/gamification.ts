@@ -8,6 +8,7 @@
 import { db } from "@/src/db";
 import { userGamificationTable, gamificationEventsTable } from "@/src/db/schema";
 import { eq, lt, and, gt } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { startOfWeek, isSameWeek, subWeeks } from "date-fns";
 import { inngest } from "@/src/inngest/client";
 
@@ -258,4 +259,32 @@ export async function addPointsForMilestoneCompletion(
     milestoneId,
     milestoneTitle,
   });
+}
+
+/**
+ * Get points earned for completing a specific interview session.
+ * Returns null if no gamification event was recorded for this session.
+ * Phase 16.4 (deeppivot-286)
+ */
+export async function getPointsEarnedForInterviewSession(
+  userId: number,
+  sessionId: number
+): Promise<number | null> {
+  try {
+    const [event] = await db
+      .select({ points: gamificationEventsTable.points })
+      .from(gamificationEventsTable)
+      .where(
+        and(
+          eq(gamificationEventsTable.userId, userId),
+          eq(gamificationEventsTable.eventType, "INTERVIEW_COMPLETED"),
+          sql`(${gamificationEventsTable.metadata}->>'sessionId') = ${String(sessionId)}`
+        )
+      )
+      .limit(1);
+
+    return event?.points ?? null;
+  } catch {
+    return null;
+  }
 }

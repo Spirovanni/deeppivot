@@ -1,7 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare, Loader2 } from "lucide-react";
+import { ArrowLeft, MessageSquare, Loader2, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   getSessionDetail,
@@ -9,6 +9,7 @@ import {
   getEmotionalAnalysis,
   getSessionGapAnalysis,
 } from "@/src/lib/actions/interview-sessions";
+import { getPointsEarnedForInterviewSession } from "@/src/lib/gamification";
 import { AnimatedFeedbackContent } from "@/components/interviews/AnimatedFeedbackContent";
 import { EmotionAwareTimeline } from "@/components/interviews/EmotionAwareTimeline";
 import { GapAnalysisPanel } from "@/components/interviews/GapAnalysisPanel";
@@ -41,6 +42,7 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
 
   if (!session) notFound();
 
+  const pointsEarned = await getPointsEarnedForInterviewSession(session.userId, sessionId);
   const typeLabel = SESSION_TYPE_LABELS[session.sessionType] ?? "General";
 
   return (
@@ -54,21 +56,29 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
           Back to Session
         </Link>
 
-        <div className="flex items-center gap-4">
-          <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-            <MessageSquare className="size-6 text-primary" />
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+              <MessageSquare className="size-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold">AI Feedback — {typeLabel} Interview</h1>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                {new Date(session.startedAt).toLocaleDateString(undefined, {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold">AI Feedback — {typeLabel} Interview</h1>
-            <p className="mt-0.5 text-sm text-muted-foreground">
-              {new Date(session.startedAt).toLocaleDateString(undefined, {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </p>
-          </div>
+          {pointsEarned != null && pointsEarned > 0 && (
+            <div className="flex items-center gap-2 rounded-lg bg-amber-500/10 px-4 py-2 text-amber-600 dark:text-amber-400">
+              <Sparkles className="size-4" />
+              <span className="text-sm font-medium">+{pointsEarned} points earned</span>
+            </div>
+          )}
         </div>
 
         {emotionalAnalysis?.data ? (

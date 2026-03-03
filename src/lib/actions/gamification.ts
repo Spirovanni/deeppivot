@@ -10,6 +10,7 @@ import {
 } from "@/src/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { GAMIFICATION_BADGES } from "@/src/lib/gamification-badges";
+import { getPracticeTimeAggregation } from "@/src/lib/practice-time";
 
 const RECENT_EVENTS_LIMIT = 5;
 
@@ -29,6 +30,10 @@ export type GamificationStatus = {
         points: number;
         createdAt: string;
     }>;
+    practiceTime: {
+        totalMinutes: number;
+        thisWeekMinutes: number;
+    };
 };
 
 /**
@@ -48,7 +53,7 @@ export async function getGamificationStatus(): Promise<GamificationStatus | null
 
         if (!user) return null;
 
-        const [gamification, badges, recentEvents] = await Promise.all([
+        const [gamification, badges, recentEvents, practiceTime] = await Promise.all([
             db
                 .select()
                 .from(userGamificationTable)
@@ -71,6 +76,7 @@ export async function getGamificationStatus(): Promise<GamificationStatus | null
                 .where(eq(gamificationEventsTable.userId, user.id))
                 .orderBy(desc(gamificationEventsTable.createdAt))
                 .limit(RECENT_EVENTS_LIMIT),
+            getPracticeTimeAggregation(user.id),
         ]);
 
         const stats = gamification[0] ?? {
@@ -103,6 +109,10 @@ export async function getGamificationStatus(): Promise<GamificationStatus | null
                 points: e.points,
                 createdAt: e.createdAt.toISOString(),
             })),
+            practiceTime: {
+                totalMinutes: practiceTime.totalMinutes,
+                thisWeekMinutes: practiceTime.thisWeekMinutes,
+            },
         };
     } catch (err) {
         console.error("[gamification] getGamificationStatus action failed:", err);

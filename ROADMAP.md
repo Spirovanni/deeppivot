@@ -824,6 +824,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: Leveling system UI (deeppivot-278) — 10 levels (Newcomer→Apex, 0→3500 pts) with animated progress bar in GamificationHub; level info added to /api/gamification/status response; src/lib/gamification-levels.ts utility.
 - [x] Security: Prevent gamification endpoint abuse/spamming (deeppivot-292) — GAMIFICATION_ACTION rate limit profile (10 req/5min per user); deduplication keys in addPoints() prevent milestone toggle and session re-completion exploits; per-user rateLimitByUser on job apply and milestone PATCH; active-status guard on interview completion
 - [x] UI: "Hours Practiced" statistic on dashboard (deeppivot-289) — SQL SUM of interview session durations (endedAt - startedAt) in getDashboardSummary(); Clock icon stat in InterviewSummaryWidget with hours/minutes display
+- [x] System: Practice time tracking aggregation (minutes spent in interview) (deeppivot-288) — Added shared `getPracticeTimeAggregation(userId)` utility to aggregate completed interview durations into `totalMinutes` and `thisWeekMinutes`; wired into `/api/gamification/status` and `getGamificationStatus()` server action.
 - [ ] UI: Gamification Hub, streak flame, confetti, badges
 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports
@@ -841,4 +842,5 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 ---
 
 *Last updated: 2026-02-28 — deeppivot-286 (Points earned in interview feedback) closed. getPointsEarnedForInterviewSession() + badge on feedback page. Phase 16.4 Gamification progressing.*
+*Last updated: 2026-03-03 — deeppivot-288 closed. Added centralized practice-time aggregation from completed interview durations (total + last 7 days), surfaced via gamification status API/server action.*
 *Last updated: 2026-03-03 — deeppivot-301 closed. Added `GET /api/employer/jobs/[jobId]/matches` with employer ownership checks, candidate privacy filtering, applied/invited exclusion, and deterministic weighted matching scores.*

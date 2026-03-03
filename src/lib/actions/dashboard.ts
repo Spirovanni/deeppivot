@@ -6,8 +6,9 @@ import {
   careerMilestonesTable,
   interviewSessionsTable,
 } from "@/src/db/schema";
-import { eq, asc, desc, and, isNotNull, sql } from "drizzle-orm";
+import { eq, asc, desc } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
+import { getPracticeTimeAggregation } from "@/src/lib/practice-time";
 
 async function getDbUserId(): Promise<number> {
   const { userId } = await auth();
@@ -48,7 +49,7 @@ export interface DashboardSummary {
 export async function getDashboardSummary(): Promise<DashboardSummary> {
   const userId = await getDbUserId();
 
-  const [milestones, allSessions, recentSessions, totalSecondsRow] = await Promise.all([
+  const [milestones, allSessions, recentSessions, practiceTime] = await Promise.all([
     db
       .select({ status: careerMilestonesTable.status })
       .from(careerMilestonesTable)
@@ -70,24 +71,13 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
       .where(eq(interviewSessionsTable.userId, userId))
       .orderBy(desc(interviewSessionsTable.createdAt))
       .limit(5),
-    db
-      .select({
-        totalSeconds: sql<number>`coalesce(sum(extract(epoch from ${interviewSessionsTable.endedAt} - ${interviewSessionsTable.startedAt})), 0)`,
-      })
-      .from(interviewSessionsTable)
-      .where(
-        and(
-          eq(interviewSessionsTable.userId, userId),
-          isNotNull(interviewSessionsTable.endedAt)
-        )
-      ),
+    getPracticeTimeAggregation(userId),
   ]);
 
   const completedMilestones = milestones.filter((m) => m.status === "completed").length;
   const inProgressMilestones = milestones.filter((m) => m.status === "in_progress").length;
   const completedSessionsCount = allSessions.filter((s) => s.status === "completed").length;
-  const totalSeconds = Number(totalSecondsRow[0]?.totalSeconds ?? 0);
-  const hoursPracticed = Math.round((totalSeconds / 3600) * 10) / 10;
+  const hoursPracticed = Math.round((practiceTime.totalSeconds / 3600) * 10) / 10;
 
   return {
     careerPlan: {

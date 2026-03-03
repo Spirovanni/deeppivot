@@ -11,6 +11,7 @@ import { eq, desc } from "drizzle-orm";
 import { rateLimit } from "@/src/lib/rate-limit";
 import { GAMIFICATION_BADGES } from "@/src/lib/gamification-badges";
 import { getUserLevel } from "@/src/lib/gamification-levels";
+import { getPracticeTimeAggregation } from "@/src/lib/practice-time";
 
 const RECENT_EVENTS_LIMIT = 10;
 
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  const [gamification, badges, recentEvents] = await Promise.all([
+  const [gamification, badges, recentEvents, practiceTime] = await Promise.all([
     db
       .select({
         points: userGamificationTable.points,
@@ -71,6 +72,7 @@ export async function GET(req: NextRequest) {
       .where(eq(gamificationEventsTable.userId, user.id))
       .orderBy(desc(gamificationEventsTable.createdAt))
       .limit(RECENT_EVENTS_LIMIT),
+    getPracticeTimeAggregation(user.id),
   ]);
 
   const badgeMap = new Map<string, { label: string; path: string }>(
@@ -123,5 +125,9 @@ export async function GET(req: NextRequest) {
         ? e.createdAt.toISOString()
         : e.createdAt,
     })),
+    practiceTime: {
+      totalMinutes: practiceTime.totalMinutes,
+      thisWeekMinutes: practiceTime.thisWeekMinutes,
+    },
   });
 }

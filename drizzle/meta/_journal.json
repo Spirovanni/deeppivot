@@ -239,6 +239,13 @@
       "when": 1772391619805,
       "tag": "0033_nervous_emma_frost",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1772579900000,
+      "tag": "0034_sturdy_cypher",
+      "breakpoints": true
     }
   ]
 }

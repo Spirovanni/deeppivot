@@ -76,6 +76,7 @@ export const userGamificationTable = pgTable("user_gamification", {
   points: integer().notNull().default(0),
   currentStreak: integer().notNull().default(0),
   highestStreak: integer().notNull().default(0),
+  isPublic: boolean().notNull().default(false),
   lastActivityAt: timestamp(),
   updatedAt: timestamp().notNull().defaultNow(),
 });

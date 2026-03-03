@@ -109,3 +109,37 @@ export async function getGamificationStatus(): Promise<GamificationStatus | null
         return null;
     }
 }
+
+export type LeaderboardEntry = {
+    id: string;
+    name: string;
+    avatarUrl: string | null;
+    points: number;
+    currentStreak: number;
+};
+
+/**
+ * Server action to fetch leaderboard data.
+ */
+export async function getLeaderboardData(): Promise<LeaderboardEntry[]> {
+    try {
+        const topUsers = await db
+            .select({
+                id: usersTable.id,
+                name: usersTable.name,
+                avatarUrl: usersTable.avatarUrl,
+                points: userGamificationTable.points,
+                currentStreak: userGamificationTable.currentStreak,
+            })
+            .from(userGamificationTable)
+            .innerJoin(usersTable, eq(userGamificationTable.userId, usersTable.id))
+            .where(eq(userGamificationTable.isPublic, true))
+            .orderBy(desc(userGamificationTable.points))
+            .limit(50);
+
+        return topUsers;
+    } catch (err) {
+        console.error("[gamification] getLeaderboardData action failed:", err);
+        return [];
+    }
+}

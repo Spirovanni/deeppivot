@@ -40,11 +40,19 @@ export interface UserProfile {
   openToOpportunities: boolean;
   role: string;
   isPremium: boolean;
+  isLeaderboardPublic: boolean;
   createdAt: Date;
 }
 
 export async function getUserProfile(): Promise<UserProfile> {
   const user = await getAuthenticatedDbUser();
+  const { userGamificationTable } = await import("@/src/db/schema");
+
+  const [gamification] = await db
+    .select()
+    .from(userGamificationTable)
+    .where(eq(userGamificationTable.userId, user.id))
+    .limit(1);
 
   return {
     id: user.id,
@@ -61,6 +69,7 @@ export async function getUserProfile(): Promise<UserProfile> {
     openToOpportunities: user.openToOpportunities ?? false,
     role: user.role,
     isPremium: user.isPremium,
+    isLeaderboardPublic: gamification?.isPublic ?? false,
     createdAt: user.createdAt,
   };
 }
@@ -108,6 +117,19 @@ export async function updateOpenToOpportunities(value: boolean): Promise<void> {
     .update(usersTable)
     .set({ openToOpportunities: value, updatedAt: new Date() })
     .where(eq(usersTable.id, user.id));
+
+  revalidatePath("/dashboard/settings/profile");
+}
+
+/** Update only the isPublic flag for leaderboard */
+export async function updateLeaderboardPrivacy(value: boolean): Promise<void> {
+  const user = await getAuthenticatedDbUser();
+  const { userGamificationTable } = await import("@/src/db/schema");
+
+  await db
+    .update(userGamificationTable)
+    .set({ isPublic: value, updatedAt: new Date() })
+    .where(eq(userGamificationTable.userId, user.id));
 
   revalidatePath("/dashboard/settings/profile");
 }

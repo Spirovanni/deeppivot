@@ -18,7 +18,7 @@ import {
   Briefcase,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import { updateProfile, updateOpenToOpportunities, uploadAvatar } from "@/src/lib/actions/profile";
+import { updateProfile, updateOpenToOpportunities, uploadAvatar, updateLeaderboardPrivacy } from "@/src/lib/actions/profile";
 import type { UserProfile } from "@/src/lib/actions/profile";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -304,6 +304,53 @@ function OpenToOpportunitiesCard({ profile }: { profile: UserProfile }) {
   );
 }
 
+function LeaderboardPrivacyCard({ profile }: { profile: UserProfile }) {
+  const [checked, setChecked] = useState(profile.isLeaderboardPublic);
+  const [isPending, startTransition] = useTransition();
+
+  const handleToggle = (value: boolean) => {
+    setChecked(value);
+    startTransition(async () => {
+      try {
+        await updateLeaderboardPrivacy(value);
+      } catch {
+        setChecked(!value); // revert on error
+      }
+    });
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <Briefcase className="size-4 text-muted-foreground" aria-hidden="true" />
+          <CardTitle className="text-base">Leaderboard privacy</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-0.5">
+            <Label htmlFor="leaderboard-public" className="text-sm font-medium">
+              Show on Leaderboard
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Allow your profile to be visible on the public leaderboard. When enabled, your name,
+              points, and streak will be visible to other users.
+            </p>
+          </div>
+          <Switch
+            id="leaderboard-public"
+            checked={checked}
+            onCheckedChange={handleToggle}
+            disabled={isPending}
+            aria-label="Show on leaderboard"
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Danger zone ──────────────────────────────────────────────────────────────
 
 function DangerZone({ profile }: { profile: UserProfile }) {
@@ -408,6 +455,9 @@ export function ProfileSettingsClient({ profile, clerkImageUrl }: Props) {
 
       {/* Privacy / Open to opportunities */}
       <OpenToOpportunitiesCard profile={profile} />
+
+      {/* Leaderboard Privacy */}
+      <LeaderboardPrivacyCard profile={profile} />
 
       {/* Account danger zone */}
       <DangerZone profile={profile} />

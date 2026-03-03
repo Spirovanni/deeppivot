@@ -798,6 +798,9 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Admin API: Send to Home (deeppivot-257) — sendToHome on announcement, force redirect to /dashboard/announcements/[id] until dismissed.
 
 - [x] Gamification: points and weekly streaks logic (deeppivot-267-270)
+- [x] UI: Leaderboard page (Opt-in only) (deeppivot-283) — Implemented /dashboard/leaderboard with privacy opt-in, podium, and rankings.
+- [x] API: GET `/api/leaderboard` (Top 50 users) (deeppivot-284) — Secure endpoint for public leaderboard data.
+- [x] E2E: Leaderboard verification (deeppivot-leaderboard-e2e) — Playwright tests for accessibility, privacy, and API.
 - [x] UI: Weekly streak flame icon and count (deeppivot-275)
 - [x] Gamification: Hub panel on dashboard (deeppivot-274)
 - [x] Badge System: Evaluate badge unlocking rules async (deeppivot-281)

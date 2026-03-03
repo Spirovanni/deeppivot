@@ -805,6 +805,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Gamification: Hub panel on dashboard (deeppivot-274)
 - [x] Badge System: Evaluate badge unlocking rules async (deeppivot-281)
 - [x] UI: Achievement Badge display in Gamification Hub (deeppivot-282) — /dashboard/achievements page with stats row (points, level, streak, badges), level progress bar, AchievementsBadgeGrid (unlocked/locked with category colors, framer-motion animations); Achievements nav link in DashboardSidebar; GamificationHub "All Badges" links to /dashboard/achievements
+- [x] UI: Share achievement to LinkedIn (deeppivot-285) — ShareToLinkedInButton on /dashboard/achievements, opens LinkedIn share dialog with achievements URL
 - [ ] UI: "Badge Unlocked" celebration modal (deeppivot-283)
 - [x] DB: `user_gamification` table (points, currentStreak, highestStreak) — migration 0025
 - [x] Hook: Add points on job application submitted (10 pts via `addPointsForJobApplication` in POST /api/jobs/[jobId]/apply)
@@ -837,4 +838,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 
 ---
 
-*Last updated: 2026-03-02 — Phase 16 / Section 4 progress: Gamification security hardening (deeppivot-292). GAMIFICATION_ACTION rate limit, deduplication keys in addPoints(), per-user rate limits on job apply and milestone PATCH, active-status guard on interview completion. pnpm build exit 0.*
+*Last updated: 2026-02-28 — deeppivot-285 (Share achievement to LinkedIn) closed. ShareToLinkedInButton on achievements page opens LinkedIn share dialog. Phase 16.4 Gamification progressing.*

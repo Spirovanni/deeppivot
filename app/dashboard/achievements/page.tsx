@@ -6,6 +6,7 @@ import { getGamificationStatus } from "@/src/lib/actions/gamification";
 import { getUserLevel, MAX_LEVEL } from "@/src/lib/gamification-levels";
 import { GAMIFICATION_BADGES } from "@/src/lib/gamification-badges";
 import { AchievementsBadgeGrid } from "@/components/gamification/AchievementsBadgeGrid";
+import { ShareToLinkedInButton } from "@/components/gamification/ShareToLinkedInButton";
 
 export default async function AchievementsPage() {
     const user = await currentUser();
@@ -26,14 +27,19 @@ export default async function AchievementsPage() {
         <div className="p-6 md:p-8">
             <div className="mx-auto max-w-4xl">
                 {/* Header */}
-                <div className="mb-8">
-                    <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight md:text-3xl">
-                        <Trophy className="size-7 text-amber-500" />
-                        Achievements
-                    </h1>
-                    <p className="mt-1 text-muted-foreground">
-                        Track your progress and unlock badges as you level up your career journey.
-                    </p>
+                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight md:text-3xl">
+                            <Trophy className="size-7 text-amber-500" />
+                            Achievements
+                        </h1>
+                        <p className="mt-1 text-muted-foreground">
+                            Track your progress and unlock badges as you level up your career journey.
+                        </p>
+                    </div>
+                    {unlockedCount > 0 && (
+                        <ShareToLinkedInButton variant="outline" size="sm" />
+                    )}
                 </div>
 
                 {/* Stats Row */}

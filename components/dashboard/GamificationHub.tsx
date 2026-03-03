@@ -17,6 +17,7 @@ interface GamificationHubProps {
 
 export function GamificationHub({ status }: GamificationHubProps) {
     if (!status) return null;
+    if (!status.enabled) return null;
 
     const hasBadges = status.badges.length > 0;
     const recentBadges = status.badges.slice(-3).reverse();

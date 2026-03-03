@@ -1,11 +1,12 @@
 "use server";
 
 import { db } from "@/src/db";
-import { usersTable } from "@/src/db/schema";
+import { usersTable, systemSettingsTable } from "@/src/db/schema";
 import { eq, isNull } from "drizzle-orm";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { uploadToR2 } from "@/src/lib/storage";
+import { gamificationPreferenceKey, isGamificationEnabled } from "@/src/lib/gamification-preferences";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -41,12 +42,14 @@ export interface UserProfile {
   role: string;
   isPremium: boolean;
   isLeaderboardPublic: boolean;
+  gamificationEnabled: boolean;
   createdAt: Date;
 }
 
 export async function getUserProfile(): Promise<UserProfile> {
   const user = await getAuthenticatedDbUser();
   const { userGamificationTable } = await import("@/src/db/schema");
+  const gamificationEnabled = await isGamificationEnabled(user.id);
 
   const [gamification] = await db
     .select()
@@ -70,6 +73,7 @@ export async function getUserProfile(): Promise<UserProfile> {
     role: user.role,
     isPremium: user.isPremium,
     isLeaderboardPublic: gamification?.isPublic ?? false,
+    gamificationEnabled,
     createdAt: user.createdAt,
   };
 }
@@ -132,6 +136,37 @@ export async function updateLeaderboardPrivacy(value: boolean): Promise<void> {
     .where(eq(userGamificationTable.userId, user.id));
 
   revalidatePath("/dashboard/settings/profile");
+}
+
+/** Toggle gamification features on/off for this user */
+export async function updateGamificationPreference(value: boolean): Promise<void> {
+  const user = await getAuthenticatedDbUser();
+  const key = gamificationPreferenceKey(user.id);
+
+  await db
+    .insert(systemSettingsTable)
+    .values({
+      key,
+      value: value ? "true" : "false",
+      type: "boolean",
+      description: "Per-user setting to enable/disable gamification features.",
+      updatedAt: new Date(),
+      updatedBy: user.id,
+    })
+    .onConflictDoUpdate({
+      target: systemSettingsTable.key,
+      set: {
+        value: value ? "true" : "false",
+        type: "boolean",
+        description: "Per-user setting to enable/disable gamification features.",
+        updatedAt: new Date(),
+        updatedBy: user.id,
+      },
+    });
+
+  revalidatePath("/dashboard/settings/profile");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/achievements");
 }
 
 // ─── Avatar upload ────────────────────────────────────────────────────────────

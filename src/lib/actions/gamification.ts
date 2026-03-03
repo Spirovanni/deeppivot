@@ -11,10 +11,12 @@ import {
 import { eq, desc } from "drizzle-orm";
 import { GAMIFICATION_BADGES } from "@/src/lib/gamification-badges";
 import { getPracticeTimeAggregation } from "@/src/lib/practice-time";
+import { isGamificationEnabled } from "@/src/lib/gamification-preferences";
 
 const RECENT_EVENTS_LIMIT = 5;
 
 export type GamificationStatus = {
+    enabled: boolean;
     points: number;
     currentStreak: number;
     highestStreak: number;
@@ -78,6 +80,7 @@ export async function getGamificationStatus(): Promise<GamificationStatus | null
                 .limit(RECENT_EVENTS_LIMIT),
             getPracticeTimeAggregation(user.id),
         ]);
+        const enabled = await isGamificationEnabled(user.id);
 
         const stats = gamification[0] ?? {
             points: 0,
@@ -91,6 +94,7 @@ export async function getGamificationStatus(): Promise<GamificationStatus | null
         );
 
         return {
+            enabled,
             points: stats.points,
             currentStreak: stats.currentStreak,
             highestStreak: stats.highestStreak,

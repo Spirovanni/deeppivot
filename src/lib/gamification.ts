@@ -11,6 +11,7 @@ import { eq, lt, and, gt } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 import { startOfWeek, isSameWeek, subWeeks } from "date-fns";
 import { inngest } from "@/src/inngest/client";
+import { isGamificationEnabled } from "@/src/lib/gamification-preferences";
 
 /** Points awarded per action (configurable) */
 export const GAMIFICATION_POINTS = {
@@ -68,6 +69,9 @@ export async function addPoints(
   pointsOverride?: number,
   metadata?: Record<string, unknown>
 ): Promise<{ pointsAdded: number; newTotal: number } | null> {
+  const enabled = await isGamificationEnabled(userId);
+  if (!enabled) return null;
+
   const points = pointsOverride ?? GAMIFICATION_POINTS[event];
   if (points <= 0) return null;
 

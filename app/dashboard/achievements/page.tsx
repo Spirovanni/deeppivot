@@ -7,14 +7,41 @@ import { getUserLevel, MAX_LEVEL } from "@/src/lib/gamification-levels";
 import { GAMIFICATION_BADGES } from "@/src/lib/gamification-badges";
 import { AchievementsBadgeGrid } from "@/components/gamification/AchievementsBadgeGrid";
 import { ShareToLinkedInButton } from "@/components/gamification/ShareToLinkedInButton";
+import Link from "next/link";
 
 export default async function AchievementsPage() {
     const user = await currentUser();
     if (!user) redirect("/sign-in");
 
     const status = await getGamificationStatus();
+    const gamificationEnabled = status?.enabled ?? true;
 
     const points = status?.points ?? 0;
+    if (!gamificationEnabled) {
+        return (
+            <div className="p-6 md:p-8">
+                <div className="mx-auto max-w-2xl">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">Gamification is turned off</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            <p className="text-sm text-muted-foreground">
+                                You have disabled gamification features in profile settings. Re-enable it to view achievements, points, and streak progress.
+                            </p>
+                            <Link
+                                href="/dashboard/settings/profile"
+                                className="inline-flex text-sm font-medium text-primary hover:underline"
+                            >
+                                Go to Profile Settings →
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        );
+    }
+
     const streak = status?.currentStreak ?? 0;
     const highestStreak = status?.highestStreak ?? 0;
     const badges = status?.badges ?? [];

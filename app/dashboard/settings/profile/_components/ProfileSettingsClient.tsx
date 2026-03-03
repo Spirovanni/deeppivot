@@ -18,7 +18,13 @@ import {
   Briefcase,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import { updateProfile, updateOpenToOpportunities, uploadAvatar, updateLeaderboardPrivacy } from "@/src/lib/actions/profile";
+import {
+  updateProfile,
+  updateOpenToOpportunities,
+  uploadAvatar,
+  updateLeaderboardPrivacy,
+  updateGamificationPreference,
+} from "@/src/lib/actions/profile";
 import type { UserProfile } from "@/src/lib/actions/profile";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -351,6 +357,52 @@ function LeaderboardPrivacyCard({ profile }: { profile: UserProfile }) {
   );
 }
 
+function GamificationPreferencesCard({ profile }: { profile: UserProfile }) {
+  const [checked, setChecked] = useState(profile.gamificationEnabled);
+  const [isPending, startTransition] = useTransition();
+
+  const handleToggle = (value: boolean) => {
+    setChecked(value);
+    startTransition(async () => {
+      try {
+        await updateGamificationPreference(value);
+      } catch {
+        setChecked(!value);
+      }
+    });
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <Briefcase className="size-4 text-muted-foreground" aria-hidden="true" />
+          <CardTitle className="text-base">Gamification preferences</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-0.5">
+            <Label htmlFor="gamification-enabled" className="text-sm font-medium">
+              Enable gamification features
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              When disabled, points, streak updates, leaderboard activity, and achievement progress are paused for your account.
+            </p>
+          </div>
+          <Switch
+            id="gamification-enabled"
+            checked={checked}
+            onCheckedChange={handleToggle}
+            disabled={isPending}
+            aria-label="Enable gamification features"
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Danger zone ──────────────────────────────────────────────────────────────
 
 function DangerZone({ profile }: { profile: UserProfile }) {
@@ -458,6 +510,9 @@ export function ProfileSettingsClient({ profile, clerkImageUrl }: Props) {
 
       {/* Leaderboard Privacy */}
       <LeaderboardPrivacyCard profile={profile} />
+
+      {/* Gamification Settings */}
+      <GamificationPreferencesCard profile={profile} />
 
       {/* Account danger zone */}
       <DangerZone profile={profile} />

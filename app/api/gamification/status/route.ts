@@ -12,6 +12,7 @@ import { rateLimit } from "@/src/lib/rate-limit";
 import { GAMIFICATION_BADGES } from "@/src/lib/gamification-badges";
 import { getUserLevel } from "@/src/lib/gamification-levels";
 import { getPracticeTimeAggregation } from "@/src/lib/practice-time";
+import { isGamificationEnabled } from "@/src/lib/gamification-preferences";
 
 const RECENT_EVENTS_LIMIT = 10;
 
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  const [gamification, badges, recentEvents, practiceTime] = await Promise.all([
+  const [gamification, badges, recentEvents, practiceTime, enabled] = await Promise.all([
     db
       .select({
         points: userGamificationTable.points,
@@ -73,6 +74,7 @@ export async function GET(req: NextRequest) {
       .orderBy(desc(gamificationEventsTable.createdAt))
       .limit(RECENT_EVENTS_LIMIT),
     getPracticeTimeAggregation(user.id),
+    isGamificationEnabled(user.id),
   ]);
 
   const badgeMap = new Map<string, { label: string; path: string }>(
@@ -90,6 +92,7 @@ export async function GET(req: NextRequest) {
   const level = getUserLevel(stats.points);
 
   return NextResponse.json({
+    enabled,
     points: stats.points,
     currentStreak: stats.currentStreak,
     highestStreak: stats.highestStreak,

@@ -14,7 +14,7 @@ import { cn } from "@/utils/index";
 
 interface LeaderboardTableProps {
     data: LeaderboardEntry[];
-    currentUserId: string;
+    currentUserId: string | number;
 }
 
 export function LeaderboardTable({ data, currentUserId }: LeaderboardTableProps) {
@@ -25,6 +25,8 @@ export function LeaderboardTable({ data, currentUserId }: LeaderboardTableProps)
             </div>
         );
     }
+
+    const currentUserIdStr = String(currentUserId);
 
     return (
         <Table>
@@ -38,7 +40,7 @@ export function LeaderboardTable({ data, currentUserId }: LeaderboardTableProps)
             </TableHeader>
             <TableBody>
                 {data.map((entry, index) => {
-                    const isMe = entry.id === currentUserId;
+                    const isMe = String(entry.id) === currentUserIdStr;
                     const rank = index + 1;
 
                     return (

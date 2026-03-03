@@ -16,6 +16,13 @@ import { eq, desc } from "drizzle-orm";
 import type { ResumeExtraction } from "@/src/lib/llm/prompts/resumes";
 
 export const DEFAULT_WEIGHTS: Record<string, number> = {
+  // Core per-candidate scoring weights (deeppivot-296)
+  skills_match: 0.5,
+  archetype_match: 0.2,
+  salary_match: 0.15,
+  interview_score: 0.15,
+
+  // Feedback-derived feature weights
   has_resume: 1.2,
   has_cover_letter: 1.1,
   resume_skills_count: 0.02, // per skill

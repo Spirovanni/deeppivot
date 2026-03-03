@@ -61,6 +61,41 @@ function getResumeSkillTokens(skills: string[]): Set<string> {
   return new Set(tokens);
 }
 
+function parseYearsOfExperience(value: unknown): number | null {
+  if (typeof value !== "string") return null;
+  const match = value.match(/(\d+(\.\d+)?)/);
+  if (!match) return null;
+  const years = Number.parseFloat(match[1]);
+  return Number.isFinite(years) ? years : null;
+}
+
+function estimateSalaryExpectation(yearsOfExperience: number): number {
+  // Coarse heuristic for relative match scoring only.
+  const estimated = 45000 + yearsOfExperience * 12000;
+  return Math.max(30000, Math.min(250000, estimated));
+}
+
+function computeSalaryScore(
+  salaryMin: number | null,
+  salaryMax: number | null,
+  yearsOfExperience: number | null
+): number {
+  if (salaryMin == null && salaryMax == null) return 50;
+  if (yearsOfExperience == null) return 50;
+
+  const expected = estimateSalaryExpectation(yearsOfExperience);
+  const min = salaryMin ?? salaryMax ?? expected;
+  const max = salaryMax ?? salaryMin ?? expected;
+  const low = Math.min(min, max);
+  const high = Math.max(min, max);
+
+  if (expected >= low && expected <= high) return 100;
+
+  const nearest = expected < low ? low : high;
+  const distanceRatio = Math.min(Math.abs(expected - nearest) / Math.max(nearest, 1), 1);
+  return Math.round(Math.max(0, 100 - distanceRatio * 100));
+}
+
 /**
  * GET /api/employer/jobs/[jobId]/matches
  *
@@ -104,6 +139,8 @@ export async function GET(
         id: jobsTable.id,
         title: jobsTable.title,
         description: jobsTable.description,
+        salaryMin: jobsTable.salaryMin,
+        salaryMax: jobsTable.salaryMax,
       })
       .from(jobsTable)
       .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
@@ -134,9 +171,14 @@ export async function GET(
     ]);
 
     const weights = await getMatchingWeights();
-    const resumeWeight = weights.has_resume ?? 1;
-    const skillsCountWeight = weights.resume_skills_count ?? 0.02;
-    const coverLetterWeight = weights.has_cover_letter ?? 1;
+    const skillsWeight = Math.max(0, weights.skills_match ?? 0.5);
+    const archetypeWeight = Math.max(0, weights.archetype_match ?? 0.2);
+    const salaryWeight = Math.max(0, weights.salary_match ?? 0.15);
+    const interviewWeight = Math.max(0, weights.interview_score ?? 0.15);
+    const totalWeight = Math.max(
+      skillsWeight + archetypeWeight + salaryWeight + interviewWeight,
+      0.01
+    );
 
     const candidates = await db
       .select({
@@ -219,15 +261,22 @@ export async function GET(
       const archetypeTokens = candidate.archetypeName
         ? new Set(toTokens(candidate.archetypeName))
         : new Set<string>();
-      const archetypeOverlap = [...jobKeywords].some((token) => archetypeTokens.has(token)) ? 10 : 0;
+      const archetypeScore = [...jobKeywords].some((token) => archetypeTokens.has(token))
+        ? 100
+        : candidate.archetypeName
+          ? 35
+          : 0;
+      const yearsOfExperience = parseYearsOfExperience(candidate.parsedData?.yearsOfExperience);
+      const salaryScore = computeSalaryScore(job.salaryMin, job.salaryMax, yearsOfExperience);
 
-      // Weights are scaled from existing matching feedback signals.
+      // Weighted score model (deeppivot-296): skills + archetype + salary + interview.
       const weightedScore = Math.round(
-        overlapScore * (0.55 + skillsCountWeight) +
-          interviewScore * 0.3 +
-          archetypeOverlap * 0.1 +
-          (skills.length > 0 ? resumeWeight : 0) +
-          coverLetterWeight * 0.5
+        (
+          overlapScore * skillsWeight +
+          archetypeScore * archetypeWeight +
+          salaryScore * salaryWeight +
+          interviewScore * interviewWeight
+        ) / totalWeight
       );
 
       const matchScore = Math.max(0, Math.min(100, weightedScore));
@@ -240,6 +289,8 @@ export async function GET(
         archetypeName: candidate.archetypeName,
         matchScore,
         avgInterviewScore: interviewScore || null,
+        salaryScore,
+        yearsOfExperience,
         matchedSkills: skills.filter((skill) =>
           matchedKeywords.some((keyword) => toTokens(skill).includes(keyword))
         ),

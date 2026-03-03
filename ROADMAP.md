@@ -838,6 +838,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Privacy: Ensure matched candidates opt-in to employer discovery (deeppivot-318) — getTopCandidateMatches strictly filters by openToOpportunities=true
 - [x] System: Exclude opted-out users from Employer matching pool (deeppivot-320) — matching engine checks privacy flags
 - [x] DB Schema: `job_matches` table (deeppivot-295) — Added `job_matches` with unique (jobId,userId), `matchScore`, `status`, and timestamps; wired Drizzle relations to `jobs` and `users`; migration `0034_sturdy_cypher.sql` added.
+- [x] AI/ML: Define matching algorithm weights (Skills, Archetype, Salary) (deeppivot-296) — Added explicit default weights (`skills_match`, `archetype_match`, `salary_match`, `interview_score`) and applied a normalized weighted scoring model in employer candidate matching API, including salary compatibility from job salary range and resume years-of-experience heuristics.
 - [x] API: GET `/api/employer/jobs/[jobId]/matches` (deeppivot-301) — employer/admin-protected endpoint with per-job candidate matching scores, applied/invited candidate exclusion, and weighted scoring from resume skills + interview performance + archetype signal.
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
@@ -852,3 +853,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-03 — deeppivot-290 closed. Added admin gamification reporting with `/admin/gamification`, including adoption, 7-day engagement, points throughput, streak participation, event distribution, and top-user leaderboard metrics.*
 *Last updated: 2026-03-03 — deeppivot-287 closed. Added streak-expiry reminder notifications via daily Inngest cron, weekly dedupe guard, and disabled-user filtering.*
 *Last updated: 2026-03-03 — deeppivot-295 closed. Added `job_matches` schema + migration with per job/user uniqueness, indexed score lookups, and typed relations for matching APIs/cron.*
+*Last updated: 2026-03-03 — deeppivot-296 closed. Added explicit weighted scoring dimensions for skills/archetype/salary/interview and wired them into `/api/employer/jobs/[jobId]/matches`.*

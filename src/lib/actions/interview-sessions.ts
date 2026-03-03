@@ -7,6 +7,7 @@ import {
   emotionSnapshotsTable,
   interviewFeedbackTable,
   emotionalAnalysesTable,
+  transcriptUrlsTable,
   usersTable,
   jobDescriptionsTable,
 } from "@/src/db/schema";
@@ -95,12 +96,25 @@ export async function endInterviewSession(
     pointsAwarded = gamResult?.pointsAdded ?? null;
   }
 
-  // Generate feedback from ElevenLabs live transcript (fire-and-forget)
-  if (transcript && transcript.length > 0) {
-    generateFeedbackFromTranscript(sessionId, transcript).catch((err) =>
-      console.error(`Feedback generation failed for session ${sessionId}:`, err)
-    );
-  }
+  // Generate feedback from ElevenLabs live transcript (fire-and-forget).
+  // Always generate feedback so every completed session has the AI Feedback segment filled out.
+  // If transcript is empty (e.g. session ended before messages captured), use a placeholder.
+  const messagesToUse =
+    transcript && transcript.length > 0
+      ? transcript
+      : [
+          {
+            role: "user",
+            text: "[Session ended before transcript was captured. This can happen with very short sessions or if the connection closed early.]",
+          },
+          {
+            role: "assistant",
+            text: "[No interviewer responses were recorded. For best feedback next time, have a full conversation with several question-answer exchanges.]",
+          },
+        ];
+  generateFeedbackFromTranscript(sessionId, messagesToUse).catch((err) =>
+    console.error(`Feedback generation failed for session ${sessionId}:`, err)
+  );
 
   revalidatePath("/dashboard/interviews");
   return { overallScore, pointsAwarded };
@@ -115,6 +129,14 @@ async function generateFeedbackFromTranscript(
   sessionId: number,
   messages: Array<{ role: string; text: string }>
 ) {
+  // Skip if feedback already exists (e.g. from concurrent request or Vapi pipeline)
+  const [existing] = await db
+    .select({ id: interviewFeedbackTable.id })
+    .from(interviewFeedbackTable)
+    .where(eq(interviewFeedbackTable.sessionId, sessionId))
+    .limit(1);
+  if (existing) return;
+
   // Build a readable transcript from the WebSocket messages
   const transcriptText = messages
     .map((m) => `${m.role === "user" ? "Candidate" : "Interviewer"}: ${m.text}`)
@@ -122,17 +144,24 @@ async function generateFeedbackFromTranscript(
 
   if (transcriptText.trim().length < 20) return;
 
-  // Insert fallback emotional analysis (ElevenLabs doesn't provide emotion data)
-  await db.insert(emotionalAnalysesTable).values({
-    sessionId,
-    jobId: "elevenlabs-live-transcript",
-    data: {
-      snapshots: [],
-      overallDominantEmotion: "Unknown",
-      aggregateEmotions: [],
-      unavailable: true,
-    },
-  });
+  // Insert fallback emotional analysis only if none exists (ElevenLabs doesn't provide emotion data)
+  const [existingEmotion] = await db
+    .select({ id: emotionalAnalysesTable.id })
+    .from(emotionalAnalysesTable)
+    .where(eq(emotionalAnalysesTable.sessionId, sessionId))
+    .limit(1);
+  if (!existingEmotion) {
+    await db.insert(emotionalAnalysesTable).values({
+      sessionId,
+      jobId: "elevenlabs-live-transcript",
+      data: {
+        snapshots: [],
+        overallDominantEmotion: "Unknown",
+        aggregateEmotions: [],
+        unavailable: true,
+      },
+    });
+  }
 
   // Fetch past feedback for adaptive context
   const [session] = await db
@@ -288,6 +317,96 @@ export async function getInterviewFeedback(sessionId: number) {
     .limit(1);
 
   return feedback ?? null;
+}
+
+/** Server action to generate feedback on-demand for completed sessions that are missing it. */
+export async function generateFeedbackIfMissing(sessionId: number) {
+  const user = await getDbUser();
+
+  const [session] = await db
+    .select({
+      id: interviewSessionsTable.id,
+      status: interviewSessionsTable.status,
+      userId: interviewSessionsTable.userId,
+    })
+    .from(interviewSessionsTable)
+    .where(
+      and(
+        eq(interviewSessionsTable.id, sessionId),
+        eq(interviewSessionsTable.userId, user.id)
+      )
+    )
+    .limit(1);
+
+  if (!session || session.status !== "completed") return null;
+
+  const [existing] = await db
+    .select({ id: interviewFeedbackTable.id })
+    .from(interviewFeedbackTable)
+    .where(eq(interviewFeedbackTable.sessionId, sessionId))
+    .limit(1);
+
+  if (existing) return null;
+
+  // Try transcript from transcript_urls (Vapi pipeline) first
+  const [transcriptRow] = await db
+    .select({ url: transcriptUrlsTable.url })
+    .from(transcriptUrlsTable)
+    .where(eq(transcriptUrlsTable.sessionId, sessionId))
+    .limit(1);
+
+  let messages: Array<{ role: string; text: string }>;
+  if (transcriptRow?.url) {
+    try {
+      const res = await fetch(transcriptRow.url);
+      if (res.ok) {
+        const json = (await res.json()) as {
+          transcript?: string;
+          utterances?: Array<{ transcript: string; speaker?: number; channel?: number }>;
+        };
+        if (json.utterances?.length) {
+          messages = json.utterances.map((u) => ({
+            role: (u.channel === 0 || u.speaker === 0 ? "user" : "assistant") as string,
+            text: u.transcript ?? "",
+          }));
+        } else if (json.transcript && json.transcript.length >= 20) {
+          messages = [{ role: "user", text: json.transcript }];
+        } else {
+          messages = [];
+        }
+      } else {
+        messages = [];
+      }
+    } catch {
+      messages = [];
+    }
+  } else {
+    messages = [];
+  }
+
+  if (messages.length === 0 || messages.map((m) => m.text).join(" ").trim().length < 20) {
+    messages = [
+      {
+        role: "user",
+        text: "[Session ended before transcript was captured. This can happen with very short sessions or if the connection closed early.]",
+      },
+      {
+        role: "assistant",
+        text: "[No interviewer responses were recorded. For best feedback next time, have a full conversation with several question-answer exchanges.]",
+      },
+    ];
+  }
+
+  await generateFeedbackFromTranscript(sessionId, messages);
+  revalidatePath(`/dashboard/interviews/${sessionId}`);
+  revalidatePath(`/dashboard/interviews/${sessionId}/feedback`);
+  const [newFeedback] = await db
+    .select()
+    .from(interviewFeedbackTable)
+    .where(eq(interviewFeedbackTable.sessionId, sessionId))
+    .orderBy(desc(interviewFeedbackTable.createdAt))
+    .limit(1);
+  return newFeedback ?? null;
 }
 
 export async function getEmotionalAnalysis(sessionId: number) {

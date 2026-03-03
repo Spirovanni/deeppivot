@@ -9,6 +9,7 @@ import {
   getSessionEmotions,
   getInterviewFeedback,
   getSessionJobMatchData,
+  generateFeedbackIfMissing,
 } from "@/src/lib/actions/interview-sessions";
 import { EmotionTimeline } from "@/components/interviews/EmotionTimeline";
 import { CommunicationSummary } from "@/components/interviews/CommunicationSummary";
@@ -59,6 +60,11 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
   ]);
 
   if (!session) notFound();
+
+  // Trigger feedback generation in background if missing (non-blocking)
+  if (!feedback && session.status === "completed") {
+    generateFeedbackIfMissing(sessionId).catch(() => {});
+  }
 
   const typeLabel = SESSION_TYPE_LABELS[session.sessionType] ?? "General";
   const statusCfg = STATUS_CONFIG[session.status] ?? STATUS_CONFIG.completed;

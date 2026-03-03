@@ -148,6 +148,7 @@ export const usersRelations = relations(usersTable, ({ many, one }) => ({
   agentConfigs: many(agentConfigsTable),
   companies: many(companiesTable),
   jobMarketplaceApplications: many(jobMarketplaceApplicationsTable),
+  jobMatches: many(jobMatchesTable),
   jobDescriptions: many(jobDescriptionsTable),
   resumes: many(userResumesTable),
   notifications: many(notificationsTable),
@@ -964,6 +965,7 @@ export const jobsRelations = relations(jobsTable, ({ one, many }) => ({
     references: [companiesTable.id],
   }),
   applications: many(jobMarketplaceApplicationsTable),
+  matches: many(jobMatchesTable),
   trackerCards: many(jobApplicationsTable),
   invitations: many(employerJobInvitationsTable),
 }));
@@ -1067,6 +1069,41 @@ export const matchingWeightsTable = pgTable("matching_weights", {
   weight: real().notNull().default(1),
   updatedAt: timestamp().notNull().defaultNow(),
 });
+
+/**
+ * Candidate-to-job match rows produced by the matching engine.
+ * One row per (jobId, userId) pair with latest score/status.
+ */
+export const jobMatchesTable = pgTable(
+  "job_matches",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    jobId: integer().notNull().references(() => jobsTable.id, { onDelete: "cascade" }),
+    userId: integer().notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+    /** 0-100 match percentage score */
+    matchScore: integer().notNull().default(0),
+    /** suggested | viewed | invited | dismissed | applied */
+    status: varchar({ length: 20 }).notNull().default("suggested"),
+    createdAt: timestamp().notNull().defaultNow(),
+    updatedAt: timestamp().notNull().defaultNow(),
+  },
+  (t) => [
+    unique("uq_job_matches_job_user").on(t.jobId, t.userId),
+    index("idx_job_matches_job_score").on(t.jobId, t.matchScore),
+    index("idx_job_matches_user").on(t.userId),
+  ]
+);
+
+export const jobMatchesRelations = relations(jobMatchesTable, ({ one }) => ({
+  job: one(jobsTable, {
+    fields: [jobMatchesTable.jobId],
+    references: [jobsTable.id],
+  }),
+  user: one(usersTable, {
+    fields: [jobMatchesTable.userId],
+    references: [usersTable.id],
+  }),
+}));
 
 // ============================================
 // SYSTEM SETTINGS (Phase 16.3)

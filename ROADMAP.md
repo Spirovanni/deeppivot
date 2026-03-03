@@ -833,6 +833,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Privacy UI: "Open to Opportunities" toggle (deeppivot-319) — users.openToOpportunities, profile settings card
 - [x] Privacy: Ensure matched candidates opt-in to employer discovery (deeppivot-318) — getTopCandidateMatches strictly filters by openToOpportunities=true
 - [x] System: Exclude opted-out users from Employer matching pool (deeppivot-320) — matching engine checks privacy flags
+- [x] API: GET `/api/employer/jobs/[jobId]/matches` (deeppivot-301) — employer/admin-protected endpoint with per-job candidate matching scores, applied/invited candidate exclusion, and weighted scoring from resume skills + interview performance + archetype signal.
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - [ ] Admin data exports to CSV for offline analysis.
@@ -840,3 +841,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 ---
 
 *Last updated: 2026-02-28 — deeppivot-286 (Points earned in interview feedback) closed. getPointsEarnedForInterviewSession() + badge on feedback page. Phase 16.4 Gamification progressing.*
+*Last updated: 2026-03-03 — deeppivot-301 closed. Added `GET /api/employer/jobs/[jobId]/matches` with employer ownership checks, candidate privacy filtering, applied/invited exclusion, and deterministic weighted matching scores.*

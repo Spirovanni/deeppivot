@@ -3,6 +3,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { db } from "@/src/db";
 import { companiesTable, jobsTable, usersTable } from "@/src/db/schema";
 import { and, eq, gte, ilike, lte, or } from "drizzle-orm";
+import { embedText } from "@/src/lib/embeddings";
+import { buildMarketplaceJobEmbeddingText } from "@/src/lib/job-embeddings";
 
 /** GET /api/jobs — paginated, filterable list (only published visible to non-owners) */
 export async function GET(req: Request) {
@@ -92,7 +94,7 @@ export async function POST(req: Request) {
 
         // Verify ownership
         const [company] = await db
-            .select({ id: companiesTable.id, ownerUserId: companiesTable.ownerUserId })
+            .select({ id: companiesTable.id, ownerUserId: companiesTable.ownerUserId, name: companiesTable.name })
             .from(companiesTable)
             .where(
                 dbUser.role === "admin"
@@ -104,12 +106,35 @@ export async function POST(req: Request) {
         if (!company)
             return NextResponse.json({ error: "Company not found or access denied" }, { status: 403 });
 
+        const titleClean = title.trim();
+        const descriptionClean = description.trim();
+
+        let embeddingVector: number[] | null = null;
+        try {
+            const embeddingText = buildMarketplaceJobEmbeddingText({
+                title: titleClean,
+                description: descriptionClean,
+                companyName: company.name,
+                location: location ?? null,
+                jobType: jobType ?? "full_time",
+                experienceLevel: experienceLevel ?? "mid",
+                salaryMin: salaryMin ?? null,
+                salaryMax: salaryMax ?? null,
+                remoteFlag: remoteFlag ?? false,
+            });
+            const { embedding } = await embedText(embeddingText);
+            embeddingVector = embedding;
+        } catch (err) {
+            console.warn("[jobs] Failed to generate marketplace job embedding:", err);
+        }
+
         const [job] = await db
             .insert(jobsTable)
             .values({
                 companyId,
-                title: title.trim(),
-                description: description.trim(),
+                title: titleClean,
+                description: descriptionClean,
+                embeddingVector,
                 location: location ?? null,
                 jobType: jobType ?? "full_time",
                 experienceLevel: experienceLevel ?? "mid",

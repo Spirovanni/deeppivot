@@ -949,6 +949,8 @@ export const jobsTable = pgTable("jobs", {
   companyId: integer().notNull().references(() => companiesTable.id, { onDelete: "cascade" }),
   title: varchar({ length: 255 }).notNull(),
   description: text().notNull(),
+  /** Native marketplace job embedding vector for semantic matching (Phase 16.5). */
+  embeddingVector: jsonb("embedding_vector"),
   location: varchar({ length: 255 }),
   /** full_time | part_time | contract | internship */
   jobType: varchar({ length: 50 }).notNull().default("full_time"),

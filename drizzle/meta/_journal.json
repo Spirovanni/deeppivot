@@ -253,6 +253,13 @@
       "when": 1772581500000,
       "tag": "0035_sharp_mimic",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1772583800000,
+      "tag": "0036_mighty_nomad",
+      "breakpoints": true
     }
   ]
 }

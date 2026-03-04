@@ -842,6 +842,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] AI/ML: Embed user profiles/resumes natively (deeppivot-297) — Added `user_resumes.embedding_vector` (JSONB) plus migration `0035_sharp_mimic`; resume upload/patch flows now generate and persist native embeddings from structured profile+raw resume text for matching/search.
 - [x] AI/ML: Embed marketplace job descriptions (deeppivot-298) — Added `jobs.embedding_vector` (JSONB) with migration `0036_mighty_nomad`; marketplace job create/update APIs now generate and persist semantic embeddings from job metadata + description.
 - [x] System: Cron job to calculate nightly matches for new jobs (deeppivot-299) — Added Inngest cron `nightly-job-matches` to compute embedding similarity for newly published jobs, then upsert top candidate rows into `job_matches` nightly.
+- [x] API: GET `/api/jobs/matches` (deeppivot-300) — Added candidate-side recommendations endpoint backed by `job_matches`, with auth, score/status filtering, pagination, and automatic `suggested` → `viewed` transition for surfaced matches.
 - [x] API: GET `/api/employer/jobs/[jobId]/matches` (deeppivot-301) — employer/admin-protected endpoint with per-job candidate matching scores, applied/invited candidate exclusion, and weighted scoring from resume skills + interview performance + archetype signal.
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
@@ -860,3 +861,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-03 — deeppivot-297 closed. Added native resume/profile embeddings (`user_resumes.embedding_vector`) with automatic generation on upload and parsed-data updates.*
 *Last updated: 2026-03-04 — deeppivot-298 closed. Added native marketplace job embeddings (`jobs.embedding_vector`) and automatic embedding generation on job create/update.*
 *Last updated: 2026-03-04 — deeppivot-299 closed. Added nightly Inngest match-calculation cron that computes embedding-based scores for new jobs and upserts `job_matches` suggestions.*
+*Last updated: 2026-03-04 — deeppivot-300 closed. Added candidate recommendations API `/api/jobs/matches` with filtering, pagination, and viewed-state progression for suggested matches.*

@@ -14,6 +14,7 @@ import { broadcastAnnouncement } from "@/src/inngest/announcements";
 import { gamificationStreakReset } from "@/src/inngest/gamification-streak-reset";
 import { gamificationStreakExpiryNotifications } from "@/src/inngest/gamification-streak-expiry-notifications";
 import { evaluateBadges } from "@/src/inngest/evaluate-badges";
+import { nightlyJobMatches } from "@/src/inngest/nightly-job-matches";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -30,6 +31,7 @@ export const { GET, POST, PUT } = serve({
     gamificationStreakReset,
     gamificationStreakExpiryNotifications,
     evaluateBadges,
+    nightlyJobMatches,
   ],
 });
 

@@ -20,6 +20,8 @@ interface MatchedCandidate {
     name: string;
     email: string;
     avatarUrl: string | null;
+    anonymizedLabel?: string;
+    anonymizedSummary?: string;
     archetypeName: string | null;
     matchScore: number;
     avgInterviewScore: number | null;
@@ -50,6 +52,7 @@ export default function EmployerApplicationsPage() {
     const [matchesLoading, setMatchesLoading] = useState(true);
     const [selectedMatch, setSelectedMatch] = useState<MatchedCandidate | null>(null);
     const [inviteBusyUserId, setInviteBusyUserId] = useState<number | null>(null);
+    const [blindMode, setBlindMode] = useState(true);
 
     useEffect(() => {
         fetch(`/api/employer/jobs/${jobId}/applications`)
@@ -149,6 +152,24 @@ export default function EmployerApplicationsPage() {
                         Top Candidate Matches
                     </button>
                 </div>
+
+                {activeTab === "matches" && (
+                    <div className="mb-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-2.5">
+                        <div>
+                            <p className="text-white text-sm font-medium">Bias-safe sourcing mode</p>
+                            <p className="text-white/50 text-xs">Hide candidate identity and prioritize skill signals first.</p>
+                        </div>
+                        <button
+                            onClick={() => setBlindMode((prev) => !prev)}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${blindMode
+                                ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/30"
+                                : "bg-white/5 text-white/60 border-white/20 hover:text-white/90"
+                                }`}
+                        >
+                            {blindMode ? "Blind Mode: ON" : "Blind Mode: OFF"}
+                        </button>
+                    </div>
+                )}
 
                 {activeTab === "applicants" && loading ? (
                     <div className="flex justify-center py-16">
@@ -275,15 +296,21 @@ export default function EmployerApplicationsPage() {
                                             }`}
                                     >
                                         <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm shrink-0">
-                                            {candidate.avatarUrl ? (
+                                            {!blindMode && candidate.avatarUrl ? (
                                                 <img src={candidate.avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover" />
                                             ) : (
-                                                candidate.name.slice(0, 2).toUpperCase()
+                                                blindMode ? "?" : candidate.name.slice(0, 2).toUpperCase()
                                             )}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="text-white text-sm font-medium truncate">{candidate.name}</div>
-                                            <div className="text-white/40 text-xs truncate">{candidate.email}</div>
+                                            <div className="text-white text-sm font-medium truncate">
+                                                {blindMode ? (candidate.anonymizedLabel ?? "Candidate") : candidate.name}
+                                            </div>
+                                            <div className="text-white/40 text-xs truncate">
+                                                {blindMode
+                                                    ? (candidate.anonymizedSummary ?? "Identity hidden for unbiased review.")
+                                                    : candidate.email}
+                                            </div>
                                         </div>
                                         <span className="px-2 py-0.5 rounded-md text-xs border bg-indigo-500/20 text-indigo-300 border-indigo-500/30">
                                             {candidate.matchScore}% match
@@ -298,17 +325,30 @@ export default function EmployerApplicationsPage() {
                             <div className="w-80 shrink-0 bg-white/5 rounded-2xl border border-white/10 p-6 h-fit sticky top-6">
                                 <div className="flex items-start gap-3 mb-5">
                                     <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold shrink-0">
-                                        {selectedMatch.avatarUrl ? (
+                                        {!blindMode && selectedMatch.avatarUrl ? (
                                             <img src={selectedMatch.avatarUrl} alt="" className="w-12 h-12 rounded-full object-cover" />
                                         ) : (
-                                            selectedMatch.name.slice(0, 2).toUpperCase()
+                                            blindMode ? "?" : selectedMatch.name.slice(0, 2).toUpperCase()
                                         )}
                                     </div>
                                     <div>
-                                        <div className="text-white font-semibold">{selectedMatch.name}</div>
-                                        <div className="text-white/50 text-xs mt-0.5">{selectedMatch.email}</div>
+                                        <div className="text-white font-semibold">
+                                            {blindMode ? (selectedMatch.anonymizedLabel ?? "Candidate") : selectedMatch.name}
+                                        </div>
+                                        <div className="text-white/50 text-xs mt-0.5">
+                                            {blindMode ? "Identity hidden until you choose to invite." : selectedMatch.email}
+                                        </div>
                                     </div>
                                 </div>
+
+                                {blindMode && (
+                                    <div className="mb-4 rounded-lg border border-white/10 bg-white/5 p-3">
+                                        <div className="text-white/50 text-xs mb-1">Anonymized Summary</div>
+                                        <p className="text-white/75 text-xs leading-relaxed">
+                                            {selectedMatch.anonymizedSummary ?? "Signal-focused profile for unbiased sourcing."}
+                                        </p>
+                                    </div>
+                                )}
 
                                 <div className="grid grid-cols-2 gap-2 mb-4">
                                     <div className="bg-white/5 border border-white/10 rounded-lg p-2.5">

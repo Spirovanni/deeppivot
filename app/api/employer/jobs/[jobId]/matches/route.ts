@@ -96,6 +96,36 @@ function computeSalaryScore(
   return Math.round(Math.max(0, 100 - distanceRatio * 100));
 }
 
+function toExperienceBand(yearsOfExperience: number | null): string {
+  if (yearsOfExperience == null) return "Experience not specified";
+  if (yearsOfExperience < 2) return "Early-career profile";
+  if (yearsOfExperience < 6) return "Mid-career profile";
+  return "Senior profile";
+}
+
+function toInterviewBand(score: number | null): string {
+  if (score == null) return "No completed interview score yet";
+  if (score >= 85) return "Strong interview performance";
+  if (score >= 70) return "Solid interview performance";
+  return "Developing interview performance";
+}
+
+function buildAnonymizedSummary(args: {
+  yearsOfExperience: number | null;
+  avgInterviewScore: number | null;
+  archetypeName: string | null;
+  matchedSkills: string[];
+}): string {
+  const parts: string[] = [toExperienceBand(args.yearsOfExperience), toInterviewBand(args.avgInterviewScore)];
+  if (args.archetypeName) {
+    parts.push(`Archetype: ${args.archetypeName}`);
+  }
+  if (args.matchedSkills.length > 0) {
+    parts.push(`Skill overlap: ${args.matchedSkills.slice(0, 3).join(", ")}`);
+  }
+  return parts.join(" • ");
+}
+
 /**
  * GET /api/employer/jobs/[jobId]/matches
  *
@@ -302,9 +332,20 @@ export async function GET(
 
     scoredCandidates.sort((a, b) => b.matchScore - a.matchScore);
 
+    const rankedCandidates = scoredCandidates.slice(0, 25).map((candidate, index) => ({
+      ...candidate,
+      anonymizedLabel: `Candidate ${index + 1}`,
+      anonymizedSummary: buildAnonymizedSummary({
+        yearsOfExperience: candidate.yearsOfExperience,
+        avgInterviewScore: candidate.avgInterviewScore,
+        archetypeName: candidate.archetypeName,
+        matchedSkills: candidate.matchedSkills,
+      }),
+    }));
+
     return NextResponse.json({
       job: { id: job.id, title: job.title },
-      candidates: scoredCandidates.slice(0, 25),
+      candidates: rankedCandidates,
       total: scoredCandidates.length,
     });
   } catch {

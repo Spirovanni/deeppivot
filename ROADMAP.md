@@ -848,6 +848,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Candidate UI: Match percentage indicator on job cards (deeppivot-303) — Updated marketplace listing cards to show per-user match percentage badges by left-joining `job_matches` for the authenticated candidate on `/jobs`.
 - [x] Candidate UI: "Why you match" explanation tooltip (LLM) (deeppivot-304) — Added lazy-loaded tooltip explanations on candidate job cards via new authenticated endpoint `/api/jobs/matches/explain`, backed by LLM-generated fit summaries with deterministic fallback signals.
 - [x] Employer UI: "Top Candidate Matches" tab in job management (deeppivot-305) — Extended employer job-management screen with a dedicated matches tab, candidate match-score detail panel, and direct "Invite to Apply" action wired to employer invite API.
+- [x] Employer UI: Anonymized candidate summary for unbiased sourcing (deeppivot-306) — Added bias-safe blind mode in employer match review with anonymized labels and signal-based summaries (experience/interview/archetype/skills) while hiding identity by default.
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - [ ] Admin data exports to CSV for offline analysis.
@@ -870,3 +871,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — deeppivot-303 closed. Added match percentage badges on `/jobs` listing cards for authenticated candidates using `job_matches` joins.*
 *Last updated: 2026-03-04 — deeppivot-304 closed. Added LLM-backed "Why you match" tooltip explanations on candidate job cards (marketplace and dashboard) with authenticated match-scoped API and fallback reasoning.*
 *Last updated: 2026-03-04 — deeppivot-305 closed. Added employer-side "Top Candidate Matches" tab in job management with match breakdown and inline invite-to-apply workflow.*
+*Last updated: 2026-03-04 — deeppivot-306 closed. Added anonymized candidate summaries and blind-mode identity masking for unbiased employer sourcing in Top Candidate Matches.*

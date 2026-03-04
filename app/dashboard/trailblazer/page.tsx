@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { getArchetype } from "@/src/lib/actions/archetype";
 import { getDashboardSummary, type DashboardSummary } from "@/src/lib/actions/dashboard";
+import { getRecommendedJobsForCandidate } from "@/src/lib/actions/matching";
 import { CareerArchetypeCard, CareerArchetypeEmptyCard } from "@/components/dashboard/CareerArchetypeCard";
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner";
 import type { TraitScore } from "@/src/lib/archetypes";
@@ -86,12 +87,18 @@ export default async function TrailblazerDashboardPage() {
 
     let archetype: Awaited<ReturnType<typeof getArchetype>> | null = null;
     let summary: DashboardSummary = emptySummary;
+    let recommendedJobs: Awaited<ReturnType<typeof getRecommendedJobsForCandidate>> = [];
 
     try {
-        [archetype, summary] = await Promise.all([getArchetype(), getDashboardSummary()]);
+        [archetype, summary, recommendedJobs] = await Promise.all([
+            getArchetype(),
+            getDashboardSummary(),
+            getRecommendedJobsForCandidate(4),
+        ]);
     } catch {
         archetype = null;
         summary = emptySummary;
+        recommendedJobs = [];
     }
 
     const avgScore =
@@ -197,6 +204,60 @@ export default async function TrailblazerDashboardPage() {
                         />
                     ) : (
                         <CareerArchetypeEmptyCard />
+                    )}
+                </div>
+
+                {/* Recommended jobs */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                            Recommended Jobs
+                        </h2>
+                        <Link
+                            href="/jobs"
+                            className="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+                        >
+                            Browse all jobs →
+                        </Link>
+                    </div>
+
+                    {recommendedJobs.length === 0 ? (
+                        <Card>
+                            <CardContent className="p-5">
+                                <p className="text-sm text-muted-foreground">
+                                    No recommendations yet. Upload a resume and keep practicing interviews to improve your matches.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            {recommendedJobs.map((job) => (
+                                <Link key={job.matchId} href={`/jobs/${job.jobId}`}>
+                                    <Card className="h-full transition-all hover:-translate-y-0.5 hover:shadow-md hover:bg-accent/30">
+                                        <CardHeader className="space-y-2">
+                                            <div className="flex items-start justify-between gap-2">
+                                                <CardTitle className="text-base leading-tight">{job.title}</CardTitle>
+                                                <span className="shrink-0 rounded bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
+                                                    {job.matchScore}% match
+                                                </span>
+                                            </div>
+                                            <CardDescription>{job.companyName}</CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="pt-0">
+                                            <p className="text-xs text-muted-foreground">
+                                                {job.location ?? "Location not specified"}
+                                                {job.remoteFlag ? " · Remote" : ""}
+                                            </p>
+                                            {(job.salaryMin != null || job.salaryMax != null) && (
+                                                <p className="mt-1 text-xs text-muted-foreground">
+                                                    Salary: {job.salaryMin ?? "?"} - {job.salaryMax ?? "?"}
+                                                </p>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                </Link>
+                            ))}
+                        </div>
                     )}
                 </div>
 

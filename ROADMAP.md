@@ -844,6 +844,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] System: Cron job to calculate nightly matches for new jobs (deeppivot-299) — Added Inngest cron `nightly-job-matches` to compute embedding similarity for newly published jobs, then upsert top candidate rows into `job_matches` nightly.
 - [x] API: GET `/api/jobs/matches` (deeppivot-300) — Added candidate-side recommendations endpoint backed by `job_matches`, with auth, score/status filtering, pagination, and automatic `suggested` → `viewed` transition for surfaced matches.
 - [x] API: GET `/api/employer/jobs/[jobId]/matches` (deeppivot-301) — employer/admin-protected endpoint with per-job candidate matching scores, applied/invited candidate exclusion, and weighted scoring from resume skills + interview performance + archetype signal.
+- [x] Candidate UI: "Recommended Jobs" section on dashboard (deeppivot-302) — Added recommended job cards to Trailblazer dashboard powered by precomputed `job_matches` via server action (`getRecommendedJobsForCandidate`), including match score, company, location/remote, salary hints, and `/jobs/[jobId]` deep-links.
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - [ ] Admin data exports to CSV for offline analysis.
@@ -862,3 +863,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — deeppivot-298 closed. Added native marketplace job embeddings (`jobs.embedding_vector`) and automatic embedding generation on job create/update.*
 *Last updated: 2026-03-04 — deeppivot-299 closed. Added nightly Inngest match-calculation cron that computes embedding-based scores for new jobs and upserts `job_matches` suggestions.*
 *Last updated: 2026-03-04 — deeppivot-300 closed. Added candidate recommendations API `/api/jobs/matches` with filtering, pagination, and viewed-state progression for suggested matches.*
+*Last updated: 2026-03-04 — deeppivot-302 closed. Added "Recommended Jobs" panel on Trailblazer dashboard using `job_matches` with match badges and job detail links.*

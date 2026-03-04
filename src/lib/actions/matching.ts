@@ -7,8 +7,11 @@ import {
     interviewSessionsTable,
     userResumesTable,
     companiesTable,
+    jobMatchesTable,
+    jobsTable,
+    jobMarketplaceApplicationsTable,
 } from "@/src/db/schema";
-import { eq, and, isNull, desc, avg } from "drizzle-orm";
+import { eq, and, isNull, desc, avg, ne } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 
 async function getDbUserId(): Promise<number> {
@@ -32,6 +35,18 @@ export interface MatchedCandidate {
     archetypeName: string | null;
     avgInterviewScore: number | null;
     skills: string[];
+}
+
+export interface RecommendedJobMatch {
+    matchId: number;
+    jobId: number;
+    matchScore: number;
+    title: string;
+    companyName: string;
+    location: string | null;
+    salaryMin: number | null;
+    salaryMax: number | null;
+    remoteFlag: boolean;
 }
 
 /**
@@ -106,4 +121,60 @@ export async function getTopCandidateMatches(): Promise<MatchedCandidate[]> {
     }
 
     return results;
+}
+
+/**
+ * Candidate-side recommended jobs from precomputed `job_matches`.
+ */
+export async function getRecommendedJobsForCandidate(limit = 6): Promise<RecommendedJobMatch[]> {
+    const userId = await getDbUserId();
+
+    const rows = await db
+        .select({
+            matchId: jobMatchesTable.id,
+            jobId: jobMatchesTable.jobId,
+            matchScore: jobMatchesTable.matchScore,
+            title: jobsTable.title,
+            companyName: companiesTable.name,
+            location: jobsTable.location,
+            salaryMin: jobsTable.salaryMin,
+            salaryMax: jobsTable.salaryMax,
+            remoteFlag: jobsTable.remoteFlag,
+            applicationId: jobMarketplaceApplicationsTable.id,
+        })
+        .from(jobMatchesTable)
+        .innerJoin(jobsTable, eq(jobMatchesTable.jobId, jobsTable.id))
+        .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
+        .leftJoin(
+            jobMarketplaceApplicationsTable,
+            and(
+                eq(jobMarketplaceApplicationsTable.jobId, jobsTable.id),
+                eq(jobMarketplaceApplicationsTable.userId, userId)
+            )
+        )
+        .where(
+            and(
+                eq(jobMatchesTable.userId, userId),
+                eq(jobsTable.status, "published"),
+                ne(jobMatchesTable.status, "dismissed"),
+                ne(jobMatchesTable.status, "applied")
+            )
+        )
+        .orderBy(desc(jobMatchesTable.matchScore), desc(jobMatchesTable.updatedAt))
+        .limit(limit * 2);
+
+    return rows
+        .filter((row) => row.applicationId == null)
+        .slice(0, limit)
+        .map((row) => ({
+            matchId: row.matchId,
+            jobId: row.jobId,
+            matchScore: row.matchScore,
+            title: row.title,
+            companyName: row.companyName,
+            location: row.location,
+            salaryMin: row.salaryMin,
+            salaryMax: row.salaryMax,
+            remoteFlag: row.remoteFlag,
+        }));
 }

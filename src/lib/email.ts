@@ -22,6 +22,10 @@ import {
     type WeeklyJobMatchesDigestEmailProps,
 } from "@/emails/WeeklyJobMatchesDigestEmail";
 import {
+    WeeklyEmployerTopCandidatesDigestEmail,
+    type WeeklyEmployerTopCandidatesDigestEmailProps,
+} from "@/emails/WeeklyEmployerTopCandidatesDigestEmail";
+import {
     AnnouncementEmail,
 } from "@/emails/AnnouncementEmail";
 
@@ -124,6 +128,17 @@ export async function sendWeeklyJobMatchesDigestEmail(
         to,
         subject: "Your weekly top job matches",
         react: createElement(WeeklyJobMatchesDigestEmail, data),
+    });
+}
+
+export async function sendWeeklyEmployerTopCandidatesDigestEmail(
+    to: string,
+    data: WeeklyEmployerTopCandidatesDigestEmailProps,
+): Promise<{ success: boolean; error?: string }> {
+    return sendEmail({
+        to,
+        subject: "Your weekly top candidate matches",
+        react: createElement(WeeklyEmployerTopCandidatesDigestEmail, data),
     });
 }
 

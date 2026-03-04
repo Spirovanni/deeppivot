@@ -851,6 +851,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Employer UI: Anonymized candidate summary for unbiased sourcing (deeppivot-306) — Added bias-safe blind mode in employer match review with anonymized labels and signal-based summaries (experience/interview/archetype/skills) while hiding identity by default.
 - [x] System: "Invite to Apply" button for Employers (deeppivot-307) — Completed employer invite flow end-to-end: Top Candidate Matches includes invite action, backend persists invitation + sends notification email, and match lifecycle now transitions to `job_matches.status = invited`.
 - [x] Email: Weekly digest of top job matches for candidate (deeppivot-309) — Added weekly Inngest digest cron for opted-in candidates with top non-applied published matches and new email template delivery via Resend.
+- [x] Email: Weekly digest of top candidates for active employer jobs (deeppivot-310) — Added weekly employer digest cron and email template summarizing top candidate matches across active published jobs with archetype/interview signals.
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - [ ] Admin data exports to CSV for offline analysis.
@@ -876,3 +877,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — deeppivot-306 closed. Added anonymized candidate summaries and blind-mode identity masking for unbiased employer sourcing in Top Candidate Matches.*
 *Last updated: 2026-03-04 — deeppivot-307 closed. Completed employer "Invite to Apply" workflow and added match-status transition to `invited` when invitations are sent.*
 *Last updated: 2026-03-04 — deeppivot-309 closed. Added weekly candidate top-match digest emails via new Inngest cron, email template, and send helper integration.*
+*Last updated: 2026-03-04 — deeppivot-310 closed. Added weekly employer top-candidates digest emails for active jobs via new Inngest cron, email template, and send helper integration.*

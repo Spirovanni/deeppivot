@@ -16,6 +16,7 @@ import { gamificationStreakExpiryNotifications } from "@/src/inngest/gamificatio
 import { evaluateBadges } from "@/src/inngest/evaluate-badges";
 import { nightlyJobMatches } from "@/src/inngest/nightly-job-matches";
 import { weeklyCandidateJobMatchesDigest } from "@/src/inngest/weekly-candidate-job-matches-digest";
+import { weeklyEmployerTopCandidatesDigest } from "@/src/inngest/weekly-employer-top-candidates-digest";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -34,6 +35,7 @@ export const { GET, POST, PUT } = serve({
     evaluateBadges,
     nightlyJobMatches,
     weeklyCandidateJobMatchesDigest,
+    weeklyEmployerTopCandidatesDigest,
   ],
 });
 

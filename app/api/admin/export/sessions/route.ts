@@ -1,10 +1,9 @@
 import { requireAdmin } from "@/src/lib/rbac";
-import { db } from "@/src/db";
-import { interviewSessionsTable, usersTable } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
+import { generateInterviewSessionsCsv } from "@/src/lib/admin-export";
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit } from "@/src/lib/rate-limit";
 
+/** GET: Admin CSV export for interview sessions (deeppivot-312). Query: from, to (ISO dates), includeDeleted. */
 export async function GET(req: NextRequest) {
     const rl = await rateLimit(req, "ADMIN");
     if (!rl.success) return rl.response;
@@ -16,39 +15,16 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const sessions = await db
-            .select({
-                session: interviewSessionsTable,
-                user: { email: usersTable.email, name: usersTable.name },
-            })
-            .from(interviewSessionsTable)
-            .leftJoin(usersTable, eq(interviewSessionsTable.userId, usersTable.id));
+        const { searchParams } = new URL(req.url);
+        const from = searchParams.get("from")?.trim();
+        const to = searchParams.get("to")?.trim();
+        const includeDeleted = searchParams.get("includeDeleted") === "true";
 
-        const headers = [
-            "Session ID",
-            "User ID",
-            "User Name",
-            "User Email",
-            "Session Type",
-            "Status",
-            "Started At",
-            "Ended At",
-            "Overall Score",
-        ];
-
-        const rows = sessions.map(({ session: s, user: u }) => [
-            s.id,
-            s.userId,
-            `"${(u?.name ?? "").replace(/"/g, '""')}"`,
-            u?.email ?? "",
-            s.sessionType,
-            s.status,
-            s.startedAt ? new Date(s.startedAt).toISOString() : "",
-            s.endedAt ? new Date(s.endedAt).toISOString() : "",
-            s.overallScore ?? "",
-        ]);
-
-        const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+        const csvContent = await generateInterviewSessionsCsv({
+            from: from && from.length > 0 ? from : undefined,
+            to: to && to.length > 0 ? to : undefined,
+            includeDeleted,
+        });
 
         return new NextResponse(csvContent, {
             status: 200,

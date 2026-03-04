@@ -75,10 +75,10 @@ const NAV_CARDS = [
     bg: "bg-orange-500/10",
   },
   {
-    href: "/api/admin/export/sessions",
+    href: "/admin/export",
     icon: Activity,
-    label: "Export Sessions CSV",
-    description: "Download interview session analytics.",
+    label: "Data Exports",
+    description: "CSV exports for users and interview sessions.",
     color: "text-pink-400",
     bg: "bg-pink-500/10",
   },

@@ -1,9 +1,9 @@
 /**
- * Admin CSV export logic — shared by direct GET and signed-link download (deeppivot-313).
+ * Admin CSV export logic — shared by direct GET and signed-link download (deeppivot-313, deeppivot-312).
  */
 import { db } from "@/src/db";
-import { usersTable, userGamificationTable } from "@/src/db/schema";
-import { eq, isNull, and, sql } from "drizzle-orm";
+import { usersTable, userGamificationTable, interviewSessionsTable } from "@/src/db/schema";
+import { eq, isNull, and, sql, gte, lte, desc } from "drizzle-orm";
 
 /** Escape CSV value: wrap in quotes, escape internal quotes */
 function csvEscape(val: string | null | undefined): string {
@@ -72,6 +72,62 @@ export async function generateUsersCsv(options: UsersExportOptions = {}): Promis
     csvEscape(u.organizationId),
     new Date(u.createdAt).toISOString(),
     new Date(u.updatedAt).toISOString(),
+  ]);
+
+  return [headers.join(","), ...dataRows.map((r) => r.join(","))].join("\n");
+}
+
+export interface InterviewSessionsExportOptions {
+  from?: string; // ISO date
+  to?: string;   // ISO date
+  includeDeleted?: boolean;
+}
+
+/** Generate interview sessions CSV with full columns (deeppivot-312). */
+export async function generateInterviewSessionsCsv(
+  options: InterviewSessionsExportOptions = {}
+): Promise<string> {
+  const { from, to, includeDeleted = false } = options;
+
+  const conditions = [];
+  if (!includeDeleted) conditions.push(isNull(interviewSessionsTable.deletedAt));
+  if (from) conditions.push(gte(interviewSessionsTable.startedAt, new Date(from)));
+  if (to) conditions.push(lte(interviewSessionsTable.startedAt, new Date(to)));
+
+  const rows = await db
+    .select({
+      session: interviewSessionsTable,
+      userEmail: usersTable.email,
+      userName: usersTable.name,
+    })
+    .from(interviewSessionsTable)
+    .leftJoin(usersTable, eq(interviewSessionsTable.userId, usersTable.id))
+    .where(conditions.length > 0 ? and(...conditions) : sql`true`)
+    .orderBy(desc(interviewSessionsTable.startedAt));
+
+  const headers = [
+    "Session ID", "User ID", "User Name", "User Email", "Job Description ID", "Resume ID",
+    "Session Type", "Status", "Started At", "Ended At", "Overall Score", "Notes",
+    "Organization ID", "Created At", "Updated At", "Deleted At",
+  ];
+
+  const dataRows = rows.map(({ session: s, userEmail, userName }) => [
+    s.id,
+    s.userId,
+    csvEscape(userName),
+    csvEscape(userEmail),
+    s.jobDescriptionId ?? "",
+    s.resumeId ?? "",
+    s.sessionType,
+    s.status,
+    s.startedAt ? new Date(s.startedAt).toISOString() : "",
+    s.endedAt ? new Date(s.endedAt).toISOString() : "",
+    s.overallScore ?? "",
+    csvEscape(s.notes?.slice(0, 500)),
+    csvEscape(s.organizationId),
+    s.createdAt ? new Date(s.createdAt).toISOString() : "",
+    s.updatedAt ? new Date(s.updatedAt).toISOString() : "",
+    s.deletedAt ? new Date(s.deletedAt).toISOString() : "",
   ]);
 
   return [headers.join(","), ...dataRows.map((r) => r.join(","))].join("\n");

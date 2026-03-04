@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { href: "/admin/employers", label: "Employers" },
   { href: "/admin/blog", label: "Blog Manager" },
   { href: "/admin/gamification", label: "Gamification" },
+  { href: "/admin/export", label: "Export" },
   { href: "/admin/settings", label: "Settings" },
 ];
 

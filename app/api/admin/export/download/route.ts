@@ -1,10 +1,10 @@
 /**
- * GET: Download CSV via signed token (deeppivot-313).
+ * GET: Download CSV via signed token (deeppivot-313, deeppivot-312).
  * No session required — token must be valid and not expired.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { verifyExportToken } from "@/src/lib/export-token";
-import { generateUsersCsv } from "@/src/lib/admin-export";
+import { generateUsersCsv, generateInterviewSessionsCsv } from "@/src/lib/admin-export";
 
 export async function GET(req: NextRequest) {
     try {
@@ -19,20 +19,31 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "Invalid or expired download link" }, { status: 403 });
         }
 
-        if (payload.type !== "users") {
+        let csvContent: string;
+        let filename: string;
+
+        if (payload.type === "users") {
+            csvContent = await generateUsersCsv({
+                role: payload.role,
+                includeDeleted: payload.includeDeleted ?? false,
+            });
+            filename = `deeppivot-users-${new Date().toISOString().split("T")[0]}.csv`;
+        } else if (payload.type === "interview_sessions") {
+            csvContent = await generateInterviewSessionsCsv({
+                from: payload.from,
+                to: payload.to,
+                includeDeleted: payload.includeDeleted ?? false,
+            });
+            filename = `deeppivot-sessions-${new Date().toISOString().split("T")[0]}.csv`;
+        } else {
             return NextResponse.json({ error: "Unknown export type" }, { status: 400 });
         }
-
-        const csvContent = await generateUsersCsv({
-            role: payload.role,
-            includeDeleted: payload.includeDeleted ?? false,
-        });
 
         return new NextResponse(csvContent, {
             status: 200,
             headers: {
                 "Content-Type": "text/csv; charset=utf-8",
-                "Content-Disposition": `attachment; filename="deeppivot-users-${new Date().toISOString().split("T")[0]}.csv"`,
+                "Content-Disposition": `attachment; filename="${filename}"`,
             },
         });
     } catch (error) {

@@ -125,7 +125,7 @@ export async function getGamificationStatus(): Promise<GamificationStatus | null
 }
 
 export type LeaderboardEntry = {
-    id: string;
+    id: number;
     name: string;
     avatarUrl: string | null;
     points: number;

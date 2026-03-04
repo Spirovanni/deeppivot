@@ -4,6 +4,7 @@ import { db } from "@/src/db";
 import {
     companiesTable,
     employerJobInvitationsTable,
+    jobMatchesTable,
     jobMarketplaceApplicationsTable,
     jobsTable,
     usersTable,
@@ -146,6 +147,17 @@ export async function POST(
                 jobId: jobIdNum,
             });
         }
+
+        // Reflect invite state in candidate-job match lifecycle when present.
+        await db
+            .update(jobMatchesTable)
+            .set({ status: "invited", updatedAt: new Date() })
+            .where(
+                and(
+                    eq(jobMatchesTable.jobId, jobIdNum),
+                    eq(jobMatchesTable.userId, candidateUserId)
+                )
+            );
 
         return NextResponse.json({ success: true, invited: true });
     } catch {

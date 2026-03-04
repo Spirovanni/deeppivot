@@ -361,6 +361,11 @@ export const userResumesTable = pgTable("user_resumes", {
   title: varchar({ length: 255 }).notNull(),
   fileUrl: varchar({ length: 1024 }),
   rawText: text(),
+  /**
+   * Pre-computed embedding for semantic matching/search (Phase 16.5).
+   * Stored as JSONB float[] for cosine similarity without pgvector dependency.
+   */
+  embeddingVector: jsonb("embedding_vector"),
   /** Parsed resume structure (parsed_resume_data). See ResumeExtraction in src/lib/llm/prompts/resumes.ts */
   parsedData: jsonb()
     .$type<ResumeExtraction>()

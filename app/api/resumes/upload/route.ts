@@ -7,6 +7,8 @@ import pdfParse from "pdf-parse";
 import { uploadToR2 } from "@/src/lib/storage";
 import { extractResumeData } from "@/src/lib/llm/resume-parser";
 import { syncProfileFromResume } from "@/src/lib/user/profile-sync";
+import { embedText } from "@/src/lib/embeddings";
+import { buildResumeEmbeddingText } from "@/src/lib/resume-embeddings";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -76,15 +78,32 @@ export async function POST(request: NextRequest) {
             })
             .returning();
 
-        // Attempt LLM extraction of structured data
+        // Attempt LLM extraction of structured data + embedding generation
         try {
             const parsedData = await extractResumeData(rawText);
+            const embeddingText = buildResumeEmbeddingText({
+                title: resumeTitle,
+                rawText,
+                parsedData,
+            });
+
+            let embeddingVector: number[] | null = null;
+            try {
+                const { embedding } = await embedText(embeddingText);
+                embeddingVector = embedding;
+            } catch (embErr) {
+                console.warn(
+                    `Failed to generate resume embedding for resume ${newResume.id}:`,
+                    embErr
+                );
+            }
 
             await db
                 .update(userResumesTable)
                 .set({
                     status: "extracted",
                     parsedData,
+                    embeddingVector,
                     updatedAt: new Date(),
                 })
                 .where(eq(userResumesTable.id, newResume.id));

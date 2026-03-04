@@ -5,6 +5,8 @@ import { userResumesTable, usersTable } from "@/src/db/schema";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { resumeExtractionSchema } from "@/src/lib/llm/prompts/resumes";
+import { embedText } from "@/src/lib/embeddings";
+import { buildResumeEmbeddingText } from "@/src/lib/resume-embeddings";
 
 const patchSchema = z.object({
     title: z.string().min(1).max(255).optional(),
@@ -81,7 +83,12 @@ export async function PATCH(
         }
 
         const [existing] = await db
-            .select({ id: userResumesTable.id })
+            .select({
+                id: userResumesTable.id,
+                title: userResumesTable.title,
+                rawText: userResumesTable.rawText,
+                parsedData: userResumesTable.parsedData,
+            })
             .from(userResumesTable)
             .where(
                 and(
@@ -107,7 +114,47 @@ export async function PATCH(
         const updates: Record<string, unknown> = { updatedAt: new Date() };
         if (parsed.data.title !== undefined) updates.title = parsed.data.title;
         if (parsed.data.isDefault !== undefined) updates.isDefault = parsed.data.isDefault;
-        if (parsed.data.parsedData !== undefined) updates.parsedData = parsed.data.parsedData;
+        if (parsed.data.parsedData !== undefined) {
+            updates.parsedData = parsed.data.parsedData;
+
+            const embeddingText = buildResumeEmbeddingText({
+                title: parsed.data.title ?? existing.title,
+                rawText: existing.rawText,
+                parsedData: parsed.data.parsedData,
+            });
+
+            try {
+                const { embedding } = await embedText(embeddingText);
+                updates.embeddingVector = embedding;
+            } catch (embErr) {
+                console.warn(
+                    `Failed to regenerate resume embedding for resume ${idNum}:`,
+                    embErr
+                );
+            }
+        }
+
+        // Keep embedding in sync when title changes even if parsedData is unchanged.
+        if (
+            parsed.data.parsedData === undefined &&
+            parsed.data.title !== undefined
+        ) {
+            const embeddingText = buildResumeEmbeddingText({
+                title: parsed.data.title,
+                rawText: existing.rawText,
+                parsedData: (existing.parsedData as z.infer<typeof resumeExtractionSchema>) ?? null,
+            });
+
+            try {
+                const { embedding } = await embedText(embeddingText);
+                updates.embeddingVector = embedding;
+            } catch (embErr) {
+                console.warn(
+                    `Failed to refresh resume embedding after title change for resume ${idNum}:`,
+                    embErr
+                );
+            }
+        }
 
         if (parsed.data.isDefault === true) {
             await db

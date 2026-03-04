@@ -1,9 +1,10 @@
 import { db } from "@/src/db";
-import { companiesTable, jobsTable } from "@/src/db/schema";
+import { companiesTable, jobMatchesTable, jobsTable, usersTable } from "@/src/db/schema";
 import { and, eq, ilike, or } from "drizzle-orm";
 import { Suspense } from "react";
 import Link from "next/link";
 import { JobSearchFilters } from "@/components/jobs/JobSearchFilters";
+import { auth } from "@clerk/nextjs/server";
 
 interface SearchProps {
     searchParams: Promise<{
@@ -42,6 +43,17 @@ function formatSalary(min: number | null, max: number | null) {
 async function JobListings({ searchParams }: SearchProps) {
     const params = await searchParams;
     const { q, location, jobType, experienceLevel, remoteFlag, salaryMin, salaryMax } = params;
+    const { userId: clerkId } = await auth();
+
+    let dbUserId: number | null = null;
+    if (clerkId) {
+        const [dbUser] = await db
+            .select({ id: usersTable.id })
+            .from(usersTable)
+            .where(eq(usersTable.clerkId, clerkId))
+            .limit(1);
+        dbUserId = dbUser?.id ?? null;
+    }
 
     const conditions = [eq(jobsTable.status, "published")];
     if (q) conditions.push(or(ilike(jobsTable.title, `%${q}%`), ilike(jobsTable.description, `%${q}%`))!);
@@ -65,9 +77,16 @@ async function JobListings({ searchParams }: SearchProps) {
             companyName: companiesTable.name,
             companyLogoUrl: companiesTable.logoUrl,
             companyIndustry: companiesTable.industry,
+            matchScore: jobMatchesTable.matchScore,
         })
         .from(jobsTable)
         .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
+        .leftJoin(
+            jobMatchesTable,
+            dbUserId
+                ? and(eq(jobMatchesTable.jobId, jobsTable.id), eq(jobMatchesTable.userId, dbUserId))
+                : eq(jobMatchesTable.id, -1)
+        )
         .where(and(...conditions))
         .orderBy(jobsTable.createdAt)
         .limit(30);
@@ -100,9 +119,16 @@ async function JobListings({ searchParams }: SearchProps) {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                        <h3 className="text-white font-semibold group-hover:text-indigo-300 transition-colors">
-                            {job.title}
-                        </h3>
+                        <div className="flex items-start justify-between gap-2">
+                            <h3 className="text-white font-semibold group-hover:text-indigo-300 transition-colors">
+                                {job.title}
+                            </h3>
+                            {typeof job.matchScore === "number" && (
+                                <span className="shrink-0 rounded bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
+                                    {job.matchScore}% match
+                                </span>
+                            )}
+                        </div>
                         <p className="text-white/50 text-sm mt-0.5">
                             {job.companyName}
                             {job.companyIndustry ? ` · ${job.companyIndustry}` : ""}

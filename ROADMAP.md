@@ -846,6 +846,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] API: GET `/api/employer/jobs/[jobId]/matches` (deeppivot-301) — employer/admin-protected endpoint with per-job candidate matching scores, applied/invited candidate exclusion, and weighted scoring from resume skills + interview performance + archetype signal.
 - [x] Candidate UI: "Recommended Jobs" section on dashboard (deeppivot-302) — Added recommended job cards to Trailblazer dashboard powered by precomputed `job_matches` via server action (`getRecommendedJobsForCandidate`), including match score, company, location/remote, salary hints, and `/jobs/[jobId]` deep-links.
 - [x] Candidate UI: Match percentage indicator on job cards (deeppivot-303) — Updated marketplace listing cards to show per-user match percentage badges by left-joining `job_matches` for the authenticated candidate on `/jobs`.
+- [x] Candidate UI: "Why you match" explanation tooltip (LLM) (deeppivot-304) — Added lazy-loaded tooltip explanations on candidate job cards via new authenticated endpoint `/api/jobs/matches/explain`, backed by LLM-generated fit summaries with deterministic fallback signals.
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - [ ] Admin data exports to CSV for offline analysis.
@@ -866,3 +867,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — deeppivot-300 closed. Added candidate recommendations API `/api/jobs/matches` with filtering, pagination, and viewed-state progression for suggested matches.*
 *Last updated: 2026-03-04 — deeppivot-302 closed. Added "Recommended Jobs" panel on Trailblazer dashboard using `job_matches` with match badges and job detail links.*
 *Last updated: 2026-03-04 — deeppivot-303 closed. Added match percentage badges on `/jobs` listing cards for authenticated candidates using `job_matches` joins.*
+*Last updated: 2026-03-04 — deeppivot-304 closed. Added LLM-backed "Why you match" tooltip explanations on candidate job cards (marketplace and dashboard) with authenticated match-scoped API and fallback reasoning.*

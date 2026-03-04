@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { JobSearchFilters } from "@/components/jobs/JobSearchFilters";
 import { auth } from "@clerk/nextjs/server";
+import { WhyYouMatchTooltip } from "@/components/jobs/WhyYouMatchTooltip";
 
 interface SearchProps {
     searchParams: Promise<{
@@ -124,9 +125,14 @@ async function JobListings({ searchParams }: SearchProps) {
                                 {job.title}
                             </h3>
                             {typeof job.matchScore === "number" && (
-                                <span className="shrink-0 rounded bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
-                                    {job.matchScore}% match
-                                </span>
+                                <div className="shrink-0 text-right">
+                                    <span className="rounded bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
+                                        {job.matchScore}% match
+                                    </span>
+                                    <div className="mt-1">
+                                        <WhyYouMatchTooltip jobId={job.id} />
+                                    </div>
+                                </div>
                             )}
                         </div>
                         <p className="text-white/50 text-sm mt-0.5">

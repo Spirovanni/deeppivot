@@ -12,6 +12,7 @@ import {
 import { getArchetype } from "@/src/lib/actions/archetype";
 import { getDashboardSummary, type DashboardSummary } from "@/src/lib/actions/dashboard";
 import { getRecommendedJobsForCandidate } from "@/src/lib/actions/matching";
+import { WhyYouMatchTooltip } from "@/components/jobs/WhyYouMatchTooltip";
 import { CareerArchetypeCard, CareerArchetypeEmptyCard } from "@/components/dashboard/CareerArchetypeCard";
 import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner";
 import type { TraitScore } from "@/src/lib/archetypes";
@@ -240,6 +241,9 @@ export default async function TrailblazerDashboardPage() {
                                                 <span className="shrink-0 rounded bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
                                                     {job.matchScore}% match
                                                 </span>
+                                            </div>
+                                            <div className="-mt-1">
+                                                <WhyYouMatchTooltip jobId={job.jobId} className="inline-block" />
                                             </div>
                                             <CardDescription>{job.companyName}</CardDescription>
                                         </CardHeader>

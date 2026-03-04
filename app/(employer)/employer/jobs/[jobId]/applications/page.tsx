@@ -15,6 +15,22 @@ interface Applicant {
     applicantAvatarUrl: string | null;
 }
 
+interface MatchedCandidate {
+    userId: number;
+    name: string;
+    email: string;
+    avatarUrl: string | null;
+    archetypeName: string | null;
+    matchScore: number;
+    avgInterviewScore: number | null;
+    salaryScore: number;
+    yearsOfExperience: number | null;
+    matchedSkills: string[];
+    skills: string[];
+    alreadyApplied: boolean;
+    alreadyInvited: boolean;
+}
+
 const STATUS_OPTIONS = ["new", "reviewing", "rejected", "hired"] as const;
 const STATUS_COLORS: Record<string, string> = {
     new: "bg-blue-500/20 text-blue-400 border-blue-500/30",
@@ -26,15 +42,25 @@ const STATUS_COLORS: Record<string, string> = {
 export default function EmployerApplicationsPage() {
     const params = useParams<{ jobId: string }>();
     const jobId = params?.jobId;
+    const [activeTab, setActiveTab] = useState<"applicants" | "matches">("applicants");
     const [applicants, setApplicants] = useState<Applicant[]>([]);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState<Applicant | null>(null);
+    const [matches, setMatches] = useState<MatchedCandidate[]>([]);
+    const [matchesLoading, setMatchesLoading] = useState(true);
+    const [selectedMatch, setSelectedMatch] = useState<MatchedCandidate | null>(null);
+    const [inviteBusyUserId, setInviteBusyUserId] = useState<number | null>(null);
 
     useEffect(() => {
         fetch(`/api/employer/jobs/${jobId}/applications`)
             .then((r) => r.json())
             .then(setApplicants)
             .finally(() => setLoading(false));
+
+        fetch(`/api/employer/jobs/${jobId}/matches`)
+            .then((r) => r.json())
+            .then((data) => setMatches(Array.isArray(data?.candidates) ? data.candidates : []))
+            .finally(() => setMatchesLoading(false));
     }, [jobId]);
 
     async function updateStatus(appId: number, status: string) {
@@ -51,6 +77,47 @@ export default function EmployerApplicationsPage() {
         }
     }
 
+    async function inviteCandidate(candidate: MatchedCandidate) {
+        if (!jobId || inviteBusyUserId === candidate.userId || candidate.alreadyInvited) return;
+        setInviteBusyUserId(candidate.userId);
+        try {
+            const res = await fetch(`/api/employer/jobs/${jobId}/invite`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ candidateUserId: candidate.userId }),
+            });
+
+            if (res.ok) {
+                setMatches((prev) =>
+                    prev.map((m) =>
+                        m.userId === candidate.userId
+                            ? { ...m, alreadyInvited: true }
+                            : m
+                    )
+                );
+                if (selectedMatch?.userId === candidate.userId) {
+                    setSelectedMatch((prev) => (prev ? { ...prev, alreadyInvited: true } : prev));
+                }
+                return;
+            }
+
+            if (res.status === 409) {
+                setMatches((prev) =>
+                    prev.map((m) =>
+                        m.userId === candidate.userId
+                            ? { ...m, alreadyInvited: true }
+                            : m
+                    )
+                );
+                if (selectedMatch?.userId === candidate.userId) {
+                    setSelectedMatch((prev) => (prev ? { ...prev, alreadyInvited: true } : prev));
+                }
+            }
+        } finally {
+            setInviteBusyUserId(null);
+        }
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#0f0f1a] to-[#1a1a2e] p-6">
             <div className="max-w-5xl mx-auto">
@@ -58,14 +125,36 @@ export default function EmployerApplicationsPage() {
                     <a href="/employer/jobs" className="text-white/40 hover:text-white/70 text-sm transition-colors">
                         ← Back to jobs
                     </a>
-                    <h1 className="text-2xl font-bold text-white mt-2">Applicants</h1>
+                    <h1 className="text-2xl font-bold text-white mt-2">Job Management</h1>
+                    <p className="text-white/50 text-sm mt-1">Review applicants and discover top candidate matches.</p>
                 </div>
 
-                {loading ? (
+                <div className="mb-5 inline-flex rounded-xl border border-white/10 bg-white/5 p-1">
+                    <button
+                        onClick={() => setActiveTab("applicants")}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === "applicants"
+                            ? "bg-white/15 text-white"
+                            : "text-white/60 hover:text-white/90"
+                            }`}
+                    >
+                        Applicants
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("matches")}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === "matches"
+                            ? "bg-white/15 text-white"
+                            : "text-white/60 hover:text-white/90"
+                            }`}
+                    >
+                        Top Candidate Matches
+                    </button>
+                </div>
+
+                {activeTab === "applicants" && loading ? (
                     <div className="flex justify-center py-16">
                         <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
                     </div>
-                ) : (
+                ) : activeTab === "applicants" ? (
                     <div className="flex gap-6">
                         {/* Left: applicant list */}
                         <div className="flex-1 space-y-3">
@@ -160,6 +249,117 @@ export default function EmployerApplicationsPage() {
                                         ))}
                                     </div>
                                 </div>
+                            </div>
+                        )}
+                    </div>
+                ) : matchesLoading ? (
+                    <div className="flex justify-center py-16">
+                        <div className="w-8 h-8 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                ) : (
+                    <div className="flex gap-6">
+                        {/* Left: match list */}
+                        <div className="flex-1 space-y-3">
+                            {matches.length === 0 ? (
+                                <div className="bg-white/5 rounded-2xl border border-white/10 p-10 text-center">
+                                    <p className="text-white/50 text-sm">
+                                        No candidate matches available yet. Matches refresh as profiles and jobs are processed.
+                                    </p>
+                                </div>
+                            ) : (
+                                matches.map((candidate) => (
+                                    <button
+                                        key={candidate.userId}
+                                        onClick={() => setSelectedMatch(candidate)}
+                                        className={`w-full text-left bg-white/5 rounded-xl border p-4 flex items-center gap-4 transition-all hover:border-white/20 ${selectedMatch?.userId === candidate.userId ? "border-indigo-500/50" : "border-white/10"
+                                            }`}
+                                    >
+                                        <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm shrink-0">
+                                            {candidate.avatarUrl ? (
+                                                <img src={candidate.avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover" />
+                                            ) : (
+                                                candidate.name.slice(0, 2).toUpperCase()
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-white text-sm font-medium truncate">{candidate.name}</div>
+                                            <div className="text-white/40 text-xs truncate">{candidate.email}</div>
+                                        </div>
+                                        <span className="px-2 py-0.5 rounded-md text-xs border bg-indigo-500/20 text-indigo-300 border-indigo-500/30">
+                                            {candidate.matchScore}% match
+                                        </span>
+                                    </button>
+                                ))
+                            )}
+                        </div>
+
+                        {/* Right: match detail panel */}
+                        {selectedMatch && (
+                            <div className="w-80 shrink-0 bg-white/5 rounded-2xl border border-white/10 p-6 h-fit sticky top-6">
+                                <div className="flex items-start gap-3 mb-5">
+                                    <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold shrink-0">
+                                        {selectedMatch.avatarUrl ? (
+                                            <img src={selectedMatch.avatarUrl} alt="" className="w-12 h-12 rounded-full object-cover" />
+                                        ) : (
+                                            selectedMatch.name.slice(0, 2).toUpperCase()
+                                        )}
+                                    </div>
+                                    <div>
+                                        <div className="text-white font-semibold">{selectedMatch.name}</div>
+                                        <div className="text-white/50 text-xs mt-0.5">{selectedMatch.email}</div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2 mb-4">
+                                    <div className="bg-white/5 border border-white/10 rounded-lg p-2.5">
+                                        <div className="text-white/40 text-[11px]">Match Score</div>
+                                        <div className="text-indigo-300 text-sm font-semibold">{selectedMatch.matchScore}%</div>
+                                    </div>
+                                    <div className="bg-white/5 border border-white/10 rounded-lg p-2.5">
+                                        <div className="text-white/40 text-[11px]">Interview</div>
+                                        <div className="text-white/80 text-sm font-semibold">
+                                            {selectedMatch.avgInterviewScore != null ? `${selectedMatch.avgInterviewScore}%` : "—"}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {selectedMatch.archetypeName && (
+                                    <div className="mb-4">
+                                        <div className="text-white/50 text-xs mb-1.5">Archetype</div>
+                                        <div className="text-white/80 text-sm">{selectedMatch.archetypeName}</div>
+                                    </div>
+                                )}
+
+                                {selectedMatch.matchedSkills.length > 0 && (
+                                    <div className="mb-4">
+                                        <div className="text-white/50 text-xs mb-2">Matched Skills</div>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {selectedMatch.matchedSkills.slice(0, 6).map((skill) => (
+                                                <span
+                                                    key={skill}
+                                                    className="px-2 py-0.5 rounded-md text-[11px] border border-green-500/30 text-green-300 bg-green-500/10"
+                                                >
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <button
+                                    onClick={() => inviteCandidate(selectedMatch)}
+                                    disabled={selectedMatch.alreadyInvited || inviteBusyUserId === selectedMatch.userId}
+                                    className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${selectedMatch.alreadyInvited
+                                        ? "bg-white/10 text-white/40 cursor-not-allowed"
+                                        : "bg-indigo-500 hover:bg-indigo-600 text-white"
+                                        }`}
+                                >
+                                    {inviteBusyUserId === selectedMatch.userId
+                                        ? "Inviting..."
+                                        : selectedMatch.alreadyInvited
+                                            ? "Invite Sent"
+                                            : "Invite to Apply"}
+                                </button>
                             </div>
                         )}
                     </div>

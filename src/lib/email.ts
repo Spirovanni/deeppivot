@@ -18,6 +18,10 @@ import {
     type EmployerInvitedYouToApplyEmailProps,
 } from "@/emails/EmployerInvitedYouToApplyEmail";
 import {
+    WeeklyJobMatchesDigestEmail,
+    type WeeklyJobMatchesDigestEmailProps,
+} from "@/emails/WeeklyJobMatchesDigestEmail";
+import {
     AnnouncementEmail,
 } from "@/emails/AnnouncementEmail";
 
@@ -109,6 +113,17 @@ export async function sendMentorConnectionEmail(
         to,
         subject,
         react: createElement(MentorConnectionEmail, data),
+    });
+}
+
+export async function sendWeeklyJobMatchesDigestEmail(
+    to: string,
+    data: WeeklyJobMatchesDigestEmailProps,
+): Promise<{ success: boolean; error?: string }> {
+    return sendEmail({
+        to,
+        subject: "Your weekly top job matches",
+        react: createElement(WeeklyJobMatchesDigestEmail, data),
     });
 }
 

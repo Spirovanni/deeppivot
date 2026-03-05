@@ -128,6 +128,7 @@ function Provider({
       <ThemeProvider defaultTheme="system" storageKey="deeppivot-theme">
         <ClerkProvider
           {...(isProduction ? {
+            domain: "deeppivots.com",
             clerkJSUrl: "/api/clerk-js",
             proxyUrl: "/api/clerk-proxy"
           } : {})}

@@ -1,11 +1,26 @@
 /**
  * Proxies Clerk Frontend API requests to avoid CORS.
- * Forwards to Clerk's default frontend-api.clerk.dev (per Clerk docs).
+ * For custom domain (pk_live_* with encoded domain): forwards to https://clerk.<domain>
+ * For default instances: forwards to frontend-api.clerk.dev
  * Set proxyUrl="/api/clerk-proxy" in ClerkProvider.
  */
 import { NextRequest, NextResponse } from "next/server";
 
-const CLERK_FRONTEND_API = "https://frontend-api.clerk.dev";
+const DEFAULT_CLERK_API = "https://frontend-api.clerk.dev";
+
+function getClerkFrontendApi(): string {
+  const key = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
+  if (key.startsWith("pk_live_")) {
+    try {
+      const b64 = key.replace(/^pk_live_/, "").replace(/\$$/, "");
+      const domain = Buffer.from(b64, "base64").toString("utf-8");
+      if (domain && domain.includes(".")) return `https://${domain}`;
+    } catch {
+      /* ignore parse errors */
+    }
+  }
+  return DEFAULT_CLERK_API;
+}
 
 export async function GET(
   req: NextRequest,
@@ -62,7 +77,8 @@ async function proxyRequest(
 ) {
   const { path } = await ctx.params;
   const pathStr = path.join("/");
-  const targetUrl = `${CLERK_FRONTEND_API}/${pathStr}${req.nextUrl.search}`;
+  const clerkApi = getClerkFrontendApi();
+  const targetUrl = `${clerkApi}/${pathStr}${req.nextUrl.search}`;
 
   const secretKey = process.env.CLERK_SECRET_KEY;
   if (!secretKey) {

@@ -31,6 +31,13 @@ const isEmployerRoute = createRouteMatcher([
 // ---------------------------------------------------------------------------
 
 export default clerkMiddleware(async (auth, request) => {
+  // Redirect www → apex (required for Clerk custom domain; avoids "unable to attribute" 400)
+  const url = request.nextUrl.clone();
+  if (url.hostname === "www.deeppivots.com") {
+    url.hostname = "deeppivots.com";
+    return NextResponse.redirect(url, 308);
+  }
+
   // Allow public routes without any auth check
   if (isPublicRoute(request)) {
     return NextResponse.next();

@@ -75,15 +75,15 @@ export const weeklyEmployerTopCandidatesDigest = inngest.createFunction(
         )
         .orderBy(desc(interviewSessionsTable.createdAt));
 
-      const archetypeByUser = new Map<number, string>();
+      const archetypeByUser: Record<number, string> = {};
       for (const row of archetypes) {
-        if (!archetypeByUser.has(row.userId)) archetypeByUser.set(row.userId, row.archetypeName);
+        if (archetypeByUser[row.userId] == null) archetypeByUser[row.userId] = row.archetypeName;
       }
 
-      const interviewByUser = new Map<number, number>();
+      const interviewByUser: Record<number, number> = {};
       for (const row of scores) {
         if (row.overallScore == null) continue;
-        if (!interviewByUser.has(row.userId)) interviewByUser.set(row.userId, row.overallScore);
+        if (interviewByUser[row.userId] == null) interviewByUser[row.userId] = row.overallScore;
       }
 
       return { archetypeByUser, interviewByUser };
@@ -141,8 +141,8 @@ export const weeklyEmployerTopCandidatesDigest = inngest.createFunction(
           userId: row.userId,
           name: row.name,
           matchScore: row.matchScore,
-          archetypeName: candidateSignals.archetypeByUser.get(row.userId) ?? null,
-          avgInterviewScore: candidateSignals.interviewByUser.get(row.userId) ?? null,
+          archetypeName: candidateSignals.archetypeByUser[row.userId] ?? null,
+          avgInterviewScore: candidateSignals.interviewByUser[row.userId] ?? null,
         });
         candidatesByJob.set(row.jobId, current);
       }

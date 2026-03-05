@@ -60,8 +60,8 @@ export default function EmployerOnboardingPage() {
                         <div key={s} className="flex items-center gap-2 flex-1">
                             <div
                                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${step >= s
-                                        ? "bg-indigo-500 text-white"
-                                        : "bg-white/10 text-white/40"
+                                    ? "bg-indigo-500 text-white"
+                                    : "bg-white/10 text-white/40"
                                     }`}
                             >
                                 {s}
@@ -126,8 +126,9 @@ export default function EmployerOnboardingPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-white/70 text-sm mb-1">Company Size</label>
+                                <label htmlFor="companySize" className="block text-white/70 text-sm mb-1">Company Size</label>
                                 <select
+                                    id="companySize"
                                     value={companySize}
                                     onChange={(e) => setCompanySize(e.target.value)}
                                     className="w-full bg-[#1a1a2e] border border-white/20 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-400 transition"

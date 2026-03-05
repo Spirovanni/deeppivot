@@ -368,11 +368,18 @@ export async function generateFeedbackIfMissing(sessionId: number) {
     .limit(1);
 
   // Fallback: session_transcripts (ElevenLabs live transcript)
-  const [storedTranscript] = await db
-    .select({ messages: sessionTranscriptsTable.messages })
-    .from(sessionTranscriptsTable)
-    .where(eq(sessionTranscriptsTable.sessionId, sessionId))
-    .limit(1);
+  // Wrapped in try/catch: table may not exist yet if migration hasn't run in production
+  let storedTranscript: { messages: unknown } | null = null;
+  try {
+    const [row] = await db
+      .select({ messages: sessionTranscriptsTable.messages })
+      .from(sessionTranscriptsTable)
+      .where(eq(sessionTranscriptsTable.sessionId, sessionId))
+      .limit(1);
+    storedTranscript = row ?? null;
+  } catch {
+    // session_transcripts may not exist; continue with empty transcript
+  }
 
   let messages: Array<{ role: string; text: string }>;
   if (transcriptRow?.url) {
@@ -418,16 +425,21 @@ export async function generateFeedbackIfMissing(sessionId: number) {
     ];
   }
 
-  await generateFeedbackFromTranscript(sessionId, messages);
-  revalidatePath(`/dashboard/interviews/${sessionId}`);
-  revalidatePath(`/dashboard/interviews/${sessionId}/feedback`);
-  const [newFeedback] = await db
-    .select()
-    .from(interviewFeedbackTable)
-    .where(eq(interviewFeedbackTable.sessionId, sessionId))
-    .orderBy(desc(interviewFeedbackTable.createdAt))
-    .limit(1);
-  return newFeedback ?? null;
+  try {
+    await generateFeedbackFromTranscript(sessionId, messages);
+    revalidatePath(`/dashboard/interviews/${sessionId}`);
+    revalidatePath(`/dashboard/interviews/${sessionId}/feedback`);
+    const [newFeedback] = await db
+      .select()
+      .from(interviewFeedbackTable)
+      .where(eq(interviewFeedbackTable.sessionId, sessionId))
+      .orderBy(desc(interviewFeedbackTable.createdAt))
+      .limit(1);
+    return newFeedback ?? null;
+  } catch (err) {
+    console.error(`generateFeedbackIfMissing failed for session ${sessionId}:`, err);
+    return null; // Page still renders; user can retry via RegenerateFeedbackButton
+  }
 }
 
 export async function getEmotionalAnalysis(sessionId: number) {

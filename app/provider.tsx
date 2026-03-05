@@ -127,11 +127,9 @@ function Provider({
     <PHProvider posthogKey={posthogKey} posthogHost={posthogHost} isDev={isDev}>
       <ThemeProvider defaultTheme="system" storageKey="deeppivot-theme">
         <ClerkProvider
-          {...(isProduction ? {
-            domain: "deeppivots.com",
-            clerkJSUrl: "/api/clerk-js",
-            proxyUrl: "/api/clerk-proxy"
-          } : {})}
+          {...(isProduction
+            ? { clerkJSUrl: "/api/clerk-js", proxyUrl: "/api/clerk-proxy" }
+            : {})}
         >
           <InnerProvider>
             {children}

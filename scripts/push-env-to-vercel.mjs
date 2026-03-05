@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
- * Push .env variables to Vercel.
- * Run: node scripts/push-env-to-vercel.mjs
- * Requires: vercel CLI linked (vercel link) and .env in project root.
+ * Push environment variables to Vercel.
+ * Prefers .env.local (Vercel CLI source) when present; otherwise uses .env.
+ * Run: npm run vercel:env
+ * Requires: vercel CLI linked (vercel link).
  */
 
 import { readFileSync, existsSync } from "fs";
@@ -12,14 +13,19 @@ import { dirname, join } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
+const envLocalPath = join(root, ".env.local");
 const envPath = join(root, ".env");
 
-if (!existsSync(envPath)) {
-  console.error("No .env file found. Create one from .env.example");
+// Prefer .env.local (matches Vercel CLI, production secrets); fallback to .env
+const sourcePath = existsSync(envLocalPath) ? envLocalPath : envPath;
+if (!existsSync(sourcePath)) {
+  console.error("No .env.local or .env found. Create one from .env.example");
   process.exit(1);
 }
 
-const content = readFileSync(envPath, "utf-8");
+console.log(`Using ${sourcePath === envLocalPath ? ".env.local" : ".env"}`);
+
+const content = readFileSync(sourcePath, "utf-8");
 const lines = content.split("\n");
 const env = {};
 

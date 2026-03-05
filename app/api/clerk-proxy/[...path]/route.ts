@@ -1,26 +1,11 @@
 /**
  * Proxies Clerk Frontend API requests to avoid CORS.
- * For custom domain (pk_live_* with encoded domain): forwards to https://clerk.<domain>
- * For default instances: forwards to frontend-api.clerk.dev
+ * Per Clerk docs: always forward to frontend-api.clerk.dev with Clerk-Proxy-Url, etc.
  * Set proxyUrl="/api/clerk-proxy" in ClerkProvider.
  */
 import { NextRequest, NextResponse } from "next/server";
 
-const DEFAULT_CLERK_API = "https://frontend-api.clerk.dev";
-
-function getClerkFrontendApi(): string {
-  const key = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
-  if (key.startsWith("pk_live_")) {
-    try {
-      const b64 = key.replace(/^pk_live_/, "").replace(/\$$/, "");
-      const domain = Buffer.from(b64, "base64").toString("utf-8");
-      if (domain && domain.includes(".")) return `https://${domain}`;
-    } catch {
-      /* ignore parse errors */
-    }
-  }
-  return DEFAULT_CLERK_API;
-}
+const CLERK_FRONTEND_API = "https://frontend-api.clerk.dev";
 
 export async function GET(
   req: NextRequest,
@@ -77,13 +62,15 @@ async function proxyRequest(
 ) {
   const { path } = await ctx.params;
   const pathStr = path.join("/");
-  const clerkApi = getClerkFrontendApi();
-  const targetUrl = `${clerkApi}/${pathStr}${req.nextUrl.search}`;
+  const targetUrl = `${CLERK_FRONTEND_API}/${pathStr}${req.nextUrl.search}`;
 
   const secretKey = process.env.CLERK_SECRET_KEY;
   if (!secretKey) {
     console.error("[clerk-proxy] CLERK_SECRET_KEY not set");
-    return new NextResponse("Proxy misconfigured", { status: 500 });
+    return NextResponse.json(
+      { error: "Proxy misconfigured", message: "CLERK_SECRET_KEY not set" },
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 
   // Normalize domain to apex (remove www) for Clerk
@@ -131,6 +118,9 @@ async function proxyRequest(
     });
   } catch (err) {
     console.error("[clerk-proxy]", err);
-    return new NextResponse("Proxy error", { status: 502 });
+    return NextResponse.json(
+      { error: "Proxy error", message: err instanceof Error ? err.message : "Upstream request failed" },
+      { status: 502, headers: { "Content-Type": "application/json" } }
+    );
   }
 }

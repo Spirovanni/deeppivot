@@ -78,6 +78,7 @@ const nextConfig = {
         "https://us.posthog.com",
         "https://*.sentry.io",
         "https://widget.elevenlabs.io",
+        "https://vercel.live",        // Vercel feedback widget in preview deployments
       ].filter(Boolean).join(" "),
       // Styles: self + inline (Tailwind/Radix)
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -113,6 +114,7 @@ const nextConfig = {
         "https://clerk-telemetry.com",
         "https://upstash.com",
         "https://*.upstash.io",
+        "https://vercel.live",
       ].join(" "),
       // Media: R2 recordings
       "media-src 'self' blob: https://*.r2.dev https://*.r2.cloudflarestorage.com",

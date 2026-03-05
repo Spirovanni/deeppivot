@@ -14,14 +14,19 @@ export function gamificationPreferenceKey(userId: number): string {
 /**
  * Returns whether gamification is enabled for a user.
  * Defaults to true when no explicit setting exists.
+ * Defensive: if system_settings table is missing (migration not run), returns true.
  */
 export async function isGamificationEnabled(userId: number): Promise<boolean> {
-  const [row] = await db
-    .select({ value: systemSettingsTable.value })
-    .from(systemSettingsTable)
-    .where(eq(systemSettingsTable.key, gamificationPreferenceKey(userId)))
-    .limit(1);
+  try {
+    const [row] = await db
+      .select({ value: systemSettingsTable.value })
+      .from(systemSettingsTable)
+      .where(eq(systemSettingsTable.key, gamificationPreferenceKey(userId)))
+      .limit(1);
 
-  return toBoolean(row?.value);
+    return toBoolean(row?.value);
+  } catch {
+    return true; // Table may not exist yet; default to enabled
+  }
 }
 

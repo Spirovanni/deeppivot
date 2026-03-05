@@ -437,8 +437,14 @@ export async function generateFeedbackIfMissing(sessionId: number) {
       .limit(1);
     return newFeedback ?? null;
   } catch (err) {
+    const msg = err instanceof Error ? err.message : "Unknown error";
     console.error(`generateFeedbackIfMissing failed for session ${sessionId}:`, err);
-    return null; // Page still renders; user can retry via RegenerateFeedbackButton
+    // Re-throw user-friendly message so RegenerateFeedbackButton can show it
+    throw new Error(
+      msg.includes("API_KEY") || msg.includes("LLM")
+        ? "AI service is not configured. Please contact support."
+        : "Could not generate feedback. The AI service may be temporarily unavailable. Please try again."
+    );
   }
 }
 

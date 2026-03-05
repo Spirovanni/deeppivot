@@ -14,6 +14,15 @@ import {
 } from "@/src/db/schema";
 import { rateLimit } from "@/src/lib/rate-limit";
 import { getMatchingWeights } from "@/src/lib/matching-feedback";
+import {
+  getJobKeywords,
+  getResumeSkills,
+  getResumeSkillTokens,
+  parseYearsOfExperience,
+  computeSalaryScore,
+  computeOverlapScore,
+  toTokens,
+} from "@/src/lib/matching-scoring";
 import type { ResumeExtraction } from "@/src/lib/llm/prompts/resumes";
 
 type CandidateRow = {
@@ -24,77 +33,6 @@ type CandidateRow = {
   archetypeName: string | null;
   parsedData: ResumeExtraction | null;
 };
-
-const STOP_WORDS = new Set([
-  "with", "that", "this", "from", "your", "will", "have", "years", "year",
-  "experience", "role", "team", "work", "skills", "ability", "about", "their",
-  "they", "them", "for", "and", "the", "you", "our", "are", "job", "position",
-  "strong", "plus", "must", "nice", "required",
-]);
-
-function toTokens(input: string): string[] {
-  return input
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, " ")
-    .split(/\s+/)
-    .filter((token) => token.length >= 3 && !STOP_WORDS.has(token));
-}
-
-function getJobKeywords(title: string, description: string): Set<string> {
-  const tokens = toTokens(`${title} ${description}`);
-  return new Set(tokens.slice(0, 80));
-}
-
-function getResumeSkills(parsedData: ResumeExtraction | null): string[] {
-  if (!parsedData || !Array.isArray(parsedData.skills)) return [];
-  return parsedData.skills
-    .map((skill) => skill.trim())
-    .filter(Boolean)
-    .slice(0, 25);
-}
-
-function getResumeSkillTokens(skills: string[]): Set<string> {
-  const tokens: string[] = [];
-  for (const skill of skills) {
-    tokens.push(...toTokens(skill));
-  }
-  return new Set(tokens);
-}
-
-function parseYearsOfExperience(value: unknown): number | null {
-  if (typeof value !== "string") return null;
-  const match = value.match(/(\d+(\.\d+)?)/);
-  if (!match) return null;
-  const years = Number.parseFloat(match[1]);
-  return Number.isFinite(years) ? years : null;
-}
-
-function estimateSalaryExpectation(yearsOfExperience: number): number {
-  // Coarse heuristic for relative match scoring only.
-  const estimated = 45000 + yearsOfExperience * 12000;
-  return Math.max(30000, Math.min(250000, estimated));
-}
-
-function computeSalaryScore(
-  salaryMin: number | null,
-  salaryMax: number | null,
-  yearsOfExperience: number | null
-): number {
-  if (salaryMin == null && salaryMax == null) return 50;
-  if (yearsOfExperience == null) return 50;
-
-  const expected = estimateSalaryExpectation(yearsOfExperience);
-  const min = salaryMin ?? salaryMax ?? expected;
-  const max = salaryMax ?? salaryMin ?? expected;
-  const low = Math.min(min, max);
-  const high = Math.max(min, max);
-
-  if (expected >= low && expected <= high) return 100;
-
-  const nearest = expected < low ? low : high;
-  const distanceRatio = Math.min(Math.abs(expected - nearest) / Math.max(nearest, 1), 1);
-  return Math.round(Math.max(0, 100 - distanceRatio * 100));
-}
 
 function toExperienceBand(yearsOfExperience: number | null): string {
   if (yearsOfExperience == null) return "Experience not specified";
@@ -281,11 +219,8 @@ export async function GET(
     const scoredCandidates = uniqueCandidates.map((candidate) => {
       const skills = getResumeSkills(candidate.parsedData);
       const skillTokens = getResumeSkillTokens(skills);
+      const overlapScore = computeOverlapScore(jobKeywords, skillTokens);
       const matchedKeywords = [...jobKeywords].filter((token) => skillTokens.has(token));
-
-      const overlapScore = jobKeywords.size
-        ? Math.round((matchedKeywords.length / jobKeywords.size) * 100)
-        : 0;
 
       const interviewScore = interviewScoreMap.get(candidate.id) ?? 0;
       const archetypeTokens = candidate.archetypeName

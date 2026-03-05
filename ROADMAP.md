@@ -856,6 +856,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Email: Weekly digest of top candidates for active employer jobs (deeppivot-310) — Added weekly employer digest cron and email template summarizing top candidate matches across active published jobs with archetype/interview signals.
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] LLM: Automated resume screening score for matched applicants (deeppivot-317) — generateResumeScreeningScore; GET /api/employer/jobs/[jobId]/matches/[userId]/screening-score; AI Resume Fit in Top Candidate Matches detail panel.
+- [x] QA: Matching algorithm threshold validation and Exports testing (deeppivot-322) — matching-scoring.ts with unit tests (toTokens, overlap, salary, parseYears); e2e/exports.spec.ts for auth on admin/employer export endpoints.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - [x] Admin data exports to CSV for offline analysis — Users, interview sessions, and job marketplace engagement CSV via /admin/export with direct download and signed link options.
 - [x] Admin UI: Admin Data Export page with date range filters (deeppivot-315) — /admin/export with Users and Sessions export cards; sessions include from/to date filters, includeDeleted; ExportUsersButtons and ExportSessionsButtons with secure link support.
@@ -889,3 +890,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — Build fix: weekly-employer-top-candidates-digest Inngest step returned Map objects which serialize to {}; switched to Record for archetypeByUser/interviewByUser so step.run() persists data correctly across steps.*
 *Last updated: 2026-03-04 — deeppivot-316 closed. Employer CSV export for job applicants: GET /api/employer/jobs/[jobId]/applications/export with name, email, status, resume URL, cover letter; Export CSV button on Applicants tab.*
 *Last updated: 2026-03-04 — deeppivot-317 closed. LLM-based resume screening score for matched applicants: generateResumeScreeningScore compares resume vs job; GET /api/employer/jobs/[jobId]/matches/[userId]/screening-score; AI Resume Fit shown in Top Candidate Matches detail panel when employer selects a candidate.*
+*Last updated: 2026-03-04 — deeppivot-322 closed. QA: extracted matching-scoring module with unit tests (threshold validation for overlap, salary, years); e2e/exports.spec.ts for export endpoints auth (401 without auth, 400/403 for download).*

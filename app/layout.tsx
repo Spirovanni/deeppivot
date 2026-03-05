@@ -31,9 +31,18 @@ export default async function RootLayout({
 
   const isProduction =
     (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "").startsWith("pk_live_");
+  const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+  const posthogHost =
+    process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";
+  const isDev = process.env.NODE_ENV === "development";
 
   return (
-    <Provider isProduction={isProduction}>
+    <Provider
+      isProduction={isProduction}
+      posthogKey={posthogKey}
+      posthogHost={posthogHost}
+      isDev={isDev}
+    >
       <NextIntlClientProvider messages={messages}>
         <html lang={locale} suppressHydrationWarning>
           <head>

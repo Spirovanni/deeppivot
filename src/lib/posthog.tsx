@@ -6,9 +6,8 @@
  * Wraps the app in a PostHog context so all child components can call
  * usePostHog() for event capture, feature flags, and A/B tests.
  *
- * Env vars:
- *   NEXT_PUBLIC_POSTHOG_KEY  – PostHog project API key (required)
- *   NEXT_PUBLIC_POSTHOG_HOST – PostHog ingest host (default: https://app.posthog.com)
+ * Props are passed from the server layout to avoid process.env in client
+ * (which triggers Next.js process polyfill and breaks Turbopack HMR).
  *
  * Docs: https://posthog.com/docs/libraries/next-js
  */
@@ -17,28 +16,30 @@ import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { useEffect } from "react";
 
-export function PHProvider({ children }: { children: React.ReactNode }) {
+export function PHProvider({
+  children,
+  posthogKey,
+  posthogHost = "https://us.i.posthog.com",
+  isDev = false,
+}: {
+  children: React.ReactNode;
+  posthogKey?: string;
+  posthogHost?: string;
+  isDev?: boolean;
+}) {
   useEffect(() => {
-    const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
-    if (!key) return;
+    if (!posthogKey) return;
 
-    posthog.init(key, {
-      api_host:
-        process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com",
-      // Route events through our own domain to avoid ad-blockers
+    posthog.init(posthogKey, {
+      api_host: posthogHost,
       ui_host: "https://us.posthog.com",
-      // Defer loading until after first interaction for performance
       loaded(ph) {
-        if (process.env.NODE_ENV === "development") {
-          ph.debug();
-        }
+        if (isDev) ph.debug();
       },
-      // Don't capture page views automatically; use the Next.js router hook instead
       capture_pageview: false,
-      // Respect Do-Not-Track header
       respect_dnt: true,
     });
-  }, []);
+  }, [posthogKey, posthogHost, isDev]);
 
   return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
 }

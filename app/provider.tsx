@@ -113,12 +113,18 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
 function Provider({
   children,
   isProduction,
+  posthogKey,
+  posthogHost,
+  isDev,
 }: {
   children: React.ReactNode;
   isProduction?: boolean;
+  posthogKey?: string;
+  posthogHost?: string;
+  isDev?: boolean;
 }) {
   return (
-    <PHProvider>
+    <PHProvider posthogKey={posthogKey} posthogHost={posthogHost} isDev={isDev}>
       <ThemeProvider defaultTheme="system" storageKey="deeppivot-theme">
         <ClerkProvider
           {...(isProduction ? {

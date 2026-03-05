@@ -7,13 +7,15 @@ import { createHmac, timingSafeEqual } from "crypto";
 const EXPIRY_SECONDS = 900; // 15 minutes
 
 export interface ExportTokenPayload {
-  type: "users" | "interview_sessions";
+  type: "users" | "interview_sessions" | "job_marketplace_engagement";
   role?: string;
   includeDeleted?: boolean;
-  /** ISO date for sessions export */
+  /** ISO date for sessions/jobs export */
   from?: string;
-  /** ISO date for sessions export */
+  /** ISO date for sessions/jobs export */
   to?: string;
+  /** Job status filter: draft | published | closed */
+  status?: "draft" | "published" | "closed";
   exp: number;
 }
 
@@ -56,7 +58,7 @@ export function verifyExportToken(token: string): ExportTokenPayload | null {
 
     const payload = JSON.parse(Buffer.from(base64urlDecode(payloadB64)).toString("utf8")) as ExportTokenPayload;
     if (payload.exp < Date.now() / 1000) return null;
-    if (payload.type !== "users" && payload.type !== "interview_sessions") return null;
+    if (payload.type !== "users" && payload.type !== "interview_sessions" && payload.type !== "job_marketplace_engagement") return null;
     return payload;
   } catch {
     return null;

@@ -1,8 +1,17 @@
 /**
- * Admin CSV export logic — shared by direct GET and signed-link download (deeppivot-313, deeppivot-312).
+ * Admin CSV export logic — shared by direct GET and signed-link download (deeppivot-313, deeppivot-312, deeppivot-314).
  */
 import { db } from "@/src/db";
-import { usersTable, userGamificationTable, interviewSessionsTable } from "@/src/db/schema";
+import {
+    usersTable,
+    userGamificationTable,
+    interviewSessionsTable,
+    jobsTable,
+    companiesTable,
+    jobMarketplaceApplicationsTable,
+    jobMatchesTable,
+    employerJobInvitationsTable,
+} from "@/src/db/schema";
 import { eq, isNull, and, sql, gte, lte, desc } from "drizzle-orm";
 
 /** Escape CSV value: wrap in quotes, escape internal quotes */
@@ -129,6 +138,123 @@ export async function generateInterviewSessionsCsv(
     s.updatedAt ? new Date(s.updatedAt).toISOString() : "",
     s.deletedAt ? new Date(s.deletedAt).toISOString() : "",
   ]);
+
+  return [headers.join(","), ...dataRows.map((r) => r.join(","))].join("\n");
+}
+
+export interface JobMarketplaceEngagementExportOptions {
+  from?: string; // ISO date (job createdAt)
+  to?: string;   // ISO date (job createdAt)
+  status?: "draft" | "published" | "closed"; // filter by job status
+}
+
+/** Generate job marketplace engagement metrics CSV (deeppivot-314). Per-job rows with application/match/invitation counts. */
+export async function generateJobMarketplaceEngagementCsv(
+  options: JobMarketplaceEngagementExportOptions = {}
+): Promise<string> {
+  const { from, to, status: statusFilter } = options;
+
+  const conditions = [];
+  if (from) conditions.push(gte(jobsTable.createdAt, new Date(from)));
+  if (to) conditions.push(lte(jobsTable.createdAt, new Date(to)));
+  if (statusFilter) conditions.push(eq(jobsTable.status, statusFilter));
+
+  const [jobsWithCompany, appCounts, matchCounts, inviteCounts] = await Promise.all([
+    db
+      .select({
+        job: jobsTable,
+        companyName: companiesTable.name,
+      })
+      .from(jobsTable)
+      .innerJoin(companiesTable, eq(jobsTable.companyId, companiesTable.id))
+      .where(conditions.length > 0 ? and(...conditions) : sql`true`)
+      .orderBy(desc(jobsTable.createdAt)),
+    db
+      .select({
+        jobId: jobMarketplaceApplicationsTable.jobId,
+        status: jobMarketplaceApplicationsTable.status,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(jobMarketplaceApplicationsTable)
+      .groupBy(jobMarketplaceApplicationsTable.jobId, jobMarketplaceApplicationsTable.status),
+    db
+      .select({
+        jobId: jobMatchesTable.jobId,
+        status: jobMatchesTable.status,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(jobMatchesTable)
+      .groupBy(jobMatchesTable.jobId, jobMatchesTable.status),
+    db
+      .select({
+        jobId: employerJobInvitationsTable.jobId,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(employerJobInvitationsTable)
+      .groupBy(employerJobInvitationsTable.jobId),
+  ]);
+
+  const appMap = new Map<number, Record<string, number>>();
+  for (const { jobId, status, count } of appCounts) {
+    const m = appMap.get(jobId) ?? { new: 0, reviewing: 0, rejected: 0, hired: 0 };
+    m[status as keyof typeof m] = count;
+    appMap.set(jobId, m);
+  }
+
+  const matchMap = new Map<number, Record<string, number>>();
+  for (const { jobId, status, count } of matchCounts) {
+    const m = matchMap.get(jobId) ?? { suggested: 0, viewed: 0, invited: 0, applied: 0, dismissed: 0 };
+    m[status as keyof typeof m] = count;
+    matchMap.set(jobId, m);
+  }
+
+  const inviteMap = new Map<number, number>();
+  for (const { jobId, count } of inviteCounts) inviteMap.set(jobId, count);
+
+  const headers = [
+    "Job ID", "Company", "Title", "Status", "Location", "Job Type", "Experience Level",
+    "Salary Min", "Salary Max", "Remote", "Created At", "Updated At",
+    "Applications Total", "Applications New", "Applications Reviewing", "Applications Rejected", "Applications Hired",
+    "Matches Total", "Matches Suggested", "Matches Viewed", "Matches Invited", "Matches Applied", "Matches Dismissed",
+    "Invitations Sent",
+  ];
+
+  const sumValues = (obj: Record<string, number>) => Object.values(obj).reduce((a, b) => a + b, 0);
+
+  const dataRows = jobsWithCompany.map(({ job: j, companyName }) => {
+    const apps = appMap.get(j.id) ?? {};
+    const appTotal = sumValues(apps);
+    const matches = matchMap.get(j.id) ?? {};
+    const matchTotal = sumValues(matches);
+    const invites = inviteMap.get(j.id) ?? 0;
+
+    return [
+      j.id,
+      csvEscape(companyName),
+      csvEscape(j.title),
+      j.status,
+      csvEscape(j.location),
+      j.jobType,
+      j.experienceLevel,
+      j.salaryMin ?? "",
+      j.salaryMax ?? "",
+      j.remoteFlag ? "Yes" : "No",
+      j.createdAt ? new Date(j.createdAt).toISOString() : "",
+      j.updatedAt ? new Date(j.updatedAt).toISOString() : "",
+      appTotal,
+      apps.new ?? 0,
+      apps.reviewing ?? 0,
+      apps.rejected ?? 0,
+      apps.hired ?? 0,
+      matchTotal,
+      matches.suggested ?? 0,
+      matches.viewed ?? 0,
+      matches.invited ?? 0,
+      matches.applied ?? 0,
+      matches.dismissed ?? 0,
+      invites,
+    ];
+  });
 
   return [headers.join(","), ...dataRows.map((r) => r.join(","))].join("\n");
 }

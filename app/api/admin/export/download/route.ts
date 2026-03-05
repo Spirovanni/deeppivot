@@ -4,7 +4,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { verifyExportToken } from "@/src/lib/export-token";
-import { generateUsersCsv, generateInterviewSessionsCsv } from "@/src/lib/admin-export";
+import { generateUsersCsv, generateInterviewSessionsCsv, generateJobMarketplaceEngagementCsv } from "@/src/lib/admin-export";
 
 export async function GET(req: NextRequest) {
     try {
@@ -35,6 +35,13 @@ export async function GET(req: NextRequest) {
                 includeDeleted: payload.includeDeleted ?? false,
             });
             filename = `deeppivot-sessions-${new Date().toISOString().split("T")[0]}.csv`;
+        } else if (payload.type === "job_marketplace_engagement") {
+            csvContent = await generateJobMarketplaceEngagementCsv({
+                from: payload.from,
+                to: payload.to,
+                status: payload.status,
+            });
+            filename = `deeppivot-jobs-engagement-${new Date().toISOString().split("T")[0]}.csv`;
         } else {
             return NextResponse.json({ error: "Unknown export type" }, { status: 400 });
         }

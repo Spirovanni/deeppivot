@@ -833,6 +833,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports
 - [x] Admin: Advanced Data Export (CSV) for users table — 28 columns, gamification + WDB fields, ?role= & ?includeDeleted= filters
 - [x] Admin: Advanced Data Export (CSV) for interview sessions table (deeppivot-312) — generateInterviewSessionsCsv with date range (?from, ?to), includeDeleted; GET /api/admin/export/sessions, POST /api/admin/export/sessions/link, download route support
+- [x] Admin API: Export job marketplace engagement metrics (deeppivot-314) — Per-job CSV with applications/match/invitation counts; GET /api/admin/export/jobs, POST /api/admin/export/jobs/link; date range and status filters; ExportJobEngagementButtons on /admin/export
 - [x] Admin API: Generate signed CSV download link (deeppivot-313) — POST /api/admin/export/users/link, GET /api/admin/export/download?token= (15min expiry)
 - [x] Feedback algorithm: Improve matching weights based on outcome — matching_feedback + matching_weights tables, recordMatchingFeedback on hired/rejected, aggregateMatchingFeedback (Inngest cron daily)
 - [x] Privacy UI: "Open to Opportunities" toggle (deeppivot-319) — users.openToOpportunities, profile settings card
@@ -855,7 +856,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Email: Weekly digest of top candidates for active employer jobs (deeppivot-310) — Added weekly employer digest cron and email template summarizing top candidate matches across active published jobs with archetype/interview signals.
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
-- [x] Admin data exports to CSV for offline analysis — Users and interview sessions CSV via /admin/export with direct download and signed link options.
+- [x] Admin data exports to CSV for offline analysis — Users, interview sessions, and job marketplace engagement CSV via /admin/export with direct download and signed link options.
 - [x] Admin UI: Admin Data Export page with date range filters (deeppivot-315) — /admin/export with Users and Sessions export cards; sessions include from/to date filters, includeDeleted; ExportUsersButtons and ExportSessionsButtons with secure link support.
 
 ---
@@ -882,3 +883,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — deeppivot-310 closed. Added weekly employer top-candidates digest emails for active jobs via new Inngest cron, email template, and send helper integration.*
 *Last updated: 2026-03-04 — deeppivot-312 closed. Added Admin CSV export for interview sessions with date range and includeDeleted filters; /admin/export page with Users and Sessions export cards; signed download links for sessions.*
 *Last updated: 2026-03-04 — deeppivot-315 closed. Admin Data Export page at /admin/export with Users and Sessions cards; date range filters (from/to) for sessions export; role/includeDeleted for users; both support direct download and secure signed links.*
+*Last updated: 2026-03-04 — deeppivot-314 closed. Added Admin CSV export for job marketplace engagement: per-job rows with applications (new/reviewing/rejected/hired), matches (suggested/viewed/invited/applied/dismissed), invitations; date and status filters; /admin/export Jobs card.*

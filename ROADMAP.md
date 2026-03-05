@@ -856,6 +856,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - [x] Admin data exports to CSV for offline analysis — Users and interview sessions CSV via /admin/export with direct download and signed link options.
+- [x] Admin UI: Admin Data Export page with date range filters (deeppivot-315) — /admin/export with Users and Sessions export cards; sessions include from/to date filters, includeDeleted; ExportUsersButtons and ExportSessionsButtons with secure link support.
 
 ---
 
@@ -880,3 +881,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — deeppivot-309 closed. Added weekly candidate top-match digest emails via new Inngest cron, email template, and send helper integration.*
 *Last updated: 2026-03-04 — deeppivot-310 closed. Added weekly employer top-candidates digest emails for active jobs via new Inngest cron, email template, and send helper integration.*
 *Last updated: 2026-03-04 — deeppivot-312 closed. Added Admin CSV export for interview sessions with date range and includeDeleted filters; /admin/export page with Users and Sessions export cards; signed download links for sessions.*
+*Last updated: 2026-03-04 — deeppivot-315 closed. Admin Data Export page at /admin/export with Users and Sessions cards; date range filters (from/to) for sessions export; role/includeDeleted for users; both support direct download and secure signed links.*

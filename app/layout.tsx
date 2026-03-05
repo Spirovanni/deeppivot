@@ -29,8 +29,11 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
 
+  const isProduction =
+    (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "").startsWith("pk_live_");
+
   return (
-    <Provider>
+    <Provider isProduction={isProduction}>
       <NextIntlClientProvider messages={messages}>
         <html lang={locale} suppressHydrationWarning>
           <head>

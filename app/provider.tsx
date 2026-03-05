@@ -110,10 +110,13 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Provider({ children }: { children: React.ReactNode }) {
-  // Only use custom proxy in production (with live keys)
-  const isProduction = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_live_');
-
+function Provider({
+  children,
+  isProduction,
+}: {
+  children: React.ReactNode;
+  isProduction?: boolean;
+}) {
   return (
     <PHProvider>
       <ThemeProvider defaultTheme="system" storageKey="deeppivot-theme">

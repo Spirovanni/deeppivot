@@ -68,7 +68,7 @@ const nextConfig = {
       [
         "script-src",
         "'self'",
-        isDev ? "'unsafe-eval'" : "", // Next.js HMR needs eval in dev
+        "'unsafe-eval'",              // Next.js/Turbopack + Clerk/Sentry use eval; required for Server Actions
         "'unsafe-inline'",            // Inline scripts from Next.js runtime
         "https://clerk.deeppivots.com",
         "https://*.clerk.accounts.dev",

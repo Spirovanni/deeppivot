@@ -54,6 +54,9 @@ export default function EmployerApplicationsPage() {
     const [selectedMatch, setSelectedMatch] = useState<MatchedCandidate | null>(null);
     const [inviteBusyUserId, setInviteBusyUserId] = useState<number | null>(null);
     const [blindMode, setBlindMode] = useState(true);
+    const [screeningScore, setScreeningScore] = useState<number | null>(null);
+    const [screeningScoreReason, setScreeningScoreReason] = useState<string | null>(null);
+    const [screeningScoreLoading, setScreeningScoreLoading] = useState(false);
 
     useEffect(() => {
         fetch(`/api/employer/jobs/${jobId}/applications`)
@@ -66,6 +69,26 @@ export default function EmployerApplicationsPage() {
             .then((data) => setMatches(Array.isArray(data?.candidates) ? data.candidates : []))
             .finally(() => setMatchesLoading(false));
     }, [jobId]);
+
+    useEffect(() => {
+        if (!jobId || !selectedMatch) {
+            setScreeningScore(null);
+            setScreeningScoreReason(null);
+            return;
+        }
+        setScreeningScoreLoading(true);
+        setScreeningScore(null);
+        setScreeningScoreReason(null);
+        fetch(`/api/employer/jobs/${jobId}/matches/${selectedMatch.userId}/screening-score`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((data: { score?: number; briefReason?: string } | null) => {
+                if (data && typeof data.score === "number") {
+                    setScreeningScore(data.score);
+                    setScreeningScoreReason(data.briefReason ?? null);
+                }
+            })
+            .finally(() => setScreeningScoreLoading(false));
+    }, [jobId, selectedMatch?.userId]);
 
     async function updateStatus(appId: number, status: string) {
         const res = await fetch(`/api/employer/applications/${appId}`, {
@@ -374,6 +397,21 @@ export default function EmployerApplicationsPage() {
                                         <div className="text-white/80 text-sm font-semibold">
                                             {selectedMatch.avgInterviewScore != null ? `${selectedMatch.avgInterviewScore}%` : "—"}
                                         </div>
+                                    </div>
+                                    <div className="col-span-2 bg-white/5 border border-white/10 rounded-lg p-2.5">
+                                        <div className="text-white/40 text-[11px]">AI Resume Fit</div>
+                                        {screeningScoreLoading ? (
+                                            <div className="text-white/50 text-xs">Analyzing resume…</div>
+                                        ) : screeningScore != null ? (
+                                            <div>
+                                                <div className="text-amber-300 text-sm font-semibold">{screeningScore}%</div>
+                                                {screeningScoreReason && (
+                                                    <p className="text-white/60 text-[11px] mt-1 line-clamp-2">{screeningScoreReason}</p>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="text-white/50 text-xs">No resume or unable to score</div>
+                                        )}
                                     </div>
                                 </div>
 

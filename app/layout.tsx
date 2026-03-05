@@ -29,8 +29,9 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
 
-  const isProduction =
+  const hasLiveKey =
     (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "").startsWith("pk_live_");
+  const isProduction = hasLiveKey && process.env.NODE_ENV === "production";
   const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
   const posthogHost =
     process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";

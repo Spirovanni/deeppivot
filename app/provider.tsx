@@ -127,6 +127,7 @@ function Provider({
     <PHProvider posthogKey={posthogKey} posthogHost={posthogHost} isDev={isDev}>
       <ThemeProvider defaultTheme="system" storageKey="deeppivot-theme">
         <ClerkProvider
+          scriptLoadTimeout={30000}
           {...(isProduction ? {
             clerkJSUrl: "/api/clerk-js",
             proxyUrl: "/api/clerk-proxy"

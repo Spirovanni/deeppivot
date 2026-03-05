@@ -2,7 +2,7 @@
  * GET /api/employer/jobs/[jobId]/matches/[userId]/screening-score
  * Employer-only. Returns LLM-based resume screening score for a matched candidate (deeppivot-317).
  */
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/src/db";
@@ -11,7 +11,7 @@ import { generateResumeScreeningScore } from "@/src/lib/resume-screening-score";
 import { rateLimit } from "@/src/lib/rate-limit";
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ jobId: string; userId: string }> }
 ) {
   const rl = await rateLimit(req, "DEFAULT");

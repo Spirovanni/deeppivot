@@ -260,6 +260,13 @@
       "when": 1772583800000,
       "tag": "0036_mighty_nomad",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1772676606584,
+      "tag": "0037_misty_nekra",
+      "breakpoints": true
     }
   ]
 }

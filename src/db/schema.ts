@@ -476,6 +476,7 @@ export const interviewSessionsRelations = relations(interviewSessionsTable, ({ o
   emotionSnapshots: many(emotionSnapshotsTable),
   recordingUrls: many(recordingUrlsTable),
   transcriptUrls: many(transcriptUrlsTable),
+  sessionTranscripts: many(sessionTranscriptsTable),
   emotionalAnalyses: many(emotionalAnalysesTable),
   interviewFeedback: many(interviewFeedbackTable),
 }));
@@ -515,6 +516,31 @@ export const transcriptUrlsRelations = relations(transcriptUrlsTable, ({ one }) 
   recordingUrl: one(recordingUrlsTable, {
     fields: [transcriptUrlsTable.recordingUrlId],
     references: [recordingUrlsTable.id],
+  }),
+}));
+
+/** ElevenLabs and other live transcripts for on-demand feedback generation */
+export const sessionTranscriptsTable = pgTable(
+  "session_transcripts",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    sessionId: integer()
+      .notNull()
+      .references(() => interviewSessionsTable.id, { onDelete: "cascade" }),
+    messages: jsonb()
+      .$type<Array<{ role: string; text: string }>>()
+      .notNull()
+      .default([]),
+    source: varchar({ length: 50 }).notNull().default("elevenlabs"),
+    createdAt: timestamp().notNull().defaultNow(),
+  },
+  (t) => [unique("session_transcripts_session_id_unique").on(t.sessionId)]
+);
+
+export const sessionTranscriptsRelations = relations(sessionTranscriptsTable, ({ one }) => ({
+  session: one(interviewSessionsTable, {
+    fields: [sessionTranscriptsTable.sessionId],
+    references: [interviewSessionsTable.id],
   }),
 }));
 

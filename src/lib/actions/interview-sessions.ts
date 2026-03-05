@@ -8,6 +8,7 @@ import {
   interviewFeedbackTable,
   emotionalAnalysesTable,
   transcriptUrlsTable,
+  sessionTranscriptsTable,
   usersTable,
   jobDescriptionsTable,
 } from "@/src/db/schema";
@@ -136,6 +137,17 @@ async function generateFeedbackFromTranscript(
     .where(eq(interviewFeedbackTable.sessionId, sessionId))
     .limit(1);
   if (existing) return;
+
+  // Persist transcript for on-demand retry (generateFeedbackIfMissing)
+  try {
+    await db.insert(sessionTranscriptsTable).values({
+      sessionId,
+      messages,
+      source: "elevenlabs",
+    });
+  } catch {
+    // Unique violation if already stored (e.g. retry) — non-fatal
+  }
 
   // Build a readable transcript from the WebSocket messages
   const transcriptText = messages
@@ -355,6 +367,13 @@ export async function generateFeedbackIfMissing(sessionId: number) {
     .where(eq(transcriptUrlsTable.sessionId, sessionId))
     .limit(1);
 
+  // Fallback: session_transcripts (ElevenLabs live transcript)
+  const [storedTranscript] = await db
+    .select({ messages: sessionTranscriptsTable.messages })
+    .from(sessionTranscriptsTable)
+    .where(eq(sessionTranscriptsTable.sessionId, sessionId))
+    .limit(1);
+
   let messages: Array<{ role: string; text: string }>;
   if (transcriptRow?.url) {
     try {
@@ -380,6 +399,8 @@ export async function generateFeedbackIfMissing(sessionId: number) {
     } catch {
       messages = [];
     }
+  } else if (storedTranscript?.messages && Array.isArray(storedTranscript.messages) && storedTranscript.messages.length > 0) {
+    messages = storedTranscript.messages;
   } else {
     messages = [];
   }

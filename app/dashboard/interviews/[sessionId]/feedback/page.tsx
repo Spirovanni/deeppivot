@@ -14,6 +14,7 @@ import { getPointsEarnedForInterviewSession } from "@/src/lib/gamification";
 import { AnimatedFeedbackContent } from "@/components/interviews/AnimatedFeedbackContent";
 import { EmotionAwareTimeline } from "@/components/interviews/EmotionAwareTimeline";
 import { GapAnalysisPanel } from "@/components/interviews/GapAnalysisPanel";
+import { RegenerateFeedbackButton } from "@/components/interviews/RegenerateFeedbackButton";
 
 const SESSION_TYPE_LABELS: Record<string, string> = {
   behavioral: "Behavioral",
@@ -187,12 +188,15 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
                   appears within a few minutes. Check back soon.
                 </p>
               </div>
-              <Link
-                href={`/dashboard/interviews/${sessionId}`}
-                className="text-sm text-primary hover:underline"
-              >
-                Return to session details
-              </Link>
+              <div className="flex flex-col items-center gap-3 sm:flex-row">
+                <RegenerateFeedbackButton sessionId={sessionId} />
+                <Link
+                  href={`/dashboard/interviews/${sessionId}`}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Return to session details
+                </Link>
+              </div>
             </CardContent>
           </Card>
         )}

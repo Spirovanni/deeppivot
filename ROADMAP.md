@@ -858,6 +858,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
 - [x] Admin data exports to CSV for offline analysis — Users, interview sessions, and job marketplace engagement CSV via /admin/export with direct download and signed link options.
 - [x] Admin UI: Admin Data Export page with date range filters (deeppivot-315) — /admin/export with Users and Sessions export cards; sessions include from/to date filters, includeDeleted; ExportUsersButtons and ExportSessionsButtons with secure link support.
+- [x] Employer UI: Export job applicants to CSV (deeppivot-316) — GET /api/employer/jobs/[jobId]/applications/export; Export CSV button on /employer/jobs/[jobId]/applications (Applicants tab).
 
 ---
 
@@ -884,3 +885,5 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — deeppivot-312 closed. Added Admin CSV export for interview sessions with date range and includeDeleted filters; /admin/export page with Users and Sessions export cards; signed download links for sessions.*
 *Last updated: 2026-03-04 — deeppivot-315 closed. Admin Data Export page at /admin/export with Users and Sessions cards; date range filters (from/to) for sessions export; role/includeDeleted for users; both support direct download and secure signed links.*
 *Last updated: 2026-03-04 — deeppivot-314 closed. Added Admin CSV export for job marketplace engagement: per-job rows with applications (new/reviewing/rejected/hired), matches (suggested/viewed/invited/applied/dismissed), invitations; date and status filters; /admin/export Jobs card.*
+*Last updated: 2026-03-04 — Build fix: weekly-employer-top-candidates-digest Inngest step returned Map objects which serialize to {}; switched to Record for archetypeByUser/interviewByUser so step.run() persists data correctly across steps.*
+*Last updated: 2026-03-04 — deeppivot-316 closed. Employer CSV export for job applicants: GET /api/employer/jobs/[jobId]/applications/export with name, email, status, resume URL, cover letter; Export CSV button on Applicants tab.*

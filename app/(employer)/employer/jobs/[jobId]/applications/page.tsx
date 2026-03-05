@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { Download } from "lucide-react";
 
 interface Applicant {
     id: number;
@@ -168,6 +169,19 @@ export default function EmployerApplicationsPage() {
                         >
                             {blindMode ? "Blind Mode: ON" : "Blind Mode: OFF"}
                         </button>
+                    </div>
+                )}
+
+                {activeTab === "applicants" && (
+                    <div className="mb-4 flex justify-end">
+                        <a
+                            href={`/api/employer/jobs/${jobId}/applications/export`}
+                            download
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/20 bg-white/5 text-white/80 text-sm font-medium hover:bg-white/10 transition-colors"
+                        >
+                            <Download className="size-4" />
+                            Export CSV
+                        </a>
                     </div>
                 )}
 

@@ -1,5 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
+import { after } from "next/server";
 import Link from "next/link";
 import { ArrowLeft, Clock, Mic2, Calendar, HelpCircle, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -61,9 +62,9 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
 
   if (!session) notFound();
 
-  // Trigger feedback generation in background if missing (non-blocking)
+  // Trigger feedback generation if missing (use after() so Vercel keeps invocation alive)
   if (!feedback && session.status === "completed") {
-    generateFeedbackIfMissing(sessionId).catch(() => {});
+    after(() => generateFeedbackIfMissing(sessionId).catch(() => {}));
   }
 
   const typeLabel = SESSION_TYPE_LABELS[session.sessionType] ?? "General";

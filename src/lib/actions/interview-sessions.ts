@@ -1,5 +1,6 @@
 "use server";
 
+import { after } from "next/server";
 import { db } from "@/src/db";
 import {
   interviewSessionsTable,
@@ -97,9 +98,8 @@ export async function endInterviewSession(
     pointsAwarded = gamResult?.pointsAdded ?? null;
   }
 
-  // Generate feedback from ElevenLabs live transcript (fire-and-forget).
-  // Always generate feedback so every completed session has the AI Feedback segment filled out.
-  // If transcript is empty (e.g. session ended before messages captured), use a placeholder.
+  // Generate feedback from ElevenLabs live transcript.
+  // Use after() so Vercel keeps the invocation alive until generation completes.
   const messagesToUse =
     transcript && transcript.length > 0
       ? transcript
@@ -113,8 +113,10 @@ export async function endInterviewSession(
             text: "[No interviewer responses were recorded. For best feedback next time, have a full conversation with several question-answer exchanges.]",
           },
         ];
-  generateFeedbackFromTranscript(sessionId, messagesToUse).catch((err) =>
-    console.error(`Feedback generation failed for session ${sessionId}:`, err)
+  after(() =>
+    generateFeedbackFromTranscript(sessionId, messagesToUse).catch((err) =>
+      console.error(`Feedback generation failed for session ${sessionId}:`, err)
+    )
   );
 
   revalidatePath("/dashboard/interviews");

@@ -1,5 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
+import { after } from "next/server";
 import Link from "next/link";
 import { ArrowLeft, MessageSquare, Loader2, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +16,8 @@ import { AnimatedFeedbackContent } from "@/components/interviews/AnimatedFeedbac
 import { EmotionAwareTimeline } from "@/components/interviews/EmotionAwareTimeline";
 import { GapAnalysisPanel } from "@/components/interviews/GapAnalysisPanel";
 import { RegenerateFeedbackButton } from "@/components/interviews/RegenerateFeedbackButton";
+
+export const maxDuration = 60; // Feedback generation can take 15–30s (LLM call)
 
 const SESSION_TYPE_LABELS: Record<string, string> = {
   behavioral: "Behavioral",
@@ -45,12 +48,14 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
   if (!session) notFound();
 
   // Generate feedback on-demand if missing (handles ElevenLabs empty transcript, Vapi pipeline gaps)
-  // Fire-and-forget: don't await to avoid Server Component timeout; user can refresh or use Regenerate button
+  // Use after() so Vercel keeps the invocation alive until generation completes
   let feedbackToShow = feedback;
   if (!feedbackToShow && session.status === "completed") {
-    generateFeedbackIfMissing(sessionId).catch((err) => {
-      console.warn("[feedback page] Background generation failed:", err);
-    });
+    after(() =>
+      generateFeedbackIfMissing(sessionId).catch((err) => {
+        console.warn("[feedback page] Background generation failed:", err);
+      })
+    );
   }
 
   let pointsEarned: number | null = null;

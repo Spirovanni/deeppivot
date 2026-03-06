@@ -12,6 +12,7 @@ import {
   emotionalAnalysesTable,
   transcriptUrlsTable,
   sessionTranscriptsTable,
+  usersTable,
 } from "@/src/db/schema";
 import { eq, and, ne, desc } from "drizzle-orm";
 import { generateCompletion } from "@/src/lib/llm";
@@ -139,15 +140,24 @@ export async function runFeedbackGenerationForSession(
     });
   }
 
-  // Fetch past feedback for adaptive context
-  const [sessionRow] = await db
-    .select({ userId: interviewSessionsTable.userId })
-    .from(interviewSessionsTable)
+  // Fetch user details for adaptive context and PII exclusions
+  const [userRow] = await db
+    .select({
+      id: usersTable.id,
+      name: usersTable.name,
+      firstName: usersTable.firstName,
+      lastName: usersTable.lastName
+    })
+    .from(usersTable)
+    .innerJoin(interviewSessionsTable, eq(interviewSessionsTable.userId, usersTable.id))
     .where(eq(interviewSessionsTable.id, sessionId))
     .limit(1);
 
+  const candidateName = userRow?.name || `${userRow?.firstName} ${userRow?.lastName}`.trim() || "Candidate";
+  const exclusions = candidateName !== "Candidate" ? [candidateName] : [];
+
   let pastFeedback: string[] = [];
-  if (sessionRow?.userId) {
+  if (userRow?.id) {
     const pastRows = await db
       .select({ content: interviewFeedbackTable.content })
       .from(interviewFeedbackTable)
@@ -157,7 +167,7 @@ export async function runFeedbackGenerationForSession(
       )
       .where(
         and(
-          eq(interviewSessionsTable.userId, sessionRow.userId),
+          eq(interviewSessionsTable.userId, userRow.id),
           ne(interviewFeedbackTable.sessionId, sessionId)
         )
       )
@@ -188,6 +198,8 @@ If previous feedback is provided, use it to:
 - Tailor suggestions to build on prior recommendations
 
 Output format:
+# [${candidateName}]
+
 ## Strengths
 - Bullet points of what the candidate did well
 
@@ -209,7 +221,7 @@ Output format:
     temperature: 0.5,
   });
 
-  const anonymizedFeedback = anonymize(feedbackContent);
+  const anonymizedFeedback = anonymize(feedbackContent, exclusions);
   const skillsMapping = await mapInterviewToSkills(
     transcriptText,
     feedbackContent,

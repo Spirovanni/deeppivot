@@ -162,13 +162,56 @@ export interface PIIReport {
  * Anonymize text by replacing all detected PII with category tokens.
  * This is the fast path — no audit trail, just the safe string.
  */
-export function anonymize(text: string): string {
-  let result = text;
-  for (const rule of PII_RULES) {
-    rule.pattern.lastIndex = 0; // reset stateful global regexes
-    result = result.replace(rule.pattern, rule.replacement);
+export function anonymize(text: string, exclusions: string[] = []): string {
+  if (exclusions.length === 0) {
+    let result = text;
+    for (const rule of PII_RULES) {
+      rule.pattern.lastIndex = 0; // reset stateful global regexes
+      result = result.replace(rule.pattern, rule.replacement);
+    }
+    return result;
   }
-  return result;
+  return anonymizeWithExclusions(text, exclusions);
+}
+
+/**
+ * Anonymize text while explicitly preserving specific strings (exclusions).
+ * Useful for keeping the candidate's name while scrubbing other PII.
+ */
+export function anonymizeWithExclusions(text: string, exclusions: string[]): string {
+  if (!text || exclusions.length === 0) return anonymize(text);
+
+  // 1. Create a map of unique markers for each exclusion to prevent accidental scrubbing
+  // Use a format that is unlikely to be caught by PII regexes
+  const markers = exclusions.map((ex, i) => ({
+    original: ex,
+    marker: `__EXCLUSION_${i}_${Math.random().toString(36).slice(2, 7)}__`,
+  }));
+
+  // 2. Sort exclusions by length descending to handle overlapping names (e.g., "John Doe" before "John")
+  const sortedExclusions = [...markers].sort((a, b) => b.original.length - a.original.length);
+
+  // 3. Temporarily swap exclusions with markers
+  let processed = text;
+  for (const item of sortedExclusions) {
+    // Escape regex special characters in original string
+    const escaped = item.original.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    processed = processed.replace(new RegExp(escaped, "g"), item.marker);
+  }
+
+  // 4. Run standard anonymization on the text containing markers
+  let anonymized = processed;
+  for (const rule of PII_RULES) {
+    rule.pattern.lastIndex = 0;
+    anonymized = anonymized.replace(rule.pattern, rule.replacement);
+  }
+
+  // 5. Swap markers back with original strings
+  for (const item of markers) {
+    anonymized = anonymized.replace(new RegExp(item.marker, "g"), item.original);
+  }
+
+  return anonymized;
 }
 
 /**

@@ -111,6 +111,28 @@ export const processInterviewTranscription = inngest.createFunction(
       throw new Error("Missing sessionId or recordingUrl in event data");
     }
 
+    // 0. Fetch user details for PII exclusions
+    const user = await step.run("fetch-user", async () => {
+      const [session] = await db
+        .select({ userId: interviewSessionsTable.userId })
+        .from(interviewSessionsTable)
+        .where(eq(interviewSessionsTable.id, sessionId))
+        .limit(1);
+
+      if (!session) return null;
+
+      const [user] = await db
+        .select({ name: usersTable.name, firstName: usersTable.firstName, lastName: usersTable.lastName })
+        .from(usersTable)
+        .where(eq(usersTable.id, session.userId))
+        .limit(1);
+
+      return user;
+    });
+
+    const candidateName = user?.name || `${user?.firstName} ${user?.lastName}`.trim() || "Candidate";
+    const exclusions = candidateName !== "Candidate" ? [candidateName] : [];
+
     // 1. Transcribe via Deepgram
     const transcriptResult = await step.run("transcribe-recording", async () => {
       return transcribeInterviewRecording(recordingUrl);
@@ -119,10 +141,10 @@ export const processInterviewTranscription = inngest.createFunction(
     // 2. PII-anonymize transcript text before storage
     const anonymizedTranscript = await step.run("anonymize-transcript", async () => {
       return {
-        transcript: anonymize(transcriptResult.transcript),
+        transcript: anonymize(transcriptResult.transcript, exclusions),
         utterances: transcriptResult.utterances?.map((u: { transcript: string }) => ({
           ...u,
-          transcript: anonymize(u.transcript),
+          transcript: anonymize(u.transcript, exclusions),
         })),
       };
     });
@@ -234,7 +256,7 @@ export const processInterviewFeedback = inngest.createFunction(
     });
 
     // 3. Fetch transcript, emotion data, and past feedback from DB
-    const { transcript, emotionData, pastFeedback } = await step.run("fetch-data", async () => {
+    const { transcript, emotionData, pastFeedback, candidateName } = await step.run("fetch-data", async () => {
       const [transcriptRow] = await db
         .select({ url: transcriptUrlsTable.url })
         .from(transcriptUrlsTable)
@@ -304,8 +326,16 @@ export const processInterviewFeedback = inngest.createFunction(
           .filter((s) => s.length > 0);
       }
 
-      return { transcript, emotionData, pastFeedback };
+      const [user] = await db
+        .select({ name: usersTable.name, firstName: usersTable.firstName, lastName: usersTable.lastName })
+        .from(usersTable)
+        .where(eq(usersTable.id, session.userId))
+        .limit(1);
+
+      return { transcript, emotionData, pastFeedback, candidateName: user?.name || `${user?.firstName} ${user?.lastName}`.trim() || "Candidate" };
     });
+
+    const exclusions = candidateName !== "Candidate" ? [candidateName] : [];
 
     // 4. Generate structured feedback via LLM (adaptive: considers past feedback)
     const feedbackContent = await step.run("generate-feedback", async () => {
@@ -337,6 +367,8 @@ If previous feedback is provided, use it to:
 - Tailor suggestions to build on prior recommendations
 
 Output format:
+# [${candidateName}]
+
 ## Strengths
 - Bullet points of what the candidate did well
 
@@ -369,7 +401,7 @@ Output format:
     });
 
     // 6. PII-anonymize feedback content before storage
-    const anonymizedFeedback = anonymize(feedbackContent);
+    const anonymizedFeedback = anonymize(feedbackContent, exclusions);
 
     // 7. Save to interview_feedback table
     await step.run("save-feedback", async () => {
@@ -407,10 +439,10 @@ Output format:
       const strengthsMatch = feedbackContent.match(/## Strengths\s*\n([\s\S]*?)(?=\n## |$)/);
       const strengths = strengthsMatch
         ? strengthsMatch[1]
-            .split("\n")
-            .map((l) => l.replace(/^[-*]\s*/, "").trim())
-            .filter((l) => l.length > 0)
-            .slice(0, 2)
+          .split("\n")
+          .map((l) => l.replace(/^[-*]\s*/, "").trim())
+          .filter((l) => l.length > 0)
+          .slice(0, 2)
         : [];
 
       await sendInterviewFeedbackEmail(user.email, {

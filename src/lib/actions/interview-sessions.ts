@@ -1,6 +1,5 @@
 "use server";
 
-import { after } from "next/server";
 import { db } from "@/src/db";
 import {
   interviewSessionsTable,
@@ -8,18 +7,16 @@ import {
   emotionSnapshotsTable,
   interviewFeedbackTable,
   emotionalAnalysesTable,
-  transcriptUrlsTable,
   sessionTranscriptsTable,
   usersTable,
   jobDescriptionsTable,
 } from "@/src/db/schema";
-import { eq, avg, and, asc, desc, ne } from "drizzle-orm";
+import { eq, avg, and, asc, desc } from "drizzle-orm";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { addPointsForInterviewCompletion } from "@/src/lib/gamification";
-import { generateCompletion } from "@/src/lib/llm";
-import { anonymize } from "@/src/lib/pii";
-import { mapInterviewToSkills } from "@/src/lib/career-skills";
+import { inngest } from "@/src/inngest/client";
+import { runFeedbackGenerationForSession } from "@/src/lib/feedback-generation";
 
 async function getDbUser(): Promise<{ id: number; organizationId: string | null }> {
   const { userId, orgId } = await auth();
@@ -98,8 +95,7 @@ export async function endInterviewSession(
     pointsAwarded = gamResult?.pointsAdded ?? null;
   }
 
-  // Generate feedback from ElevenLabs live transcript.
-  // Use after() so Vercel keeps the invocation alive until generation completes.
+  // Persist transcript for Inngest job, then trigger feedback generation
   const messagesToUse =
     transcript && transcript.length > 0
       ? transcript
@@ -113,156 +109,24 @@ export async function endInterviewSession(
             text: "[No interviewer responses were recorded. For best feedback next time, have a full conversation with several question-answer exchanges.]",
           },
         ];
-  after(() =>
-    generateFeedbackFromTranscript(sessionId, messagesToUse).catch((err) =>
-      console.error(`Feedback generation failed for session ${sessionId}:`, err)
-    )
+  try {
+    await db.insert(sessionTranscriptsTable).values({
+      sessionId,
+      messages: messagesToUse,
+      source: "elevenlabs",
+    });
+  } catch {
+    // Unique violation if already stored (retry) — non-fatal
+  }
+  inngest.send({
+    name: "feedback/generate.elevenlabs",
+    data: { sessionId },
+  }).catch((err) =>
+    console.error(`[inngest] Failed to send feedback/generate.elevenlabs for session ${sessionId}:`, err)
   );
 
   revalidatePath("/dashboard/interviews");
   return { overallScore, pointsAwarded };
-}
-
-/**
- * Generate AI feedback directly from ElevenLabs live transcript messages.
- * Bypasses the Vapi → R2 → Deepgram pipeline since ElevenLabs provides
- * real-time transcription via WebSocket.
- */
-async function generateFeedbackFromTranscript(
-  sessionId: number,
-  messages: Array<{ role: string; text: string }>
-) {
-  // Skip if feedback already exists (e.g. from concurrent request or Vapi pipeline)
-  const [existing] = await db
-    .select({ id: interviewFeedbackTable.id })
-    .from(interviewFeedbackTable)
-    .where(eq(interviewFeedbackTable.sessionId, sessionId))
-    .limit(1);
-  if (existing) return;
-
-  // Persist transcript for on-demand retry (generateFeedbackIfMissing)
-  try {
-    await db.insert(sessionTranscriptsTable).values({
-      sessionId,
-      messages,
-      source: "elevenlabs",
-    });
-  } catch {
-    // Unique violation if already stored (e.g. retry) — non-fatal
-  }
-
-  // Build a readable transcript from the WebSocket messages
-  const transcriptText = messages
-    .map((m) => `${m.role === "user" ? "Candidate" : "Interviewer"}: ${m.text}`)
-    .join("\n");
-
-  if (transcriptText.trim().length < 20) return;
-
-  // Insert fallback emotional analysis only if none exists (ElevenLabs doesn't provide emotion data)
-  const [existingEmotion] = await db
-    .select({ id: emotionalAnalysesTable.id })
-    .from(emotionalAnalysesTable)
-    .where(eq(emotionalAnalysesTable.sessionId, sessionId))
-    .limit(1);
-  if (!existingEmotion) {
-    await db.insert(emotionalAnalysesTable).values({
-      sessionId,
-      jobId: "elevenlabs-live-transcript",
-      data: {
-        snapshots: [],
-        overallDominantEmotion: "Unknown",
-        aggregateEmotions: [],
-        unavailable: true,
-      },
-    });
-  }
-
-  // Fetch past feedback for adaptive context
-  const [session] = await db
-    .select({ userId: interviewSessionsTable.userId })
-    .from(interviewSessionsTable)
-    .where(eq(interviewSessionsTable.id, sessionId))
-    .limit(1);
-
-  let pastFeedback: string[] = [];
-  if (session?.userId) {
-    const pastRows = await db
-      .select({ content: interviewFeedbackTable.content })
-      .from(interviewFeedbackTable)
-      .innerJoin(
-        interviewSessionsTable,
-        eq(interviewSessionsTable.id, interviewFeedbackTable.sessionId)
-      )
-      .where(
-        and(
-          eq(interviewSessionsTable.userId, session.userId),
-          ne(interviewFeedbackTable.sessionId, sessionId)
-        )
-      )
-      .orderBy(desc(interviewFeedbackTable.createdAt))
-      .limit(3);
-    pastFeedback = pastRows
-      .map((r) => {
-        const c = r.content ?? "";
-        return c.slice(0, 400) + (c.length > 400 ? "..." : "");
-      })
-      .filter((s) => s.length > 0);
-  }
-
-  const pastFeedbackContext =
-    pastFeedback.length > 0
-      ? `\n\n---\nPrevious feedback from this candidate's past interviews (use to highlight improvement or recurring issues):\n${pastFeedback.map((f, i) => `[Past ${i + 1}]\n${f}`).join("\n\n")}`
-      : "";
-
-  // Generate structured feedback via LLM
-  const { content: feedbackContent } = await generateCompletion({
-    messages: [
-      {
-        role: "system",
-        content: `You are an expert interview coach. Generate structured, actionable feedback for a job interview practice session.
-
-If previous feedback is provided, use it to:
-- Highlight areas where the candidate has improved since last time
-- Call out recurring issues that still need work
-- Tailor suggestions to build on prior recommendations
-
-Output format:
-## Strengths
-- Bullet points of what the candidate did well
-
-## Areas for Improvement
-- Bullet points of specific, actionable suggestions
-
-## Emotional Tone
-- Brief summary of how their delivery came across based on their word choice and conversation flow (note that voice emotion analysis was not available)
-
-## Overall Recommendation
-- 1-2 sentences with next steps.`,
-      },
-      {
-        role: "user",
-        content: `Interview transcript:\n\n${transcriptText}\n\n---\nEmotional analysis: Unavailable (voice emotion analysis was not performed for this session).${pastFeedbackContext}\n\nGenerate structured feedback.`,
-      },
-    ],
-    maxTokens: 1500,
-    temperature: 0.5,
-  });
-
-  // PII-anonymize and save
-  const anonymizedFeedback = anonymize(feedbackContent);
-
-  // Map to career skills
-  const skillsMapping = await mapInterviewToSkills(
-    transcriptText,
-    feedbackContent,
-    "Emotion analysis unavailable"
-  ).catch(() => []);
-
-  await db.insert(interviewFeedbackTable).values({
-    sessionId,
-    content: anonymizedFeedback,
-    skillsMapping: skillsMapping.length > 0 ? skillsMapping : undefined,
-  });
 }
 
 export async function getSessionDetail(sessionId: number) {
@@ -362,73 +226,8 @@ export async function generateFeedbackIfMissing(sessionId: number) {
 
   if (existing) return null;
 
-  // Try transcript from transcript_urls (Vapi pipeline) first
-  const [transcriptRow] = await db
-    .select({ url: transcriptUrlsTable.url })
-    .from(transcriptUrlsTable)
-    .where(eq(transcriptUrlsTable.sessionId, sessionId))
-    .limit(1);
-
-  // Fallback: session_transcripts (ElevenLabs live transcript)
-  // Wrapped in try/catch: table may not exist yet if migration hasn't run in production
-  let storedTranscript: { messages: unknown } | null = null;
   try {
-    const [row] = await db
-      .select({ messages: sessionTranscriptsTable.messages })
-      .from(sessionTranscriptsTable)
-      .where(eq(sessionTranscriptsTable.sessionId, sessionId))
-      .limit(1);
-    storedTranscript = row ?? null;
-  } catch {
-    // session_transcripts may not exist; continue with empty transcript
-  }
-
-  let messages: Array<{ role: string; text: string }>;
-  if (transcriptRow?.url) {
-    try {
-      const res = await fetch(transcriptRow.url);
-      if (res.ok) {
-        const json = (await res.json()) as {
-          transcript?: string;
-          utterances?: Array<{ transcript: string; speaker?: number; channel?: number }>;
-        };
-        if (json.utterances?.length) {
-          messages = json.utterances.map((u) => ({
-            role: (u.channel === 0 || u.speaker === 0 ? "user" : "assistant") as string,
-            text: u.transcript ?? "",
-          }));
-        } else if (json.transcript && json.transcript.length >= 20) {
-          messages = [{ role: "user", text: json.transcript }];
-        } else {
-          messages = [];
-        }
-      } else {
-        messages = [];
-      }
-    } catch {
-      messages = [];
-    }
-  } else if (storedTranscript?.messages && Array.isArray(storedTranscript.messages) && storedTranscript.messages.length > 0) {
-    messages = storedTranscript.messages;
-  } else {
-    messages = [];
-  }
-
-  if (messages.length === 0 || messages.map((m) => m.text).join(" ").trim().length < 20) {
-    messages = [
-      {
-        role: "user",
-        text: "[Session ended before transcript was captured. This can happen with very short sessions or if the connection closed early.]",
-      },
-      {
-        role: "assistant",
-        text: "[No interviewer responses were recorded. For best feedback next time, have a full conversation with several question-answer exchanges.]",
-      },
-    ];
-  }
-
-  try {
-    await generateFeedbackFromTranscript(sessionId, messages);
+    await runFeedbackGenerationForSession(sessionId);
     revalidatePath(`/dashboard/interviews/${sessionId}`);
     revalidatePath(`/dashboard/interviews/${sessionId}/feedback`);
     const [newFeedback] = await db

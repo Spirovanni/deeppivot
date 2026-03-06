@@ -1,6 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
-import { after } from "next/server";
 import Link from "next/link";
 import { ArrowLeft, Clock, Mic2, Calendar, HelpCircle, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,8 +9,8 @@ import {
   getSessionEmotions,
   getInterviewFeedback,
   getSessionJobMatchData,
-  generateFeedbackIfMissing,
 } from "@/src/lib/actions/interview-sessions";
+import { inngest } from "@/src/inngest/client";
 import { EmotionTimeline } from "@/components/interviews/EmotionTimeline";
 import { CommunicationSummary } from "@/components/interviews/CommunicationSummary";
 import { JobMatchScoreCard } from "@/components/interviews/JobMatchScoreCard";
@@ -62,9 +61,12 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
 
   if (!session) notFound();
 
-  // Trigger feedback generation if missing (use after() so Vercel keeps invocation alive)
+  // Trigger Inngest job if feedback is missing (runs in background with retries)
   if (!feedback && session.status === "completed") {
-    after(() => generateFeedbackIfMissing(sessionId).catch(() => {}));
+    inngest.send({
+      name: "feedback/generate.elevenlabs",
+      data: { sessionId },
+    }).catch(() => {});
   }
 
   const typeLabel = SESSION_TYPE_LABELS[session.sessionType] ?? "General";

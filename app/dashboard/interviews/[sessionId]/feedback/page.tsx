@@ -1,6 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
-import { after } from "next/server";
 import Link from "next/link";
 import { ArrowLeft, MessageSquare, Loader2, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,8 +8,8 @@ import {
   getInterviewFeedback,
   getEmotionalAnalysis,
   getSessionGapAnalysis,
-  generateFeedbackIfMissing,
 } from "@/src/lib/actions/interview-sessions";
+import { inngest } from "@/src/inngest/client";
 import { getPointsEarnedForInterviewSession } from "@/src/lib/gamification";
 import { AnimatedFeedbackContent } from "@/components/interviews/AnimatedFeedbackContent";
 import { EmotionAwareTimeline } from "@/components/interviews/EmotionAwareTimeline";
@@ -47,15 +46,15 @@ export default async function FeedbackPage({ params }: FeedbackPageProps) {
 
   if (!session) notFound();
 
-  // Generate feedback on-demand if missing (handles ElevenLabs empty transcript, Vapi pipeline gaps)
-  // Use after() so Vercel keeps the invocation alive until generation completes
+  // Trigger Inngest job if feedback is missing (runs in background with retries)
   let feedbackToShow = feedback;
   if (!feedbackToShow && session.status === "completed") {
-    after(() =>
-      generateFeedbackIfMissing(sessionId).catch((err) => {
-        console.warn("[feedback page] Background generation failed:", err);
-      })
-    );
+    inngest.send({
+      name: "feedback/generate.elevenlabs",
+      data: { sessionId },
+    }).catch((err) => {
+      console.warn("[feedback page] Failed to send feedback/generate.elevenlabs:", err);
+    });
   }
 
   let pointsEarned: number | null = null;

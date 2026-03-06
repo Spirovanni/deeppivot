@@ -26,6 +26,7 @@ import { mapInterviewToSkills } from "@/src/lib/career-skills";
 import { anonymize } from "@/src/lib/pii";
 import { sendInterviewFeedbackEmail } from "@/src/lib/email";
 import { createNotification } from "@/src/lib/notifications";
+import { runFeedbackGenerationForSession } from "@/src/lib/feedback-generation";
 
 export const processInterviewRecording = inngest.createFunction(
   {
@@ -442,6 +443,43 @@ Output format:
     });
 
     return { sessionId };
+  }
+);
+
+/**
+ * Generate feedback for ElevenLabs sessions (live transcript).
+ * Triggered when an interview ends with transcript in session_transcripts.
+ * Runs in background with retries; no serverless timeout issues.
+ */
+export const generateElevenLabsFeedback = inngest.createFunction(
+  {
+    id: "generate-elevenlabs-feedback",
+    name: "Generate ElevenLabs Interview Feedback",
+    retries: 3,
+  },
+  { event: "feedback/generate.elevenlabs" },
+  async ({ event, step }) => {
+    const { sessionId } = event.data as { sessionId: number };
+
+    if (!sessionId) {
+      throw new Error("Missing sessionId in feedback/generate.elevenlabs event");
+    }
+
+    const result = await step.run("generate-feedback", async () => {
+      return runFeedbackGenerationForSession(sessionId);
+    });
+
+    if (!result) {
+      return { sessionId, skipped: true }; // Already exists or invalid
+    }
+
+    // Emit feedback.complete for archetyping (same as Vapi pipeline)
+    await step.sendEvent("trigger-archetyping", {
+      name: "feedback.complete",
+      data: { sessionId },
+    });
+
+    return { sessionId, feedbackId: result.id };
   }
 );
 

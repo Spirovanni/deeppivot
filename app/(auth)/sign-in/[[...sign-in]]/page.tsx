@@ -7,7 +7,7 @@ import { useSignIn } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const CLERK_LOAD_TIMEOUT_MS = 8000;
+const CLERK_LOAD_TIMEOUT_MS = 15000;
 
 export default function Page() {
   const router = useRouter();
@@ -69,6 +69,10 @@ export default function Page() {
 
   if (!isLoaded) {
     if (clerkLoadFailed) {
+      const isDevMode =
+        typeof window !== "undefined" &&
+        (process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith("pk_test_") ||
+          process.env.NEXT_PUBLIC_CLERK_USE_DEVELOPMENT === "true");
       return (
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4">
           <div className="max-w-md rounded-lg border border-amber-200 bg-amber-50 p-6 dark:border-amber-800 dark:bg-amber-950/50">
@@ -76,21 +80,33 @@ export default function Page() {
               Authentication failed to load
             </h2>
             <p className="mt-2 text-sm text-amber-700 dark:text-amber-300">
-              This is usually caused by a CORS or domain mismatch. Try:
+              {isDevMode
+                ? "Clerk is taking too long to load. Try:"
+                : "This is usually caused by a CORS or domain mismatch. Try:"}
             </p>
             <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-amber-700 dark:text-amber-300">
-              <li>
-                Use <strong>deeppivots.com</strong> (without www) instead of
-                www.deeppivots.com
-              </li>
-              <li>
-                Add <strong>www.deeppivots.com</strong> to Clerk Dashboard →
-                Configure → Domains
-              </li>
-              <li>
-                Ensure <strong>clerk.deeppivots.com</strong> DNS is configured
-                per Clerk Dashboard
-              </li>
+              {isDevMode ? (
+                <>
+                  <li>Disable ad blockers or try an incognito/private window</li>
+                  <li>Check your internet connection</li>
+                  <li>Ensure the site is not blocked by a firewall or corporate proxy</li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    Use <strong>deeppivots.com</strong> (without www) instead of
+                    www.deeppivots.com
+                  </li>
+                  <li>
+                    Add <strong>www.deeppivots.com</strong> to Clerk Dashboard →
+                    Configure → Domains
+                  </li>
+                  <li>
+                    Ensure <strong>clerk.deeppivots.com</strong> DNS is configured
+                    per Clerk Dashboard
+                  </li>
+                </>
+              )}
             </ul>
             <Button
               className="mt-4 w-full"

@@ -53,7 +53,7 @@ Generate questions that specifically assess the candidate's cultural fit and beh
 
     try {
         const completion = await openai.chat.completions.create({
-            model: "gpt-4-turbo",
+            model: "gpt-4o",
             messages: [
                 { role: "system", content: BEHAVIORAL_QUESTIONS_SYSTEM_PROMPT },
                 { role: "user", content: userPrompt },

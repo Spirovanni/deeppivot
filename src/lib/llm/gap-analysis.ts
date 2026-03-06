@@ -26,7 +26,7 @@ export async function generateGapAnalysis(
 
     try {
         const completion = await openai.chat.completions.create({
-            model: "gpt-4-turbo",
+            model: "gpt-4o",
             messages: [
                 { role: "system", content: GAP_ANALYSIS_SYSTEM_PROMPT },
                 {

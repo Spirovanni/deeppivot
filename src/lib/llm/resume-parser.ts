@@ -21,7 +21,7 @@ export async function extractResumeData(text: string): Promise<ResumeExtraction>
 
     try {
         const completion = await openai.chat.completions.create({
-            model: "gpt-4-turbo",
+            model: "gpt-4o",
             messages: [
                 { role: "system", content: RESUME_ANALYSIS_SYSTEM_PROMPT },
                 { role: "user", content: `Please analyze the following resume:\n\n${text}` }

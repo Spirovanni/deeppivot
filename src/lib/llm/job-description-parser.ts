@@ -23,7 +23,7 @@ export async function extractJobDescriptionData(text: string): Promise<JobDescri
 
     try {
         const completion = await openai.chat.completions.create({
-            model: "gpt-4-turbo",
+            model: "gpt-4o",
             messages: [
                 { role: "system", content: JOB_DESCRIPTION_ANALYSIS_SYSTEM_PROMPT },
                 { role: "user", content: `Please analyze the following job description:\n\n${text}` }

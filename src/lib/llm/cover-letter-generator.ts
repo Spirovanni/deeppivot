@@ -60,7 +60,7 @@ export async function generateCoverLetter(
 
     try {
         const completion = await openai.chat.completions.create({
-            model: "gpt-4-turbo",
+            model: "gpt-4o",
             messages: [
                 { role: "system", content: COVER_LETTER_SYSTEM_PROMPT },
                 { role: "user", content: userPrompt },
@@ -103,7 +103,7 @@ export function streamCoverLetter(
         async start(controller) {
             try {
                 const stream = await openai.chat.completions.create({
-                    model: "gpt-4-turbo",
+                    model: "gpt-4o",
                     messages: [
                         { role: "system", content: COVER_LETTER_STREAM_SYSTEM_PROMPT },
                         { role: "user", content: userPrompt },

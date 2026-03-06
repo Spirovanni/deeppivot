@@ -50,8 +50,8 @@ export interface LLMCompletionResult {
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const OPENAI_MODEL = "gpt-4-turbo";
-const ANTHROPIC_MODEL = "claude-3-opus-20240229";
+const OPENAI_MODEL = "gpt-4o";
+const ANTHROPIC_MODEL = "claude-sonnet-4-5-20250929";
 
 function getProvider(): Exclude<LLMProvider, "auto"> {
   const env = process.env.LLM_PROVIDER?.toLowerCase();

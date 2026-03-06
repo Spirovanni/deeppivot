@@ -9,11 +9,13 @@ import {
   getSessionEmotions,
   getInterviewFeedback,
   getSessionJobMatchData,
+  getSessionTranscript,
 } from "@/src/lib/actions/interview-sessions";
 import { inngest } from "@/src/inngest/client";
 import { EmotionTimeline } from "@/components/interviews/EmotionTimeline";
 import { CommunicationSummary } from "@/components/interviews/CommunicationSummary";
 import { JobMatchScoreCard } from "@/components/interviews/JobMatchScoreCard";
+import { TranscriptView } from "@/components/interviews/TranscriptView";
 
 const SESSION_TYPE_LABELS: Record<string, string> = {
   behavioral: "Behavioral",
@@ -52,11 +54,12 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
   const sessionId = parseInt(sessionIdStr, 10);
   if (isNaN(sessionId)) notFound();
 
-  const [session, snapshots, feedback, jobMatchData] = await Promise.all([
+  const [session, snapshots, feedback, jobMatchData, messages] = await Promise.all([
     getSessionDetail(sessionId),
     getSessionEmotions(sessionId),
     getInterviewFeedback(sessionId),
     getSessionJobMatchData(sessionId),
+    getSessionTranscript(sessionId),
   ]);
 
   if (!session) notFound();
@@ -66,7 +69,7 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
     inngest.send({
       name: "feedback/generate.elevenlabs",
       data: { sessionId },
-    }).catch(() => {});
+    }).catch(() => { });
   }
 
   const typeLabel = SESSION_TYPE_LABELS[session.sessionType] ?? "General";
@@ -221,6 +224,9 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
             />
           </CardContent>
         </Card>
+
+        {/* Interview Transcript */}
+        <TranscriptView messages={messages} />
 
         {/* Questions */}
         {session.questions && session.questions.length > 0 && (

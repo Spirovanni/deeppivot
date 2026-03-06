@@ -100,15 +100,15 @@ export async function endInterviewSession(
     transcript && transcript.length > 0
       ? transcript
       : [
-          {
-            role: "user",
-            text: "[Session ended before transcript was captured. This can happen with very short sessions or if the connection closed early.]",
-          },
-          {
-            role: "assistant",
-            text: "[No interviewer responses were recorded. For best feedback next time, have a full conversation with several question-answer exchanges.]",
-          },
-        ];
+        {
+          role: "user",
+          text: "[Session ended before transcript was captured. This can happen with very short sessions or if the connection closed early.]",
+        },
+        {
+          role: "assistant",
+          text: "[No interviewer responses were recorded. For best feedback next time, have a full conversation with several question-answer exchanges.]",
+        },
+      ];
   try {
     await db.insert(sessionTranscriptsTable).values({
       sessionId,
@@ -247,6 +247,19 @@ export async function generateFeedbackIfMissing(sessionId: number) {
         : "Could not generate feedback. The AI service may be temporarily unavailable. Please try again."
     );
   }
+}
+
+export async function getSessionTranscript(sessionId: number) {
+  const user = await getDbUser();
+  const userId = user.id;
+
+  const transcript = await db.query.sessionTranscriptsTable.findFirst({
+    where: and(
+      eq(sessionTranscriptsTable.sessionId, sessionId)
+    ),
+  });
+
+  return transcript?.messages ?? [];
 }
 
 export async function getEmotionalAnalysis(sessionId: number) {

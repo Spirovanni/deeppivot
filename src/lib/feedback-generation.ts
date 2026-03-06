@@ -154,7 +154,7 @@ export async function runFeedbackGenerationForSession(
     .limit(1);
 
   const candidateName = userRow?.name || `${userRow?.firstName} ${userRow?.lastName}`.trim() || "Candidate";
-  const exclusions = candidateName !== "Candidate" ? [candidateName] : [];
+  const exclusions = [candidateName, userRow?.firstName, userRow?.lastName].filter((n): n is string => !!n && n !== "Candidate");
 
   let pastFeedback: string[] = [];
   if (userRow?.id) {
@@ -210,7 +210,10 @@ Output format:
 - Brief summary of how their delivery came across based on their word choice and conversation flow (note that voice emotion analysis was not available)
 
 ## Overall Recommendation
-- 1-2 sentences with next steps.`,
+- 1-2 sentences with next steps.
+ 
+- IMPORTANT: Use the candidate's actual name (${candidateName}) in the feedback text.
+- IMPORTANT: Do NOT use placeholders like "[NAME]" or "[Candidate]". If you see "[NAME]" in past feedback, replace it with "${candidateName}" if referring to the candidate.`,
       },
       {
         role: "user",

@@ -135,7 +135,7 @@ const PII_RULES: PIIRule[] = [
     category: "name",
     replacement: "[NAME]",
     pattern:
-      /\b(?:[A-Z][a-z]{1,20}\s){1,2}[A-Z][a-z]{1,20}\b/g,
+      /\b(?:[A-Z][a-z]{1,20}[ \t]){1,2}[A-Z][a-z]{1,20}\b/g,
   },
 ];
 

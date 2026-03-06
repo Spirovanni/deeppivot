@@ -131,7 +131,7 @@ export const processInterviewTranscription = inngest.createFunction(
     });
 
     const candidateName = user?.name || `${user?.firstName} ${user?.lastName}`.trim() || "Candidate";
-    const exclusions = candidateName !== "Candidate" ? [candidateName] : [];
+    const exclusions = [candidateName, user?.firstName, user?.lastName].filter((n): n is string => !!n && n !== "Candidate");
 
     // 1. Transcribe via Deepgram
     const transcriptResult = await step.run("transcribe-recording", async () => {
@@ -256,7 +256,7 @@ export const processInterviewFeedback = inngest.createFunction(
     });
 
     // 3. Fetch transcript, emotion data, and past feedback from DB
-    const { transcript, emotionData, pastFeedback, candidateName } = await step.run("fetch-data", async () => {
+    const { transcript, emotionData, pastFeedback, candidateName, firstName, lastName } = await step.run("fetch-data", async () => {
       const [transcriptRow] = await db
         .select({ url: transcriptUrlsTable.url })
         .from(transcriptUrlsTable)
@@ -332,10 +332,10 @@ export const processInterviewFeedback = inngest.createFunction(
         .where(eq(usersTable.id, session.userId))
         .limit(1);
 
-      return { transcript, emotionData, pastFeedback, candidateName: user?.name || `${user?.firstName} ${user?.lastName}`.trim() || "Candidate" };
+      return { transcript, emotionData, pastFeedback, candidateName: user?.name || `${user?.firstName} ${user?.lastName}`.trim() || "Candidate", firstName: user?.firstName, lastName: user?.lastName };
     });
 
-    const exclusions = candidateName !== "Candidate" ? [candidateName] : [];
+    const exclusions = [candidateName, firstName, lastName].filter((n): n is string => !!n && n !== "Candidate");
 
     // 4. Generate structured feedback via LLM (adaptive: considers past feedback)
     const feedbackContent = await step.run("generate-feedback", async () => {
@@ -379,7 +379,10 @@ Output format:
 - Brief summary of how their emotional delivery came across (or note that emotion analysis was unavailable if only transcript was used)
 
 ## Overall Recommendation
-- 1-2 sentences with next steps.`,
+- 1-2 sentences with next steps.
+ 
+- IMPORTANT: Use the candidate's actual name (${candidateName}) in the feedback text.
+- IMPORTANT: Do NOT use placeholders like "[NAME]" or "[Candidate]". If you see "[NAME]" in past feedback, replace it with "${candidateName}" if referring to the candidate.`,
           },
           {
             role: "user",

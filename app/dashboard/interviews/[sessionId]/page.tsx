@@ -54,7 +54,7 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
   const sessionId = parseInt(sessionIdStr, 10);
   if (isNaN(sessionId)) notFound();
 
-  const [session, snapshots, feedback, jobMatchData, messages] = await Promise.all([
+  const [session, snapshots, feedback, jobMatchData, messagesResult] = await Promise.all([
     getSessionDetail(sessionId),
     getSessionEmotions(sessionId),
     getInterviewFeedback(sessionId),
@@ -63,6 +63,9 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
   ]);
 
   if (!session) notFound();
+
+  // Ensure messages is always an array
+  const messages = Array.isArray(messagesResult) ? messagesResult : [];
 
   // Trigger Inngest job if feedback is missing (runs in background with retries)
   if (!feedback && session.status === "completed") {

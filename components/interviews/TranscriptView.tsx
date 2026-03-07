@@ -1,5 +1,3 @@
-"use client";
-
 import { MessageSquare, User, Bot } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/src/lib/utils";

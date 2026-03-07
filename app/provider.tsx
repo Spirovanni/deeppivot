@@ -77,8 +77,7 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log('User creation/sync successful:', data);
+      await response.json();
     } catch (error) {
       console.warn('Failed to create/sync user - continuing without database sync:', {
         message: error instanceof Error ? error.message : 'Unknown error',

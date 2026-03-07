@@ -52,6 +52,7 @@ export function PredictiveInsightsWidget({ insights }: PredictiveInsightsWidgetP
       <CardContent className="space-y-3">
         {insights.map((insight, i) => {
           const config = TYPE_CONFIG[insight.type];
+          if (!config) return null; // Skip unknown insight types
           const Icon = config.icon;
           return (
             <Link key={i} href={config.href}>

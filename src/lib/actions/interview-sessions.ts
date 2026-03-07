@@ -253,13 +253,25 @@ export async function getSessionTranscript(sessionId: number) {
   const user = await getDbUser();
   const userId = user.id;
 
-  const transcript = await db.query.sessionTranscriptsTable.findFirst({
-    where: and(
-      eq(sessionTranscriptsTable.sessionId, sessionId)
-    ),
-  });
+  try {
+    const [transcript] = await db
+      .select({ messages: sessionTranscriptsTable.messages })
+      .from(sessionTranscriptsTable)
+      .where(eq(sessionTranscriptsTable.sessionId, sessionId))
+      .limit(1);
 
-  return transcript?.messages ?? [];
+    if (!transcript?.messages) return [];
+
+    // Ensure messages is an array with the correct shape
+    const messages = Array.isArray(transcript.messages) ? transcript.messages : [];
+    return messages.map((m: any) => ({
+      role: m.role || 'user',
+      text: m.text || ''
+    }));
+  } catch (error) {
+    console.error('Failed to fetch transcript:', error);
+    return [];
+  }
 }
 
 export async function getEmotionalAnalysis(sessionId: number) {

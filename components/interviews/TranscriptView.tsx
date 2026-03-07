@@ -14,7 +14,7 @@ interface TranscriptViewProps {
 }
 
 export function TranscriptView({ messages }: TranscriptViewProps) {
-    if (messages.length === 0) {
+    if (!messages || messages.length === 0) {
         return (
             <Card>
                 <CardContent className="flex flex-col items-center gap-3 py-8 text-center text-muted-foreground">

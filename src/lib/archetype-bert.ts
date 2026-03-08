@@ -37,6 +37,8 @@ export async function classifyArchetype(
   const model =
     process.env.HUGGINGFACE_ARCHETYPE_MODEL ?? DEFAULT_MODEL;
 
+  console.log(`[archetype-bert] Classifying with model: ${model}`);
+
   if (!apiKey) {
     console.warn(
       "[archetype-bert] HUGGINGFACE_API_KEY not set; skipping classification"

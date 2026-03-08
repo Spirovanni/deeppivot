@@ -94,10 +94,10 @@ async function JobListings({ searchParams }: SearchProps) {
 
     if (jobs.length === 0) {
         return (
-            <div className="bg-white/5 rounded-2xl border border-white/10 p-12 text-center">
+            <div className="bg-muted/50 rounded-2xl border border-border p-12 text-center">
                 <div className="text-4xl mb-3">🔍</div>
-                <p className="text-white font-semibold mb-1">No jobs found</p>
-                <p className="text-white/50 text-sm">Try adjusting your filters or check back later.</p>
+                <p className="text-foreground font-semibold mb-1">No jobs found</p>
+                <p className="text-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
             </div>
         );
     }
@@ -107,11 +107,11 @@ async function JobListings({ searchParams }: SearchProps) {
             {jobs.map((job) => (
                 <Link
                     key={job.id}
-                    href={`/jobs/${job.id}`}
-                    className="flex items-start gap-4 bg-white/5 hover:bg-white/8 rounded-xl border border-white/10 hover:border-white/20 p-5 transition-all group"
+                    href={`/dashboard/jobs/${job.id}`}
+                    className="flex items-start gap-4 bg-card hover:bg-accent/50 rounded-xl border border-border hover:border-primary/50 p-5 transition-all group"
                 >
                     {/* Company logo placeholder */}
-                    <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-lg shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-lg shrink-0">
                         {job.companyLogoUrl ? (
                             <img src={job.companyLogoUrl} alt={job.companyName} className="w-12 h-12 rounded-xl object-cover" />
                         ) : (
@@ -121,12 +121,12 @@ async function JobListings({ searchParams }: SearchProps) {
 
                     <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                            <h3 className="text-white font-semibold group-hover:text-indigo-300 transition-colors">
+                            <h3 className="text-foreground font-semibold group-hover:text-primary transition-colors">
                                 {job.title}
                             </h3>
                             {typeof job.matchScore === "number" && (
                                 <div className="shrink-0 text-right">
-                                    <span className="rounded bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">
+                                    <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                         {job.matchScore}% match
                                     </span>
                                     <div className="mt-1">
@@ -135,34 +135,34 @@ async function JobListings({ searchParams }: SearchProps) {
                                 </div>
                             )}
                         </div>
-                        <p className="text-white/50 text-sm mt-0.5">
+                        <p className="text-muted-foreground text-sm mt-0.5">
                             {job.companyName}
                             {job.companyIndustry ? ` · ${job.companyIndustry}` : ""}
                         </p>
                         <div className="flex flex-wrap items-center gap-2 mt-2">
-                            <span className="px-2 py-0.5 bg-white/10 text-white/60 rounded-md text-xs">
+                            <span className="px-2 py-0.5 bg-muted text-muted-foreground rounded-md text-xs">
                                 {TYPE_LABELS[job.jobType] ?? job.jobType}
                             </span>
-                            <span className="px-2 py-0.5 bg-white/10 text-white/60 rounded-md text-xs">
+                            <span className="px-2 py-0.5 bg-muted text-muted-foreground rounded-md text-xs">
                                 {LEVEL_LABELS[job.experienceLevel] ?? job.experienceLevel}
                             </span>
                             {job.remoteFlag && (
-                                <span className="px-2 py-0.5 bg-green-500/20 text-green-400 border border-green-500/30 rounded-md text-xs">
+                                <span className="px-2 py-0.5 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 rounded-md text-xs">
                                     Remote
                                 </span>
                             )}
                             {job.location && (
-                                <span className="text-white/40 text-xs">📍 {job.location}</span>
+                                <span className="text-muted-foreground/60 text-xs">📍 {job.location}</span>
                             )}
                             {formatSalary(job.salaryMin, job.salaryMax) && (
-                                <span className="text-white/40 text-xs ml-auto">
+                                <span className="text-muted-foreground/60 text-xs ml-auto">
                                     {formatSalary(job.salaryMin, job.salaryMax)}
                                 </span>
                             )}
                         </div>
                     </div>
 
-                    <div className="text-white/30 text-xs shrink-0 mt-0.5">
+                    <div className="text-muted-foreground/40 text-xs shrink-0 mt-0.5">
                         {new Date(job.createdAt).toLocaleDateString()}
                     </div>
                 </Link>
@@ -176,12 +176,12 @@ export default async function JobsPage({ searchParams }: SearchProps) {
     const initialKeyword = params.q;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#0f0f1a] to-[#1a1a2e] p-6">
-            <div className="max-w-6xl mx-auto">
+        <div className="p-6 md:p-8">
+            <div className="mx-auto max-w-6xl">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white">Job Marketplace</h1>
-                    <p className="text-white/50 mt-1">Discover opportunities from top employers</p>
+                    <h1 className="text-2xl font-bold tracking-tight md:text-3xl text-foreground">Job Marketplace</h1>
+                    <p className="text-muted-foreground mt-1">Discover opportunities from top employers</p>
                 </div>
 
                 <div className="flex gap-6">
@@ -198,7 +198,7 @@ export default async function JobsPage({ searchParams }: SearchProps) {
                             fallback={
                                 <div className="space-y-3">
                                     {Array.from({ length: 5 }).map((_, i) => (
-                                        <div key={i} className="bg-white/5 rounded-xl border border-white/10 p-5 h-24 animate-pulse" />
+                                        <div key={i} className="bg-card rounded-xl border border-border p-5 h-24 animate-pulse" />
                                     ))}
                                 </div>
                             }

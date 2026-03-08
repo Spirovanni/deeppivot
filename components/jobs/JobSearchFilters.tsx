@@ -78,45 +78,45 @@ export function JobSearchFilters({ initialKeyword }: { initialKeyword?: string }
     const hasFilters = q || location || jobType || experienceLevel || remoteOnly || salaryMin || salaryMax;
 
     return (
-        <div className="bg-white/5 rounded-2xl border border-white/10 p-5 space-y-4">
+        <div className="bg-card rounded-2xl border border-border p-5 space-y-4 shadow-sm">
             {/* Keyword */}
             <div>
-                <label className="block text-white/50 text-xs mb-1.5">Keyword</label>
+                <label className="block text-muted-foreground text-xs mb-1.5 font-medium">Keyword</label>
                 <div className="relative">
-                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input
                         value={q}
                         onChange={(e) => handleQChange(e.target.value)}
                         placeholder="Job title, skills..."
-                        className="w-full bg-white/10 border border-white/20 text-white rounded-xl pl-9 pr-4 py-2 text-sm placeholder:text-white/30 focus:outline-none focus:border-indigo-400 transition"
+                        className="w-full bg-muted/50 border border-border text-foreground rounded-xl pl-9 pr-4 py-2 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
                     />
                 </div>
             </div>
 
             {/* Location */}
             <div>
-                <label className="block text-white/50 text-xs mb-1.5">Location</label>
+                <label className="block text-muted-foreground text-xs mb-1.5 font-medium">Location</label>
                 <input
                     value={location}
                     onChange={(e) => { setLocation(e.target.value); push(); }}
                     placeholder="City, state..."
-                    className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-2 text-sm placeholder:text-white/30 focus:outline-none focus:border-indigo-400 transition"
+                    className="w-full bg-muted/50 border border-border text-foreground rounded-xl px-4 py-2 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
                 />
             </div>
 
             {/* Job Type */}
             <div>
-                <label className="block text-white/50 text-xs mb-1.5">Job Type</label>
+                <label className="block text-muted-foreground text-xs mb-1.5 font-medium">Job Type</label>
                 <div className="flex flex-wrap gap-2">
                     {JOB_TYPES.map((t) => (
                         <button
                             key={t.value}
                             onClick={() => handleImmediateChange(() => setJobType(jobType === t.value ? "" : t.value))}
-                            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${jobType === t.value
-                                    ? "bg-indigo-500 text-white"
-                                    : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white"
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${jobType === t.value
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                                 }`}
                         >
                             {t.label}
@@ -127,15 +127,15 @@ export function JobSearchFilters({ initialKeyword }: { initialKeyword?: string }
 
             {/* Experience Level */}
             <div>
-                <label className="block text-white/50 text-xs mb-1.5">Experience</label>
+                <label className="block text-muted-foreground text-xs mb-1.5 font-medium">Experience</label>
                 <div className="flex flex-wrap gap-2">
                     {EXPERIENCE_LEVELS.map((l) => (
                         <button
                             key={l.value}
                             onClick={() => handleImmediateChange(() => setExperienceLevel(experienceLevel === l.value ? "" : l.value))}
-                            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${experienceLevel === l.value
-                                    ? "bg-indigo-500 text-white"
-                                    : "bg-white/10 text-white/60 hover:bg-white/20 hover:text-white"
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${experienceLevel === l.value
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                                 }`}
                         >
                             {l.label}
@@ -145,34 +145,34 @@ export function JobSearchFilters({ initialKeyword }: { initialKeyword?: string }
             </div>
 
             {/* Remote toggle */}
-            <label className="flex items-center gap-3 cursor-pointer">
+            <label className="flex items-center gap-3 cursor-pointer select-none">
                 <div
                     onClick={() => handleImmediateChange(() => setRemoteOnly(!remoteOnly))}
-                    className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${remoteOnly ? "bg-indigo-500" : "bg-white/20"}`}
+                    className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${remoteOnly ? "bg-primary" : "bg-muted-foreground/20"}`}
                 >
                     <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${remoteOnly ? "translate-x-5" : "translate-x-0.5"}`} />
                 </div>
-                <span className="text-white/60 text-sm">Remote only</span>
+                <span className="text-muted-foreground text-sm font-medium">Remote only</span>
             </label>
 
             {/* Salary range */}
             <div>
-                <label className="block text-white/50 text-xs mb-1.5">Salary Range (USD/yr)</label>
+                <label className="block text-muted-foreground text-xs mb-1.5 font-medium">Salary Range (USD/yr)</label>
                 <div className="flex gap-2 items-center">
                     <input
                         type="number"
                         value={salaryMin}
                         onChange={(e) => { setSalaryMin(e.target.value); push(); }}
                         placeholder="Min"
-                        className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-3 py-2 text-sm placeholder:text-white/30 focus:outline-none focus:border-indigo-400 transition"
+                        className="w-full bg-muted/50 border border-border text-foreground rounded-xl px-3 py-2 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
                     />
-                    <span className="text-white/30 text-xs">–</span>
+                    <span className="text-muted-foreground/50 text-xs">–</span>
                     <input
                         type="number"
                         value={salaryMax}
                         onChange={(e) => { setSalaryMax(e.target.value); push(); }}
                         placeholder="Max"
-                        className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-3 py-2 text-sm placeholder:text-white/30 focus:outline-none focus:border-indigo-400 transition"
+                        className="w-full bg-muted/50 border border-border text-foreground rounded-xl px-3 py-2 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
                     />
                 </div>
             </div>
@@ -180,7 +180,7 @@ export function JobSearchFilters({ initialKeyword }: { initialKeyword?: string }
             {hasFilters && (
                 <button
                     onClick={clearAll}
-                    className="w-full py-2 text-white/50 hover:text-white/80 text-xs transition-colors"
+                    className="w-full py-2 text-muted-foreground hover:text-foreground text-xs font-medium transition-colors"
                 >
                     Clear all filters
                 </button>

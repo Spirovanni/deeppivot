@@ -20,12 +20,14 @@ const SEGMENT_LABELS: Record<string, string> = {
   mentors: "Mentors",
   education: "Education Explorer",
   "job-tracker": "Job Tracker",
+  jobs: "Job Marketplace",
   feedback: "Feedback",
   session: "Session",
 };
 
 function getLabel(segment: string, index: number, segments: string[]): string {
-  if (segment in SEGMENT_LABELS) return SEGMENT_LABELS[segment];
+  const lower = segment.toLowerCase();
+  if (lower in SEGMENT_LABELS) return SEGMENT_LABELS[lower];
   if (segment === "[sessionId]" || /^\d+$/.test(segment)) {
     const prev = segments[index - 1];
     return prev === "interviews" ? "Session" : segment;

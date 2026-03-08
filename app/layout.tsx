@@ -64,6 +64,7 @@ export default async function RootLayout({
             />
           </head>
           <body
+            suppressHydrationWarning
             className={cn(
               GeistSans.variable,
               GeistMono.variable,

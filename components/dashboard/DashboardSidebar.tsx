@@ -43,6 +43,7 @@ const navItems = [
   { href: "/dashboard/mentors", label: "Mentors", icon: Users },
   { href: "/dashboard/education", label: "Education Explorer", icon: GraduationCap },
   { href: "/dashboard/job-tracker", label: "Job Tracker", icon: Briefcase },
+  { href: "/jobs", label: "Job Marketplace", icon: Briefcase },
   { href: "/dashboard/achievements", label: "Achievements", icon: Trophy },
   { href: "/dashboard/leaderboard", label: "Leaderboard", icon: Medal },
   { href: "/dashboard/billing", label: "Billing", icon: CreditCard },

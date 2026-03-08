@@ -90,7 +90,7 @@ async function JobListings({ searchParams }: SearchProps) {
         )
         .where(and(...conditions))
         .orderBy(jobsTable.createdAt)
-        .limit(30);
+        .limit(100);
 
     if (jobs.length === 0) {
         return (

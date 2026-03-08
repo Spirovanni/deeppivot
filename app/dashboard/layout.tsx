@@ -14,6 +14,7 @@ import { SessionTimeoutWarning } from "@/components/SessionTimeoutWarning";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
 import { SendToHomeRedirect } from "./_components/SendToHomeRedirect";
 import { PointsAnimation } from "@/components/gamification/PointsAnimation";
+import { BadgeUnlockedModal } from "@/components/gamification/BadgeUnlockedModal";
 import { AnnouncementBanner } from "@/components/dashboard/AnnouncementBanner";
 import NotificationToastSync from "@/components/dashboard/NotificationToastSync";
 
@@ -54,6 +55,7 @@ export default async function DashboardLayout({
       <SessionTimeoutWarning />
       <FeedbackWidget />
       <PointsAnimation />
+      <BadgeUnlockedModal />
     </div>
   );
 }

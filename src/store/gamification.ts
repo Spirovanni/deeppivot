@@ -6,13 +6,23 @@ export interface PointsAward {
   label: string;
 }
 
+export interface BadgeUnlock {
+  badgeId: string;
+  label: string;
+  description: string;
+  iconPath: string;
+}
+
 interface GamificationState {
   awards: PointsAward[];
+  pendingBadgeUnlock: BadgeUnlock | null;
 }
 
 interface GamificationActions {
   showPointsAnimation: (points: number, label?: string) => void;
   dismissAward: (id: string) => void;
+  showBadgeUnlock: (unlock: BadgeUnlock) => void;
+  dismissBadgeUnlock: () => void;
 }
 
 type GamificationStore = GamificationState & GamificationActions;
@@ -21,6 +31,7 @@ let _awardCounter = 0;
 
 export const useGamificationStore = create<GamificationStore>((set) => ({
   awards: [],
+  pendingBadgeUnlock: null,
 
   showPointsAnimation: (points, label) =>
     set((state) => ({
@@ -38,6 +49,12 @@ export const useGamificationStore = create<GamificationStore>((set) => ({
     set((state) => ({
       awards: state.awards.filter((a) => a.id !== id),
     })),
+
+  showBadgeUnlock: (unlock) =>
+    set({ pendingBadgeUnlock: unlock }),
+
+  dismissBadgeUnlock: () =>
+    set({ pendingBadgeUnlock: null }),
 }));
 
 /** Convenience hook for triggering the animation from any component */

@@ -807,7 +807,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] UI: Achievement Badge display in Gamification Hub (deeppivot-282) — /dashboard/achievements page with stats row (points, level, streak, badges), level progress bar, AchievementsBadgeGrid (unlocked/locked with category colors, framer-motion animations); Achievements nav link in DashboardSidebar; GamificationHub "All Badges" links to /dashboard/achievements
 - [x] UI: Share achievement to LinkedIn (deeppivot-285) — ShareToLinkedInButton on /dashboard/achievements, opens LinkedIn share dialog with achievements URL
 - [x] Feedback: Show points earned in interview feedback summary (deeppivot-286) — getPointsEarnedForInterviewSession(), +N pts badge on feedback page
-- [ ] UI: "Badge Unlocked" celebration modal (deeppivot-283)
+- [x] UI: "Badge Unlocked" celebration modal (deeppivot-323) — BadgeUnlockedModal component with Framer Motion spring animation, confetti celebration (canvas-confetti gold bursts), badge icon/name/description display, Escape/click-outside dismiss, localStorage dedup; NotificationToastSync detects badge-unlock notifications and triggers modal instead of toast; mounted in dashboard layout
 - [x] DB: `user_gamification` table (points, currentStreak, highestStreak) — migration 0025
 - [x] Hook: Add points on job application submitted (10 pts via `addPointsForJobApplication` in POST /api/jobs/[jobId]/apply)
 - [x] Design: 10 badge icons SVG (deeppivot-279) — public/badges/*.svg + gamification-badges.ts
@@ -828,7 +828,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] User Setting: Toggle to disable gamification features (deeppivot-291) — Added profile setting backed by `system_settings` (`gamification:user:<id>:enabled`), enforced in points award pipeline (`addPoints` short-circuit), exposed via gamification status API/action, and reflected in Profile Settings + Achievements/Gamification hub behavior.
 - [x] Admin: Reporting on gamification engagement metrics (deeppivot-290) — Added admin analytics module (`getAdminGamificationMetrics`) and `/admin/gamification` dashboard with enabled/disabled adoption, 7-day activity/points, streak participation, top event types, and top users by points.
 - [x] Notifications: Push notification when streak is about to expire (deeppivot-287) — Added daily Inngest cron (`gamification-streak-expiry-notifications`) that detects at-risk weekly streaks, skips users with gamification disabled, dedupes reminders to once per week, and creates in-app notifications linking to interview practice.
-- [ ] UI: Gamification Hub, streak flame, confetti, badges
+- [x] UI: Gamification Hub, streak flame, confetti, badges — all sub-components shipped: GamificationHub (deeppivot-274), StreakBadge flame (deeppivot-275), StreakConfetti (deeppivot-277), AchievementsBadgeGrid (deeppivot-282), BadgeUnlockedModal (deeppivot-323)
 
 ### 5. Employer / Candidate Matching Engine & Advanced Data Exports
 - [x] Admin: Advanced Data Export (CSV) for users table — 28 columns, gamification + WDB fields, ?role= & ?includeDeleted= filters
@@ -854,7 +854,7 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 - [x] System: "Invite to Apply" button for Employers (deeppivot-307) — Completed employer invite flow end-to-end: Top Candidate Matches includes invite action, backend persists invitation + sends notification email, and match lifecycle now transitions to `job_matches.status = invited`.
 - [x] Email: Weekly digest of top job matches for candidate (deeppivot-309) — Added weekly Inngest digest cron for opted-in candidates with top non-applied published matches and new email template delivery via Resend.
 - [x] Email: Weekly digest of top candidates for active employer jobs (deeppivot-310) — Added weekly employer digest cron and email template summarizing top candidate matches across active published jobs with archetype/interview signals.
-- [ ] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions.
+- [x] Semantic matching algorithm comparing candidate embeddings (resume/archetype) with job descriptions — implemented via resume embeddings (deeppivot-297), job embeddings (deeppivot-298), nightly match cron (deeppivot-299), and weighted scoring model (deeppivot-296)
 - [x] LLM: Automated resume screening score for matched applicants (deeppivot-317) — generateResumeScreeningScore; GET /api/employer/jobs/[jobId]/matches/[userId]/screening-score; AI Resume Fit in Top Candidate Matches detail panel.
 - [x] QA: Matching algorithm threshold validation and Exports testing (deeppivot-322) — matching-scoring.ts with unit tests (toTokens, overlap, salary, parseYears); e2e/exports.spec.ts for auth on admin/employer export endpoints.
 - [x] Employer dashboard "Top Candidate Matches" and user dashboard "Recommended Jobs".
@@ -892,3 +892,4 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — deeppivot-317 closed. LLM-based resume screening score for matched applicants: generateResumeScreeningScore compares resume vs job; GET /api/employer/jobs/[jobId]/matches/[userId]/screening-score; AI Resume Fit shown in Top Candidate Matches detail panel when employer selects a candidate.*
 *Last updated: 2026-03-04 — deeppivot-322 closed. QA: extracted matching-scoring module with unit tests (threshold validation for overlap, salary, years); e2e/exports.spec.ts for export endpoints auth (401 without auth, 400/403 for download).*
 - [x] Accessibility: Linked label to select for Company Size in employer onboarding (app/employer/onboarding/page.tsx)
+*Last updated: 2026-03-07 — deeppivot-323 closed. Badge Unlocked celebration modal: BadgeUnlockedModal component with Framer Motion + canvas-confetti gold bursts, NotificationToastSync badge detection, localStorage dedup. Closed 5 stale resolved beads issues (deeppivot-173/176/177/178/179). All 3 remaining ROADMAP unchecked items now complete. Phase 16 fully shipped.*

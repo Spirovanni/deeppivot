@@ -41,18 +41,11 @@ export default async function RootLayout({
   const isDev = process.env.NODE_ENV === "development";
 
   return (
-    <Provider
-      isProduction={isProduction}
-      posthogKey={posthogKey}
-      posthogHost={posthogHost}
-      isDev={isDev}
-    >
-      <NextIntlClientProvider messages={messages}>
-        <html lang={locale} suppressHydrationWarning>
-          <head>
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
                 try {
                   var theme = localStorage.getItem('deeppivot-theme');
                   if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -60,17 +53,24 @@ export default async function RootLayout({
                   }
                 } catch (e) {}
               `,
-              }}
-            />
-          </head>
-          <body
-            suppressHydrationWarning
-            className={cn(
-              GeistSans.variable,
-              GeistMono.variable,
-              "flex flex-col min-h-screen"
-            )}
-          >
+          }}
+        />
+      </head>
+      <body
+        suppressHydrationWarning
+        className={cn(
+          GeistSans.variable,
+          GeistMono.variable,
+          "flex flex-col min-h-screen"
+        )}
+      >
+        <Provider
+          isProduction={isProduction}
+          posthogKey={posthogKey}
+          posthogHost={posthogHost}
+          isDev={isDev}
+        >
+          <NextIntlClientProvider messages={messages}>
             {/* Skip-to-content link for keyboard and screen-reader users (WCAG 2.4.1) */}
             <a
               href="#main-content"
@@ -81,9 +81,9 @@ export default async function RootLayout({
             <div id="main-content" className="flex flex-1 flex-col">{children}</div>
             <Footer />
             <CookieConsent />
-          </body>
-        </html>
-      </NextIntlClientProvider>
-    </Provider>
-  ) as any;
+          </NextIntlClientProvider>
+        </Provider>
+      </body>
+    </html>
+  );
 }

@@ -1,8 +1,15 @@
-# Files/dirs to exclude from Vercel deployment uploads
-# (reduces bundle upload size and avoids leaking dev files)
+# Build and deps
+.next
+node_modules
+node_modules_old
+node_modules_old_2
+.git
 
-# Dev tooling
+# Tooling and tests
 .taskmaster
+.storybook
+playwright-report
+test-results
 scripts
 *.local
 *.log

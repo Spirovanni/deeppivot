@@ -893,3 +893,9 @@ CONTRIBUTING.md                        New: branch protection, CI requirements, 
 *Last updated: 2026-03-04 — deeppivot-322 closed. QA: extracted matching-scoring module with unit tests (threshold validation for overlap, salary, years); e2e/exports.spec.ts for export endpoints auth (401 without auth, 400/403 for download).*
 - [x] Accessibility: Linked label to select for Company Size in employer onboarding (app/employer/onboarding/page.tsx)
 *Last updated: 2026-03-07 — deeppivot-323 closed. Badge Unlocked celebration modal: BadgeUnlockedModal component with Framer Motion + canvas-confetti gold bursts, NotificationToastSync badge detection, localStorage dedup. Closed 5 stale resolved beads issues (deeppivot-173/176/177/178/179). All 3 remaining ROADMAP unchecked items now complete. Phase 16 fully shipped.*
+
+## Phase 17 — Job Marketplace Enhancements
+
+**Goal:** Polish the two-sided job marketplace with candidate-facing tracking, employer analytics, and UX improvements.
+
+- [x] Frontend: Candidate "My Applications" dashboard page (deeppivot-324) — `/dashboard/applications` with stats row (total/active/hired), application cards showing status badges (Applied/In Review/Not Selected/Hired), company logos, job type/location, applied date, resume link, position-closed indicator; loading skeleton; ClipboardList nav link in DashboardSidebar

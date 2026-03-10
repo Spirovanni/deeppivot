@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 
 export default function Page() {
   const router = useRouter();
-  const { isLoaded, signUp, setActive } = useSignUp();
+  const { signUp, fetchStatus } = useSignUp();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [code, setCode] = React.useState("");
@@ -17,14 +17,21 @@ export default function Page() {
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
+  const isLoaded = !!signUp && fetchStatus === "idle";
+
   const signUpWithOAuth = (strategy: "oauth_google") => {
     if (!signUp) return;
     setError("");
     signUp
-      .authenticateWithRedirect({
+      .sso({
         strategy,
         redirectUrl: "/sign-in/sso-callback",
-        redirectUrlComplete: "/onboarding",
+        redirectCallbackUrl: "/onboarding",
+      })
+      .then(({ error: ssoError }) => {
+        if (ssoError) {
+          setError(ssoError.message || "Sign-up failed");
+        }
       })
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : "Sign-up failed");
@@ -37,8 +44,19 @@ export default function Page() {
     setError("");
     setLoading(true);
     try {
-      await signUp.create({ emailAddress: email, password });
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      const { error: pwError } = await signUp.password({
+        emailAddress: email,
+        password,
+      });
+      if (pwError) {
+        setError(pwError.message || "Sign-up failed");
+        return;
+      }
+      const { error: verifyError } = await signUp.verifications.sendEmailCode();
+      if (verifyError) {
+        setError(verifyError.message || "Failed to send verification code");
+        return;
+      }
       setVerifying(true);
     } catch (err: unknown) {
       const msg =
@@ -60,9 +78,13 @@ export default function Page() {
     setError("");
     setLoading(true);
     try {
-      const attempt = await signUp.attemptEmailAddressVerification({ code });
-      if (attempt.status === "complete") {
-        await setActive({ session: attempt.createdSessionId });
+      const { error: verifyError } = await signUp.verifications.verifyEmailCode({ code });
+      if (verifyError) {
+        setError(verifyError.message || "Verification failed");
+        return;
+      }
+      if (signUp.status === "complete") {
+        await signUp.finalize();
         router.push("/onboarding");
       } else {
         setError("Verification incomplete. Please try again.");

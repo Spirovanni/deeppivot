@@ -11,12 +11,14 @@ const CLERK_LOAD_TIMEOUT_MS = 15000;
 
 export default function Page() {
   const router = useRouter();
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { signIn, fetchStatus } = useSignIn();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [clerkLoadFailed, setClerkLoadFailed] = React.useState(false);
+
+  const isLoaded = !!signIn && fetchStatus === "idle";
 
   React.useEffect(() => {
     if (isLoaded) return;
@@ -28,10 +30,15 @@ export default function Page() {
     if (!signIn) return;
     setError("");
     signIn
-      .authenticateWithRedirect({
+      .sso({
         strategy,
         redirectUrl: "/sign-in/sso-callback",
-        redirectUrlComplete: "/dashboard",
+        redirectCallbackUrl: "/dashboard",
+      })
+      .then(({ error: ssoError }) => {
+        if (ssoError) {
+          setError(ssoError.message || "Sign-in failed");
+        }
       })
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : "Sign-in failed");
@@ -44,11 +51,18 @@ export default function Page() {
     setError("");
     setLoading(true);
     try {
-      const attempt = await signIn.create({ identifier: email, password });
-      if (attempt.status === "complete") {
-        await setActive({ session: attempt.createdSessionId });
+      const { error: pwError } = await signIn.password({
+        identifier: email,
+        password,
+      });
+      if (pwError) {
+        setError(pwError.message || "Sign-in failed");
+        return;
+      }
+      if (signIn.status === "complete") {
+        await signIn.finalize();
         router.push("/dashboard");
-      } else if (attempt.status === "needs_second_factor") {
+      } else if (signIn.status === "needs_second_factor") {
         setError("Please check your email for a verification code.");
       } else {
         setError("Sign-in incomplete. Please try again.");

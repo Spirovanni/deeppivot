@@ -14,6 +14,7 @@ import Link from "next/link";
 import { ArrowLeft, Briefcase, Building2, ExternalLink, Globe, MapPin } from "lucide-react";
 import { WhyYouMatchTooltip } from "@/components/jobs/WhyYouMatchTooltip";
 import { JobDetailApply } from "@/components/jobs/JobDetailApply";
+import { SaveToLibraryButton } from "@/components/jobs/SaveToLibraryButton";
 
 const TYPE_LABELS: Record<string, string> = {
   full_time: "Full-time",
@@ -215,7 +216,7 @@ export default async function JobDetailPage({
               </div>
 
               {/* Apply section */}
-              <div className="mt-5 pt-5 border-t border-border">
+              <div className="mt-5 pt-5 border-t border-border space-y-3">
                 {!clerkId ? (
                   <Link
                     href="/sign-in"
@@ -257,6 +258,16 @@ export default async function JobDetailPage({
                     </Link>{" "}
                     to apply for jobs.
                   </p>
+                )}
+
+                {/* Save to Practice Library */}
+                {clerkId && job.description && (
+                  <SaveToLibraryButton
+                    jobId={job.id}
+                    jobTitle={job.title}
+                    companyName={job.companyName}
+                    jobDescription={job.description}
+                  />
                 )}
               </div>
             </div>

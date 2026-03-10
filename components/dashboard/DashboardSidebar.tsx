@@ -19,6 +19,7 @@ import {
   Trophy,
   Medal,
   ClipboardList,
+  Store,
 } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/utils";
@@ -32,24 +33,80 @@ import {
 } from "@/components/ui/sheet";
 import { useState, useEffect } from "react";
 
-const navItems = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/practice/job-descriptions", label: "Job Descriptions", icon: FileText },
-  { href: "/dashboard/practice/resumes", label: "Resumes", icon: FileStack },
-  { href: "/dashboard/cover-letters", label: "Cover Letters", icon: FileText },
-  { href: "/dashboard/interviews", label: "Interviews", icon: Mic2 },
-  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/dashboard/archetype", label: "Career Archetype", icon: UserCircle },
-  { href: "/dashboard/career-plan", label: "Career Plan", icon: MapPin },
-  { href: "/dashboard/mentors", label: "Mentors", icon: Users },
-  { href: "/dashboard/education", label: "Education Explorer", icon: GraduationCap },
-  { href: "/dashboard/job-tracker", label: "Job Tracker", icon: Briefcase },
-  { href: "/dashboard/jobs", label: "Job Marketplace", icon: LayoutDashboard },
-  { href: "/dashboard/applications", label: "My Applications", icon: ClipboardList },
-  { href: "/dashboard/achievements", label: "Achievements", icon: Trophy },
-  { href: "/dashboard/leaderboard", label: "Leaderboard", icon: Medal },
-  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
-  { href: "/dashboard/settings/profile", label: "Settings", icon: Settings },
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+interface NavSection {
+  title: string | null; // null = no header (for Overview)
+  items: NavItem[];
+}
+
+const navSections: NavSection[] = [
+  {
+    title: null,
+    items: [
+      { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+    ],
+  },
+  {
+    title: "Assessments",
+    items: [
+      { href: "/dashboard/archetype", label: "Career Archetype", icon: UserCircle },
+      { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+    ],
+  },
+  {
+    title: "Career Choices",
+    items: [
+      { href: "/dashboard/career-plan", label: "Career Plan", icon: MapPin },
+      { href: "/dashboard/education", label: "Education Explorer", icon: GraduationCap },
+      { href: "/dashboard/mentors", label: "Mentors", icon: Users },
+    ],
+  },
+  {
+    title: "Training",
+    items: [
+      { href: "/dashboard/interviews", label: "Interviews", icon: Mic2 },
+      { href: "/dashboard/practice/job-descriptions", label: "Job Descriptions", icon: FileText },
+    ],
+  },
+  {
+    title: "Resumes",
+    items: [
+      { href: "/dashboard/practice/resumes", label: "My Resumes", icon: FileStack },
+    ],
+  },
+  {
+    title: "Cover Letters",
+    items: [
+      { href: "/dashboard/cover-letters", label: "My Cover Letters", icon: FileText },
+    ],
+  },
+  {
+    title: "Job Search",
+    items: [
+      { href: "/dashboard/jobs", label: "Job Marketplace", icon: Store },
+      { href: "/dashboard/job-tracker", label: "Job Tracker", icon: Briefcase },
+      { href: "/dashboard/applications", label: "My Applications", icon: ClipboardList },
+    ],
+  },
+  {
+    title: "Community",
+    items: [
+      { href: "/dashboard/achievements", label: "Achievements", icon: Trophy },
+      { href: "/dashboard/leaderboard", label: "Leaderboard", icon: Medal },
+    ],
+  },
+  {
+    title: null,
+    items: [
+      { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
+      { href: "/dashboard/settings/profile", label: "Settings", icon: Settings },
+    ],
+  },
 ];
 
 function UserButtonPlaceholder() {
@@ -63,27 +120,36 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex h-full flex-col">
-      <nav className="flex flex-1 flex-col gap-1 p-4">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-accent text-accent-foreground"
-                  : "text-foreground hover:bg-accent/50 hover:text-accent-foreground"
-              )}
-            >
-              <Icon className="size-5 shrink-0" />
-              {item.label}
-            </Link>
-          );
-        })}
+      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-4">
+        {navSections.map((section, si) => (
+          <div key={si} className={cn(si > 0 && "mt-4")}>
+            {section.title && (
+              <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                {section.title}
+              </p>
+            )}
+            {section.items.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onNavigate}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-accent text-accent-foreground"
+                      : "text-foreground hover:bg-accent/50 hover:text-accent-foreground"
+                  )}
+                >
+                  <Icon className="size-5 shrink-0" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
       <div className="border-t border-border p-4">
         <div className="flex items-center gap-3">

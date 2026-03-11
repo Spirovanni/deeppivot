@@ -21,8 +21,8 @@ import type { ResumeExtraction } from "@/src/lib/llm/prompts/resumes";
 import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
 
 const generateRequestSchema = z.object({
-  resumeId: z.number().int().positive(),
-  jobDescriptionId: z.number().int().positive(),
+  resumeId: z.coerce.number().int().positive(),
+  jobDescriptionId: z.coerce.number().int().positive(),
 });
 
 export async function POST(request: NextRequest) {
@@ -42,7 +42,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const body = await request.json().catch(() => ({}));
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid JSON body" },
+        { status: 400 }
+      );
+    }
     const { resumeId, jobDescriptionId } = generateRequestSchema.parse(body);
 
     // Fetch all data in parallel

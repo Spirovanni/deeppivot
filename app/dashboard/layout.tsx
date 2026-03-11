@@ -31,8 +31,16 @@ export default async function DashboardLayout({
     return <DashboardConnectionError />;
   }
 
-  const pendingAnnouncement = await getPendingSendToHomeAnnouncement(dbUserId);
-  const latestAnnouncement = await getLatestAnnouncement(dbUserId);
+  let pendingAnnouncement: Awaited<ReturnType<typeof getPendingSendToHomeAnnouncement>> = null;
+  let latestAnnouncement: Awaited<ReturnType<typeof getLatestAnnouncement>> = null;
+  try {
+    [pendingAnnouncement, latestAnnouncement] = await Promise.all([
+      getPendingSendToHomeAnnouncement(dbUserId),
+      getLatestAnnouncement(dbUserId),
+    ]);
+  } catch {
+    // Non-fatal: announcements are optional — layout still renders without them
+  }
 
   // Only show banner if it's not a forced redirect announcement (deeppivot-258)
   const showBanner = latestAnnouncement && !latestAnnouncement.sendToHome;

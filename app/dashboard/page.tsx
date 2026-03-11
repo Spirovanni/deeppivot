@@ -11,12 +11,14 @@ import {
   Briefcase,
   ArrowRight,
 } from "lucide-react";
+import { Suspense } from "react";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { WidgetErrorBoundary } from "./_components/WidgetErrorBoundary";
 
 const features = [
   {
@@ -138,7 +140,11 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        {widgets}
+        <WidgetErrorBoundary>
+          <Suspense fallback={null}>
+            {widgets}
+          </Suspense>
+        </WidgetErrorBoundary>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => {

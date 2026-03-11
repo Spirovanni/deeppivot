@@ -34,23 +34,33 @@ export const generatedMilestoneSchema = z.object({
       })
     )
     .max(3)
+    .optional()
+    .default([])
     .describe("1-3 relevant learning resources for this milestone."),
 });
 
 export const careerPlanGenerationSchema = z.object({
   planSummary: z
     .string()
+    .optional()
+    .default("")
     .describe(
       "A 2-3 sentence summary of the overall career plan strategy."
     ),
+  plan_summary: z.string().optional(),
+  summary: z.string().optional(),
   milestones: z
     .array(generatedMilestoneSchema)
-    .min(5)
-    .max(8)
+    .min(1)
+    .max(12)
     .describe(
       "5-8 ordered career milestones forming a progressive path from current state to target role."
     ),
-});
+}).transform((data) => ({
+  // Normalize: LLM might use different key names for summary
+  planSummary: data.planSummary || data.plan_summary || data.summary || "",
+  milestones: data.milestones,
+}));
 
 export type GeneratedCareerPlan = z.infer<typeof careerPlanGenerationSchema>;
 export type GeneratedMilestone = z.infer<typeof generatedMilestoneSchema>;
@@ -81,8 +91,25 @@ MILESTONE GENERATION PRINCIPLES:
 8. Resource Relevance: When suggesting resources, prefer programs from the provided education catalog when they match. Include real, well-known resource URLs.
 
 OUTPUT FORMAT:
-Return valid JSON matching the required schema. Generate 5-8 milestones ordered from first to last.
+Return ONLY valid JSON (no markdown, no explanation) with this exact structure:
+{
+  "planSummary": "2-3 sentence strategy overview",
+  "milestones": [
+    {
+      "title": "Milestone title",
+      "description": "2-3 sentence description",
+      "targetWeeksFromNow": 4,
+      "suggestedResources": [
+        { "title": "Resource name", "url": "https://...", "resourceType": "course" }
+      ]
+    }
+  ]
+}
+
+Generate 5-8 milestones ordered from first to last.
 Each milestone needs a targetWeeksFromNow (integer, 1-52) relative to today.
+Each milestone MUST include a "suggestedResources" array (can be empty []).
+The top-level "planSummary" field is REQUIRED.
 
 DO NOT:
 - Fabricate skills or experience the candidate does not have

@@ -17,30 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getArchetype } from "@/src/lib/actions/archetype";
-import {
-  getDashboardSummary,
-  type DashboardSummary,
-} from "@/src/lib/actions/dashboard";
-import { getPredictiveInsights } from "@/src/lib/actions/predictive-insights";
-import {
-  CareerArchetypeCard,
-  CareerArchetypeEmptyCard,
-} from "@/components/dashboard/CareerArchetypeCard";
-import { CareerPlanProgressWidget } from "@/components/dashboard/CareerPlanProgressWidget";
-import { InterviewSummaryWidget } from "@/components/dashboard/InterviewSummaryWidget";
-import { OnboardingBanner } from "@/components/dashboard/OnboardingBanner";
-import { RecentInterviewsWidget } from "@/components/dashboard/RecentInterviewsWidget";
-import { PredictiveInsightsWidget } from "@/components/dashboard/PredictiveInsightsWidget";
-import type { TraitScore } from "@/src/lib/archetypes";
-import { db } from "@/src/db";
-import { usersTable } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
-import { getUserDashboardRoute, type UserRole } from "@/src/lib/rbac";
-import { getGamificationStatus } from "@/src/lib/actions/gamification";
-import { GamificationHub } from "@/components/dashboard/GamificationHub";
-
-// ─── Static feature cards ────────────────────────────────────────────────────
 
 const features = [
   {
@@ -88,59 +64,52 @@ const features = [
   },
 ];
 
-const EMPTY_SUMMARY: DashboardSummary = {
-  careerPlan: { total: 0, completed: 0, inProgress: 0 },
-  interviews: { total: 0, completed: 0, recent: [], hoursPracticed: 0 },
-};
+// ─── Role-based redirect (dynamic import so DB modules can't crash the page) ─
 
-// ─── Isolated data loaders (each catches its own errors) ─────────────────────
-
-async function loadUserRole(clerkId: string): Promise<UserRole> {
+async function handleRoleRedirect(clerkId: string) {
   try {
+    const { db } = await import("@/src/db");
+    const { usersTable } = await import("@/src/db/schema");
+    const { eq } = await import("drizzle-orm");
+    const { getUserDashboardRoute } = await import("@/src/lib/rbac");
+    type UserRole = "user" | "admin" | "system_admin" | "employer" | "mentor";
+
     const [row] = await db
       .select({ role: usersTable.role })
       .from(usersTable)
       .where(eq(usersTable.clerkId, clerkId))
       .limit(1);
-    return (row?.role as UserRole) ?? "user";
-  } catch (err) {
-    console.error("[Dashboard] loadUserRole failed:", err);
-    return "user";
+
+    const userRole = (row?.role as UserRole) ?? "user";
+    const isSuperUser = userRole === "admin" || userRole === "system_admin";
+    if (!isSuperUser && userRole !== "user") {
+      redirect(getUserDashboardRoute(userRole));
+    }
+  } catch (err: unknown) {
+    // Let redirects propagate (Next.js throws a special error for redirect)
+    if (
+      err &&
+      typeof err === "object" &&
+      "digest" in err &&
+      typeof (err as Record<string, unknown>).digest === "string" &&
+      ((err as Record<string, unknown>).digest as string).startsWith("NEXT_REDIRECT")
+    ) {
+      throw err;
+    }
+    console.error("[Dashboard] handleRoleRedirect failed:", err);
   }
 }
 
-async function loadArchetype() {
-  try {
-    return await getArchetype();
-  } catch (err) {
-    console.error("[Dashboard] loadArchetype failed:", err);
-    return null;
-  }
-}
+// ─── Dynamically load all dashboard widgets ──────────────────────────────────
 
-async function loadSummary(): Promise<DashboardSummary> {
+async function loadWidgets(): Promise<React.ReactNode> {
   try {
-    return await getDashboardSummary();
+    const { DashboardWidgets } = await import(
+      "./_components/DashboardWidgets"
+    );
+    return <DashboardWidgets />;
   } catch (err) {
-    console.error("[Dashboard] loadSummary failed:", err);
-    return EMPTY_SUMMARY;
-  }
-}
-
-async function loadInsights() {
-  try {
-    return await getPredictiveInsights();
-  } catch (err) {
-    console.error("[Dashboard] loadInsights failed:", err);
-    return null;
-  }
-}
-
-async function loadGamification() {
-  try {
-    return await getGamificationStatus();
-  } catch (err) {
-    console.error("[Dashboard] loadGamification failed:", err);
+    console.error("[Dashboard] Widget module failed to load:", err);
     return null;
   }
 }
@@ -148,25 +117,14 @@ async function loadGamification() {
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default async function DashboardPage() {
-  // Auth — redirect must propagate naturally
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  // Role-based redirect — outside any try/catch so redirect() propagates
-  const userRole = await loadUserRole(user.id);
-  const isSuperUser = userRole === "admin" || userRole === "system_admin";
-  if (!isSuperUser && userRole !== "user") {
-    redirect(getUserDashboardRoute(userRole));
-  }
+  // Role-based redirect (all DB imports are dynamic inside)
+  await handleRoleRedirect(user.id);
 
-  // Load all dashboard data in parallel — each loader is individually safe
-  const [archetype, summary, predictiveInsights, gamificationStatus] =
-    await Promise.all([
-      loadArchetype(),
-      loadSummary(),
-      loadInsights(),
-      loadGamification(),
-    ]);
+  // Load widgets (dynamic import — if module crashes, we still render)
+  const widgets = await loadWidgets();
 
   return (
     <div className="p-6 md:p-8">
@@ -180,58 +138,8 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        {/* First-time user onboarding */}
-        <OnboardingBanner
-          hasCompletedInterviews={summary.interviews.completed > 0}
-          hasArchetype={!!archetype}
-          hasCareerPlan={summary.careerPlan.total > 0}
-        />
+        {widgets}
 
-        {/* Progress overview */}
-        <div className="mb-8 grid gap-4 lg:grid-cols-3">
-          <CareerPlanProgressWidget
-            total={summary.careerPlan.total}
-            completed={summary.careerPlan.completed}
-            inProgress={summary.careerPlan.inProgress}
-          />
-          <InterviewSummaryWidget
-            total={summary.interviews.total}
-            completed={summary.interviews.completed}
-            hoursPracticed={summary.interviews.hoursPracticed}
-          />
-          <GamificationHub status={gamificationStatus} />
-        </div>
-
-        {/* Recent interviews */}
-        {summary.interviews.recent.length > 0 && (
-          <div className="mb-8">
-            <RecentInterviewsWidget sessions={summary.interviews.recent} />
-          </div>
-        )}
-
-        {/* Predictive insights */}
-        {predictiveInsights && predictiveInsights.length > 0 && (
-          <div className="mb-8">
-            <PredictiveInsightsWidget insights={predictiveInsights} />
-          </div>
-        )}
-
-        {/* Career Archetype */}
-        <div className="mb-8">
-          {archetype ? (
-            <CareerArchetypeCard
-              archetypeName={archetype.archetypeName}
-              traits={(archetype.traits ?? []) as TraitScore[]}
-              strengths={archetype.strengths ?? []}
-              growthAreas={archetype.growthAreas ?? []}
-              assessedAt={archetype.assessedAt}
-            />
-          ) : (
-            <CareerArchetypeEmptyCard />
-          )}
-        </div>
-
-        {/* Feature navigation */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => {
             const Icon = feature.icon;

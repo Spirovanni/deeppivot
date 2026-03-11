@@ -26,6 +26,11 @@ export default function DashboardError({
             We couldn&apos;t load your dashboard. This is often temporary.
             Try again or return to the homepage.
           </p>
+          <pre className="mt-3 max-h-40 overflow-auto rounded bg-muted p-2 text-left text-xs text-destructive">
+            {error.message}
+            {"\n"}digest: {(error as unknown as Record<string, unknown>).digest as string ?? "none"}
+            {"\n"}name: {error.name}
+          </pre>
         </CardHeader>
         <CardContent className="flex flex-col gap-2 sm:flex-row">
           <Button variant="outline" className="flex-1" asChild>

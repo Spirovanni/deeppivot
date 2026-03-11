@@ -29,12 +29,17 @@ const generateRequestSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  let step = "init";
   try {
+    // Step 1: Auth
+    step = "auth";
     const { userId: clerkId } = await auth();
     if (!clerkId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Step 2: User lookup
+    step = "user_lookup";
     const [user] = await db
       .select({ id: usersTable.id, clerkId: usersTable.clerkId })
       .from(usersTable)
@@ -45,6 +50,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Step 3: Parse body
+    step = "parse_body";
     let body: unknown;
     try {
       body = await request.json();
@@ -54,12 +61,21 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const { resumeId, jobDescriptionId } = generateRequestSchema.parse(body);
 
-    // Fetch all data in parallel
+    step = "validate_body";
+    const parsed = generateRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: `Validation failed: ${JSON.stringify(parsed.error.flatten())}`, receivedBody: JSON.stringify(body) },
+        { status: 400 }
+      );
+    }
+    const { resumeId, jobDescriptionId } = parsed.data;
+
+    // Step 4: Fetch data
+    step = "fetch_data";
     const [resumeResult, jdResult, archetypeResult, interviewResult, programsResult] =
       await Promise.all([
-        // Resume
         db
           .select({
             id: userResumesTable.id,
@@ -75,7 +91,6 @@ export async function POST(request: NextRequest) {
           )
           .limit(1),
 
-        // Job description
         db
           .select({
             id: jobDescriptionsTable.id,
@@ -91,7 +106,6 @@ export async function POST(request: NextRequest) {
           )
           .limit(1),
 
-        // Archetype
         db
           .select({
             archetypeName: careerArchetypesTable.archetypeName,
@@ -102,7 +116,6 @@ export async function POST(request: NextRequest) {
           .where(eq(careerArchetypesTable.userId, user.id))
           .limit(1),
 
-        // Interview feedback (last 10 completed sessions)
         db
           .select({
             skillsMapping: interviewFeedbackTable.skillsMapping,
@@ -122,7 +135,6 @@ export async function POST(request: NextRequest) {
           .orderBy(desc(interviewSessionsTable.startedAt))
           .limit(10),
 
-        // Education programs (active, ordered by ROI)
         db
           .select({
             name: educationProgramsTable.name,
@@ -140,31 +152,34 @@ export async function POST(request: NextRequest) {
           .limit(15),
       ]);
 
-    // Validate resume
+    // Step 5: Validate resume
+    step = "validate_resume";
     const resume = resumeResult[0];
     if (!resume) {
-      return NextResponse.json({ error: "Resume not found" }, { status: 404 });
+      return NextResponse.json({ error: `Resume not found (id=${resumeId}, userId=${user.id})` }, { status: 404 });
     }
     if (resume.status !== "extracted" || !resume.parsedData) {
       return NextResponse.json(
-        { error: "Resume data has not been extracted yet. Please wait for processing to complete." },
+        { error: `Resume not ready: status=${resume.status}, hasData=${!!resume.parsedData}` },
         { status: 400 }
       );
     }
 
-    // Validate JD
+    // Step 6: Validate JD
+    step = "validate_jd";
     const jd = jdResult[0];
     if (!jd) {
-      return NextResponse.json({ error: "Job description not found" }, { status: 404 });
+      return NextResponse.json({ error: `Job description not found (id=${jobDescriptionId}, userId=${user.id})` }, { status: 404 });
     }
     if (jd.status !== "extracted" || !jd.extractedData) {
       return NextResponse.json(
-        { error: "Job description data has not been extracted yet. Please wait for processing to complete." },
+        { error: `Job description not ready: status=${jd.status}, hasData=${!!jd.extractedData}` },
         { status: 400 }
       );
     }
 
-    // Aggregate interview insights
+    // Step 7: Aggregate interview data
+    step = "aggregate_interviews";
     const allSkillScores: Array<{ skill: string; score: number; note?: string }> = [];
     const feedbackSummaries: string[] = [];
     for (const fb of interviewResult) {
@@ -177,7 +192,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Average skill scores across sessions
     const skillAverages = new Map<string, { total: number; count: number; note?: string }>();
     for (const s of allSkillScores) {
       const existing = skillAverages.get(s.skill);
@@ -194,7 +208,8 @@ export async function POST(request: NextRequest) {
       note,
     }));
 
-    // Merge context
+    // Step 8: Merge context
+    step = "merge_context";
     const context = mergeCareerPlanContext(
       resume.parsedData as ResumeExtraction,
       jd.extractedData as JobDescriptionExtraction,
@@ -205,19 +220,22 @@ export async function POST(request: NextRequest) {
       programsResult
     );
 
-    // Generate career plan via LLM
+    // Step 9: Generate career plan via LLM
+    step = "llm_generate";
     let plan;
     try {
       plan = await generateCareerPlan(context);
     } catch (llmError) {
-      console.error("[api/plans/generate] LLM generation failed:", llmError);
+      const msg = llmError instanceof Error ? llmError.message : String(llmError);
+      console.error("[api/plans/generate] LLM generation failed:", msg);
       return NextResponse.json(
-        { error: "AI generation failed. Please try again." },
+        { error: `AI generation failed: ${msg}` },
         { status: 502 }
       );
     }
 
-    // Compute starting orderIndex
+    // Step 10: Insert milestones
+    step = "insert_milestones";
     const existingMilestones = await db
       .select({ orderIndex: careerMilestonesTable.orderIndex })
       .from(careerMilestonesTable)
@@ -229,7 +247,6 @@ export async function POST(request: NextRequest) {
         ? existingMilestones[existingMilestones.length - 1].orderIndex + 1
         : 0;
 
-    // Insert milestones
     const now = new Date();
     const milestoneValues = plan.milestones.map((m, i) => ({
       userId: user.id,
@@ -245,7 +262,8 @@ export async function POST(request: NextRequest) {
       .values(milestoneValues)
       .returning();
 
-    // Insert resources for each milestone
+    // Step 11: Insert resources
+    step = "insert_resources";
     const resourceInserts: Array<{
       milestoneId: number;
       title: string;
@@ -270,7 +288,8 @@ export async function POST(request: NextRequest) {
       await db.insert(careerResourcesTable).values(resourceInserts);
     }
 
-    // Fetch complete milestones with resources
+    // Step 12: Fetch results
+    step = "fetch_results";
     const insertedIds = insertedMilestones.map((m) => m.id);
     const resultMilestones = await db.query.careerMilestonesTable.findMany({
       where: inArray(careerMilestonesTable.id, insertedIds),
@@ -305,14 +324,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Invalid request", details: error.flatten() },
+        { error: `Validation failed at step=${step}`, details: error.flatten() },
         { status: 400 }
       );
     }
     const errMsg = error instanceof Error ? error.message : String(error);
-    console.error("[api/plans/generate] Error:", errMsg, error);
+    console.error(`[api/plans/generate] Error at step=${step}:`, errMsg, error);
     return NextResponse.json(
-      { error: `Failed to generate career plan: ${errMsg}` },
+      { error: `Failed at step=${step}: ${errMsg}` },
       { status: 500 }
     );
   }

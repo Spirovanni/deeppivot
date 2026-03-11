@@ -40,6 +40,7 @@ import {
 } from "@/src/lib/hooks/use-career-plans";
 import { EditMilestoneDialog } from "./EditMilestoneDialog";
 import { CreateMilestoneDialog } from "./CreateMilestoneDialog";
+import { GenerateCareerPlanDialog } from "./GenerateCareerPlanDialog";
 import { useShowPointsAnimation } from "@/src/store/gamification";
 
 // ─── Status config ─────────────────────────────────────────────────────────────
@@ -294,7 +295,10 @@ export function MilestoneTimeline({ milestones }: MilestoneTimelineProps) {
             )}
           </p>
         </div>
-        <CreateMilestoneDialog />
+        <div className="flex items-center gap-2">
+          <GenerateCareerPlanDialog />
+          <CreateMilestoneDialog />
+        </div>
       </div>
 
       {milestones.length === 0 ? (
@@ -308,7 +312,11 @@ export function MilestoneTimeline({ milestones }: MilestoneTimelineProps) {
               Add your first career milestone to start building your roadmap.
             </p>
           </div>
-          <CreateMilestoneDialog />
+          <div className="flex flex-col items-center gap-2">
+            <GenerateCareerPlanDialog />
+            <span className="text-xs text-muted-foreground">or</span>
+            <CreateMilestoneDialog />
+          </div>
         </div>
       ) : (
         <DndContext

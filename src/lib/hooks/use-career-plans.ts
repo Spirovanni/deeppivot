@@ -248,6 +248,39 @@ export function useResourceRecommendations(
   });
 }
 
+export interface GenerateCareerPlanResult {
+  planSummary: string;
+  milestones: PlanMilestone[];
+}
+
+export function useGenerateCareerPlan() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      resumeId: number;
+      jobDescriptionId: number;
+    }): Promise<GenerateCareerPlanResult> => {
+      const res = await fetch("/api/plans/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error ?? "Failed to generate career plan");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: PLANS_QUERY_KEY });
+      toast.success("Career plan generated!");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to generate career plan");
+    },
+  });
+}
+
 export function useRemoveResource() {
   const queryClient = useQueryClient();
   return useMutation({

@@ -97,13 +97,19 @@ export default async function DashboardPage() {
 
   // Role-based redirect: send non-default roles to their dedicated dashboard.
   // Skip redirect for admin/system_admin so they can access the user dashboard when they choose it.
-  const [row] = await db
-    .select({ role: usersTable.role })
-    .from(usersTable)
-    .where(eq(usersTable.clerkId, user.id))
-    .limit(1);
+  let userRole: UserRole = "user";
+  try {
+    const [row] = await db
+      .select({ role: usersTable.role })
+      .from(usersTable)
+      .where(eq(usersTable.clerkId, user.id))
+      .limit(1);
 
-  const userRole = (row?.role as UserRole) ?? "user";
+    userRole = (row?.role as UserRole) ?? "user";
+  } catch {
+    // Fallback: transient DB error — default to "user" role so the page still renders
+  }
+
   const isSuperUser = userRole === "admin" || userRole === "system_admin";
   if (!isSuperUser && userRole !== "user") {
     redirect(getUserDashboardRoute(userRole));

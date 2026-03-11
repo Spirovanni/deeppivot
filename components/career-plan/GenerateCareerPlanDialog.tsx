@@ -70,6 +70,7 @@ export function GenerateCareerPlanDialog() {
 
   const handleGenerate = () => {
     if (!resumeId || !jdId) return;
+    generatePlan.reset();
     generatePlan.mutate(
       { resumeId, jobDescriptionId: jdId },
       { onSuccess: () => setOpen(false) }
@@ -177,12 +178,27 @@ export function GenerateCareerPlanDialog() {
               </p>
             </div>
 
+            {/* Error state */}
+            {generatePlan.isError && (
+              <div className="flex items-start gap-2 rounded-lg bg-destructive/10 border border-destructive/30 px-3 py-2">
+                <AlertCircle className="size-4 shrink-0 text-destructive mt-0.5" />
+                <p className="text-sm text-destructive">
+                  {generatePlan.error instanceof Error
+                    ? generatePlan.error.message
+                    : "Failed to generate career plan. Please try again."}
+                </p>
+              </div>
+            )}
+
             {/* Generating state */}
             {generatePlan.isPending && (
               <div className="flex flex-col items-center gap-2 py-4">
                 <Loader2 className="size-6 animate-spin text-primary" />
                 <p className="text-sm text-muted-foreground animate-pulse">
                   Generating your personalized career plan...
+                </p>
+                <p className="text-xs text-muted-foreground/70">
+                  This may take 10-20 seconds
                 </p>
               </div>
             )}

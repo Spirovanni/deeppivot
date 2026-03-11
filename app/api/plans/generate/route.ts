@@ -20,6 +20,9 @@ import { captureServerEvent } from "@/src/lib/posthog-server";
 import type { ResumeExtraction } from "@/src/lib/llm/prompts/resumes";
 import type { JobDescriptionExtraction } from "@/src/lib/llm/prompts/job-descriptions";
 
+// Allow up to 60s for LLM generation
+export const maxDuration = 60;
+
 const generateRequestSchema = z.object({
   resumeId: z.coerce.number().int().positive(),
   jobDescriptionId: z.coerce.number().int().positive(),
@@ -203,7 +206,16 @@ export async function POST(request: NextRequest) {
     );
 
     // Generate career plan via LLM
-    const plan = await generateCareerPlan(context);
+    let plan;
+    try {
+      plan = await generateCareerPlan(context);
+    } catch (llmError) {
+      console.error("[api/plans/generate] LLM generation failed:", llmError);
+      return NextResponse.json(
+        { error: "AI generation failed. Please try again." },
+        { status: 502 }
+      );
+    }
 
     // Compute starting orderIndex
     const existingMilestones = await db
@@ -297,9 +309,10 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    console.error("[api/plans/generate] Error:", error);
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.error("[api/plans/generate] Error:", errMsg, error);
     return NextResponse.json(
-      { error: "Failed to generate career plan" },
+      { error: `Failed to generate career plan: ${errMsg}` },
       { status: 500 }
     );
   }
